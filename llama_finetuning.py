@@ -53,10 +53,8 @@ import configs
 from torch.distributed.fsdp import (
     FullyShardedDataParallel as FSDP,
     MixedPrecision,
-    StateDictType,
 )
 from torch.utils.data import DistributedSampler
-from torch.distributed.fsdp._common_utils import _is_fsdp_flattened
 import policies
 from policies import AnyPrecisionAdamW
 from configs import fsdp_config, train_config
@@ -66,7 +64,6 @@ from pkg_resources import packaging
 import torch
 import torch.cuda.nccl as nccl
 import torch.distributed as dist
-from transformers.models.t5.modeling_t5 import T5Block
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
 
 
