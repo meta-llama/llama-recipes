@@ -26,6 +26,8 @@ This runs with the `samsum_dataset` for summarization application by default.
 
 **Multiple GPUs one node**:
 
+**NOTE** please make sure to use PyTorch Nightlies for using PEFT+FSDP. Also, note that int8 quantization from bit&bytes currently is not supported in FSDP.
+
 ```bash
 
 torchrun --nnodes 1 --nproc_per_node 4  ../llama_finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model
