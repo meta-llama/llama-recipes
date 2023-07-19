@@ -304,3 +304,31 @@ def save_distributed_model_checkpoint(model, rank, cfg, epoch=1):
         save_state_dict(state_dict, writer)
 
         return
+
+def load_sharded_model_single_gpu(model, model_path):
+    
+    dcp.load_state_dict(
+                    state_dict=state_dict_to_load_to,
+                    storage_reader=FsspecReader(path),
+                    no_dist=True,
+                )
+    print(f"Sharded state checkpoint loaded from {load_dir}")
+    
+def load_sharded_model_single_gpu(model,model_path,verbose=True):
+    
+    reader = FileSystemReader(model_path)
+
+    with FSDP.state_dict_type(model, StateDictType.FULL_STATE_DICT):
+      
+        dist_cp.load_state_dict(
+                    state_dict=state_dict_to_load_to,
+                    storage_reader= FileSystemReader(path),
+                    no_dist=True,
+                )
+       
+        print(f"checkpoint after load_state_dict()")
+        ck = checkpoint.keys()
+        print(f" checkpoint key len = {len(ck)} and \n keys =  {ck}")
+        model.load_state_dict(checkpoint)
+    
+    print(f"Sharded state checkpoint loaded from {model_path}")
