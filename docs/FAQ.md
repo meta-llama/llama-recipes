@@ -17,3 +17,11 @@ Here we discuss frequently asked questions that may occur and we found useful al
 4. Can I add custom datasets?
 
     Yes, you can find more information on how to do that [here](Dataset.md).
+
+5. What are the hardware SKU requirements for deploying these models?
+
+    Hardware requirements vary based on latency, throughput and cost constraints. For good latency, the models were split across multiple GPUs with tensor parallelism in a machine with NVIDIA A100s or H100s. But TPUs, other types of GPUs, or even commodity hardware can also be used to deploy these models (e.g. https://github.com/ggerganov/llama.cpp).
+
+6. What are the hardware SKU requirements for fine-tuning Llama pre-trained models?
+
+    Fine-tuning requirements vary based on amount of data, time to complete fine-tuning and cost constraints. To fine-tune these models we have generally used multiple NVIDIA A100 machines with data parallelism across nodes and a mix of data and tensor parallelism intra node. But using a single machine, or other GPU types are definitely possible (e.g. alpaca models are trained on a single RTX4090: https://github.com/tloen/alpaca-lora).

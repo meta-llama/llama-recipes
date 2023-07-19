@@ -11,7 +11,7 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
     - [Single GPU](#single-gpu)
     - [Multi GPU One Node](#multiple-gpus-one-node)
     - [Multi GPU Multi Node](#multi-gpu-multi-node)
-3. [Inference](./inference/inference.md)
+3. [Inference](./docs/inference.md)
 4. [Model Conversion](#model-conversion-to-hugging-face)
 5. [Repository Organization](#repository-organization)
 6. [License and Acceptable Use Policy](#license)
@@ -32,7 +32,7 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
 * [Multi-GPU Fine-tuning](./docs/mutli_gpu.md)
 * [LLM Fine-tuning](./docs/LLM_finetuning.md)
 * [Adding custom datasets](./docs/Dataset.md)
-* [Inference](./inference/inference.md)
+* [Inference](./docs/inference.md)
 * [FAQs](./docs/FAQ.md)
 
 ## Requirements
