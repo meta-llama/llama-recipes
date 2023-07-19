@@ -43,4 +43,10 @@ Alternate inference options include:
 To use vLLM you will need to install it using the instructions [here](https://vllm.readthedocs.io/en/latest/getting_started/installation.html#installation).
 Once installed, you can use the vLLM_ineference.py script provided [here](vLLM_inference.py).
 
-[**TGI**](https://github.com/huggingface/text-generation-inference): Text Generation Inference (TGI) is another inference option available to you. For more information on how to set up and use TGI see [here](https://github.com/huggingface/text-generation-inference).
+Below is an example of how to run the vLLM_inference.py script found within the inference folder.
+
+``` bash
+python vLLM_inference.py --model_name <PATH/TO/LLAMA/7B>
+```
+
+[**TGI**](https://github.com/huggingface/text-generation-inference): Text Generation Inference (TGI) is another inference option available to you. For more information on how to set up and use TGI see [here](hf-text-generation-inference/README.md).
