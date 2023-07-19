@@ -81,7 +81,7 @@ Here we make use of Parameter Efficient Methods (PEFT) as described in the next 
 
 ### Multiple GPUs One Node:
 
-**NOTE** please make sure to use PyTorch Nightlies for using PEFT+FSDP .
+**NOTE** please make sure to use PyTorch Nightlies for using PEFT+FSDP. Also, note that int8 quantization from bit&bytes currently is not supported in FSDP.
 
 ```bash
 
