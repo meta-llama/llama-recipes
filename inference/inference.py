@@ -52,7 +52,6 @@ def main(
     torch.manual_seed(seed)
     
     model = load_model(model_name, quantization)
-    model.config.pretraining_tp=8
     tokenizer = LlamaTokenizer.from_pretrained(model_name)
     tokenizer.add_special_tokens(
         {
