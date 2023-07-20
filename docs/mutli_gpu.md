@@ -132,7 +132,7 @@ save_optimizer: bool=False
 
 ```
 
-* [Datasets config file](../configs/datasets.py) provides the avaiable options for datasets.
+* [Datasets config file](../configs/datasets.py) provides the available options for datasets.
 
 * [peft config file](../configs/peft.py) provides the suported PEFT methods and respective settings that can be modified.
 
