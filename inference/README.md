@@ -1,6 +1,6 @@
 # Inference
 
-So far, we have provided support for three methods of inference:
+This folder contains inference examples for Llama 2. So far, we have provided support for three methods of inference:
 
 1. [inference script](inference.py) script provides support for Hugging Face accelerate and PEFT fine tuned models.
 
