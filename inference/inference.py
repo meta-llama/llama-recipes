@@ -59,12 +59,12 @@ def main(
     torch.cuda.manual_seed(seed)
     torch.manual_seed(seed)
     # model = load_model(model_name, quantization)
-    model = load_llama_from_config()
-    loaded_model = load_sharded_model_single_gpu(model, model_name)
+    model_config = load_llama_from_config()
+    model = load_sharded_model_single_gpu(model_config, model_name)
     
     print("model has been loaded *******************")
 
-    tokenizer = LlamaTokenizer.from_pretrained(model_name)
+    tokenizer = LlamaTokenizer.from_pretrained("../../../hf-llama-pr/7B/")
     tokenizer.add_special_tokens(
         {
             "eos_token": "</s>",
@@ -97,7 +97,7 @@ def main(
     if peft_model:
         model = load_peft_model(model, peft_model)
 
-    model.eval()
+    # model.eval()
 
     batch = tokenizer(user_prompt, return_tensors="pt")
     batch = {k: v.to("cuda") for k, v in batch.items()}
