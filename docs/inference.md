@@ -1,6 +1,6 @@
 # Inference
 
-For inference we have provided an [inference script](inference.py). Depending on the type of finetuning performed during training the [inference script](inference.py) takes different arguments.
+For inference we have provided an [inference script](../inference/inference.py). Depending on the type of finetuning performed during training the [inference script](../inference/inference.py) takes different arguments.
 To finetune all model parameters the output dir of the training has to be given as --model_name argument.
 In the case of a parameter efficient method like lora the base model has to be given as --model_name and the output dir of the training has to be given as --peft_model argument.
 Additionally, a prompt for the model in the form of a text file has to be provided. The prompt file can either be piped through standard input or given as --prompt_file parameter.
@@ -41,6 +41,12 @@ Alternate inference options include:
 
 [**vLLM**](https://vllm.readthedocs.io/en/latest/getting_started/quickstart.html):
 To use vLLM you will need to install it using the instructions [here](https://vllm.readthedocs.io/en/latest/getting_started/installation.html#installation).
-Once installed, you can use the vLLM_ineference.py script provided [here](vLLM_inference.py).
+Once installed, you can use the vLLM_ineference.py script provided [here](../inference/vLLM_inference.py).
 
-[**TGI**](https://github.com/huggingface/text-generation-inference): Text Generation Inference (TGI) is another inference option available to you. For more information on how to set up and use TGI see [here](https://github.com/huggingface/text-generation-inference).
+Below is an example of how to run the vLLM_inference.py script found within the inference folder.
+
+``` bash
+python vLLM_inference.py --model_name <PATH/TO/MODEL/7B>
+```
+
+[**TGI**](https://github.com/huggingface/text-generation-inference): Text Generation Inference (TGI) is another inference option available to you. For more information on how to set up and use TGI see [here](../inference/hf-text-generation-inference/README.md).
