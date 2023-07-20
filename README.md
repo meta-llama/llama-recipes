@@ -22,7 +22,7 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
 
 [Llama 2 Jupyter Notebook](quickstart.ipynb): This jupyter notebook steps you through how to finetune a Llama 2 model on the text summarization task using the [samsum](https://huggingface.co/datasets/samsum). The notebook uses parameter efficient finetuning (PEFT) and int8 quantization to finetune a 7B on a single GPU like an A10 with 24GB gpu memory.
 
-**Note** All the setting defined in [config files](./configs/) can be passed as args through CLI when running the sctipt, there is no need to change from config files directly.
+**Note** All the setting defined in [config files](./configs/) can be passed as args through CLI when running the script, there is no need to change from config files directly.
 
 **Note** In case need to run PEFT model with FSDP, please make sure to use the PyTorch Nightlies.
 
