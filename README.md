@@ -62,7 +62,7 @@ All the parameters in the examples and recipes below need to be further tuned to
 
 * Make sure to set the right path to the model in the [training config](./configs/training.py).
 
-### Single GPU :
+### Single GPU:
 
 ```bash
 #if running on multi-gpu machine
