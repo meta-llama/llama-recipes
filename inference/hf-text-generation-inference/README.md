@@ -4,7 +4,7 @@ This document shows how to serve a fine tuned LLaMA mode with HuggingFace's text
 
 ## Step 0: Merging the weights (Only required if LoRA method was used) 
 
-In case the model was fine tuned with LoRA mehtod we need to merge the weights of the base model with the adapter weight. For this we can use the script `merge_lora_weights.py` which is located in the same folder as this README file.
+In case the model was fine tuned with LoRA method we need to merge the weights of the base model with the adapter weight. For this we can use the script `merge_lora_weights.py` which is located in the same folder as this README file.
 
 The script takes the base model, the peft weight folder as well as an output as arguments:
 
