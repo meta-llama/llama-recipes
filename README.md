@@ -119,11 +119,14 @@ Given that the original checkpoint resides under models/7B you can install all r
 
 ```bash
 ## Install HuggingFace Transformers from source
-pip install git+https://github.com/huggingface/transformers
-cd transformers
+pip freeze | grep transformers ## verify it is version 4.31.0 or higher
 
+```bash
+git clone git@github.com:huggingface/transformers.git
+cd transformers
+pip install protobuf
 python src/transformers/models/llama/convert_llama_weights_to_hf.py \
-    --input_dir /path/to/downloaded/llama/weights --model_size 7B --output_dir models_hf/7B
+   --input_dir /path/to/downloaded/llama/weights --model_size 7B --output_dir /output/path
 ```
 
 # Repository Organization
