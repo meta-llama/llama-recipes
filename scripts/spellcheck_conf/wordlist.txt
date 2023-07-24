@@ -1064,3 +1064,7 @@ ActionSLAM
 statins
 ci
 chatGPT
+Llama
+PEFT
+LORA
+FSDP
