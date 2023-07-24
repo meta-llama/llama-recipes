@@ -4,7 +4,7 @@ To run fine-tuning on multi-GPUs, we will  make use of two packages:
 
 1. [PEFT](https://huggingface.co/blog/peft) methods and in particular using the Hugging Face [PEFT](https://github.com/huggingface/peft)library.
 
-2. [FSDP](https://pytorch.org/tutorials/intermediate/FSDP_adavnced_tutorial.html) which helps us parallelize the training over mutiple GPUs. [More details](LLM_finetuning.md/#2-full-partial-parameter-finetuning).
+2. [FSDP](https://pytorch.org/tutorials/intermediate/FSDP_adavnced_tutorial.html) which helps us parallelize the training over multiple GPUs. [More details](LLM_finetuning.md/#2-full-partial-parameter-finetuning).
 
 Given the combination of PEFT and FSDP, we would be able to fine tune a Llama 2 model on multiple GPUs in one node or multi-node.
 
@@ -21,7 +21,7 @@ pip install -r requirements.txt
 
 ## How to run it
 
-Get access to a machine with mutiple GPUs ( in this case we tested with 4 A100 and A10s).
+Get access to a machine with multiple GPUs ( in this case we tested with 4 A100 and A10s).
 This runs with the `samsum_dataset` for summarization application by default.
 
 **Multiple GPUs one node**:
@@ -68,7 +68,7 @@ sbatch multi_node.slurm
 
 ## How to run with different datasets?
 
-Currenty 4 datasets are supported that can be found in [Datasets config file](../configs/datasets.py).
+Currently 4 datasets are supported that can be found in [Datasets config file](../configs/datasets.py).
 
 * `grammar_dataset` : use this [notebook](../ft_datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process theJfleg and C4 200M datasets for grammar checking.
 
@@ -134,7 +134,7 @@ save_optimizer: bool=False
 
 * [Datasets config file](../configs/datasets.py) provides the available options for datasets.
 
-* [peft config file](../configs/peft.py) provides the suported PEFT methods and respective settings that can be modified.
+* [peft config file](../configs/peft.py) provides the supported PEFT methods and respective settings that can be modified.
 
 * [FSDP config file](../configs/fsdp.py) provides FSDP settings such as:
 
@@ -147,12 +147,12 @@ save_optimizer: bool=False
 
         * `SHARD_GRAD_OP` that shards gradinets and optimizer states and keeps the parameters after the first `all_gather`. This reduces communication overhead specially if you are using slower networks more specifically beneficial on multi-node cases. This comes with the trade off of higher memory consumption.
 
-        * `NO_SHARD` this is equivalant to DDP, does not shard model parameters, gradinets or optimizer states. It keeps the full parameter after the first `all_gather`.
+        * `NO_SHARD` this is equivalent to DDP, does not shard model parameters, gradinets or optimizer states. It keeps the full parameter after the first `all_gather`.
 
         * `HYBRID_SHARD` available on PyTorch Nightlies. It does FSDP within a node and DDP between nodes. It's for multi-node cases and helpful for slower networks, given your model will fit into one node.
 
 * `checkpoint_type` specifies the state dict checkpoint type for saving the model. `FULL_STATE_DICT` streams state_dict of each model shard from a rank to CPU and assembels the full state_dict on CPU. `SHARDED_STATE_DICT` saves one checkpoint per rank, and enables the re-loading the model in a different world size.
 
-* `fsdp_activation_checkpointing` enables activation checkpoining for FSDP, this saves siginificant amount of memory with the trade off of recomputing itermediate activations during the backward pass. The saved memory can be re-invested in higher batch sizes to increase the throughput. We recommond you use this option.
+* `fsdp_activation_checkpointing` enables activation checkpoining for FSDP, this saves significant amount of memory with the trade off of recomputing itermediate activations during the backward pass. The saved memory can be re-invested in higher batch sizes to increase the throughput. We recommond you use this option.
 
-* `pure_bf16` it moves the  model to `BFloat16` and if `optimizer` is set to `anyprecision` then optimizer states will be kept in `BFloat16` as well. You can use this option if neccessary.
+* `pure_bf16` it moves the  model to `BFloat16` and if `optimizer` is set to `anyprecision` then optimizer states will be kept in `BFloat16` as well. You can use this option if necessary.
