@@ -33,6 +33,7 @@ def main(
     enable_azure_content_safety: bool=False, # Enable safety check with Azure content safety api
     enable_sensitive_topics: bool=False, # Enable check for sensitive topics using AuditNLG APIs
     enable_saleforce_content_safety: bool=True, # Enable safety check woth Saleforce safety flan t5
+    max_padding_length: int=0, # specifies the max padding length to pad the context/ prompt
     **kwargs
 ):
     if prompt_file is not None:
@@ -85,10 +86,8 @@ def main(
         model = load_peft_model(model, peft_model)
 
     model.eval()
-    max_length = 350
-    batch = tokenizer(user_prompt, pad_to_max_length=True, max_length=max_length, return_tensors="pt")
+    batch = tokenizer(user_prompt, pad_to_max_length=True, max_length=max_padding_length, return_tensors="pt")
     batch = {k: v.to("cuda") for k, v in batch.items()}
-    print("lentgh******", batch["input_ids"].size())
     start = time.perf_counter()
     with torch.no_grad():
         outputs = model.generate(
