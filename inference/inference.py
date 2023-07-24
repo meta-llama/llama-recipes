@@ -59,7 +59,8 @@ def main(
             "pad_token": "<PAD>",
         }
     )
-    
+    # making sure embedding is updated accordingly with pad token being added as special token
+    model.resize_token_embeddings(model.config.vocab_size + 1)
     safety_checker = get_safety_checker(enable_azure_content_safety,
                                         enable_sensitive_topics,
                                         enable_saleforce_content_safety,
@@ -84,9 +85,10 @@ def main(
         model = load_peft_model(model, peft_model)
 
     model.eval()
-
-    batch = tokenizer(user_prompt, return_tensors="pt")
+    max_length = 350
+    batch = tokenizer(user_prompt, pad_to_max_length=True, max_length=max_length, return_tensors="pt")
     batch = {k: v.to("cuda") for k, v in batch.items()}
+    print("lentgh******", batch["input_ids"].size())
     start = time.perf_counter()
     with torch.no_grad():
         outputs = model.generate(
