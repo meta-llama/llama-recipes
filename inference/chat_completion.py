@@ -34,6 +34,7 @@ def main(
     enable_azure_content_safety: bool=False, # Enable safety check with Azure content safety api
     enable_sensitive_topics: bool=False, # Enable check for sensitive topics using AuditNLG APIs
     enable_saleforce_content_safety: bool=True, # Enable safety check woth Saleforce safety flan t5
+    max_padding_length: int=0, # specifies the max padding length to pad the context/ prompt
     **kwargs
 ):
     if prompt_file is not None:
@@ -66,9 +67,11 @@ def main(
             "pad_token": "<PAD>",
         }
     )
+    # making sure embedding is updated accordingly with pad token being added as special token
+    # Ref: https://huggingface.co/docs/transformers/main/model_doc/llama2
+    model.resize_token_embeddings(model.config.vocab_size + 1)
     
-    chats = format_tokens(dialogs, tokenizer)
-
+    chats = format_tokens(dialogs, tokenizer, max_padding_length)
     with torch.no_grad():
         for idx, chat in enumerate(chats):
             safety_checker = get_safety_checker(enable_azure_content_safety,

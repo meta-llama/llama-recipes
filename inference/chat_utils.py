@@ -21,7 +21,7 @@ You are a helpful, respectful and honest assistant. Always answer as helpfully a
 
 If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information."""
 
-def format_tokens(dialogs, tokenizer):
+def format_tokens(dialogs, tokenizer, max_pad_length):
     prompt_tokens = []
     for dialog in dialogs:
         if dialog[0]["role"] != "system":
@@ -53,7 +53,7 @@ def format_tokens(dialogs, tokenizer):
         dialog_tokens: List[int] = sum(
             [
                 tokenizer.encode(
-                    f"{B_INST} {(prompt['content']).strip()} {E_INST} {(answer['content']).strip()} ",
+                    f"{B_INST} {(prompt['content']).strip()} {E_INST} {(answer['content']).strip()} "
                 )
                 for prompt, answer in zip(dialog[::2], dialog[1::2])
             ],
@@ -65,7 +65,10 @@ def format_tokens(dialogs, tokenizer):
         dialog_tokens += tokenizer.encode(
             f"{B_INST} {(dialog[-1]['content']).strip()} {E_INST}",
         )
-        prompt_tokens.append(dialog_tokens)
+        tokens = {"input_ids":dialog_tokens}
+        prompt_tokens_padded = tokenizer.pad(tokens, max_length=max_pad_length, padding="max_length", pad_to_multiple_of=None)
+        prompt_tokens.append(prompt_tokens_padded["input_ids"])
+      
     return prompt_tokens
         
 

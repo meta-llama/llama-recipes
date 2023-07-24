@@ -61,6 +61,7 @@ def main(
         }
     )
     # making sure embedding is updated accordingly with pad token being added as special token
+    # Ref: https://huggingface.co/docs/transformers/main/model_doc/llama2
     model.resize_token_embeddings(model.config.vocab_size + 1)
     safety_checker = get_safety_checker(enable_azure_content_safety,
                                         enable_sensitive_topics,
