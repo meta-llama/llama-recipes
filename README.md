@@ -11,7 +11,7 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
     - [Single GPU](#single-gpu)
     - [Multi GPU One Node](#multiple-gpus-one-node)
     - [Multi GPU Multi Node](#multi-gpu-multi-node)
-3. [Inference](./inference/inference.md)
+3. [Inference](./docs/inference.md)
 4. [Model Conversion](#model-conversion-to-hugging-face)
 5. [Repository Organization](#repository-organization)
 6. [License and Acceptable Use Policy](#license)
@@ -22,7 +22,7 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
 
 [Llama 2 Jupyter Notebook](quickstart.ipynb): This jupyter notebook steps you through how to finetune a Llama 2 model on the text summarization task using the [samsum](https://huggingface.co/datasets/samsum). The notebook uses parameter efficient finetuning (PEFT) and int8 quantization to finetune a 7B on a single GPU like an A10 with 24GB gpu memory.
 
-**Note** All the setting defined in [config files](./configs/) can be passed as args through CLI when running the sctipt, there is no need to change from config files directly.
+**Note** All the setting defined in [config files](./configs/) can be passed as args through CLI when running the script, there is no need to change from config files directly.
 
 **Note** In case need to run PEFT model with FSDP, please make sure to use the PyTorch Nightlies.
 
@@ -32,7 +32,7 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
 * [Multi-GPU Fine-tuning](./docs/mutli_gpu.md)
 * [LLM Fine-tuning](./docs/LLM_finetuning.md)
 * [Adding custom datasets](./docs/Dataset.md)
-* [Inference](./inference/inference.md)
+* [Inference](./docs/inference.md)
 * [FAQs](./docs/FAQ.md)
 
 ## Requirements
@@ -62,7 +62,7 @@ All the parameters in the examples and recipes below need to be further tuned to
 
 * Make sure to set the right path to the model in the [training config](./configs/training.py).
 
-### Single GPU :
+### Single GPU:
 
 ```bash
 #if running on multi-gpu machine

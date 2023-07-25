@@ -62,13 +62,11 @@ def main(
     tokenizer = LlamaTokenizer.from_pretrained(model_name)
     tokenizer.add_special_tokens(
         {
-            "eos_token": "</s>",
-            "bos_token": "</s>",
-            "unk_token": "</s>",
-            "pad_token": "[PAD]",
+         
+            "pad_token": "<PAD>",
         }
     )
-
+    
     chats = format_tokens(dialogs, tokenizer)
 
     with torch.no_grad():

@@ -40,7 +40,7 @@ The args used in the command above are:
 
 ## How to run with different datasets?
 
-Currenty 4 datasets are supported that can be found in [Datasets config file](../configs/datasets.py).
+Currently 4 datasets are supported that can be found in [Datasets config file](../configs/datasets.py).
 
 * `grammar_dataset` : use this [notebook](../ft_datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process theJfleg and C4 200M datasets for grammar checking.
 
@@ -106,6 +106,6 @@ save_optimizer: bool=False
 
 ```
 
-* [Datasets config file](../configs/datasets.py) provides the avaiable options for datasets.
+* [Datasets config file](../configs/datasets.py) provides the available options for datasets.
 
-* [peft config file](../configs/peft.py) provides the suported PEFT methods and respective settings that can be modified.
+* [peft config file](../configs/peft.py) provides the supported PEFT methods and respective settings that can be modified.

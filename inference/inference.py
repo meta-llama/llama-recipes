@@ -7,6 +7,7 @@ import fire
 import torch
 import os
 import sys
+import time
 from typing import List
 
 from transformers import LlamaTokenizer
@@ -58,22 +59,13 @@ def main(
     # Set the seeds for reproducibility
     torch.cuda.manual_seed(seed)
     torch.manual_seed(seed)
-    # model = load_model(model_name, quantization)
-    model_def = load_llama_from_config()
-    # print(dir(model_def))
-    # model_def.eval()
-    model = load_sharded_model_single_gpu(model_def, model_name)
-    model.to(torch.bfloat16)
-    model.to("cuda:0")
-    print("model has been loaded *******************")
-
-    tokenizer = LlamaTokenizer.from_pretrained("../../../hf-llama-pr/7B/")
+    
+    model = load_model(model_name, quantization)
+    tokenizer = LlamaTokenizer.from_pretrained(model_name)
     tokenizer.add_special_tokens(
         {
-            "eos_token": "</s>",
-            "bos_token": "</s>",
-            "unk_token": "</s>",
-            "pad_token": "[PAD]",
+         
+            "pad_token": "<PAD>",
         }
     )
     
@@ -104,7 +96,7 @@ def main(
 
     batch = tokenizer(user_prompt, return_tensors="pt")
     batch = {k: v.to("cuda") for k, v in batch.items()}
-    
+    start = time.perf_counter()
     with torch.no_grad():
         outputs = model.generate(
             **batch,
@@ -119,7 +111,8 @@ def main(
             length_penalty=length_penalty,
             **kwargs 
         )
-
+    e2e_inference_time = (time.perf_counter()-start)*1000
+    print(f"the inference time is {e2e_inference_time} ms")
     output_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
     
     # Safety check of the model output
