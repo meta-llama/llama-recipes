@@ -7,12 +7,8 @@ import fire
 import torch
 import os
 import sys
-from typing import List
-
 from transformers import LlamaTokenizer
-from safety_utils import get_safety_checker
-from model_utils import load_model, load_peft_model, load_llama_from_config
-from accelerate import init_empty_weights
+from model_utils import  load_llama_from_config
 # Get the current file's directory
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
