@@ -14,15 +14,6 @@ from transformers import LlamaTokenizer
 from safety_utils import get_safety_checker
 from model_utils import load_model, load_peft_model, load_llama_from_config
 from accelerate import init_empty_weights
-# Get the current file's directory
-current_directory = os.path.dirname(os.path.abspath(__file__))
-
-# Get the parent directory
-parent_directory = os.path.dirname(current_directory)
-
-# Append the parent directory to sys.path
-sys.path.append(parent_directory)
-from model_checkpointing import load_sharded_model_single_gpu
 
 def main(
     model_name,
@@ -92,7 +83,7 @@ def main(
     if peft_model:
         model = load_peft_model(model, peft_model)
 
-    # model.eval()
+    model.eval()
 
     batch = tokenizer(user_prompt, return_tensors="pt")
     batch = {k: v.to("cuda") for k, v in batch.items()}
