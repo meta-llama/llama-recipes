@@ -34,6 +34,15 @@ The inference folder also includes a chat completion example, that adds built-in
 python chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file chats.json  --quantization --use_auditnlg
 
 ```
+## Loading back FSDP checkpoints
+
+In case you have fine-tuned your model with pure FSDP and saved the checkpoints with "SHARDED_STATE_DICT" as shown [here](../configs/fsdp.py), you can use this converter script to convert the FSDP Sharded checkpoints into HuggingFace checkpoints. This enables you to use the inference script normally as mentioned above.
+**To convert the checkpoint use the following command**:
+```bash
+ python checkpoint_converter_fsdp_hf.py --model_name  PATH/to/FSDP/Checkpoints --save_dir PATH/to/save/checkpoints --model_path PATH/or/HF/model_name
+
+ # --model_path specifies the HF Llama model name or path where it has config.json and tokenizer.json
+ ```
 
 ## Other Inference Options
 
