@@ -84,7 +84,6 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                     if train_config.enable_fsdp:
                         batch[key] = batch[key].to(local_rank)
                     else:
-
                         batch[key] = batch[key].to('cuda:0')              
                 loss = model(**batch).loss
                 loss = loss / gradient_accumulation_steps
@@ -137,7 +136,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                     if not train_config.use_peft and fsdp_config.checkpoint_type == StateDictType.FULL_STATE_DICT:
                         
                         model_checkpointing.save_model_checkpoint(
-                            model, optimizer, rank, train_config, epoch=1
+                            model, optimizer, rank, train_config, epoch=epoch
                         )
                     elif not train_config.use_peft and fsdp_config.checkpoint_type == StateDictType.SHARDED_STATE_DICT:
                         print(" we are about to save the models *******")
@@ -148,7 +147,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
 
                     if not train_config.use_peft and  train_config.save_optimizer:
                         model_checkpointing.save_optimizer_checkpoint(
-                            model, optimizer, rank, train_config, epoch=1
+                            model, optimizer, rank, train_config, epoch=epoch
                         )   
                                 
             
