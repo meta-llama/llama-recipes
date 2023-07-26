@@ -46,9 +46,9 @@ torchrun --nnodes 1 --nproc_per_node 8  llama_finetuning.py --enable_fsdp --mode
 ```
 Then convert your FSDP checkpoint to HuggingFace checkpoints using:
 ```bash
- python checkpoint_converter_fsdp_hf.py --model_name  PATH/to/FSDP/Checkpoints --save_dir PATH/to/save/checkpoints --model_path PATH/or/HF/model_name
+ python checkpoint_converter_fsdp_hf.py --fsdp_checkpoint_path  PATH/to/FSDP/Checkpoints --consolidated_model_path PATH/to/save/checkpoints --HF_model_path PATH/or/HF/model_name
 
- # --model_path specifies the HF Llama model name or path where it has config.json and tokenizer.json
+ # --HF_model_path specifies the HF Llama model name or path where it has config.json and tokenizer.json
  ```
 
 Then run inference using:
