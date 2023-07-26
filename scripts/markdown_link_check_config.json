@@ -19,6 +19,9 @@
     },
     {
       "pattern": "^http(s)?://localhost.*"
+    },
+    {
+      "pattern": "https://www.intel.com/content/www/us/en/developer/articles/news/llama2.html"
     }
   ]
 }
