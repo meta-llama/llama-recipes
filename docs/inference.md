@@ -31,7 +31,7 @@ inference/samsum_prompt.txt
 The inference folder also includes a chat completion example, that adds built-in safety features in fine-tuned models to the prompt tokens. To run the example:
 
 ```bash
-python chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file chats.json  --quantization --use_auditnlg
+python inference/chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file inference/chats.json  --quantization --use_auditnlg
 
 ```
 
