@@ -177,7 +177,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         results['avg_eval_prep'] = avg_eval_prep
         results['avg_eval_loss'] = avg_eval_loss
         
-
+    dist.barrier()
     return results
 
 def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer):
