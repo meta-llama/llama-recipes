@@ -1,0 +1,56 @@
+name: 🐛 Bug Report
+description: Create a report to help us reproduce and fix the bug
+
+body:
+  - type: markdown
+    attributes:
+      value: >
+        #### Before submitting a bug, please make sure the issue hasn't been already addressed by searching through [the
+        existing and past issues](https://github.com/facebookresearch/llama-recipes/issues), the [FAQ](https://github.com/facebookresearch/llama-recipes/blob/main/docs/FAQ.md) 
+
+  - type: textarea
+    attributes:
+      label: 🐛 Describe the bug
+      description: |
+        Please provide a clear and concise description of what the bug is.
+
+        It would be helfpul to provide the setting and command you are running. Setting includes the number and type of GPUs, using FSDP and PEFT or pure FSDP.
+
+      placeholder: |
+        A clear and concise description of what the bug is.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Error logs
+      description: |
+       Paste the error logs that indicate there's a problem
+
+      placeholder: |
+        Error...
+
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Enviroment
+      description: |
+        You can use the following command to capture your enviroment information
+        python -m "torch.utils.collect_env"
+
+      placeholder: |    
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Possible Solution
+      description: |
+        Possible fix for them the problem
+
+  - type: markdown
+    attributes:
+      value: >
+        Thanks for contributing 🎉!
