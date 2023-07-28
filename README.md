@@ -39,7 +39,7 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
 To run the examples, make sure to install the requirements using
 
 ```bash
-
+# python 3.8 recommended
 pip install -r requirements.txt
 
 ```
@@ -55,7 +55,6 @@ Given that the original checkpoint resides under models/7B you can install all r
 ## Install HuggingFace Transformers from source
 pip freeze | grep transformers ## verify it is version 4.31.0 or higher
 
-```bash
 git clone git@github.com:huggingface/transformers.git
 cd transformers
 pip install protobuf
