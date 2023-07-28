@@ -43,7 +43,7 @@ def set_tokenizer_params(tokenizer: LlamaTokenizer):
 def byte2mb(x):
     return int(x / 2**20)
 
-def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None):
+def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None, log_file=None):
     """
     Trains the model on the given dataloader
     
@@ -66,7 +66,9 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         scaler = ShardedGradScaler()
     elif train_config.use_fp16 and not train_config.enable_fsdp:
         scaler = torch.cuda.amp.GradScaler() 
-        
+
+    if local_rank == 0:
+        fh = open(log_file,'w')
     train_prep = []
     train_loss = []
     val_prep = []
@@ -106,6 +108,8 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         optimizer.zero_grad()
                         
                 print(f"\n step {step} is completed and loss is {loss.detach().float()}")
+                if local_rank == 0:
+                    fh.write(f"\n step {step} is completed and loss is {loss.detach().float()}")
         # Reducing total_loss across all devices if there's more than one CUDA device
         if torch.cuda.device_count() > 1 and train_config.enable_fsdp:
             dist.all_reduce(total_loss, op=dist.ReduceOp.SUM)
@@ -119,6 +123,12 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         print(f"Max CUDA memory reserved was {memtrace.max_reserved} GB")
         print(f"Cuda Malloc retires : {memtrace.cuda_malloc_retires}")
         print(f"CPU Total Peak Memory consumed during the train (max): {memtrace.cpu_peaked + memtrace.cpu_begin} GB")
+
+        if local_rank == 0:
+            fh.write(f"Max CUDA memory allocated was {memtrace.peak} GB\n")
+            fh.write(f"Max CUDA memory reserved was {memtrace.max_reserved} GB\n")
+            fh.write(f"Cuda Malloc retires : {memtrace.cuda_malloc_retires}\n")
+            fh.write(f"CPU Total Peak Memory consumed during the train (max): {memtrace.cpu_peaked + memtrace.cpu_begin} GB\n")
         
         # Update the learning rate as needed
         lr_scheduler.step()
@@ -155,11 +165,14 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
             if local_rank == 0 and eval_epoch_loss < best_val_loss:
                 best_val_loss = eval_epoch_loss
                 print(f"best eval loss on epoch {epoch} is {best_val_loss}")
+                fh.write(f"best eval loss on epoch {epoch} is {best_val_loss}\n")
             val_loss.append(best_val_loss)
             val_prep.append(eval_ppl)
         
         
         print(f"Epoch {epoch+1}: train_perplexity={train_perplexity:.4f}, train_epoch_loss={train_epoch_loss:.4f}")
+        if local_rank == 0:
+            fh.write(f"Epoch {epoch+1}: train_perplexity={train_perplexity:.4f}, train_epoch_loss={train_epoch_loss:.4f}\n")
         lr_scheduler.step()
 
     avg_train_prep = sum(train_prep)/len(train_prep)
@@ -174,7 +187,11 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         results['avg_eval_prep'] = avg_eval_prep
         results['avg_eval_loss'] = avg_eval_loss
         
-
+    if local_rank == 0:
+        fh.write("Final Results\n")
+        [fh.write(f'Key: {k}, Value: {v}\n') for k, v in results.items()]
+        fh.close()
+        
     return results
 
 def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer):
