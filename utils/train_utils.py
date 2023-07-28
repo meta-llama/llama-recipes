@@ -69,6 +69,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
 
     if local_rank == 0:
         fh = open(log_file,'w')
+        print(f"Created file {log_file}\n")
     train_prep = []
     train_loss = []
     val_prep = []
@@ -109,6 +110,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         
                 print(f"\n step {step} is completed and loss is {loss.detach().float()}")
                 if local_rank == 0:
+                    print("Writing current loss to file\n")
                     fh.write(f"\n step {step} is completed and loss is {loss.detach().float()}")
         # Reducing total_loss across all devices if there's more than one CUDA device
         if torch.cuda.device_count() > 1 and train_config.enable_fsdp:
