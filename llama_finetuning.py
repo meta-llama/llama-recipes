@@ -216,6 +216,8 @@ def main(**kwargs):
         )
     scheduler = StepLR(optimizer, step_size=1, gamma=train_config.gamma)
 
+    print(f"Log file is {train_config.log_file}\n")
+
     # Start the training process
     results = train(
         model,
