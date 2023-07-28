@@ -35,4 +35,4 @@ Logs for Test B
 - [ ] Did you make sure to update the documentation with your changes?  
 - [ ] Did you write any new necessary tests?
 
-
+Thanks for contributing 🎉!
