@@ -9,15 +9,44 @@ body:
         existing and past issues](https://github.com/facebookresearch/llama-recipes/issues), the [FAQ](https://github.com/facebookresearch/llama-recipes/blob/main/docs/FAQ.md) 
 
   - type: textarea
+    id: system-info
+    attributes:
+      label: System Info
+      description: |
+        Please share your system info with us. You can use the following command to capture your environment information
+        python -m "torch.utils.collect_env"
+
+      placeholder: | 
+        PyTorch version, CUDA version, GPU type, #num of GPUs...   
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: information-scripts-examples
+    attributes:
+      label: Information
+      description: 'The problem arises when using:'
+      options:
+        - label: "The official example scripts"
+        - label: "My own modified scripts"
+
+  - type: textarea
+    id: bug-description
     attributes:
       label: 🐛 Describe the bug
       description: |
         Please provide a clear and concise description of what the bug is.
 
-        It would be helfpul to provide the setting and command you are running. Setting includes the number and type of GPUs, using FSDP and PEFT or pure FSDP.
-
+        Provide the exact command(s) that you ran with the settings eg using FSDP and PEFT or pure FSDP.
+        
+        Please also paste or describe the results you observe instead of the expected results. 
       placeholder: |
         A clear and concise description of what the bug is.
+        
+        ```python
+        # Command that you used for running the examples
+        ```
+        Description of the results
     validations:
       required: true
 
@@ -25,30 +54,24 @@ body:
     attributes:
       label: Error logs
       description: |
-       Paste the error logs that indicate there's a problem
+       If you observe an error, please paste the error message including the **full** traceback of the exception. It may be relevant to wrap error messages in ```` ```triple quotes blocks``` ````.
 
       placeholder: |
-        Error...
+        ```
+        The error message you got, with the full traceback.
+        ```
 
     validations:
       required: true
 
+  
   - type: textarea
-    attributes:
-      label: Enviroment
-      description: |
-        You can use the following command to capture your enviroment information
-        python -m "torch.utils.collect_env"
-
-      placeholder: |    
+    id: expected-behavior
     validations:
       required: true
-
-  - type: textarea
     attributes:
-      label: Possible Solution
-      description: |
-        Possible fix for them the problem
+      label: Expected behavior
+      description: "A clear and concise description of what you would expect to happen."
 
   - type: markdown
     attributes:
