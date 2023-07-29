@@ -186,14 +186,14 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
             if local_rank == 0 and eval_epoch_loss < best_val_loss:
                 best_val_loss = eval_epoch_loss
                 print(f"best eval loss on epoch {epoch} is {best_val_loss}")
-                report(epoch=epoch,best_val_loss=best_val_loss)
+                report(epoch=epoch,best_val_loss=best_val_loss.item())
             val_loss.append(best_val_loss)
             val_prep.append(eval_ppl)
         
         
         print(f"Epoch {epoch+1}: train_perplexity={train_perplexity:.4f}, train_epoch_loss={train_epoch_loss:.4f}")
         if local_rank == 0:
-            report(epoch=epoch+1, train_perplexity=train_perplexity, train_epoch_loss=train_epoch_loss)
+            report(epoch=epoch+1, train_perplexity=train_perplexity.item(), train_epoch_loss=train_epoch_loss.item())
         lr_scheduler.step()
 
     avg_train_prep = sum(train_prep)/len(train_prep)
@@ -209,7 +209,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         results['avg_eval_loss'] = avg_eval_loss
         
     if local_rank == 0:
-        [report(key=k, value=v) for k, v in results.items()]
+        [report(key=k, value=v.item()) for k, v in results.items()]
         
     return results
 
