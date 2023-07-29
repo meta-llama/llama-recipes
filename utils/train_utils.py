@@ -41,18 +41,22 @@ def set_tokenizer_params(tokenizer: LlamaTokenizer):
     tokenizer.pad_token_id = 0
     tokenizer.padding_side = "left"
 
-def report_and_log(logdir, *args, **kwargs):
+def report(*args, **kwargs):
+    print(*args)
+    for key in kwargs:
+        print(key, "=", kwargs[key])
+
+def report_and_log(log_file, *args, **kwargs):
     """Report, but also save all kwargs to log json in logdir"""
     report(*args, **kwargs)
 
     if len(kwargs) > 0:
-        log_path = os.path.join(logdir, "log_main.json")
-        if not os.path.exists(log_path):
-            print("Starting new log file at", log_path)
-            with open(log_path, "w") as f:
+        if not os.path.exists(log_file):
+            print("Starting new log file at", log_file)
+            with open(log_file, "w") as f:
                 json.dump([kwargs], f)
         else:
-            with open(log_path, "r+") as f:
+            with open(log_file, "r+") as f:
                 loaded_results = json.load(f)
                 f.seek(0)
                 json.dump(loaded_results + [kwargs], f)
