@@ -4,6 +4,8 @@
 import os
 import sys
 from typing import List
+import functools
+import json
 
 import fire
 import torch
@@ -38,6 +40,22 @@ from policies import bfSixteen, fpSixteen,bfSixteen_mixed, get_llama_wrapper
 def set_tokenizer_params(tokenizer: LlamaTokenizer):
     tokenizer.pad_token_id = 0
     tokenizer.padding_side = "left"
+
+def report_and_log(logdir, *args, **kwargs):
+    """Report, but also save all kwargs to log json in logdir"""
+    report(*args, **kwargs)
+
+    if len(kwargs) > 0:
+        log_path = os.path.join(logdir, "log_main.json")
+        if not os.path.exists(log_path):
+            print("Starting new log file at", log_path)
+            with open(log_path, "w") as f:
+                json.dump([kwargs], f)
+        else:
+            with open(log_path, "r+") as f:
+                loaded_results = json.load(f)
+                f.seek(0)
+                json.dump(loaded_results + [kwargs], f)
     
 # Converting Bytes to Megabytes
 def byte2mb(x):
@@ -65,11 +83,10 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     if train_config.use_fp16 and train_config.enable_fsdp:
         scaler = ShardedGradScaler()
     elif train_config.use_fp16 and not train_config.enable_fsdp:
-        scaler = torch.cuda.amp.GradScaler() 
+        scaler = torch.cuda.amp.GradScaler()
 
-    if local_rank == 0:
-        fh = open(log_file,'w')
-        print(f"Created file {log_file}\n")
+    report = functools.partial(report_and_log, log_file)
+
     train_prep = []
     train_loss = []
     val_prep = []
@@ -111,7 +128,8 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                 print(f"\n step {step} is completed and loss is {loss.detach().float()}")
                 if local_rank == 0:
                     print("Writing current loss to file\n")
-                    fh.write(f"\n step {step} is completed and loss is {loss.detach().float()}")
+                    report_loss = loss.detach().float()
+                    report(step=step, loss=report_loss)
         # Reducing total_loss across all devices if there's more than one CUDA device
         if torch.cuda.device_count() > 1 and train_config.enable_fsdp:
             dist.all_reduce(total_loss, op=dist.ReduceOp.SUM)
@@ -127,10 +145,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         print(f"CPU Total Peak Memory consumed during the train (max): {memtrace.cpu_peaked + memtrace.cpu_begin} GB")
 
         if local_rank == 0:
-            fh.write(f"Max CUDA memory allocated was {memtrace.peak} GB\n")
-            fh.write(f"Max CUDA memory reserved was {memtrace.max_reserved} GB\n")
-            fh.write(f"Cuda Malloc retires : {memtrace.cuda_malloc_retires}\n")
-            fh.write(f"CPU Total Peak Memory consumed during the train (max): {memtrace.cpu_peaked + memtrace.cpu_begin} GB\n")
+            report(max_cuda_memory=memtrace.peak, max_reserved_memory=memtrace.max_reserved,cuda_malloc_retries=memtrace.cuda_malloc_retires)
         
         # Update the learning rate as needed
         lr_scheduler.step()
@@ -167,14 +182,14 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
             if local_rank == 0 and eval_epoch_loss < best_val_loss:
                 best_val_loss = eval_epoch_loss
                 print(f"best eval loss on epoch {epoch} is {best_val_loss}")
-                fh.write(f"best eval loss on epoch {epoch} is {best_val_loss}\n")
+                report(epoch=epoch,best_val_loss=best_val_loss)
             val_loss.append(best_val_loss)
             val_prep.append(eval_ppl)
         
         
         print(f"Epoch {epoch+1}: train_perplexity={train_perplexity:.4f}, train_epoch_loss={train_epoch_loss:.4f}")
         if local_rank == 0:
-            fh.write(f"Epoch {epoch+1}: train_perplexity={train_perplexity:.4f}, train_epoch_loss={train_epoch_loss:.4f}\n")
+            report(epoch=epoch+1, train_perplexity=train_perplexity, train_epoch_loss=train_epoch_loss)
         lr_scheduler.step()
 
     avg_train_prep = sum(train_prep)/len(train_prep)
@@ -190,9 +205,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         results['avg_eval_loss'] = avg_eval_loss
         
     if local_rank == 0:
-        fh.write("Final Results\n")
-        [fh.write(f'Key: {k}, Value: {v}\n') for k, v in results.items()]
-        fh.close()
+        [report(key=k, value=v) for k, v in results.items()]
         
     return results
 
