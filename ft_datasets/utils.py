@@ -35,8 +35,6 @@ class Concatenator(object):
             result = concatenated_samples
             self.residual = {k: [] for k in concatenated_samples.keys()}
 
-        result["labels"] = result["input_ids"].copy()
-
         return result
 
 class ConcatDataset(Dataset):

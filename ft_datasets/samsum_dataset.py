@@ -23,9 +23,14 @@ def get_preprocessed_samsum(dataset_config, tokenizer, split):
         }
 
     dataset = dataset.map(apply_prompt_template, remove_columns=list(dataset.features))
-        
+
+    def preprocess_function(sample):
+        tokenized_output = tokenizer(sample["text"])
+        tokenized_output["labels"] = tokenized_output["input_ids"].copy()
+        return tokenized_output
+
     dataset = dataset.map(
-        lambda sample: tokenizer(sample["text"]),
+        preprocess_function,
         batched=True,
         remove_columns=list(dataset.features),
     ).map(Concatenator(), batched=True)
