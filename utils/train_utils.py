@@ -136,7 +136,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         dist.all_reduce(report_loss, op=dist.ReduceOp.SUM)
                     if local_rank == 0:
                         loss_to_log = report_loss.item()
-                        report(epoch=epoch, step=step, loss=report_loss)
+                        report(epoch=epoch, step=step, loss=loss_to_log)
         # Reducing total_loss across all devices if there's more than one CUDA device
         if torch.cuda.device_count() > 1 and train_config.enable_fsdp:
             dist.all_reduce(total_loss, op=dist.ReduceOp.SUM)
