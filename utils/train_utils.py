@@ -65,7 +65,7 @@ def report_and_log(log_file, *args, **kwargs):
 def byte2mb(x):
     return int(x / 2**20)
 
-def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None, log_file=None):
+def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None, log_file=None, world_size=None):
     """
     Trains the model on the given dataloader
     
@@ -136,6 +136,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         dist.all_reduce(report_loss, op=dist.ReduceOp.SUM)
                     if local_rank == 0:
                         loss_to_log = report_loss.item()
+                        loss_to_log = loss_to_log / world_size
                         report(epoch=epoch, step=step, loss=loss_to_log)
         # Reducing total_loss across all devices if there's more than one CUDA device
         if torch.cuda.device_count() > 1 and train_config.enable_fsdp:
