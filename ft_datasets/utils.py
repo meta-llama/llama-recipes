@@ -3,16 +3,17 @@
 
 from tqdm import tqdm
 from itertools import chain
+from collections import defaultdict
 from torch.utils.data import Dataset
 
 class Concatenator(object):
     def __init__(self, chunk_size=2048):
         self.chunk_size=chunk_size
-        self.residual = {"input_ids": [], "attention_mask": []}
+        self.residual =  defaultdict(list)
         
     def __call__(self, batch):
         concatenated_samples = {
-            k: v + list(chain(*batch[k])) for k, v in self.residual.items()
+            k: self.residual[k] + list(chain(*v)) for k,v in batch.items()
         }
 
         total_length = len(concatenated_samples[list(concatenated_samples.keys())[0]])
@@ -44,15 +45,11 @@ class ConcatDataset(Dataset):
         self.chunk_size = chunk_size
         
         self.samples = []
-        
-        buffer = {
-            "input_ids": [],
-            "attention_mask": [],
-            "labels": [],
-            }
+
+        buffer = defaultdict(list)
         
         for sample in tqdm(self.dataset, desc="Preprocessing dataset"):
-            buffer = {k: v + sample[k] for k,v in buffer.items()}
+            buffer = {k: buffer[k] + v for k,v in sample.items()}
             
             while len(next(iter(buffer.values()))) > self.chunk_size:
                 self.samples.append({k: v[:self.chunk_size] for k,v in buffer.items()})
