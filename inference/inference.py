@@ -86,7 +86,7 @@ def main(
         are_safe = all([r[1] for r in safety_results])
         if are_safe:
             print("User prompt deemed safe.")
-            print(f"User prompt:\n{user_prompt}")
+            #print(f"User prompt:\n{user_prompt}")
         else:
             print("User prompt deemed unsafe.")
             for method, is_safe, report in safety_results:
