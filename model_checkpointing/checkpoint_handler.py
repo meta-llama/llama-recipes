@@ -144,8 +144,9 @@ def save_model_checkpoint(
         print(f"--> saving model ...")
         # create save path
         save_dir = Path.cwd() / cfg.checkpoint_folder
+        save_dir = save_dir / cfg.model_name
         save_dir.mkdir(parents=True, exist_ok=True)
-        save_name = cfg.model_name + "-epoch" + str(epoch) + "-step" + str(step) + ".pt"
+        save_name = "epoch" + str(epoch) + "-step" + str(step) + ".pt"
         save_full_path = str(save_dir) + "/" + save_name
 
         # save model
