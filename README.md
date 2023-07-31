@@ -39,7 +39,7 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
 To run the examples, make sure to install the requirements using
 
 ```bash
-# python 3.8 recommended
+# python 3.9 or higher recommended
 pip install -r requirements.txt
 
 ```
