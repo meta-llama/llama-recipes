@@ -7,12 +7,12 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
 
 # Table of Contents
 1. [Quick start](#quick-start)
-2. [Fine-tuning](#fine-tuning)
+2. [Model Conversion](#model-conversion-to-hugging-face)
+3. [Fine-tuning](#fine-tuning)
     - [Single GPU](#single-gpu)
     - [Multi GPU One Node](#multiple-gpus-one-node)
     - [Multi GPU Multi Node](#multi-gpu-multi-node)
-3. [Inference](./docs/inference.md)
-4. [Model Conversion](#model-conversion-to-hugging-face)
+4. [Inference](./docs/inference.md)
 5. [Repository Organization](#repository-organization)
 6. [License and Acceptable Use Policy](#license)
 
@@ -45,6 +45,23 @@ pip install -r requirements.txt
 ```
 
 **Please note that the above requirements.txt will install PyTorch 2.0.1 version, in case you want to run FSDP + PEFT, please make sure to install PyTorch nightlies.**
+
+# Model conversion to Hugging Face
+The recipes and notebooks in this folder are using the Llama 2 model definition provided by Hugging Face's transformers library.
+
+Given that the original checkpoint resides under models/7B you can install all requirements and convert the checkpoint with:
+
+```bash
+## Install HuggingFace Transformers from source
+pip freeze | grep transformers ## verify it is version 4.31.0 or higher
+
+```bash
+git clone git@github.com:huggingface/transformers.git
+cd transformers
+pip install protobuf
+python src/transformers/models/llama/convert_llama_weights_to_hf.py \
+   --input_dir /path/to/downloaded/llama/weights --model_size 7B --output_dir /output/path
+```
 
 # Fine-tuning
 
@@ -111,20 +128,6 @@ sbatch multi_node.slurm
 ```
 You can read more about our fine-tuning strategies [here](./docs/LLM_finetuning.md).
 
-
-# Model conversion to Hugging Face
-The recipes and notebooks in this folder are using the Llama 2 model definition provided by Hugging Face's transformers library.
-
-Given that the original checkpoint resides under models/7B you can install all requirements and convert the checkpoint with:
-
-```bash
-## Install HuggingFace Transformers from source
-pip install git+https://github.com/huggingface/transformers
-cd transformers
-
-python src/transformers/models/llama/convert_llama_weights_to_hf.py \
-    --input_dir /path/to/downloaded/llama/weights --model_size 7B --output_dir models_hf/7B
-```
 
 # Repository Organization
 This repository is organized in the following way:

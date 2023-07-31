@@ -1,0 +1,22 @@
+matrix:
+- name: Markdown
+  apsell:
+    lang: en
+    d: en_US
+  dictionary:
+    wordlists:
+    - scripts/spellcheck_conf/wordlist.txt
+    output: scripts/spellcheck_conf/wordlist.dic
+    encoding: utf-8
+  pipeline:
+  - pyspelling.filters.context:
+      context_visible_first: true
+      delimiters:
+      - open: '(?s)^ *(?P<open>`{3,})[a-z0-9]*?$'
+        close: '^(?P=open)$'
+      - open: ''
+        content: 'https?://[-a-zA-Z0-9.]+?\.[a-z]{2,6}[-?=&%.0-9a-zA-Z/_#]*'
+        close: ''
+  - pyspelling.filters.markdown:
+      markdown_extensions:
+      - markdown.extensions.extra:

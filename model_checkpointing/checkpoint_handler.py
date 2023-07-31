@@ -212,7 +212,7 @@ def save_optimizer_checkpoint(model, optimizer, rank, cfg, epoch=1):
 
 
 def load_optimizer_checkpoint(model, optimizer, rank, cfg):
-    """load an fdsp optimizer full_state checkpoint using scatter method
+    """load an fsdp optimizer full_state checkpoint using scatter method
     this ensures only rank 0 loads the optimizer state dict and scatters to other ranks
     """
 
