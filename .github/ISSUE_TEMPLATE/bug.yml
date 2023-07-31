@@ -1,0 +1,79 @@
+name: 🐛 Bug Report
+description: Create a report to help us reproduce and fix the bug
+
+body:
+  - type: markdown
+    attributes:
+      value: >
+        #### Before submitting a bug, please make sure the issue hasn't been already addressed by searching through [the
+        existing and past issues](https://github.com/facebookresearch/llama-recipes/issues), the [FAQ](https://github.com/facebookresearch/llama-recipes/blob/main/docs/FAQ.md) 
+
+  - type: textarea
+    id: system-info
+    attributes:
+      label: System Info
+      description: |
+        Please share your system info with us. You can use the following command to capture your environment information
+        python -m "torch.utils.collect_env"
+
+      placeholder: | 
+        PyTorch version, CUDA version, GPU type, #num of GPUs...   
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: information-scripts-examples
+    attributes:
+      label: Information
+      description: 'The problem arises when using:'
+      options:
+        - label: "The official example scripts"
+        - label: "My own modified scripts"
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 🐛 Describe the bug
+      description: |
+        Please provide a clear and concise description of what the bug is.
+
+        Provide the exact command(s) that you ran with the settings eg using FSDP and PEFT or pure FSDP.
+        
+        Please also paste or describe the results you observe instead of the expected results. 
+      placeholder: |
+        A clear and concise description of what the bug is.
+        
+        ```python
+        # Command that you used for running the examples
+        ```
+        Description of the results
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Error logs
+      description: |
+       If you observe an error, please paste the error message including the **full** traceback of the exception. It may be relevant to wrap error messages in ```` ```triple quotes blocks``` ````.
+
+      placeholder: |
+        ```
+        The error message you got, with the full traceback.
+        ```
+
+    validations:
+      required: true
+
+  
+  - type: textarea
+    id: expected-behavior
+    validations:
+      required: true
+    attributes:
+      label: Expected behavior
+      description: "A clear and concise description of what you would expect to happen."
+
+  - type: markdown
+    attributes:
+      value: >
+        Thanks for contributing 🎉!
