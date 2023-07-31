@@ -13,7 +13,6 @@ from typing import List
 from transformers import LlamaTokenizer
 from safety_utils import get_safety_checker
 from model_utils import load_model, load_peft_model, load_llama_from_config
-from accelerate import init_empty_weights
 
 def main(
     model_name,
