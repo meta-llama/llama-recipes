@@ -143,6 +143,9 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         loss_to_log = report_loss.item()
                         loss_to_log = loss_to_log / world_size
                         report(epoch=epoch, step=step, loss=loss_to_log)
+                if step % train_config.save_steps_interval == (train_config.save_steps_interval - 1):
+                    model_checkpointing.save_model_checkpoint(model, optimizer, rank, train_config, epoch, step)
+                    
         # Reducing total_loss across all devices if there's more than one CUDA device
         if torch.cuda.device_count() > 1 and train_config.enable_fsdp:
             dist.all_reduce(total_loss, op=dist.ReduceOp.SUM)
@@ -172,24 +175,26 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                     print(f"we are in the saving the PEFT modules")
                     model.save_pretrained(train_config.output_dir)   
                     print(f"PEFT modules are saved in {train_config.output_dir} directory")
-                    
                 else:
-                    if not train_config.use_peft and fsdp_config.checkpoint_type == StateDictType.FULL_STATE_DICT:
+                    model_checkpointing.save_model_checkpoint(model, optimizer, rank, train_config, epoch, step)
+                    
+                # else:
+                #     if not train_config.use_peft and fsdp_config.checkpoint_type == StateDictType.FULL_STATE_DICT:
                         
-                        model_checkpointing.save_model_checkpoint(
-                            model, optimizer, rank, train_config, epoch=1
-                        )
-                    elif not train_config.use_peft and fsdp_config.checkpoint_type == StateDictType.SHARDED_STATE_DICT:
-                        print(" we are about to save the models *******")
+                #         model_checkpointing.save_model_checkpoint(
+                #             model, optimizer, rank, train_config, epoch, steps
+                #         )
+                #     elif not train_config.use_peft and fsdp_config.checkpoint_type == StateDictType.SHARDED_STATE_DICT:
+                #         print(" we are about to save the models *******")
                         
-                        model_checkpointing.save_model_and_optimizer_sharded(model, rank, train_config)
-                        if train_config.save_optimizer:
-                            model_checkpointing.save_model_and_optimizer_sharded(model, rank, train_config, optim=optimizer)
+                #         model_checkpointing.save_model_and_optimizer_sharded(model, rank, train_config)
+                #         if train_config.save_optimizer:
+                #             model_checkpointing.save_model_and_optimizer_sharded(model, rank, train_config, optim=optimizer)
 
-                    if not train_config.use_peft and  train_config.save_optimizer:
-                        model_checkpointing.save_optimizer_checkpoint(
-                            model, optimizer, rank, train_config, epoch=1
-                        )   
+                #     if not train_config.use_peft and  train_config.save_optimizer:
+                #         model_checkpointing.save_optimizer_checkpoint(
+                #             model, optimizer, rank, train_config, epoch=1
+                #         )   
                                 
             
             if local_rank == 0 and eval_epoch_loss < best_val_loss:
