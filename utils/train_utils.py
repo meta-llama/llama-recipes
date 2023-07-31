@@ -93,8 +93,9 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     report = functools.partial(report_and_log, log_file)
 
     # dump the train config
-    d_dict = dataclasses.asdict(train_config())
-    report("train_config",train_conf=d_dict)
+    if local_rank == 0:
+        d_dict = dataclasses.asdict(train_config())
+        report("train_config",train_conf=d_dict)
 
     train_prep = []
     train_loss = []
