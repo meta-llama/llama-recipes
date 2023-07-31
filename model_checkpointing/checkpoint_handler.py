@@ -127,7 +127,8 @@ def save_model_checkpoint(
     optimizer,
     rank,
     cfg,
-    epoch=1,
+    epoch,
+    step
 ):
     """saving model via rank0 cpu streaming and full_state_dict"""
 
@@ -144,14 +145,14 @@ def save_model_checkpoint(
         # create save path
         save_dir = Path.cwd() / cfg.checkpoint_folder
         save_dir.mkdir(parents=True, exist_ok=True)
-        save_name = cfg.model_name + "-" + str(epoch) + ".pt"
+        save_name = cfg.model_name + "-epoch" + str(epoch) + "-step" + str(step) + ".pt"
         save_full_path = str(save_dir) + "/" + save_name
 
         # save model
         torch.save(cpu_state, save_full_path)
 
         if cfg.verbose:
-            print(f"model checkpoint saved for epoch {epoch} at {save_full_path}\n")
+            print(f"model checkpoint saved for epoch {epoch} and step {step} at {save_full_path}\n")
       
 
 
