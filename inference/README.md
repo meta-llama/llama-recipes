@@ -2,7 +2,7 @@
 
 This folder contains inference examples for Llama 2. So far, we have provided support for three methods of inference:
 
-1. [inference script](inference.py) script provides support for Hugging Face accelerate and PEFT fine tuned models.
+1. [inference script](inference.py) script provides support for Hugging Face accelerate, PEFT and FSDP fine tuned models.
 
 2. [vLLM_inference.py](vLLM_inference.py) script takes advantage of vLLM's paged attention concept for low latency.
 
