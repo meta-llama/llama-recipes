@@ -37,6 +37,7 @@ def main(
     enable_saleforce_content_safety: bool=True, # Enable safety check woth Saleforce safety flan t5
     **kwargs
 ):
+    print (f'prompt file {prompt_file}')
     if prompt_file and output_file:
         assert os.path.exists(
             prompt_file
