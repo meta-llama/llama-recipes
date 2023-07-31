@@ -50,7 +50,7 @@ Then convert your FSDP checkpoint to HuggingFace checkpoints using:
 
  # --HF_model_path_or_name specifies the HF Llama model name or path where it has config.json and tokenizer.json
  ```
-By default, training parameter are saved in train_params.yaml in the path where FSDP checkpoints are saved, in the converter script we frist try to find the HugingFace model name used in the fine-tuning to load the model with configs from there, if not found user need to provide it.
+By default, training parameter are saved in `train_params.yaml` in the path where FSDP checkpoints are saved, in the converter script we frist try to find the HugingFace model name used in the fine-tuning to load the model with configs from there, if not found user need to provide it.
 
 Then run inference using:
 
