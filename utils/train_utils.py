@@ -193,8 +193,6 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         else:
             print(f"Epoch {epoch+1}: train_perplexity={train_perplexity:.4f}, train_epoch_loss={train_epoch_loss:.4f}")
             
-        lr_scheduler.step()
-
     avg_train_prep = sum(train_prep)/len(train_prep)
     avg_train_loss = sum(train_loss)/len(train_loss)
     if train_config.run_validation:
