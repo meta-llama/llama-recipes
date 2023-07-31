@@ -127,15 +127,32 @@ def main(**kwargs):
 
         mixed_precision_policy, wrapping_policy = get_policies(fsdp_config, rank)
         my_auto_wrapping_policy = fsdp_auto_wrap_policy(model, LlamaDecoderLayer)
-   
-        model = FSDP(
+        if fsdp_config.optimizer_overlap:
+            try:
+                from torch.distributed.optim import _apply_optimizer_in_backward
+            except ImportError:
+                # Handle the ImportError here, such as providing an alternative implementation or an error message.
+                print("The required module 'torch.distributed.optim' is not available.")
+            model = FSDP(
             model,
             auto_wrap_policy= my_auto_wrapping_policy if train_config.use_peft else wrapping_policy,
             mixed_precision=mixed_precision_policy if not fsdp_config.pure_bf16 else None,
             sharding_strategy=fsdp_config.sharding_strategy,
             device_id=torch.cuda.current_device(),
             limit_all_gathers=True,
+            use_orig_params=True,
         )
+            
+        else:    
+            model = FSDP(
+                model,
+                auto_wrap_policy= my_auto_wrapping_policy if train_config.use_peft else wrapping_policy,
+                mixed_precision=mixed_precision_policy if not fsdp_config.pure_bf16 else None,
+                sharding_strategy=fsdp_config.sharding_strategy,
+                device_id=torch.cuda.current_device(),
+                limit_all_gathers=True,
+            )
+        
         if fsdp_config.fsdp_activation_checkpointing:
             policies.apply_fsdp_checkpointing(model)
     elif not train_config.quantization and not train_config.enable_fsdp:
@@ -214,6 +231,23 @@ def main(**kwargs):
             lr=train_config.lr,
             weight_decay=0.0,
         )
+    # if fsdp_config.optimizer_overlap:
+    #     optim_kwargs = {"lr": train_config.lr}
+    #     _apply_optimizer_in_backward(
+    #         optimizer_class=optim.AdamW,
+    #         params=model.parameters(),
+    #         optimizer_kwargs=optim_kwargs,
+    #         register_hook=False,
+    #     )
+    #     for p in model.parameters():
+    #         assert hasattr(p, "_in_backward_optimizers")
+    #     optim_kwargs = {"lr": train_config.lr, "weight_decay":0.0}
+    #     optimizer = optim.AdamW(
+    #         model.parameters(),
+    #         **optim_kwargs
+    #     )
+        
+        
     scheduler = StepLR(optimizer, step_size=1, gamma=train_config.gamma)
 
     # Start the training process
