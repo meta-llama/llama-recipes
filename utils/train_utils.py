@@ -6,6 +6,7 @@ import sys
 from typing import List
 import functools
 import json
+import dataclasses
 
 import fire
 import torch
@@ -90,6 +91,10 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         scaler = torch.cuda.amp.GradScaler()
 
     report = functools.partial(report_and_log, log_file)
+
+    # dump the train config
+    d_dict = dataclasses.asdict(train_config)
+    report("train_config",train_conf=d_dict)
 
     train_prep = []
     train_loss = []
