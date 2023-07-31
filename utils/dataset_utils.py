@@ -14,7 +14,7 @@ from typing import Optional
 
 
 DATASET_PREPROC = {
-    "alpaca_dataset": partial(get_alpaca_dataset, max_words=2048),
+    "alpaca_dataset": partial(get_alpaca_dataset, max_words=1024),
     "grammar_dataset": get_grammar_dataset,
     "samsum_dataset": get_samsum_dataset,
 }
