@@ -99,7 +99,7 @@ def main(
 
         batch = tokenizer(user_prompt, return_tensors="pt")
         for k,v in batch.items():
-            print (f'{k}- num tokens {len(v)}')
+            print (f'{k}- num tokens {len(v[0])}')
         batch = {k: v.to("cuda") for k, v in batch.items()}
 
         start = time.perf_counter()
