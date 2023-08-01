@@ -98,8 +98,10 @@ def main(
             #sys.exit(1)  # Exit the program with an error status
 
         batch = tokenizer(user_prompt, return_tensors="pt")
-        print (f'query {count} - num tokens {len(batch.items())}')
+        for k,v in batch.items():
+            print (f'{k}- num tokens {len(v)}')
         batch = {k: v.to("cuda") for k, v in batch.items()}
+
         start = time.perf_counter()
         with torch.no_grad():
             outputs = model.generate(
