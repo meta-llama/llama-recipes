@@ -34,6 +34,8 @@ class train_config:
     save_optimizer: bool=False # will be used if using FSDP
     log_file: str="PATH/to/save/logs" #will be used by training script
     report_steps: int=20 #number of steps to report
+    save_steps_interval: int=500
+    checkpoint_folder: str="PATH/to/save/full_state_dict/model" # for full state dict save
 
     
     

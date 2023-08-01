@@ -83,7 +83,7 @@ def load_model_sharded(model, rank, cfg, verbose=True):
         print(f"Sharded state checkpoint loaded from {load_dir}")
 
 
-def save_model_and_optimizer_sharded(model, rank, cfg,optim=None, verbose=True):
+def save_model_and_optimizer_sharded(model, rank, cfg,epoch,step,optim=None, verbose=True):
     """save model and optimizer via sharded_state_dict to save_dir"""
     
     folder_name = (
@@ -92,6 +92,10 @@ def save_model_and_optimizer_sharded(model, rank, cfg,optim=None, verbose=True):
         + cfg.dist_checkpoint_folder
         + "-"
         + cfg.model_name
+        + "-"
+        + str(epoch)
+        + "-"
+        + str(step)
     )
 
     save_dir = Path.cwd() / folder_name
@@ -127,7 +131,8 @@ def save_model_checkpoint(
     optimizer,
     rank,
     cfg,
-    epoch=1,
+    epoch,
+    step
 ):
     """saving model via rank0 cpu streaming and full_state_dict"""
 
@@ -143,15 +148,16 @@ def save_model_checkpoint(
         print(f"--> saving model ...")
         # create save path
         save_dir = Path.cwd() / cfg.checkpoint_folder
+        save_dir = save_dir / cfg.model_name
         save_dir.mkdir(parents=True, exist_ok=True)
-        save_name = cfg.model_name + "-" + str(epoch) + ".pt"
+        save_name = "epoch" + str(epoch) + "-step" + str(step) + ".pt"
         save_full_path = str(save_dir) + "/" + save_name
 
         # save model
         torch.save(cpu_state, save_full_path)
 
         if cfg.verbose:
-            print(f"model checkpoint saved for epoch {epoch} at {save_full_path}\n")
+            print(f"model checkpoint saved for epoch {epoch} and step {step} at {save_full_path}\n")
       
 
 
