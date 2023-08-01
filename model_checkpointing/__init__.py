@@ -10,4 +10,5 @@ from .checkpoint_handler import (
     save_optimizer_checkpoint,
     save_model_and_optimizer_sharded,
     load_model_sharded,
+    load_sharded_model_single_gpu
 )

@@ -12,7 +12,7 @@ Here we discuss frequently asked questions that may occur and we found useful al
 
 3. How do PEFT methods work with FSDP in terms of grad requirements/layer freezing?
 
-    We wrap the PEFT modules separate from the transfromer layer in auto_wrapping policy, that would result in PEFT models having `require_grad=True` while the rest of the model is  `require_grad=False`.
+    We wrap the PEFT modules separate from the transformer layer in auto_wrapping policy, that would result in PEFT models having `require_grad=True` while the rest of the model is  `require_grad=False`.
 
 4. Can I add custom datasets?
 

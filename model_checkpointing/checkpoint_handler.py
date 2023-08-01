@@ -182,7 +182,7 @@ def save_optimizer_checkpoint(model, optimizer, rank, cfg, epoch=1):
 
 
 def load_optimizer_checkpoint(model, optimizer, rank, cfg):
-    """load an fdsp optimizer full_state checkpoint using scatter method
+    """load an fsdp optimizer full_state checkpoint using scatter method
     this ensures only rank 0 loads the optimizer state dict and scatters to other ranks
     """
 
@@ -257,3 +257,31 @@ def save_distributed_model_checkpoint(model, rank, cfg, epoch=1):
         save_state_dict(state_dict, writer)
 
         return
+
+def load_sharded_model_single_gpu(model, model_path):
+    
+    dcp.load_state_dict(
+                    state_dict=state_dict_to_load_to,
+                    storage_reader=FsspecReader(path),
+                    no_dist=True,
+                )
+    print(f"Sharded state checkpoint loaded from {load_dir}")
+    
+def load_sharded_model_single_gpu(model,model_path):
+    
+    reader = FileSystemReader(model_path)
+    
+    state_dict = {
+        "model": model.state_dict()
+    }
+    
+    dist_cp.load_state_dict(
+                state_dict=state_dict,
+                storage_reader= FileSystemReader(model_path),
+                no_dist=True,
+            )
+    
+    model.load_state_dict(state_dict["model"])
+    
+    print(f"Sharded state checkpoint loaded from {model_path}")
+    return model
