@@ -79,6 +79,7 @@ def main(
                                         )
 
     responses = []
+    count = 0
     for user_prompt in prompts:
         user_prompt = user_prompt['prompt']
         # Safety check of the user prompt
@@ -97,6 +98,7 @@ def main(
             #sys.exit(1)  # Exit the program with an error status
 
         batch = tokenizer(user_prompt, return_tensors="pt")
+        print (f'query {count} - num tokens {len(batch.items())}')
         batch = {k: v.to("cuda") for k, v in batch.items()}
         start = time.perf_counter()
         with torch.no_grad():
@@ -131,6 +133,7 @@ def main(
                 if not is_safe:
                     print(method)
                     print(report)
+        count += 1
 
     if output_file:
         json.dump(responses, fout, indent=4)
