@@ -83,8 +83,8 @@ def main(
         model = load_peft_model(model, peft_model)
 
     model.eval()
-
-    batch = tokenizer(user_prompt, return_tensors="pt")
+    batch = tokenizer(user_prompt, padding='max_length', truncation=True,max_length=420,return_tensors="pt")
+    model.resize_token_embeddings(model.config.vocab_size + 1) 
     batch = {k: v.to("cuda") for k, v in batch.items()}
     start = time.perf_counter()
     with torch.no_grad():
