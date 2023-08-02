@@ -7,7 +7,8 @@ from typing import ClassVar
 @dataclass
 class train_config:
     model_name: str="PATH/to/LLAMA/7B"
-    enable_fsdp: bool= False 
+    enable_fsdp: bool=False
+    low_cpu_fsdp: bool=False
     run_validation: bool=True
     batch_size_training: int=4
     num_epochs: int=3
