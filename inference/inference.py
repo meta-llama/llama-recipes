@@ -32,6 +32,7 @@ def main(
     enable_azure_content_safety: bool=False, # Enable safety check with Azure content safety api
     enable_sensitive_topics: bool=False, # Enable check for sensitive topics using AuditNLG APIs
     enable_saleforce_content_safety: bool=True, # Enable safety check woth Saleforce safety flan t5
+    max_padding_length: int=None, # the max padding length to be used with tokenizer padding the prompts.
     **kwargs
 ):
     if prompt_file is not None:
@@ -83,7 +84,7 @@ def main(
         model = load_peft_model(model, peft_model)
 
     model.eval()
-    batch = tokenizer(user_prompt, padding='max_length', truncation=True,max_length=420,return_tensors="pt")
+    batch = tokenizer(user_prompt, padding='max_length', truncation=True,max_length=max_padding_length,return_tensors="pt")
     model.resize_token_embeddings(model.config.vocab_size + 1) 
     batch = {k: v.to("cuda") for k, v in batch.items()}
     start = time.perf_counter()
