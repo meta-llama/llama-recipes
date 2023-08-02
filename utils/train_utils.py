@@ -116,7 +116,8 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
             dist.all_reduce(total_loss, op=dist.ReduceOp.SUM)
             world_size = int(os.environ["WORLD_SIZE"])
         train_epoch_loss = total_loss / len(train_dataloader)
-        train_epoch_loss = train_epoch_loss/world_size
+        if train_config.enable_fsdp:
+            train_epoch_loss = train_epoch_loss/world_size
         train_perplexity = torch.exp(train_epoch_loss)
         
         train_prep.append(train_perplexity)
