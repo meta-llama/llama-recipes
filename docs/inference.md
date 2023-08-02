@@ -34,6 +34,31 @@ The inference folder also includes a chat completion example, that adds built-in
 python inference/chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file inference/chats.json  --quantization --use_auditnlg
 
 ```
+## Loading back FSDP checkpoints
+
+In case you have fine-tuned your model with pure FSDP and saved the checkpoints with "SHARDED_STATE_DICT" as shown [here](../configs/fsdp.py), you can use this converter script to convert the FSDP Sharded checkpoints into HuggingFace checkpoints. This enables you to use the inference script normally as mentioned above.
+**To convert the checkpoint use the following command**:
+
+This is helpful if you have fine-tuned you model using FSDP only as follows:
+
+```bash
+torchrun --nnodes 1 --nproc_per_node 8  llama_finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 
+```
+Then convert your FSDP checkpoint to HuggingFace checkpoints using:
+```bash
+ python inference/checkpoint_converter_fsdp_hf.py --fsdp_checkpoint_path  PATH/to/FSDP/Checkpoints --consolidated_model_path PATH/to/save/checkpoints --HF_model_path_or_name PATH/or/HF/model_name
+
+ # --HF_model_path_or_name specifies the HF Llama model name or path where it has config.json and tokenizer.json
+ ```
+By default, training parameter are saved in `train_params.yaml` in the path where FSDP checkpoints are saved, in the converter script we frist try to find the HugingFace model name used in the fine-tuning to load the model with configs from there, if not found user need to provide it.
+
+Then run inference using:
+
+```bash
+python inference/inference.py --model_name <training_config.output_dir> --prompt_file <test_prompt_file> 
+
+```
+
 
 ## Other Inference Options
 

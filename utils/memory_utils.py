@@ -52,6 +52,7 @@ class MemoryTrace:
         cuda_info = torch.cuda.memory_stats()
         self.peak_active_gb = byte2gb(cuda_info["active_bytes.all.peak"])
         self.cuda_malloc_retires = cuda_info.get("num_alloc_retries", 0)
+        self.peak_active_gb = byte2gb(cuda_info["active_bytes.all.peak"])
         self.m_cuda_ooms = cuda_info.get("num_ooms", 0)
         self.used = byte2gb(self.end - self.begin)
         self.peaked = byte2gb(self.peak - self.begin)
