@@ -11,7 +11,6 @@ from typing import List
 
 from peft import PeftModel, PeftConfig
 from transformers import LlamaConfig, LlamaTokenizer, LlamaForCausalLM
-from optimum.bettertransformer import BetterTransformer
 from safety_utils import get_safety_checker
 from model_utils import load_model, load_peft_model
 from chat_utils import read_dialogs_from_file, format_tokens
