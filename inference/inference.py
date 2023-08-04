@@ -52,6 +52,11 @@ def main(
     torch.manual_seed(seed)
     
     model = load_model(model_name, quantization)
+    if peft_model:
+        model = load_peft_model(model, peft_model)
+
+    model.eval()
+    
     if use_fast_kernels:
         """
         Setting 'use_fast_kernels' will enable
@@ -91,11 +96,6 @@ def main(
                 print(report)
         print("Skipping the inferece as the prompt is not safe.")
         sys.exit(1)  # Exit the program with an error status
-
-    if peft_model:
-        model = load_peft_model(model, peft_model)
-
-    model.eval()
 
     batch = tokenizer(user_prompt, return_tensors="pt")
     batch = {k: v.to("cuda") for k, v in batch.items()}

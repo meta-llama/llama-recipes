@@ -58,6 +58,8 @@ def main(
     torch.cuda.manual_seed(seed)
     torch.manual_seed(seed)
     model = load_model(model_name, quantization)
+    if peft_model:
+        model = load_peft_model(model, peft_model)
     if use_fast_kernels:
         """
         Setting 'use_fast_kernels' will enable
@@ -70,8 +72,7 @@ def main(
             print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
 
         model = BetterTransformer.transform(model)
-    if peft_model:
-        model = load_peft_model(model, peft_model)
+   
     tokenizer = LlamaTokenizer.from_pretrained(model_name)
     tokenizer.add_special_tokens(
         {
