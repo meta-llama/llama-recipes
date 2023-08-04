@@ -24,6 +24,7 @@ from transformers import (
     BitsAndBytesConfig
 )
 import torch.distributed as dist
+from optimum.bettertransformer import BetterTransformer
 
 # Unused imports removed
 from utils.train_utils import (
@@ -95,7 +96,17 @@ def main(**kwargs):
         load_in_8bit=True if train_config.quantization else None,
         device_map="auto" if train_config.quantization else None,
     )
-    
+    if train_config.enable_fsdp and train_config.use_fast_kernels:
+        """
+        For FSDP and FSDP+PEFT, setting 'use_fast_kernels' will enable
+        using of Flash Attention or Xformer memory-efficient kernels 
+        based on the hardware being used. This would speed up fine-tuning.
+        """
+        try:
+            from optimum.bettertransformer import BetterTransformer
+        except ImportError:
+            print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
+        model = BetterTransformer.transform(model)
     print_model_size(model, train_config, rank if train_config.enable_fsdp else 0)
     
     # Prepare the model for int8 training if quantization is enabled

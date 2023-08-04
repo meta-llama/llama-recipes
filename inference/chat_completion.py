@@ -11,6 +11,7 @@ from typing import List
 
 from peft import PeftModel, PeftConfig
 from transformers import LlamaConfig, LlamaTokenizer, LlamaForCausalLM
+from optimum.bettertransformer import BetterTransformer
 from safety_utils import get_safety_checker
 from model_utils import load_model, load_peft_model
 from chat_utils import read_dialogs_from_file, format_tokens
@@ -34,6 +35,7 @@ def main(
     enable_azure_content_safety: bool=False, # Enable safety check with Azure content safety api
     enable_sensitive_topics: bool=False, # Enable check for sensitive topics using AuditNLG APIs
     enable_saleforce_content_safety: bool=True, # Enable safety check woth Saleforce safety flan t5
+    use_fast_kernels: bool = False, # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
     **kwargs
 ):
     if prompt_file is not None:
@@ -57,6 +59,18 @@ def main(
     torch.cuda.manual_seed(seed)
     torch.manual_seed(seed)
     model = load_model(model_name, quantization)
+    if use_fast_kernels:
+        """
+        Setting 'use_fast_kernels' will enable
+        using of Flash Attention or Xformer memory-efficient kernels 
+        based on the hardware being used. This would speed up inference when used for batched inputs.
+        """
+        try:
+            from optimum.bettertransformer import BetterTransformer
+        except ImportError:
+            print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
+
+        model = BetterTransformer.transform(model)
     if peft_model:
         model = load_peft_model(model, peft_model)
     tokenizer = LlamaTokenizer.from_pretrained(model_name)

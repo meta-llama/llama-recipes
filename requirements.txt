@@ -13,4 +13,4 @@ transformers>=4.31.0
 sentencepiece
 py7zr
 scipy
-
+optimum
