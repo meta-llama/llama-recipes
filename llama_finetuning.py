@@ -24,8 +24,6 @@ from transformers import (
     BitsAndBytesConfig
 )
 import torch.distributed as dist
-from optimum.bettertransformer import BetterTransformer
-
 # Unused imports removed
 from utils.train_utils import (
     set_tokenizer_params,
