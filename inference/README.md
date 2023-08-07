@@ -16,4 +16,4 @@ For more in depth information on inference including inference safety checks and
 We received feedback from the community on our prompt template and we are providing an update to reduce the false refusal rates seen. False refusals occur when the model incorrectly refuses to answer a question that it should, for example due to overly broad instructions to be cautious in how it provides responses.
 
 ### Updated approach
-Based on evaluation and analysis, we recommend the removal of the system prompt as the default setting. [Pull request #104](https://github.com/facebookresearch/llama-recipes/pull/104)] removes the system prompt as the default option, but still provides an example to help enable experimentation for those using it.
+Based on evaluation and analysis, we recommend the removal of the system prompt as the default setting. [Pull request #105](https://github.com/facebookresearch/llama-recipes/pull/105) removes the system prompt as the default option, but still provides an example to help enable experimentation for those using it.
