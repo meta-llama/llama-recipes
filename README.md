@@ -29,7 +29,7 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
 **For more in depth information checkout the following:**
 
 * [Single GPU Fine-tuning](./docs/single_gpu.md)
-* [Multi-GPU Fine-tuning](./docs/mutli_gpu.md)
+* [Multi-GPU Fine-tuning](./docs/multi_gpu.md)
 * [LLM Fine-tuning](./docs/LLM_finetuning.md)
 * [Adding custom datasets](./docs/Dataset.md)
 * [Inference](./docs/inference.md)
