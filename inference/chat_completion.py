@@ -68,11 +68,10 @@ def main(
         """
         try:
             from optimum.bettertransformer import BetterTransformer
+            model = BetterTransformer.transform(model)   
         except ImportError:
             print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
 
-        model = BetterTransformer.transform(model)
-   
     tokenizer = LlamaTokenizer.from_pretrained(model_name)
     tokenizer.add_special_tokens(
         {
