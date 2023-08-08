@@ -27,6 +27,21 @@ inference/samsum_prompt.txt
 ...
 ```
 
+**Note**
+Currently pad token by default in [HuggingFace Tokenizer is `None`](https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/tokenization_llama.py#L110). We add the padding token as a special token to the tokenizer, which in this case requires to resize the token_embeddings as shown below:
+
+```python
+tokenizer.add_special_tokens(
+        {
+         
+            "pad_token": "<PAD>",
+        }
+    )
+model.resize_token_embeddings(model.config.vocab_size + 1) 
+```
+Padding would be required for batch inference. In this this [example](../inference/inference.py), batch size = 1 so essentially padding is not required. However,We added the code pointer as an example in case of batch inference.
+
+
 **Chat completion**
 The inference folder also includes a chat completion example, that adds built-in safety features in fine-tuned models to the prompt tokens. To run the example:
 
