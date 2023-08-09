@@ -39,10 +39,14 @@ curl 127.0.0.1:8080/generate_stream \
     -H 'Content-Type: application/json'
 ```
 
-Further information can be found in the documentation of the [hf text-generation-inference](https://github.com/huggingface/text-generation-inference) solution.
+When performing inference on the chat-based model, ensure that the input prompt adheres to a specific structure that includes tags such as `<s>..</s>`, `[INST] .. [/INST]`, and optional `<<SYS>>` for system prompts. The structure of the input prompt should be as follows:
 
+```
+<s>[INST] <<SYS>>
+{{ system_prompt }}
+<</SYS>>
 
+{{ user_msg_1 }} [/INST] {{ model_answer_1 }} </s><s>[INST] {{ user_msg_2 }} [/INST]
+```
 
-
-
-
+Refer to the sample script [hf_tgi_inference.py](./hf_tgi_inference.py) for more details on how to perform inference on the chat-based model.
