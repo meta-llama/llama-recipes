@@ -154,14 +154,14 @@ class AzureSaftyChecker(object):
 # Function to determine which safety checker to use based on the options selected
 def get_safety_checker(enable_azure_content_safety,
                        enable_sensitive_topics,
-                       enable_saleforce_content_safety,
+                       enable_salesforce_content_safety,
                        ):
     safety_checker = []
     if enable_azure_content_safety:
         safety_checker.append(AzureSaftyChecker())
     if enable_sensitive_topics:
         safety_checker.append(AuditNLGSensitiveTopics())
-    if enable_saleforce_content_safety:
+    if enable_salesforce_content_safety:
         safety_checker.append(SalesforceSafetyChecker())
     return safety_checker
 
