@@ -48,5 +48,6 @@ When performing inference on the chat-based model, ensure that the input prompt 
 
 {{ user_msg_1 }} [/INST] {{ model_answer_1 }} </s><s>[INST] {{ user_msg_2 }} [/INST]
 ```
+For an in-depth explanation and further guidance, please refer to the blog [how-to-prompt-llama-2](https://huggingface.co/blog/llama2#how-to-prompt-llama-2).
 
-Refer to the sample script [hf_tgi_inference.py](./hf_tgi_inference.py) for more details on how to perform inference on the chat-based model.
+Additionally, you may consult the sample script  [hf_tgi_inference.py](./hf_tgi_inference.py) for comprehensive instructions on executing inference with the chat-based model.

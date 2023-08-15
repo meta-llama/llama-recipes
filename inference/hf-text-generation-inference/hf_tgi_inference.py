@@ -1,5 +1,5 @@
 import json
-from text_generation import Client
+import requests
 
 
 def build_chat_completion_prompt(dialog: list[str]) -> str:
@@ -34,6 +34,7 @@ def build_chat_completion_prompt(dialog: list[str]) -> str:
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Good Morning!"},
             {"role": "assistant", "content": "Good morning! How can I help you today?"},
+            {"role": "user", "content": "I need help with a 7 day itinerary for visiting Iceland."},
         ]
         formatted_conversation = build_chat_completion_prompt(dialog)
     """
@@ -63,9 +64,6 @@ def build_chat_completion_prompt(dialog: list[str]) -> str:
     return "".join(texts)
 
 
-# Create a text-generation client to interact with the model
-client = Client("http://127.0.0.1:8080")
-
 # Load the sample dialogs
 with open("../chats.json", "r") as f:
     sample_dialogs = json.load(f)
@@ -73,5 +71,12 @@ with open("../chats.json", "r") as f:
 # Generate responses for the sample dialogs
 for dialog in sample_dialogs:
     prompt = build_chat_completion_prompt(dialog)
-    print(client.generate(prompt, max_new_tokens=200).generated_text.strip())
+    payload = {
+        "inputs": prompt,
+        "parameters": {"max_new_tokens": 200}
+    }
+    headers = {'Content-Type': 'application/json'}
+    # Assuming the model is loaded via. text-generation-launcher and the server is running on 127.0.0.1:8080
+    response = requests.post("http://127.0.0.1:8080/generate", json=payload, headers=headers)
+    print(response.json()['generated_text'].strip())
     print("-" * 80)
