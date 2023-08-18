@@ -7,7 +7,6 @@ import fire
 import torch
 import torch.distributed as dist
 import torch.optim as optim
-from peft import get_peft_model, prepare_model_for_int8_training
 from pkg_resources import packaging
 from torch.distributed.fsdp import (
     FullyShardedDataParallel as FSDP,
@@ -29,7 +28,6 @@ from policies import AnyPrecisionAdamW
 from utils import fsdp_auto_wrap_policy
 from utils.config_utils import (
     update_config,
-    generate_peft_config,
     generate_dataset_config,
 )
 from utils.dataset_utils import get_preprocessed_dataset
@@ -111,10 +109,6 @@ def main(**kwargs):
             print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
     print_model_size(model, train_config, rank if train_config.enable_fsdp else 0)
 
-    # Prepare the model for int8 training if quantization is enabled
-    if train_config.quantization:
-        model = prepare_model_for_int8_training(model)
-
     # Convert the model to bfloat16 if fsdp and pure_bf16 is enabled
     if train_config.enable_fsdp and fsdp_config.pure_bf16:
         model.to(torch.bfloat16)
@@ -127,23 +121,17 @@ def main(**kwargs):
                 "pad_token": "<PAD>",
             }
         )
-    if train_config.use_peft:
-        peft_config = generate_peft_config(train_config, kwargs)
-        model = get_peft_model(model, peft_config)
-        model.print_trainable_parameters()
-
     #setting up FSDP if enable_fsdp is enabled
     if train_config.enable_fsdp:
-        if not train_config.use_peft and train_config.freeze_layers:
+        if train_config.freeze_layers:
 
             freeze_transformer_layers(train_config.num_freeze_layers)
 
         mixed_precision_policy, wrapping_policy = get_policies(fsdp_config, rank)
-        my_auto_wrapping_policy = fsdp_auto_wrap_policy(model, LlamaDecoderLayer)
 
         model = FSDP(
             model,
-            auto_wrap_policy= my_auto_wrapping_policy if train_config.use_peft else wrapping_policy,
+            auto_wrap_policy=  wrapping_policy,
             mixed_precision=mixed_precision_policy if not fsdp_config.pure_bf16 else None,
             sharding_strategy=fsdp_config.sharding_strategy,
             device_id=torch.cuda.current_device(),

@@ -146,36 +146,22 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
             if train_config.save_model and eval_epoch_loss < best_val_loss:
                 if train_config.enable_fsdp:
                     dist.barrier()
-                if train_config.use_peft:
-                    if train_config.enable_fsdp:
-                        if rank==0:
-                            print(f"we are about to save the PEFT modules")
-                    else:
-                        print(f"we are about to save the PEFT modules")
-                    model.save_pretrained(train_config.output_dir)  
-                    if train_config.enable_fsdp:
-                        if rank==0: 
-                            print(f"PEFT modules are saved in {train_config.output_dir} directory")
-                    else:
-                        print(f"PEFT modules are saved in {train_config.output_dir} directory")
-                        
-                else:
-                    if not train_config.use_peft and fsdp_config.checkpoint_type == StateDictType.FULL_STATE_DICT:
-                        
-                        model_checkpointing.save_model_checkpoint(
-                            model, optimizer, rank, train_config, epoch=epoch
-                        )
-                    elif not train_config.use_peft and fsdp_config.checkpoint_type == StateDictType.SHARDED_STATE_DICT:
-                        print(" Saving the FSDP model checkpoints using SHARDED_STATE_DICT")
-                        print("=====================================================")
-                        
-                        model_checkpointing.save_model_and_optimizer_sharded(model, rank, train_config)
-                        if train_config.save_optimizer:
-                            model_checkpointing.save_model_and_optimizer_sharded(model, rank, train_config, optim=optimizer)
-                            print(" Saving the FSDP model checkpoints and optimizer using SHARDED_STATE_DICT")
-                            print("=====================================================")
+                if  fsdp_config.checkpoint_type == StateDictType.FULL_STATE_DICT:
 
-                    if not train_config.use_peft and  train_config.save_optimizer:
+                    model_checkpointing.save_model_checkpoint(
+                        model, optimizer, rank, train_config, epoch=epoch
+                    )
+                elif fsdp_config.checkpoint_type == StateDictType.SHARDED_STATE_DICT:
+                    print(" Saving the FSDP model checkpoints using SHARDED_STATE_DICT")
+                    print("=====================================================")
+
+                    model_checkpointing.save_model_and_optimizer_sharded(model, rank, train_config)
+                    if train_config.save_optimizer:
+                        model_checkpointing.save_model_and_optimizer_sharded(model, rank, train_config, optim=optimizer)
+                        print(" Saving the FSDP model checkpoints and optimizer using SHARDED_STATE_DICT")
+                        print("=====================================================")
+
+                if train_config.save_optimizer:
                         model_checkpointing.save_optimizer_checkpoint(
                             model, optimizer, rank, train_config, epoch=epoch
                         )
@@ -394,7 +380,7 @@ def save_train_params(train_config, fsdp_config, rank):
     train_config.dist_checkpoint_root_folder
     + "/"
     + train_config.dist_checkpoint_folder
-    + "-"
+    + "/"
     + train_config.model_name
     )
 
