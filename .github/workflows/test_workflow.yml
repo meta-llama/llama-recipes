@@ -4,6 +4,10 @@ on: [push]
 env:
     AWS_REGION : "us-west-2"
     AWS_ACCOUNT: "320567679581"
+# permission can be added at job level or workflow level
+permissions:
+    id-token: write # This is required for requesting the JWT
+    contents: read  # This is required for actions/checkout
 jobs:
   connect_to_aws_instance:
     name: Connecting to test AWS instance
