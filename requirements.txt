@@ -1,5 +1,4 @@
--f https://download.pytorch.org/whl/torch_stable.html 
-torch==2.0.1+cu118
+torch==2.0.1
 accelerate
 appdirs
 loralib
@@ -8,7 +7,6 @@ black
 black[jupyter]
 datasets
 fire
-git+https://github.com/huggingface/peft.git
 transformers>=4.31.0
 sentencepiece
 py7zr
