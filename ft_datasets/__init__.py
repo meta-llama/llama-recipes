@@ -4,3 +4,4 @@
 from .grammar_dataset import get_dataset as get_grammar_dataset
 from .alpaca_dataset import InstructionDataset as get_alpaca_dataset
 from .samsum_dataset import get_preprocessed_samsum as get_samsum_dataset
+from .tokenized_dataset import get_tokenized_dataset

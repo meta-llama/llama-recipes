@@ -2,7 +2,7 @@
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
 import os
-
+import pkg_resources
 import fire
 import torch
 import torch.distributed as dist
@@ -42,6 +42,19 @@ from utils.train_utils import (
     get_policies
 )
 
+print("Checking package versions...")
+# Read the requirements.txt file and extract package names and version constraints
+with open("requirements.txt") as f:
+    requirements = f.read().splitlines()
+
+# Iterate through the requirements and check installed versions
+for requirement in requirements:
+    try:
+        req = pkg_resources.Requirement.parse(requirement)
+        package = pkg_resources.get_distribution(req.project_name)
+        print(f"{package.project_name}: Installed version {package.version}")
+    except Exception:
+        print(f"{req.project_name}: Not installed or parsing error")
 
 def main(**kwargs):
     # Update the configuration for the training and sharding process
@@ -81,18 +94,18 @@ def main(**kwargs):
                             "please install latest nightly.")
         if rank == 0:
             model = LlamaForCausalLM.from_pretrained(
-                train_config.model_name,
+                train_config.model_path,
                 load_in_8bit=True if train_config.quantization else None,
                 device_map="auto" if train_config.quantization else None,
             )
         else:
-            llama_config = LlamaConfig.from_pretrained(train_config.model_name)
+            llama_config = LlamaConfig.from_pretrained(train_config.model_path)
             with torch.device("meta"):
                 model = LlamaForCausalLM(llama_config)
 
     else:
         model = LlamaForCausalLM.from_pretrained(
-            train_config.model_name,
+            train_config.model_path,
             load_in_8bit=True if train_config.quantization else None,
             device_map="auto" if train_config.quantization else None,
         )
@@ -114,7 +127,7 @@ def main(**kwargs):
         model.to(torch.bfloat16)
 
     # Load the tokenizer and add special tokens
-    tokenizer = LlamaTokenizer.from_pretrained(train_config.model_name)
+    tokenizer = LlamaTokenizer.from_pretrained(train_config.tokenizer_name)
     tokenizer.add_special_tokens(
             {
 
