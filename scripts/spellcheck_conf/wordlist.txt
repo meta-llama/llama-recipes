@@ -73,6 +73,7 @@ Benchmarking
 Captum
 Grafana
 HuggingFace
+HuggingFace's
 JMeter
 KMS
 Kubeflow
@@ -1077,6 +1078,7 @@ peft
 samsum
 vLLM
 TGI
+tgi
 vLLM
 vLLM's
 OOM
@@ -1121,3 +1123,5 @@ summarization
 xA
 Sanitization
 tokenization
+SYS
+LoRA

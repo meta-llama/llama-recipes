@@ -1,6 +1,6 @@
-# Serving a fine tuned LLaMA model with HuggingFace text-generation-inference server
+# Serving a fine tuned Llama model with HuggingFace text-generation-inference server
 
-This document shows how to serve a fine tuned LLaMA mode with HuggingFace's text-generation-inference server. This option is currently only available for models that were trained using the LoRA method or without using the `--use_peft` argument.
+This document shows how to serve a fine tuned Llama mode with HuggingFace's text-generation-inference server. This option is currently only available for models that were trained using the LoRA method or without using the `--use_peft` argument.
 
 ## Step 0: Merging the weights (Only required if LoRA method was used) 
 
@@ -22,7 +22,7 @@ volume=$PWD/inference/hf-text-generation-inference/data
 docker run --gpus all --shm-size 1g -p 8080:80 -v $volume:/data ghcr.io/huggingface/text-generation-inference:latest --model-id $model --num-shard $num_shard
 ```
 
-The num_shard argument determines the number of GPU's the model should be sharded on.
+The num_shard argument determines the number of GPUs the model should be sharded on.
 
 ## Step 2: Running inference
 After the loading of the model shards completed an inference can be executed by using one of the following commands:
