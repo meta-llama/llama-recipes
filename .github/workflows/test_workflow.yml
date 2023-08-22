@@ -23,7 +23,7 @@ jobs:
       - name: Configure AWS credentials from Test account
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHubOIDC
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHubOIDCProvider
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Hello World
