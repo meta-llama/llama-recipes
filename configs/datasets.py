@@ -26,3 +26,12 @@ class alpaca_dataset:
     train_split: str = "train"
     test_split: str = "val"
     data_path: str = "ft_datasets/alpaca_data.json"
+    
+
+@dataclass
+class uniphore_dataset:
+    dataset: str =  "uniphore_dataset"
+    train_split: str = "train"
+    test_split: str = "validation"
+    data_path: str = "/root/llama-recipes/ft_datasets/uniphore_dataset"
+    input_length: int = 4000

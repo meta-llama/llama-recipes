@@ -113,17 +113,16 @@ def main(**kwargs):
 
     # Prepare the model for int8 training if quantization is enabled
     if train_config.quantization:
-        model = prepare_model_for_int8_training(model)
-
+        model = prepare_model_for_kbit_training(model)
     # Convert the model to bfloat16 if fsdp and pure_bf16 is enabled
     if train_config.enable_fsdp and fsdp_config.pure_bf16:
         model.to(torch.bfloat16)
 
     # Load the tokenizer and add special tokens
-    tokenizer = LlamaTokenizer.from_pretrained(train_config.model_name)
+    hf_token="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"
+    tokenizer = LlamaTokenizer.from_pretrained("meta-llama/Llama-2-13b-chat-hf",use_auth_token=hf_token)#train_config.model_name)
     tokenizer.add_special_tokens(
             {
-
                 "pad_token": "<PAD>",
             }
         )
