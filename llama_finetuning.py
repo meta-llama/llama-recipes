@@ -94,7 +94,7 @@ def main(**kwargs):
 
     else:
         model = LlamaForCausalLM.from_pretrained(
-            "meta-llama/Llama-2-13b-chat-hf",token=hf_token
+            "meta-llama/Llama-2-13b-chat-hf",token=hf_token,
             load_in_8bit=True if train_config.quantization else None,
             device_map="auto" if train_config.quantization else None,
         )
