@@ -5,9 +5,9 @@ import os
 
 def get_preprocessed_uniphore(dataset_config, tokenizer, split):
     
-    raw_train_dataset = load_dataset("json", data_files=os.path.join(dataset_config.data_path,"train.jsonl"))['train']
+    raw_train_dataset = load_dataset("json", data_files=os.path.join(os.environ["SM_CHANNEL_TRAIN"],"train.jsonl"))['train']
     #os.path.join(os.environ["SM_CHANNEL_TRAIN"],"train.jsonl")['train'] #dataset_config.data_path))
-    raw_validation_dataset = load_dataset("json", data_files=os.path.join(dataset_config.data_path,"val.jsonl"))['train']
+    raw_validation_dataset = load_dataset("json", data_files=os.path.join(os.environ["SM_CHANNEL_TEST"],"val.jsonl"))['train']
     
     dataset = datasets.DatasetDict({"train":raw_train_dataset,"validation":raw_validation_dataset})
     
@@ -27,6 +27,6 @@ def get_preprocessed_uniphore(dataset_config, tokenizer, split):
         lambda sample: tokenizer(sample["text"]),
         batched=True,
         remove_columns=list(processed_dataset[split].features),
-    ).map(Concatenator(chunk_size=4000), batched=True)
+    ).map(Concatenator(chunk_size=2048), batched=True)
     
     return dataset_final

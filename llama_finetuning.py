@@ -67,7 +67,7 @@ def main(**kwargs):
 
     # Calculate gradient accumulation steps
     gradient_accumulation_steps = train_config.batch_size_training // train_config.micro_batch_size
-
+    hf_token="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"
     # Load the pre-trained model and setup its configuration
     if train_config.enable_fsdp and train_config.low_cpu_fsdp:
         """
@@ -83,18 +83,18 @@ def main(**kwargs):
                             "please install latest nightly.")
         if rank == 0:
             model = LlamaForCausalLM.from_pretrained(
-                train_config.model_name,
+                "meta-llama/Llama-2-13b-chat-hf",token=hf_token,
                 load_in_8bit=True if train_config.quantization else None,
                 device_map="auto" if train_config.quantization else None,
             )
         else:
-            llama_config = LlamaConfig.from_pretrained(train_config.model_name)
+            llama_config = LlamaConfig.from_pretrained("meta-llama/Llama-2-13b-chat-hf",token=hf_token)
             with torch.device("meta"):
                 model = LlamaForCausalLM(llama_config)
 
     else:
         model = LlamaForCausalLM.from_pretrained(
-            train_config.model_name,
+            "meta-llama/Llama-2-13b-chat-hf",token=hf_token
             load_in_8bit=True if train_config.quantization else None,
             device_map="auto" if train_config.quantization else None,
         )
@@ -117,10 +117,10 @@ def main(**kwargs):
     # Convert the model to bfloat16 if fsdp and pure_bf16 is enabled
     if train_config.enable_fsdp and fsdp_config.pure_bf16:
         model.to(torch.bfloat16)
-
+    
     # Load the tokenizer and add special tokens
     hf_token="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"
-    tokenizer = LlamaTokenizer.from_pretrained("meta-llama/Llama-2-13b-chat-hf",use_auth_token=hf_token)#train_config.model_name)
+    tokenizer = LlamaTokenizer.from_pretrained("meta-llama/Llama-2-13b-chat-hf",token=hf_token)#train_config.model_name)
     tokenizer.add_special_tokens(
             {
                 "pad_token": "<PAD>",
