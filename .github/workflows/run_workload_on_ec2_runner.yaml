@@ -1,0 +1,74 @@
+name: test-workflow
+run-name: ${{ github.actor }} Triggered Action.
+on: [push]
+env:
+  AWS_REGION : "us-west-2"
+  AWS_ACCOUNT: "320567679581"
+  AWS_SUBNET_ID: "subnet-0027f3626e822a0e2"
+  AWS_EC2_TYPE: "t2.nano"
+  AWS_EC2_AMI: "ami-03f65b8614a860c29" # t2.micro AMI
+  AWS_SG_ID: "sg-034deceed8bd7a983"
+# permission can be added at job level or workflow level
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
+jobs:
+  start-self-hosted-ec2-runner:
+    name: Start self-hosted EC2 runner
+    runs-on: ubuntu-latest
+    outputs:
+        label: ${{ steps.start-ec2-runner.outputs.label }}
+        ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
+    steps:
+      - name: Configure AWS credentials
+        id: configure_aws_security_credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHubOIDCSelfHostedRunner
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Start EC2 runner
+        id: start-ec2-runner
+        uses: machulav/ec2-github-runner@v2
+        with:
+          mode: start
+          github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }} # added to repo secrets.
+          ec2-image-id: ${{ env.AWS_EC2_AMI }}
+          ec2-instance-type: ${{ env.AWS_EC2_TYPE }}
+          subnet-id: ${{ env.AWS_SUBNET_ID }}
+          security-group-id: ${{ env.AWS_SG_ID }}
+          iam-role-name: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHubOIDCSelfHostedRunner # optional, requires additional permissions
+          aws-resource-tags: > # optional, requires additional permissions
+            [
+              {"Key": "Name", "Value": "ec2-github-runner"},
+              {"Key": "GitHubRepository", "Value": "${{ github.repository }}"}
+            ]
+
+  run_workload_on_the_runner:
+    name: Execute the job on the runner
+    needs: start-self-hosted-ec2-runner                              # required to start the main job when the runner is ready
+    runs-on: ${{ needs.start-self-hosted-ec2-runner.outputs.label }} # run the job on the newly created runner
+    steps:
+      - name: "Running 'ls -la' on Self Hosted EC2 Runner"
+        run: ls -la
+
+  stop-runner:
+    name: Stop self-hosted EC2 runner
+    needs:
+      - start-self-hosted-ec2-runner # required to get output from the start-runner job
+      - run_workload_on_the_runner   # required to wait when the main job is done
+    runs-on: ubuntu-latest
+    if: ${{ always() }} # required to stop the runner even if the error happened in the previous jobs
+    steps:
+       - name: Configure AWS credentials
+         id: configure_aws_security_credentials
+         uses: aws-actions/configure-aws-credentials@v2
+         with:
+           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHubOIDCSelfHostedRunner
+           aws-region: ${{ env.AWS_REGION }}
+       - name: Stop EC2 runner
+         uses: machulav/ec2-github-runner@v2
+         with:
+           mode: stop
+           github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+           label: ${{ needs.start-self-hosted-ec2-runner.outputs.label }}
+           ec2-instance-id: ${{ needs.start-self-hosted-ec2-runner.outputs.ec2-instance-id }}
