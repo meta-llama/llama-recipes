@@ -37,7 +37,8 @@ jobs:
           subnet-id: ${{ env.AWS_SUBNET_ID }}
           security-group-id: ${{ env.AWS_SG_ID }}
         #   iam-role-name: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHubOIDCSelfHostedRunner # optional, requires additional permissions
-          iam-role-name: GitHubOIDCSelfHostedRunner # optional, requires additional permissions
+        #   iam-role-name: GitHubOIDCSelfHostedRunner # optional, requires additional permissions
+          iam-role-name: AmazonS3ReadOnlyAccess
           aws-resource-tags: > # optional, requires additional permissions
             [
               {"Key": "Name", "Value": "ec2-github-runner"},
