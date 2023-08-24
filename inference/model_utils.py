@@ -5,9 +5,10 @@ from peft import PeftModel
 from transformers import LlamaForCausalLM, LlamaConfig
 
 # Function to load the main model for text generation
-def load_model(model_name, quantization):
+def load_model(quantization,model_name,token):
     model = LlamaForCausalLM.from_pretrained(
         model_name,
+        token=token,
         return_dict=True,
         load_in_8bit=quantization,
         device_map="auto",

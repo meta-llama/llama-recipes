@@ -14,11 +14,14 @@ from transformers import LlamaTokenizer
 from safety_utils import get_safety_checker
 from model_utils import load_model, load_peft_model, load_llama_from_config
 
+import datasets
+from datasets import load_dataset
+from tqdm import tqdm
 def main(
     model_name,
     peft_model: str=None,
     quantization: bool=False,
-    max_new_tokens =100, #The maximum numbers of tokens to generate
+    max_new_tokens =1024, #The maximum numbers of tokens to generate
     prompt_file: str=None,
     seed: int=42, #seed value for reproducibility
     do_sample: bool=True, #Whether or not to use sampling ; use greedy decoding otherwise.
@@ -36,107 +39,127 @@ def main(
     use_fast_kernels: bool = False, # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
     **kwargs
 ):
-    if prompt_file is not None:
-        assert os.path.exists(
-            prompt_file
-        ), f"Provided Prompt file does not exist {prompt_file}"
-        with open(prompt_file, "r") as f:
-            user_prompt = "\n".join(f.readlines())
-    elif not sys.stdin.isatty():
-        user_prompt = "\n".join(sys.stdin.readlines())
-    else:
-        print("No user prompt provided. Exiting.")
-        sys.exit(1)
-    
-    # Set the seeds for reproducibility
-    torch.cuda.manual_seed(seed)
-    torch.manual_seed(seed)
-    
-    model = load_model(model_name, quantization)
-    if peft_model:
-        model = load_peft_model(model, peft_model)
-
-    model.eval()
-    
-    if use_fast_kernels:
-        """
-        Setting 'use_fast_kernels' will enable
-        using of Flash Attention or Xformer memory-efficient kernels 
-        based on the hardware being used. This would speed up inference when used for batched inputs.
-        """
-        try:
-            from optimum.bettertransformer import BetterTransformer
-            model = BetterTransformer.transform(model)    
-        except ImportError:
-            print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
-
-    tokenizer = LlamaTokenizer.from_pretrained(model_name)
+    # if prompt_file is not None:
+    #     user_prompt=prompt_file
+    #     print(user_prompt)
+    #     assert os.path.exists(
+    #         prompt_file
+    #     ), f"Provided Prompt file does not exist {prompt_file}"
+    #     with open(prompt_file, "r") as f:
+    #         user_prompt = "\n".join(f.readlines())
+    # elif not sys.stdin.isatty():
+    #     user_prompt = "\n".join(sys.stdin.readlines())
+    # else:
+    #     print("No user prompt provided. Exiting.")
+    #     sys.exit(1)
+    hf_token="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"
+    #raw_test_dataset = load_dataset("json", data_files="/root/summarization/test.jsonl")['train']
+    tokenizer = LlamaTokenizer.from_pretrained("meta-llama/Llama-2-13b-chat-hf",token=hf_token)
     tokenizer.add_special_tokens(
         {
          
             "pad_token": "<PAD>",
         }
     )
-    model.resize_token_embeddings(model.config.vocab_size + 1) 
-    
-    safety_checker = get_safety_checker(enable_azure_content_safety,
-                                        enable_sensitive_topics,
-                                        enable_salesforce_content_safety,
-                                        )
+#     dataset = datasets.DatasetDict({"test":raw_test_dataset})
+#     # Define a function to process each sample
+#     def process_sample(sample):
 
-    # Safety check of the user prompt
-    safety_results = [check(user_prompt) for check in safety_checker]
-    are_safe = all([r[1] for r in safety_results])
-    if are_safe:
-        print("User prompt deemed safe.")
-        print(f"User prompt:\n{user_prompt}")
-    else:
-        print("User prompt deemed unsafe.")
-        for method, is_safe, report in safety_results:
-            if not is_safe:
-                print(method)
-                print(report)
-        print("Skipping the inference as the prompt is not safe.")
-        sys.exit(1)  # Exit the program with an error status
-        
+#         # Merge the modified input with the target
+#         merged_text = sample["input"] + "\n\nSummary:\n"
+
+#         # Return the merged text as a new sample
+#         return {"text": merged_text}
+
+#     # Apply the process_sample function using map()
+#     processed_dataset = dataset.map(process_sample,remove_columns=['input', 'target'])
+    
+    torch.cuda.manual_seed(seed)
+    torch.manual_seed(seed)
+
+    model = load_model(quantization,model_name="meta-llama/Llama-2-13b-chat-hf",token=hf_token)
     if peft_model:
         model = load_peft_model(model, peft_model)
-
-    model.eval()
-    batch = tokenizer(user_prompt, padding='max_length', truncation=True,max_length=max_padding_length,return_tensors="pt")
-
-    batch = {k: v.to("cuda") for k, v in batch.items()}
-    start = time.perf_counter()
-    with torch.no_grad():
-        outputs = model.generate(
-            **batch,
-            max_new_tokens=max_new_tokens,
-            do_sample=do_sample,
-            top_p=top_p,
-            temperature=temperature,
-            min_length=min_length,
-            use_cache=use_cache,
-            top_k=top_k,
-            repetition_penalty=repetition_penalty,
-            length_penalty=length_penalty,
-            **kwargs 
-        )
-    e2e_inference_time = (time.perf_counter()-start)*1000
-    print(f"the inference time is {e2e_inference_time} ms")
-    output_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    print("peft+llama model loaded")
+    merged_model = model.merge_and_unload(progressbar=True)
+    merged_model.save_pretrained("/root/llama-recipes-uniphore/inference/llama+peft_model")
+#     model.eval()
+#     if use_fast_kernels:
+#         """
+#         Setting 'use_fast_kernels' will enable
+#         using of Flash Attention or Xformer memory-efficient kernels 
+#         based on the hardware being used. This would speed up inference when used for batched inputs.
+#         """
+#         try:
+#             from optimum.bettertransformer import BetterTransformer
+#             model = BetterTransformer.transform(model)    
+#         except ImportError:
+#             print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
+            
+#     model.resize_token_embeddings(model.config.vocab_size + 1) 
     
-    # Safety check of the model output
-    safety_results = [check(output_text) for check in safety_checker]
-    are_safe = all([r[1] for r in safety_results])
-    if are_safe:
-        print("User input and model output deemed safe.")
-        print(f"Model output:\n{output_text}")
-    else:
-        print("Model output deemed unsafe.")
-        for method, is_safe, report in safety_results:
-            if not is_safe:
-                print(method)
-                print(report)
+#     for i in tqdm(range(len(processed_dataset['test']['text']))):
+#         user_prompt=processed_dataset['test']['text'][i]        
+
+
+#         safety_checker = get_safety_checker(enable_azure_content_safety,
+#                                             enable_sensitive_topics,
+#                                             enable_salesforce_content_safety,
+#                                             )
+
+#         # Safety check of the user prompt
+#         safety_results = [check(user_prompt) for check in safety_checker]
+#         are_safe = all([r[1] for r in safety_results])
+#         if are_safe:
+#             print("User prompt deemed safe.")
+#             print(f"User prompt:\n{user_prompt}")
+#         else:
+#             print("User prompt deemed unsafe.")
+#             for method, is_safe, report in safety_results:
+#                 if not is_safe:
+#                     print(method)
+#                     print(report)
+#             print("Skipping the inference as the prompt is not safe.")
+#             sys.exit(1)  # Exit the program with an error status
+
+#         if peft_model:
+#             model = load_peft_model(model, peft_model)
+
+#         model.eval()
+#         batch = tokenizer(user_prompt,return_tensors="pt")
+
+#         batch = {k: v.to("cuda") for k, v in batch.items()}
+#         start = time.perf_counter()
+#         with torch.no_grad():
+#             outputs = model.generate(
+#                 **batch,
+#                 max_new_tokens=max_new_tokens,
+#                 do_sample=do_sample,
+#                 top_p=top_p,
+#                 temperature=temperature,
+#                 min_length=min_length,
+#                 use_cache=use_cache,
+#                 top_k=top_k,
+#                 repetition_penalty=repetition_penalty,
+#                 length_penalty=length_penalty,
+#                 **kwargs 
+#             )
+#         e2e_inference_time = (time.perf_counter()-start)*1000
+#         print(f"the inference time is {e2e_inference_time} ms")
+#         output_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+#         # Safety check of the model output
+#         safety_results = [check(output_text) for check in safety_checker]
+#         are_safe = all([r[1] for r in safety_results])
+#         if are_safe:
+#             print("User input and model output deemed safe.")
+#             print(f"Model output:\n{output_text}")
+#         else:
+#             print("Model output deemed unsafe.")
+#             for method, is_safe, report in safety_results:
+#                 if not is_safe:
+#                     print(method)
+#                     print(report)
                 
 
 if __name__ == "__main__":
