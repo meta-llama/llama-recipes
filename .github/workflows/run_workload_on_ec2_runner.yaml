@@ -25,6 +25,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHubOIDCSelfHostedRunner
+          role-session-name: GitHubOIDCSession
           aws-region: ${{ env.AWS_REGION }}
       - name: Start EC2 runner
         id: start-ec2-runner
@@ -36,8 +37,7 @@ jobs:
           ec2-instance-type: ${{ env.AWS_EC2_TYPE }}
           subnet-id: ${{ env.AWS_SUBNET_ID }}
           security-group-id: ${{ env.AWS_SG_ID }}
-        #   iam-role-name: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHubOIDCSelfHostedRunner # optional, requires additional permissions
-          iam-role-name: GitHubSelfHostedRunner # optional, requires additional permissions
+          iam-role-name: GitHubSelfHostedRunner
           aws-resource-tags: > # optional, requires additional permissions
             [
               {"Key": "Name", "Value": "ec2-github-runner"},
