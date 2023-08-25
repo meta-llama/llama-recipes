@@ -41,6 +41,29 @@ model.resize_token_embeddings(model.config.vocab_size + 1)
 ```
 Padding would be required for batch inference. In this this [example](../inference/inference.py), batch size = 1 so essentially padding is not required. However,We added the code pointer as an example in case of batch inference.
 
+**Code Llama**
+
+Code llama was recently released with three flavors, base-model tha support multiple programming languages, Python fine-tuned model and an instruction fine-tuned and aligned variation of Code Llama, please read more [here](https://ai.meta.com/blog/code-llama-large-language-model-coding/).
+
+Find the scripts to run Code Llama [here](../inference/code-llama/), where there are two examples of running code completion and infilling.
+
+**Note** Please find the right model on HF side [here](https://huggingface.co/codellama).
+
+To run the code completion example:
+
+```bash
+
+python code_completion_example.py --model_name MODEL_NAME  --prompt_file code_completion_prompt.txt --temperature 0.2 --top_p 0.9
+
+```
+
+To run the code infilling example:
+
+```bash
+
+python code_infilling_example.py --model_name MODEL_NAME --prompt_file code_infilling_prompt.txt --temperature 0.2 --top_p 0.9
+
+```
 
 **Chat completion**
 The inference folder also includes a chat completion example, that adds built-in safety features in fine-tuned models to the prompt tokens. To run the example:
