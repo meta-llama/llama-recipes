@@ -43,7 +43,7 @@ Padding would be required for batch inference. In this this [example](../inferen
 
 **Code Llama**
 
-Code llama was recently released with three flavors, base-model tha support multiple programming languages, Python fine-tuned model and an instruction fine-tuned and aligned variation of Code Llama, please read more [here](https://ai.meta.com/blog/code-llama-large-language-model-coding/).
+Code llama was recently released with three flavors, base-model that support multiple programming languages, Python fine-tuned model and an instruction fine-tuned and aligned variation of Code Llama, please read more [here](https://ai.meta.com/blog/code-llama-large-language-model-coding/).
 
 Find the scripts to run Code Llama [here](../inference/code-llama/), where there are two examples of running code completion and infilling.
 
