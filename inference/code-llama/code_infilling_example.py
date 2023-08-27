@@ -43,8 +43,6 @@ def main(
         ), f"Provided Prompt file does not exist {prompt_file}"
         with open(prompt_file, "r") as f:
             user_prompt = f.read()
-    elif not sys.stdin.isatty():
-        user_prompt = "\n".join(sys.stdin.readlines())
     else:
         print("No user prompt provided. Exiting.")
         sys.exit(1)
