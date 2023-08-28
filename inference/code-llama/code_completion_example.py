@@ -33,7 +33,6 @@ def main(
     enable_azure_content_safety: bool=False, # Enable safety check with Azure content safety api
     enable_sensitive_topics: bool=False, # Enable check for sensitive topics using AuditNLG APIs
     enable_salesforce_content_safety: bool=True, # Enable safety check with Salesforce safety flan t5
-    max_padding_length: int=None, # the max padding length to be used with tokenizer padding the prompts.
     use_fast_kernels: bool = True, # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
     **kwargs
 ):
@@ -70,14 +69,6 @@ def main(
             print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    tokenizer.add_special_tokens(
-        {
-         
-            "pad_token": "<PAD>",
-        }
-    )
-    model.resize_token_embeddings(model.config.vocab_size + 1) 
-    
     safety_checker = get_safety_checker(enable_azure_content_safety,
                                         enable_sensitive_topics,
                                         enable_salesforce_content_safety,
@@ -98,7 +89,7 @@ def main(
         print("Skipping the inference as the prompt is not safe.")
         sys.exit(1)  # Exit the program with an error status
         
-    batch = tokenizer(user_prompt, padding='max_length', truncation=True, max_length=max_padding_length, return_tensors="pt")
+    batch = tokenizer(user_prompt, return_tensors="pt")
 
     batch = {k: v.to("cuda") for k, v in batch.items()}
     start = time.perf_counter()
