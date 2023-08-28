@@ -88,7 +88,7 @@ python inference/inference.py --model_name <training_config.output_dir> --prompt
 
 ## Prompt Llama 2
 
-As outlined by [this blog by Hugging Face](https://huggingface.co/blog/llama2#how-to-prompt-llama-2), you can use the template below to prompt Llama 2. Review the [blog article](https://huggingface.co/blog/llama2#how-to-prompt-llama-2) for more information on how to prompt Llama 2.
+As outlined by [this blog by Hugging Face](https://huggingface.co/blog/llama2#how-to-prompt-llama-2), you can use the template below to prompt Llama 2 chat models. Review the [blog article](https://huggingface.co/blog/llama2#how-to-prompt-llama-2) for more information.
 
 ```
 <s>[INST] <<SYS>>
