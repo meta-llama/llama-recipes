@@ -56,7 +56,7 @@ Find the scripts to run Code Llama [here](../inference/code-llama/), where there
 
 **Note** Please find the right model on HF side [here](https://huggingface.co/codellama). 
 
-Make sure to install Transfromers from source for now
+Make sure to install Transformers from source for now
 
 ```bash
 
