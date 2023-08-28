@@ -50,7 +50,7 @@ python inference/chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_fi
 ```
 **Code Llama**
 
-Code llama was recently released with three flavors, base-model that support multiple programming languages, Python fine-tuned model and an instruction fine-tuned and aligned variation of Code Llama, please read more [here](https://ai.meta.com/blog/code-llama-large-language-model-coding/). Also note that the Python fine-tuned model and 34B models are not trained on infilling objective, hence can not be used for this use-case.
+Code llama was recently released with three flavors, base-model that support multiple programming languages, Python fine-tuned model and an instruction fine-tuned and aligned variation of Code Llama, please read more [here](https://ai.meta.com/blog/code-llama-large-language-model-coding/). Also note that the Python fine-tuned model and 34B models are not trained on infilling objective, hence can not be used for infilling use-case.
 
 Find the scripts to run Code Llama [here](../inference/code-llama/), where there are two examples of running code completion and infilling.
 
