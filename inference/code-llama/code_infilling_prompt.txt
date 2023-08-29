@@ -1,0 +1,3 @@
+def remove_non_ascii(s: str) -> str:
+    """ <FILL_ME>
+    return result
