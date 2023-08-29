@@ -54,7 +54,7 @@ Pytorch has the FSDP package for training models that do not fit into one GPU. F
 FSDP extends this idea, not only sharding the data but also model parameters, gradients and optimizer states. This means each GPU will only keep one shard of the model. This will result in huge memory savings that enable us to fit a much larger model into the same number of GPU. As an example in DDP the most you could fit into a GPU with 16GB memory is a model around 700M parameters. So, suppose you had 4 GPUs, in this case even though you access 4 GPUs, you still can't scale beyond the model size that can fit into one GPU. However with FSDP you can fit a 3B model into 4 GPUs, > 4x larger model.
 
 
-Please read more on FSDP here.
+Please read more on FSDP [here](https://engineering.fb.com/2021/07/15/open-source/fsdp/) & get started with FSDP [here](https://pytorch.org/tutorials/intermediate/FSDP_tutorial.html).
 
 
 To boost the performance of fine-tuning with FSDP, we can make use a number of features such as:
