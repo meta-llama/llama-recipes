@@ -3,10 +3,7 @@
 
 def fsdp_auto_wrap_policy(model, transformer_layer_name):
     import functools
-    import os
 
-    from accelerate import FullyShardedDataParallelPlugin
-    from transformers.models.t5.modeling_t5 import T5Block
     from torch.distributed.fsdp.wrap import _or_policy, lambda_auto_wrap_policy, transformer_auto_wrap_policy
 
     from peft.tuners import PrefixEncoder, PromptEmbedding, PromptEncoder

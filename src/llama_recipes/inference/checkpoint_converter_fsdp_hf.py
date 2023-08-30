@@ -4,12 +4,14 @@
 # from accelerate import init_empty_weights, load_checkpoint_and_dispatch
 
 import fire
-import torch
 import os
 import sys
 import yaml
+
 from transformers import LlamaTokenizer
-from model_utils import  load_llama_from_config
+
+from .model_utils import  load_llama_from_config
+
 # Get the current file's directory
 current_directory = os.path.dirname(os.path.abspath(__file__))
 

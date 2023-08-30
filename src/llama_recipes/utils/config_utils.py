@@ -3,14 +3,14 @@
 
 import inspect
 from dataclasses import fields
+
 from peft import (
     LoraConfig,
     AdaptionPromptConfig,
     PrefixTuningConfig,
 )
 
-import configs.datasets as datasets
-from configs import lora_config, llama_adapter_config, prefix_config, train_config
+from ..configs import datasets, lora_config, llama_adapter_config, prefix_config, train_config
 from .dataset_utils import DATASET_PREPROC
 
 

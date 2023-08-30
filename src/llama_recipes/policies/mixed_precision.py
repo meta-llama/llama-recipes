@@ -4,11 +4,7 @@
 import torch
 
 from torch.distributed.fsdp import (
-    # FullyShardedDataParallel as FSDP,
-    # CPUOffload,
     MixedPrecision,
-    # BackwardPrefetch,
-    # ShardingStrategy,
 )
 
 # requires grad scaler in main loop

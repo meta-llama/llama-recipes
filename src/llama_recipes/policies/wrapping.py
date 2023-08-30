@@ -1,27 +1,13 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
-import torch.distributed as dist
-import torch.nn as nn
-import torch
+import functools
 
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
-
-from torch.distributed.fsdp.fully_sharded_data_parallel import (
-    FullyShardedDataParallel as FSDP,
-    CPUOffload,
-    BackwardPrefetch,
-    MixedPrecision,
-)
 from torch.distributed.fsdp.wrap import (
     transformer_auto_wrap_policy,
     size_based_auto_wrap_policy,
-    enable_wrap,
-    wrap,
 )
-
-import functools
-from typing import Type
 
 
 def get_size_policy(min_params=1e8):

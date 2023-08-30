@@ -5,8 +5,6 @@ import os
 import torch
 import warnings
 
-from peft import PeftConfig
-from transformers import LlamaConfig, LlamaTokenizer, LlamaForCausalLM
 
 # Class for performing safety checks using AuditNLG library
 class AuditNLGSensitiveTopics(object):

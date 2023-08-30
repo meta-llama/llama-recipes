@@ -1,19 +1,12 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
-from accelerate import init_empty_weights, load_checkpoint_and_dispatch
 import fire
+
 import torch
-import os
-import sys
-from peft import PeftModel, PeftConfig
-from transformers import (
-    LlamaConfig,
-    LlamaTokenizer,
-    LlamaForCausalLM
-)
 from vllm import LLM
 from vllm import LLM, SamplingParams
+
 
 torch.cuda.manual_seed(42)
 torch.manual_seed(42)

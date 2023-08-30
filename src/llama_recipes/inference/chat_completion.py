@@ -2,18 +2,18 @@
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
 # from accelerate import init_empty_weights, load_checkpoint_and_dispatch
+
 import fire
-import torch
 import os
 import sys
-import warnings
 from typing import List
 
-from peft import PeftModel, PeftConfig
-from transformers import LlamaConfig, LlamaTokenizer, LlamaForCausalLM
-from safety_utils import get_safety_checker
+import torch
 from model_utils import load_model, load_peft_model
-from chat_utils import read_dialogs_from_file, format_tokens
+from transformers import LlamaTokenizer
+from safety_utils import get_safety_checker
+
+from .chat_utils import read_dialogs_from_file, format_tokens
 
 def main(
     model_name,

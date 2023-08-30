@@ -2,13 +2,13 @@
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
 import os
+from pkg_resources import packaging
 
 import fire
 import torch
 import torch.distributed as dist
 import torch.optim as optim
 from peft import get_peft_model, prepare_model_for_int8_training
-from pkg_resources import packaging
 from torch.distributed.fsdp import (
     FullyShardedDataParallel as FSDP,
 )
@@ -22,19 +22,18 @@ from transformers import (
 )
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
 
-import policies
-from configs import fsdp_config, train_config
-from policies import AnyPrecisionAdamW
+from .configs import fsdp_config, train_config
+from .policies import AnyPrecisionAdamW, apply_fsdp_checkpointing
 
-from utils import fsdp_auto_wrap_policy
-from utils.config_utils import (
+from .utils import fsdp_auto_wrap_policy
+from .utils.config_utils import (
     update_config,
     generate_peft_config,
     generate_dataset_config,
 )
-from utils.dataset_utils import get_preprocessed_dataset
+from .utils.dataset_utils import get_preprocessed_dataset
 
-from utils.train_utils import (
+from .utils.train_utils import (
     train,
     freeze_transformer_layers,
     setup,
@@ -153,7 +152,7 @@ def main(**kwargs):
             if train_config.low_cpu_fsdp and rank != 0 else None,
         )
         if fsdp_config.fsdp_activation_checkpointing:
-            policies.apply_fsdp_checkpointing(model)
+            apply_fsdp_checkpointing(model)
     elif not train_config.quantization and not train_config.enable_fsdp:
         model.to("cuda")
 

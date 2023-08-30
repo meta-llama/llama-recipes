@@ -1,12 +1,10 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
+
 import gc
-import os
-import sys
+import psutil
 import threading
 
-import numpy as np
-import psutil
 import torch
 
 def byte2gb(x):

@@ -1,16 +1,15 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
-import torch
-
 from functools import partial
 
-from ft_datasets import (
+import torch
+
+from ..datasets import (
     get_grammar_dataset,
     get_alpaca_dataset,
     get_samsum_dataset,
 )
-from typing import Optional
 
 
 DATASET_PREPROC = {

@@ -3,6 +3,7 @@
 
 from tqdm import tqdm
 from itertools import chain
+
 from torch.utils.data import Dataset
 
 class Concatenator(object):

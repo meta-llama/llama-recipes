@@ -5,12 +5,10 @@
 
 import copy
 import json
-import os
-import torch
 
-from sentencepiece import SentencePieceProcessor
+import torch
 from torch.utils.data import Dataset
-from typing import List
+
 
 PROMPT_DICT = {
     "prompt_input": (
