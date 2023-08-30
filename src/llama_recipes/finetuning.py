@@ -203,6 +203,7 @@ def main(**kwargs):
         collate_fn=default_data_collator,
     )
 
+    eval_dataloader = None
     if train_config.run_validation:
         eval_dataloader = torch.utils.data.DataLoader(
             dataset_val,
