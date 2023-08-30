@@ -68,7 +68,7 @@ If you are interested in running full parameter fine-tuning on the 70B model, yo
 
 ```bash
 
-torchrun --nnodes 1 --nproc_per_node 8 llama_finetuning.py --enable_fsdp --low_cpu_fsdp --pure_bf16 --model_name /patht_of_model_folder/70B --batch_size_training 1 --micro_batch_size 1 --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned
+torchrun --nnodes 1 --nproc_per_node 8 llama_finetuning.py --enable_fsdp --low_cpu_fsdp --pure_bf16 --model_name /patht_of_model_folder/70B --batch_size_training 1 --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned
 
 ```
 
@@ -126,6 +126,7 @@ model_name: str="PATH/to/LLAMA 2/7B"
 enable_fsdp: bool= False
 run_validation: bool=True
 batch_size_training: int=4
+gradient_accumulation_steps: int=1
 num_epochs: int=3
 num_workers_dataloader: int=2
 lr: float=2e-4
@@ -135,7 +136,6 @@ use_fp16: bool=False
 mixed_precision: bool=True
 val_batch_size: int=4
 dataset = "samsum_dataset" # alpaca_dataset, grammar_dataset
-micro_batch_size: int=1
 peft_method: str = "lora" # None , llama_adapter, prefix
 use_peft: bool=False
 output_dir: str = "./ft-output"
