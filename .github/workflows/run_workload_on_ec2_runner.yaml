@@ -37,8 +37,7 @@ jobs:
           ec2-instance-type: ${{ env.AWS_EC2_TYPE }}
           subnet-id: ${{ env.AWS_SUBNET_ID }}
           security-group-id: ${{ env.AWS_SG_ID }}
-          # iam-role-name: arn:aws:iam::320567679581:instance-profile/GitHub_EC2AccessToAWSServicesInstanceProfile # Role Passed to newly configured EC2 instance to perform permitted Actions on AWS resources.
-          iam-role-name: GitHubSelfHostedRunner # Role Passed to newly configured EC2 instance to perform permitted Actions on AWS resources.
+          iam-role-name: GitHub_EC2AccessToAWSServicesInstanceProfile # Role Passed to newly configured EC2 instance to perform permitted Actions on AWS resources.
           aws-resource-tags: > # optional, requires additional permissions
             [
               {"Key": "Name", "Value": "ec2-github-runner"},
