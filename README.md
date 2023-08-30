@@ -92,7 +92,7 @@ All the parameters in the examples and recipes below need to be further tuned to
 #if running on multi-gpu machine
 export CUDA_VISIBLE_DEVICES=0
 
-python llama_finetuning.py  --use_peft --peft_method lora --quantization --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
 
 ```
 
