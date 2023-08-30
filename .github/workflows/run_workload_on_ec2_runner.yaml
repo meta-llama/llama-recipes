@@ -24,7 +24,7 @@ jobs:
         id: configure_aws_security_credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHubOIDCSelfHostedRunner
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHub_SelfHostedRunner
           role-session-name: GitHubOIDCSession
           aws-region: ${{ env.AWS_REGION }}
       - name: Start EC2 runner
@@ -37,7 +37,7 @@ jobs:
           ec2-instance-type: ${{ env.AWS_EC2_TYPE }}
           subnet-id: ${{ env.AWS_SUBNET_ID }}
           security-group-id: ${{ env.AWS_SG_ID }}
-          iam-role-name: GitHubSelfHostedRunner # Role Passed to newly configured EC2 instance to perform permitted Actions on AWS resources.
+          iam-role-name: GitHub_EC2AccessToAWSServicesRole # Role Passed to newly configured EC2 instance to perform permitted Actions on AWS resources.
           aws-resource-tags: > # optional, requires additional permissions
             [
               {"Key": "Name", "Value": "ec2-github-runner"},
@@ -64,7 +64,7 @@ jobs:
          id: configure_aws_security_credentials
          uses: aws-actions/configure-aws-credentials@v2
          with:
-           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHubOIDCSelfHostedRunner
+           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHub_SelfHostedRunner
            aws-region: ${{ env.AWS_REGION }}
        - name: Stop EC2 runner
          uses: machulav/ec2-github-runner@v2
