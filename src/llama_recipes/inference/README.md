@@ -6,6 +6,6 @@ This folder contains inference examples for Llama 2. So far, we have provided su
 
 2. [vLLM_inference.py](vLLM_inference.py) script takes advantage of vLLM's paged attention concept for low latency.
 
-3. The [hf-text-generation-inference](hf-text-generation-inference/README.md) folder contains information on Hugging Face Text Generation Inference (TGI).
+3. The [hf_text_generation_inference](hf_text_generation_inference/README.md) folder contains information on Hugging Face Text Generation Inference (TGI).
 
-For more in depth information on inference including inference safety checks and examples, see the inference documentation [here](../docs/inference.md).
+For more in depth information on inference including inference safety checks and examples, see the inference documentation [here](../../../docs/inference.md).

@@ -37,7 +37,7 @@ pip install -e .
 ```
 ⚠️ **Note** ⚠️  Some features (especially fine-tuning with FSDP + PEFT) currently require PyTorch nightlies to be installed. Please make sure to install the nightlies if you're using these features following [this guide](https://pytorch.org/get-started/locally/).
 
-**Note** All the setting defined in [config files](./configs/) can be passed as args through CLI when running the script, there is no need to change from config files directly.
+**Note** All the setting defined in [config files](src/llama_recipes/configs/) can be passed as args through CLI when running the script, there is no need to change from config files directly.
 
 **Note** In case need to run PEFT model with FSDP, please make sure to use the PyTorch Nightlies.
 
@@ -84,7 +84,7 @@ All the parameters in the examples and recipes below need to be further tuned to
 
 * Default dataset and other LORA config has been set to `samsum_dataset`.
 
-* Make sure to set the right path to the model in the [training config](./configs/training.py).
+* Make sure to set the right path to the model in the [training config](src/llama_recipes/configs/training.py).
 
 ### Single GPU:
 
@@ -100,7 +100,7 @@ Here we make use of Parameter Efficient Methods (PEFT) as described in the next 
 
 **Note** if you are running on a machine with multiple GPUs please make sure to only make one of them visible using `export CUDA_VISIBLE_DEVICES=GPU:id`
 
-**Make sure you set [save_model](configs/training.py) in [training.py](configs/training.py) to save the model. Be sure to check the other training settings in [train config](configs/training.py) as well as others in the config folder as needed or they can be passed as args to the training script as well.**
+**Make sure you set `save_model` parameter to save the model. Be sure to check the other training parameter in [train config](src/llama_recipes/configs/training.py) as well as others in the config folder as needed. All parameter can be passed as args to the training script. No need to alter the config files.**
 
 
 ### Multiple GPUs One Node:
@@ -157,20 +157,20 @@ You can read more about our fine-tuning strategies [here](./docs/LLM_finetuning.
 # Repository Organization
 This repository is organized in the following way:
 
-[configs](configs/): Contains the configuration files for PEFT methods, FSDP, Datasets.
+[configs](src/llama_recipes/configs/): Contains the configuration files for PEFT methods, FSDP, Datasets.
 
 [docs](docs/): Example recipes for single and multi-gpu fine-tuning recipes.
 
-[ft_datasets](ft_datasets/): Contains individual scripts for each dataset to download and process. Note: Use of any of the datasets should be in compliance with the dataset's underlying licenses (including but not limited to non-commercial uses)
+[datasets](src/llama_recipes/datasets/): Contains individual scripts for each dataset to download and process. Note: Use of any of the datasets should be in compliance with the dataset's underlying licenses (including but not limited to non-commercial uses)
 
 
-[inference](inference/): Includes examples for inference for the fine-tuned models and how to use them safely.
+[inference](src/llama_recipes/inference/): Includes examples for inference for the fine-tuned models and how to use them safely.
 
-[model_checkpointing](model_checkpointing/): Contains FSDP checkpoint handlers.
+[model_checkpointing](src/llama_recipes/model_checkpointing/): Contains FSDP checkpoint handlers.
 
-[policies](policies/): Contains FSDP scripts to provide different policies, such as mixed precision, transformer wrapping policy and activation checkpointing along with any precision optimizer (used for running FSDP with pure bf16 mode).
+[policies](src/llama_recipes/policies/): Contains FSDP scripts to provide different policies, such as mixed precision, transformer wrapping policy and activation checkpointing along with any precision optimizer (used for running FSDP with pure bf16 mode).
 
-[utils](utils/): Utility files for:
+[utils](src/llama_recipes/utils/): Utility files for:
 
 - `train_utils.py` provides training/eval loop and more train utils.
 

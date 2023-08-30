@@ -52,7 +52,7 @@ python -m llama_recipes.inference.chat_completion --model_name "PATH/TO/MODEL/7B
 
 Code llama was recently released with three flavors, base-model that support multiple programming languages, Python fine-tuned model and an instruction fine-tuned and aligned variation of Code Llama, please read more [here](https://ai.meta.com/blog/code-llama-large-language-model-coding/). Also note that the Python fine-tuned model and 34B models are not trained on infilling objective, hence can not be used for infilling use-case.
 
-Find the scripts to run Code Llama [here](../src/llama_recipes/inference/code-llama/), where there are two examples of running code completion and infilling.
+Find the scripts to run Code Llama [here](../src/llama_recipes/inference/code_llama/), where there are two examples of running code completion and infilling.
 
 **Note** Please find the right model on HF side [here](https://huggingface.co/codellama). 
 
@@ -131,4 +131,4 @@ Below is an example of how to run the vLLM_inference.py script found within the 
 python -m llama_recipes.inference.vLLM_inference --model_name <PATH/TO/MODEL/7B>
 ```
 
-[**TGI**](https://github.com/huggingface/text-generation-inference): Text Generation Inference (TGI) is another inference option available to you. For more information on how to set up and use TGI see [here](../inference/hf-text-generation-inference/README.md).
+[**TGI**](https://github.com/huggingface/text-generation-inference): Text Generation Inference (TGI) is another inference option available to you. For more information on how to set up and use TGI see [here](../src/llama_recipes/inference/hf_text_generation_inference/README.md).

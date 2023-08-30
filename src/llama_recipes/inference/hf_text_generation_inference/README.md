@@ -9,7 +9,7 @@ In case the model was fine tuned with LoRA method we need to merge the weights o
 The script takes the base model, the peft weight folder as well as an output as arguments:
 
 ```
-python inference/hf-text-generation-inference/merge_lora_weights.py --base_model llama-7B --peft_model ft_output --output_dir data/merged_model_output
+python -m llama_recipes.inference.hf_text_generation_inference.merge_lora_weights --base_model llama-7B --peft_model ft_output --output_dir data/merged_model_output
 ```
 
 ## Step 1: Serving the model
