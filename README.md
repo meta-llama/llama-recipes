@@ -22,6 +22,21 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
 
 [Llama 2 Jupyter Notebook](quickstart.ipynb): This jupyter notebook steps you through how to finetune a Llama 2 model on the text summarization task using the [samsum](https://huggingface.co/datasets/samsum). The notebook uses parameter efficient finetuning (PEFT) and int8 quantization to finetune a 7B on a single GPU like an A10 with 24GB gpu memory.
 
+# Installation
+Llama-recipes provides a pip distribution for easy install and usage in other projects. Alternatively, it can be installed from source.
+
+## Install with pip
+```
+pip install llama-recipes
+```
+## Install from source
+To install from source e.g. for development use this command. We're using hatchling as our build backend which requires an up-to-date pip as well as setuptools package.
+```
+pip install -U pip setuptools
+pip install -e .
+```
+⚠️ **Note** ⚠️  Some features (especially fine-tuning with FSDP + PEFT) currently require PyTorch nightlies to be installed. Please make sure to install the nightlies if you're using these features following [this guide](https://pytorch.org/get-started/locally/).
+
 **Note** All the setting defined in [config files](./configs/) can be passed as args through CLI when running the script, there is no need to change from config files directly.
 
 **Note** In case need to run PEFT model with FSDP, please make sure to use the PyTorch Nightlies.
@@ -34,17 +49,6 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
 * [Adding custom datasets](./docs/Dataset.md)
 * [Inference](./docs/inference.md)
 * [FAQs](./docs/FAQ.md)
-
-## Requirements
-To run the examples, make sure to install the requirements using
-
-```bash
-# python 3.9 or higher recommended
-pip install -r requirements.txt
-
-```
-
-**Please note that the above requirements.txt will install PyTorch 2.0.1 version, in case you want to run FSDP + PEFT, please make sure to install PyTorch nightlies.**
 
 # Where to find the models?
 
