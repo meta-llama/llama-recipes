@@ -6,14 +6,14 @@
 import fire
 import os
 import sys
-from typing import List
 
 import torch
-from model_utils import load_model, load_peft_model
 from transformers import LlamaTokenizer
-from safety_utils import get_safety_checker
 
 from .chat_utils import read_dialogs_from_file, format_tokens
+from .model_utils import load_model, load_peft_model
+from .safety_utils import get_safety_checker
+
 
 def main(
     model_name,
