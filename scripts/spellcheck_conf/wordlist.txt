@@ -1121,3 +1121,4 @@ summarization
 xA
 Sanitization
 tokenization
+bitsandbytes
