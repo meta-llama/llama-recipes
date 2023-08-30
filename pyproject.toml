@@ -24,6 +24,11 @@ dynamic = ["dependencies"]
 "Homepage" = "https://github.com/facebookresearch/llama-recipes/"
 "Bug Tracker" = "https://github.com/facebookresearch/llama-recipes/issues"
 
+[tool.hatch.build]
+exclude = [
+  "dist/*",
+]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/llama_recipes"]
 
