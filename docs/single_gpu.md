@@ -4,7 +4,7 @@ To run fine-tuning on a single GPU, we will  make use of two packages
 
 1- [PEFT](https://huggingface.co/blog/peft) methods and in specific using HuggingFace [PEFT](https://github.com/huggingface/peft)library.
 
-2- [BitandBytes](https://github.com/TimDettmers/bitsandbytes) int8 quantization.
+2- [bitandbytes](https://github.com/TimDettmers/bitsandbytes) int8 quantization.
 
 Given combination of PEFT and Int8 quantization, we would be able to fine_tune a Llama 2 7B model on one consumer grade GPU such as A10.
 
@@ -15,7 +15,7 @@ To run the examples, make sure to install the llama-recipes package (See [README
 
 ## How to run it?
 
-Get access to a machine with one GPU or if using a multi-GPU macine please make sure to only make one of them visible using `export CUDA_VISIBLE_DEVICES=GPU:id` and run the following. It runs by default with `samsum_dataset` for summarization application.
+Get access to a machine with one GPU or if using a multi-GPU machine please make sure to only make one of them visible using `export CUDA_VISIBLE_DEVICES=GPU:id` and run the following. It runs by default with `samsum_dataset` for summarization application.
 
 
 ```bash

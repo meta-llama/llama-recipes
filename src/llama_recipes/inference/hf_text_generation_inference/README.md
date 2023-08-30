@@ -1,4 +1,4 @@
-# Serving a fine tuned LLaMA model with HuggingFace text-generation-inference server
+# Serving a fine tuned Llama model with HuggingFace text-generation-inference server
 
 This document shows how to serve a fine tuned LLaMA mode with HuggingFace's text-generation-inference server. This option is currently only available for models that were trained using the LoRA method or without using the `--use_peft` argument.
 
