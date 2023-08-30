@@ -4,7 +4,7 @@ To run fine-tuning on a single GPU, we will  make use of two packages
 
 1- [PEFT](https://huggingface.co/blog/peft) methods and in specific using HuggingFace [PEFT](https://github.com/huggingface/peft)library.
 
-2- [bitandbytes](https://github.com/TimDettmers/bitsandbytes) int8 quantization.
+2- [bitsandbytes](https://github.com/TimDettmers/bitsandbytes) int8 quantization.
 
 Given combination of PEFT and Int8 quantization, we would be able to fine_tune a Llama 2 7B model on one consumer grade GPU such as A10.
 
