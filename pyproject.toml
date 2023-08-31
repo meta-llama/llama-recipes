@@ -22,7 +22,7 @@ dynamic = ["dependencies"]
 
 [project.optional-dependencies]
 vllm = ["vllm"]
-tests = ["pytest", "pytest-mock"]
+tests = ["pytest-mock"]
 
 [project.urls]
 "Homepage" = "https://github.com/facebookresearch/llama-recipes/"
