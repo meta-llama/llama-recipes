@@ -13,6 +13,3 @@ sentencepiece
 py7zr
 scipy
 optimum
-vllm
-pytest
-pytest-mock

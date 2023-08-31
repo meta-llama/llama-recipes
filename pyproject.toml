@@ -20,6 +20,10 @@ classifiers = [
 ]
 dynamic = ["dependencies"]
 
+[project.optional-dependencies]
+vllm = ["vllm"]
+tests = ["pytest", "pytest-mock"]
+
 [project.urls]
 "Homepage" = "https://github.com/facebookresearch/llama-recipes/"
 "Bug Tracker" = "https://github.com/facebookresearch/llama-recipes/issues"
