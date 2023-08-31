@@ -5,7 +5,7 @@ from functools import partial
 
 import torch
 
-from ..datasets import (
+from llama_recipes.datasets import (
     get_grammar_dataset,
     get_alpaca_dataset,
     get_samsum_dataset,

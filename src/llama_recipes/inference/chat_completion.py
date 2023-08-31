@@ -10,9 +10,9 @@ import sys
 import torch
 from transformers import LlamaTokenizer
 
-from .chat_utils import read_dialogs_from_file, format_tokens
-from .model_utils import load_model, load_peft_model
-from .safety_utils import get_safety_checker
+from llama_recipes.inference.chat_utils import read_dialogs_from_file, format_tokens
+from llama_recipes.inference.model_utils import load_model, load_peft_model
+from llama_recipes.inference.safety_utils import get_safety_checker
 
 
 def main(

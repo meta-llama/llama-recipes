@@ -10,7 +10,7 @@ from pathlib import Path
 
 from torch.utils.data import Dataset
 
-from ..utils import ConcatDataset
+from llama_recipes.datasets.utils import ConcatDataset
 
 
 class grammar(Dataset):

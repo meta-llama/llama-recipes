@@ -10,8 +10,8 @@ from peft import (
     PrefixTuningConfig,
 )
 
-from ..configs import datasets, lora_config, llama_adapter_config, prefix_config, train_config
-from .dataset_utils import DATASET_PREPROC
+from llama_recipes.configs import datasets, lora_config, llama_adapter_config, prefix_config, train_config
+from llama_recipes.utils.dataset_utils import DATASET_PREPROC
 
 
 def update_config(config, **kwargs):

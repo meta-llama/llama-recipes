@@ -17,9 +17,9 @@ from tqdm import tqdm
 from transformers import LlamaTokenizer
 
 
-from .memory_utils import MemoryTrace
-from ..model_checkpointing import save_model_checkpoint, save_model_and_optimizer_sharded, save_optimizer_checkpoint
-from ..policies import fpSixteen,bfSixteen_mixed, get_llama_wrapper
+from llama_recipes.model_checkpointing import save_model_checkpoint, save_model_and_optimizer_sharded, save_optimizer_checkpoint
+from llama_recipes.policies import fpSixteen,bfSixteen_mixed, get_llama_wrapper
+from llama_recipes.utils.memory_utils import MemoryTrace
 
 
 def set_tokenizer_params(tokenizer: LlamaTokenizer):

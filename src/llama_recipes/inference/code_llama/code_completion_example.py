@@ -11,8 +11,8 @@ import time
 import torch
 from transformers import AutoTokenizer
 
-from ..safety_utils import get_safety_checker
-from ..model_utils import load_model, load_peft_model
+from llama_recipes.inference.safety_utils import get_safety_checker
+from llama_recipes.inference.model_utils import load_model, load_peft_model
 
 
 def main(

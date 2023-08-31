@@ -22,18 +22,18 @@ from transformers import (
 )
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
 
-from .configs import fsdp_config, train_config
-from .policies import AnyPrecisionAdamW, apply_fsdp_checkpointing
+from llama_recipes.configs import fsdp_config, train_config
+from llama_recipes.policies import AnyPrecisionAdamW, apply_fsdp_checkpointing
 
-from .utils import fsdp_auto_wrap_policy
-from .utils.config_utils import (
+from llama_recipes.utils import fsdp_auto_wrap_policy
+from llama_recipes.utils.config_utils import (
     update_config,
     generate_peft_config,
     generate_dataset_config,
 )
-from .utils.dataset_utils import get_preprocessed_dataset
+from llama_recipes.utils.dataset_utils import get_preprocessed_dataset
 
-from .utils.train_utils import (
+from llama_recipes.utils.train_utils import (
     train,
     freeze_transformer_layers,
     setup,
