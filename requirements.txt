@@ -1,4 +1,4 @@
--f https://download.pytorch.org/whl/torch_stable.html torch==2.0.1+cu118
+--index-url https://download.pytorch.org/whl/test/cu118 torch 
 accelerate
 appdirs
 loralib
