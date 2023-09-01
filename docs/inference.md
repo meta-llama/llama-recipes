@@ -15,11 +15,11 @@ Examples:
 
  ```bash
 # Full finetuning of all parameters
-cat <test_prompt_file> | python inference.py --model_name <training_config.output_dir> --use_auditnlg
+cat <test_prompt_file> | python examples/inference.py --model_name <training_config.output_dir> --use_auditnlg
 # PEFT method
-cat <test_prompt_file> | python inference.py --model_name <training_config.model_name> --peft_model <training_config.output_dir> --use_auditnlg
+cat <test_prompt_file> | python examples/inference.py --model_name <training_config.model_name> --peft_model <training_config.output_dir> --use_auditnlg
 # prompt as parameter
-python inference.py --model_name <training_config.output_dir> --prompt_file <test_prompt_file> --use_auditnlg
+python examples/inference.py --model_name <training_config.output_dir> --prompt_file <test_prompt_file> --use_auditnlg
  ```
 The example folder contains test prompts for summarization use-case:
 ```
@@ -45,7 +45,7 @@ Padding would be required for batch inference. In this this [example](../example
 The inference folder also includes a chat completion example, that adds built-in safety features in fine-tuned models to the prompt tokens. To run the example:
 
 ```bash
-python examples/chat_completion/chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file inference/chats.json  --quantization --use_auditnlg
+python examples/chat_completion/chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file examples/inference/chats.json  --quantization --use_auditnlg
 
 ```
 **Code Llama**
