@@ -35,6 +35,17 @@ To install from source e.g. for development use this command. We're using hatchl
 pip install -U pip setuptools
 pip install -e --extra-index-url https://download.pytorch.org/whl/test/cu118 .
 ```
+## Install with optional dependencies
+LLama-recipes offers the installation of optional packages. There are two optional dependenciy groups.
+To run the unit tests we can install the required dependencies with:
+```
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[tests]
+```
+For the vllm example we need additional requirements that can be installed with:
+```
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[vllm]
+```
+
 ⚠️ **Note** ⚠️  Some features (especially fine-tuning with FSDP + PEFT) currently require PyTorch nightlies to be installed. Please make sure to install the nightlies if you're using these features following [this guide](https://pytorch.org/get-started/locally/).
 
 **Note** All the setting defined in [config files](src/llama_recipes/configs/) can be passed as args through CLI when running the script, there is no need to change from config files directly.

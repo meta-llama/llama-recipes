@@ -9,3 +9,5 @@ This folder contains inference examples for Llama 2. So far, we have provided su
 3. The [hf_text_generation_inference](./hf_text_generation_inference/README.md) folder contains information on Hugging Face Text Generation Inference (TGI).
 
 For more in depth information on inference including inference safety checks and examples, see the inference documentation [here](../docs/inference.md).
+
+**Note** The **vLLM** example requires additional dependencies. Please refer to installation section of the main [README.md](../README.md#install-with-optional-dependencies) for details
