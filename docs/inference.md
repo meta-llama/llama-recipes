@@ -33,11 +33,11 @@ Currently pad token by default in [HuggingFace Tokenizer is `None`](https://gith
 ```python
 tokenizer.add_special_tokens(
         {
-         
+
             "pad_token": "<PAD>",
         }
     )
-model.resize_token_embeddings(model.config.vocab_size + 1) 
+model.resize_token_embeddings(model.config.vocab_size + 1)
 ```
 Padding would be required for batch inference. In this this [example](../inference/inference.py), batch size = 1 so essentially padding is not required. However,We added the code pointer as an example in case of batch inference.
 
@@ -99,7 +99,7 @@ In case you have fine-tuned your model with pure FSDP and saved the checkpoints 
 This is helpful if you have fine-tuned you model using FSDP only as follows:
 
 ```bash
-torchrun --nnodes 1 --nproc_per_node 8  llama_finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 
+torchrun --nnodes 1 --nproc_per_node 8  llama_finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16
 ```
 Then convert your FSDP checkpoint to HuggingFace checkpoints using:
 ```bash
@@ -112,10 +112,22 @@ By default, training parameter are saved in `train_params.yaml` in the path wher
 Then run inference using:
 
 ```bash
-python inference/inference.py --model_name <training_config.output_dir> --prompt_file <test_prompt_file> 
+python inference/inference.py --model_name <training_config.output_dir> --prompt_file <test_prompt_file>
 
 ```
 
+## Prompt Llama 2
+
+As outlined by [this blog by Hugging Face](https://huggingface.co/blog/llama2#how-to-prompt-llama-2), you can use the template below to prompt Llama 2 chat models. Review the [blog article](https://huggingface.co/blog/llama2#how-to-prompt-llama-2) for more information.
+
+```
+<s>[INST] <<SYS>>
+{{ system_prompt }}
+<</SYS>>
+
+{{ user_message }} [/INST]
+
+```
 
 ## Other Inference Options
 
