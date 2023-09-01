@@ -6,8 +6,8 @@ from typing import ClassVar
 
 @dataclass
 class train_config:
-    model_name: str="PATH/to/LLAMA/7B"
-    enable_fsdp: bool=False
+    model_name: str=" meta-llama/Llama-2-7b-chat-hf"
+    enable_fsdp: bool=True
     low_cpu_fsdp: bool=False
     run_validation: bool=True
     batch_size_training: int=4
@@ -23,8 +23,8 @@ class train_config:
     val_batch_size: int=1
     dataset = "samsum_dataset"
     peft_method: str = "lora" # None , llama_adapter, prefix
-    use_peft: bool=False
-    output_dir: str = "PATH/to/save/PEFT/model"
+    use_peft: bool=True
+    output_dir: str = "PEFT-7b-model"
     freeze_layers: bool = False
     num_freeze_layers: int = 1
     quantization: bool = False
