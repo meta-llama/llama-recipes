@@ -27,13 +27,13 @@ Llama-recipes provides a pip distribution for easy install and usage in other pr
 
 ## Install with pip
 ```
-pip install llama-recipes
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes
 ```
 ## Install from source
 To install from source e.g. for development use this command. We're using hatchling as our build backend which requires an up-to-date pip as well as setuptools package.
 ```
 pip install -U pip setuptools
-pip install -e .
+pip install -e --extra-index-url https://download.pytorch.org/whl/test/cu118 .
 ```
 ⚠️ **Note** ⚠️  Some features (especially fine-tuning with FSDP + PEFT) currently require PyTorch nightlies to be installed. Please make sure to install the nightlies if you're using these features following [this guide](https://pytorch.org/get-started/locally/).
 
