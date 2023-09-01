@@ -1,6 +1,6 @@
 # Inference
 
-For inference we have provided an [inference script](../src/llama_recipes/inference/inference.py). Depending on the type of finetuning performed during training the [inference script](../src/llama_recipes/inference/inference.py) takes different arguments.
+For inference we have provided an [inference script](../examples/inference.py). Depending on the type of finetuning performed during training the [inference script](../examples/inference.py) takes different arguments.
 To finetune all model parameters the output dir of the training has to be given as --model_name argument.
 In the case of a parameter efficient method like lora the base model has to be given as --model_name and the output dir of the training has to be given as --peft_model argument.
 Additionally, a prompt for the model in the form of a text file has to be provided. The prompt file can either be piped through standard input or given as --prompt_file parameter.
@@ -15,15 +15,15 @@ Examples:
 
  ```bash
 # Full finetuning of all parameters
-cat <test_prompt_file> | python -m llama_recipes.inference --model_name <training_config.output_dir> --use_auditnlg
+cat <test_prompt_file> | python inference.py --model_name <training_config.output_dir> --use_auditnlg
 # PEFT method
-cat <test_prompt_file> | python -m llama_recipes.inference --model_name <training_config.model_name> --peft_model <training_config.output_dir> --use_auditnlg
+cat <test_prompt_file> | python inference.py --model_name <training_config.model_name> --peft_model <training_config.output_dir> --use_auditnlg
 # prompt as parameter
-python -m llama_recipes.inference --model_name <training_config.output_dir> --prompt_file <test_prompt_file> --use_auditnlg
+python inference.py --model_name <training_config.output_dir> --prompt_file <test_prompt_file> --use_auditnlg
  ```
-The inference folder contains test prompts for summarization use-case:
+The example folder contains test prompts for summarization use-case:
 ```
-src/llama_recipes/inference/samsum_prompt.txt
+examples/samsum_prompt.txt
 ...
 ```
 
@@ -39,20 +39,20 @@ tokenizer.add_special_tokens(
     )
 model.resize_token_embeddings(model.config.vocab_size + 1) 
 ```
-Padding would be required for batch inference. In this this [example](../src/llama_recipes/inference/inference.py), batch size = 1 so essentially padding is not required. However,We added the code pointer as an example in case of batch inference.
+Padding would be required for batch inference. In this this [example](../examples/inference.py), batch size = 1 so essentially padding is not required. However,We added the code pointer as an example in case of batch inference.
 
 **Chat completion**
 The inference folder also includes a chat completion example, that adds built-in safety features in fine-tuned models to the prompt tokens. To run the example:
 
 ```bash
-python -m llama_recipes.inference.chat_completion --model_name "PATH/TO/MODEL/7B/" --prompt_file inference/chats.json  --quantization --use_auditnlg
+python examples/chat_completion/chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file inference/chats.json  --quantization --use_auditnlg
 
 ```
 **Code Llama**
 
 Code llama was recently released with three flavors, base-model that support multiple programming languages, Python fine-tuned model and an instruction fine-tuned and aligned variation of Code Llama, please read more [here](https://ai.meta.com/blog/code-llama-large-language-model-coding/). Also note that the Python fine-tuned model and 34B models are not trained on infilling objective, hence can not be used for infilling use-case.
 
-Find the scripts to run Code Llama [here](../src/llama_recipes/inference/code_llama/), where there are two examples of running code completion and infilling.
+Find the scripts to run Code Llama [here](../examples/code_llama/), where there are two examples of running code completion and infilling.
 
 **Note** Please find the right model on HF side [here](https://huggingface.co/codellama). 
 
@@ -68,7 +68,7 @@ To run the code completion example:
 
 ```bash
 
-python -m llama_recipes.inference.code_llama.code_completion_example --model_name MODEL_NAME  --prompt_file code_completion_prompt.txt --temperature 0.2 --top_p 0.9
+python examples/code_llama/code_completion_example.py --model_name MODEL_NAME  --prompt_file code_completion_prompt.txt --temperature 0.2 --top_p 0.9
 
 ```
 
@@ -76,7 +76,7 @@ To run the code infilling example:
 
 ```bash
 
-python -m llama_recipes.inference.code_llama.code_infilling_example --model_name MODEL_NAME --prompt_file code_infilling_prompt.txt --temperature 0.2 --top_p 0.9
+python examples/code_llama/code_infilling_example.py --model_name MODEL_NAME --prompt_file code_infilling_prompt.txt --temperature 0.2 --top_p 0.9
 
 ```
 
@@ -85,9 +85,9 @@ python -m llama_recipes.inference.code_llama.code_infilling_example --model_name
 Setting `use_fast_kernels` will enable using of Flash Attention or Xformer memory-efficient kernels based on the hardware being used. This would speed up inference when used for batched inputs. This has been enabled in `optimum` library from HuggingFace as a one-liner API, please read more [here](https://pytorch.org/blog/out-of-the-box-acceleration/).
 
 ```bash
-python -m llama_recipes.inference.chat_completion --model_name "PATH/TO/MODEL/7B/" --prompt_file inference/chats.json  --quantization --use_auditnlg --use_fast_kernels
+python examples/chat_completion/chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file examples/chat_completion/chats.json  --quantization --use_auditnlg --use_fast_kernels
 
-python -m llama_recipes.inference --model_name <training_config.output_dir> --peft_model <training_config.output_dir> --prompt_file <test_prompt_file> --use_auditnlg --use_fast_kernels
+python examples/inference.py --model_name <training_config.output_dir> --peft_model <training_config.output_dir> --prompt_file <test_prompt_file> --use_auditnlg --use_fast_kernels
 
 ```
 
@@ -112,7 +112,7 @@ By default, training parameter are saved in `train_params.yaml` in the path wher
 Then run inference using:
 
 ```bash
-python -m llama_recipes.inference --model_name <training_config.output_dir> --prompt_file <test_prompt_file> 
+python examples/inference.py --model_name <training_config.output_dir> --prompt_file <test_prompt_file> 
 
 ```
 
@@ -123,12 +123,12 @@ Alternate inference options include:
 
 [**vLLM**](https://vllm.readthedocs.io/en/latest/getting_started/quickstart.html):
 To use vLLM you will need to install it using the instructions [here](https://vllm.readthedocs.io/en/latest/getting_started/installation.html#installation).
-Once installed, you can use the vLLM_ineference.py script provided [here](../src//llama_recipes/inference/vLLM_inference.py).
+Once installed, you can use the vllm/inference.py script provided [here](../examples/vllm/inference.py).
 
 Below is an example of how to run the vLLM_inference.py script found within the inference folder.
 
 ``` bash
-python -m llama_recipes.inference.vLLM_inference --model_name <PATH/TO/MODEL/7B>
+python examples/vllm/inference.py --model_name <PATH/TO/MODEL/7B>
 ```
 
-[**TGI**](https://github.com/huggingface/text-generation-inference): Text Generation Inference (TGI) is another inference option available to you. For more information on how to set up and use TGI see [here](../src/llama_recipes/inference/hf_text_generation_inference/README.md).
+[**TGI**](https://github.com/huggingface/text-generation-inference): Text Generation Inference (TGI) is another inference option available to you. For more information on how to set up and use TGI see [here](../examples/hf_text_generation_inference/README.md).
