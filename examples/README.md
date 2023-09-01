@@ -1,6 +1,20 @@
-# Inference
+# Examples
 
-This folder contains inference examples for Llama 2. So far, we have provided support for three methods of inference:
+This folder contains finetuning and inference examples for Llama 2.
+
+## Finetuning
+
+Please refer to the main [README.md](../README.md) for information on how to use the [finetuning.py](./finetuning.py) script.
+After installing the llama-recipes package through [pip](../README.md#installation) you can also invoke the finetuning in two ways:
+```
+python -m llama_recipes.finetuning <parameters>
+
+python examnples/finetuning.py <parameters>
+```
+Please see [README.md](../README.md) for details.
+
+## Inference 
+So far, we have provided support for three methods of inference:
 
 1. [inference script](./inference.py) script provides support for Hugging Face accelerate, PEFT and FSDP fine tuned models.
 

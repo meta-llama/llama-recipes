@@ -32,5 +32,5 @@ export CUDA_LAUNCH_BLOCKING=0
 export NCCL_SOCKET_IFNAME="ens"
 export FI_EFA_USE_DEVICE_RDMA=1
 
-srun  torchrun --nproc_per_node 4 --rdzv_id $RANDOM --rdzv_backend c10d --rdzv_endpoint $head_node_ip:29500 llama_finetuning.py  --enable_fsdp --use_peft --peft_method lora
+srun  torchrun --nproc_per_node 4 --rdzv_id $RANDOM --rdzv_backend c10d --rdzv_endpoint $head_node_ip:29500 examples/finetuning.py  --enable_fsdp --use_peft --peft_method lora
 
