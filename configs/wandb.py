@@ -11,7 +11,6 @@ class wandb_config:
     wandb_entity: str = None
     wandb_mode: str = None
     wandb_dir: str = None
-
-    
+    wandb_token: str = None
     
     
