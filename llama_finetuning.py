@@ -20,14 +20,15 @@ from transformers import (
     LlamaTokenizer,
     LlamaConfig,
     default_data_collator,
+    get_cosine_schedule_with_warmup
 )
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
 
 import policies
-from configs import fsdp_config, train_config
+from configs import fsdp_config, train_config, wandb_config
 from policies import AnyPrecisionAdamW
 
-from utils import fsdp_auto_wrap_policy
+from utils import fsdp_auto_wrap_policy, wandb_watch
 from utils.config_utils import (
     update_config,
     generate_peft_config,
@@ -48,7 +49,7 @@ from utils.train_utils import (
 
 def main(**kwargs):
     # Update the configuration for the training and sharding process
-    update_config((train_config, fsdp_config), **kwargs)
+    update_config((train_config, fsdp_config, wandb_config), **kwargs)
 
     # Set the seeds for reproducibility
     torch.cuda.manual_seed(train_config.seed)
@@ -174,7 +175,7 @@ def main(**kwargs):
         split="test",
     )
     if not train_config.enable_fsdp or rank == 0:
-            print(f"--> Validation Set Length = {len(dataset_val)}")
+        print(f"--> Validation Set Length = {len(dataset_val)}")
 
     train_sampler = None
     val_sampler = None
@@ -231,6 +232,10 @@ def main(**kwargs):
         )
     scheduler = StepLR(optimizer, step_size=1, gamma=train_config.gamma)
 
+    wandb_run = None
+    if wandb_config.enable_wandb and (not train_config.enable_fsdp or rank == 0):
+        wandb_run = wandb_watch(model, wandb_config)
+
     # Start the training process
     results = train(
         model,
@@ -244,6 +249,7 @@ def main(**kwargs):
         fsdp_config if train_config.enable_fsdp else None,
         local_rank if train_config.enable_fsdp else None,
         rank if train_config.enable_fsdp else None,
+        wandb_run,
     )
     if not train_config.enable_fsdp or rank==0:
         [print(f'Key: {k}, Value: {v}') for k, v in results.items()]

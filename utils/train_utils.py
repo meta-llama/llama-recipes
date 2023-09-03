@@ -10,6 +10,7 @@ import time
 import fire
 import torch
 import transformers
+import wandb
 from datasets import load_dataset
 from tqdm import tqdm
 """
@@ -45,7 +46,7 @@ def set_tokenizer_params(tokenizer: LlamaTokenizer):
 def byte2mb(x):
     return int(x / 2**20)
 
-def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None):
+def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None, wandb_run=None):
     """
     Trains the model on the given dataloader
     
@@ -60,6 +61,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         train_config: The training configuration
         eval_dataloader: The dataloader containing the eval data
         tokenizer: tokenizer used in the eval for decoding the predicitons
+        wandb_run: The run object for wandb logging
     
     Returns: results dictionary containing average training and validation perplexity and loss
     """
@@ -101,16 +103,18 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         scaler.step(optimizer)
                         scaler.update()
                         optimizer.zero_grad()
-                        pbar.reset(step//gradient_accumulation_steps)
+                        pbar.update()
                 else:
                     # regular backpropagation when fp16 is not used
                     loss.backward()
                     if (step + 1) % gradient_accumulation_steps == 0 or step == len(train_dataloader) - 1:
                         optimizer.step()
                         optimizer.zero_grad()
-                        pbar.reset(step//gradient_accumulation_steps)
+                        pbar.update()
                 
                 pbar.set_description(f"Training Epoch: {epoch}/{train_config.num_epochs}, step {step}/{len(train_dataloader)} completed (loss: {loss.detach().float()})")
+                if wandb_run is not None:
+                    wandb_run.log({"lr":lr_scheduler.get_lr(), "loss": loss.detach().float(), "epoch": epoch + float(step) / len(train_dataloader)})
                 
         epoch_end_time = time.perf_counter()-epoch_start_time
         epoch_times.append(epoch_end_time)    
@@ -221,6 +225,9 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     #saving the training params including fsdp setting for reference.
     if train_config.enable_fsdp and not train_config.use_peft:
         save_train_params(train_config, fsdp_config, rank)
+
+    if wandb_run is not None:
+        wandb_run.finish()
         
     return results
 
