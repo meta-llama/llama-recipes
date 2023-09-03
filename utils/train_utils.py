@@ -412,8 +412,6 @@ def save_train_params(train_config, fsdp_config, rank):
     train_config.dist_checkpoint_root_folder
     + "/"
     + train_config.dist_checkpoint_folder
-    + "-"
-    + train_config.model_name
     )
 
     save_dir = Path.cwd() / folder_name

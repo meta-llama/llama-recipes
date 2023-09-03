@@ -26,3 +26,13 @@ class alpaca_dataset:
     train_split: str = "train"
     test_split: str = "val"
     data_path: str = "ft_datasets/alpaca_data.json"
+
+
+@dataclass
+class completion_dataset:
+    dataset: str = "completion_dataset"
+    train_split: str = "train"
+    test_split: str = "val"
+    data_path: str = "ft_datasets/completion.json"
+    input_length: int = 4096
+    disable_packing: bool = False
