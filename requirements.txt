@@ -9,7 +9,7 @@ black[jupyter]
 datasets
 fire
 git+https://github.com/huggingface/peft.git
-transformers>=4.31.0
+git+https://github.com/huggingface/transformers.git@main
 sentencepiece
 py7zr
 scipy

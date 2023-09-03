@@ -17,7 +17,7 @@ from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DistributedSampler
 from transformers import (
     LlamaForCausalLM,
-    LlamaTokenizerFast,
+    AutoTokenizer,
     LlamaConfig,
     default_data_collator,
     get_cosine_schedule_with_warmup
@@ -119,7 +119,7 @@ def main(**kwargs):
         model.to(torch.bfloat16)
 
     # Load the tokenizer and add special tokens
-    tokenizer = LlamaTokenizerFast.from_pretrained(train_config.model_name, model_max_length=4096)
+    tokenizer = AutoTokenizer.from_pretrained(train_config.model_name, model_max_length=4096, use_fast=True)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.pad_token_id = tokenizer.eos_token_id
     if train_config.use_peft:
