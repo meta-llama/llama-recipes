@@ -230,7 +230,12 @@ def main(**kwargs):
             lr=train_config.lr,
             weight_decay=0.0,
         )
-    scheduler = StepLR(optimizer, step_size=1, gamma=train_config.gamma)
+
+    if train_config.use_cosine_scheduler:
+        total_length = len(train_dataloader)//train_config.gradient_accumulation_steps
+        scheduler = get_cosine_schedule_with_warmup(optimizer, train_config.warmup_steps, total_length * train_config.num_epochs)
+    else:
+        scheduler = StepLR(optimizer, step_size=1, gamma=train_config.gamma)
 
     wandb_run = None
     if wandb_config.enable_wandb and (not train_config.enable_fsdp or rank == 0):
@@ -250,6 +255,7 @@ def main(**kwargs):
         local_rank if train_config.enable_fsdp else None,
         rank if train_config.enable_fsdp else None,
         wandb_run,
+        train_config.use_cosine_scheduler
     )
     if not train_config.enable_fsdp or rank==0:
         [print(f'Key: {k}, Value: {v}') for k, v in results.items()]
