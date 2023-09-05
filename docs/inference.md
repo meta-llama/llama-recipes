@@ -45,7 +45,7 @@ Padding would be required for batch inference. In this this [example](../example
 The inference folder also includes a chat completion example, that adds built-in safety features in fine-tuned models to the prompt tokens. To run the example:
 
 ```bash
-python examples/chat_completion/chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file examples/inference/chats.json  --quantization --use_auditnlg
+python examples/chat_completion/chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file examples/chat_completion/chats.json  --quantization --use_auditnlg
 
 ```
 **Code Llama**
@@ -68,7 +68,7 @@ To run the code completion example:
 
 ```bash
 
-python examples/code_llama/code_completion_example.py --model_name MODEL_NAME  --prompt_file code_completion_prompt.txt --temperature 0.2 --top_p 0.9
+python examples/code_llama/code_completion_example.py --model_name MODEL_NAME  --prompt_file examples/code_llama/code_completion_prompt.txt --temperature 0.2 --top_p 0.9
 
 ```
 
@@ -76,7 +76,7 @@ To run the code infilling example:
 
 ```bash
 
-python examples/code_llama/code_infilling_example.py --model_name MODEL_NAME --prompt_file code_infilling_prompt.txt --temperature 0.2 --top_p 0.9
+python examples/code_llama/code_infilling_example.py --model_name MODEL_NAME --prompt_file examples/code_llama/code_infilling_prompt.txt --temperature 0.2 --top_p 0.9
 
 ```
 
