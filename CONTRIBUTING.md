@@ -29,3 +29,15 @@ outlined on that page and do not file a public issue.
 ## License
 By contributing to llama-recipes, you agree that your contributions will be licensed
 under the LICENSE file in the root directory of this source tree.
+
+## Tests
+Llama-recipes currently comes with a basic set of unit tests but we strive to increase our test coverage in the future in order to mitigate silent errors.
+When submitting a new feature PR please make sure to cover the newly added code with a unit test.
+We use **pytest** for our unit tests and to run them locally you need to install llama-recipes with optional [tests] dependencies enabled:
+```
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[tests]
+```
+The unit tests can be found in the [tests](./tests/) folder and you can run them from the main directory using:
+```
+python -m pytest tests/
+```
