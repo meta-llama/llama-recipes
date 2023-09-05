@@ -16,7 +16,7 @@ Please see [README.md](../README.md) for details.
 ## Inference 
 So far, we have provide the following inference examples:
 
-1. [inference script](./inference.py) script provides support for Hugging Face accelerate, PEFT and FSDP fine tuned models.
+1. [inference script](./inference.py) script provides support for Hugging Face accelerate, PEFT and FSDP fine tuned models. It also demonstrates safety features to protect the user from toxic or harmful content.
 
 2. [vllm/inference.py](./vllm/inference.py) script takes advantage of vLLM's paged attention concept for low latency.
 
@@ -28,4 +28,6 @@ So far, we have provide the following inference examples:
 
 For more in depth information on inference including inference safety checks and examples, see the inference documentation [here](../docs/inference.md).
 
-**Note** The **vLLM** example requires additional dependencies. Please refer to installation section of the main [README.md](../README.md#install-with-optional-dependencies) for details
+**Note** The [sensitive topics safety checker](../src/llama_recipes/inference/safety_utils.py) utilizes AuditNLG which is an optional dependency. Please refer to installation section of the main [README.md](../README.md#install-with-optional-dependencies) for details.
+
+**Note** The **vLLM** example requires additional dependencies. Please refer to installation section of the main [README.md](../README.md#install-with-optional-dependencies) for details.
