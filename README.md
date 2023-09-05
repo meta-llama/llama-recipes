@@ -33,7 +33,7 @@ pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-
 To install from source e.g. for development use this command. We're using hatchling as our build backend which requires an up-to-date pip as well as setuptools package.
 ```
 pip install -U pip setuptools
-pip install -e --extra-index-url https://download.pytorch.org/whl/test/cu118 .
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .
 ```
 ## Install with optional dependencies
 LLama-recipes offers the installation of optional packages. There are two optional dependenciy groups.
