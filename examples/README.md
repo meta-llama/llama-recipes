@@ -1,6 +1,7 @@
 # Examples
 
 This folder contains finetuning and inference examples for Llama 2.
+For the full documentation on these examples please refer to [docs/inference.md](../docs/inference.md)
 
 ## Finetuning
 
