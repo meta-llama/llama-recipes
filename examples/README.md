@@ -14,13 +14,17 @@ python examnples/finetuning.py <parameters>
 Please see [README.md](../README.md) for details.
 
 ## Inference 
-So far, we have provided support for three methods of inference:
+So far, we have provide the following inference examples:
 
 1. [inference script](./inference.py) script provides support for Hugging Face accelerate, PEFT and FSDP fine tuned models.
 
 2. [vllm/inference.py](./vllm/inference.py) script takes advantage of vLLM's paged attention concept for low latency.
 
 3. The [hf_text_generation_inference](./hf_text_generation_inference/README.md) folder contains information on Hugging Face Text Generation Inference (TGI).
+
+4. A [chat completion](./chat_completion/chat_completion.py) example highlighting the handling of chat dialogs.
+
+5. [Code Llama](./code_llama/) folder which provides examples for [code completion](./code_llama/code_completion_example.py) and [code infilling](./code_llama/code_infilling_example.py).
 
 For more in depth information on inference including inference safety checks and examples, see the inference documentation [here](../docs/inference.md).
 
