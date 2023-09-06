@@ -6,7 +6,7 @@ from typing import ClassVar, List
 
 @dataclass
 class lora_config:
-     r: int=8
+     r: int=64
      lora_alpha: int=32
      target_modules: ClassVar[List[str]]= ["q_proj", "v_proj"]
      bias= "none"
