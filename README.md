@@ -36,12 +36,12 @@ pip install -U pip setuptools
 pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .
 ```
 ## Install with optional dependencies
-LLama-recipes offers the installation of optional packages. There are three optional dependenciy groups.
+Llama-recipes offers the installation of optional packages. There are three optional dependency groups.
 To run the unit tests we can install the required dependencies with:
 ```
 pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[tests]
 ```
-For the vllm example we need additional requirements that can be installed with:
+For the vLLM example we need additional requirements that can be installed with:
 ```
 pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[vllm]
 ```
