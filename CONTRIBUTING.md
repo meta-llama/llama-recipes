@@ -31,7 +31,7 @@ By contributing to llama-recipes, you agree that your contributions will be lice
 under the LICENSE file in the root directory of this source tree.
 
 ## Tests
-Llama-recipes currently comes with a basic set of unit tests but we strive to increase our test coverage in the future in order to mitigate silent errors.
+Llama-recipes currently comes with a basic set of unit tests (covering the parts of the main training script and training loop) but we strive to increase our test coverage in the future in order to mitigate silent errors.
 When submitting a new feature PR please make sure to cover the newly added code with a unit test.
 Run the tests locally to ensure the new feature does not break an old one.
 We use **pytest** for our unit tests and to run them locally you need to install llama-recipes with optional [tests] dependencies enabled:
