@@ -35,6 +35,11 @@ To install from source e.g. for development use this command. We're using hatchl
 pip install -U pip setuptools
 pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .
 ```
+For development and contributing to llama-recipes please install all optional dependencies:
+```
+pip install -U pip setuptools
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .[tests,auditnlg,vllm]
+```
 ## Install with optional dependencies
 Llama-recipes offers the installation of optional packages. There are three optional dependency groups.
 To run the unit tests we can install the required dependencies with:

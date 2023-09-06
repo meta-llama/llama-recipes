@@ -38,6 +38,11 @@ We use **pytest** for our unit tests and to run them locally you need to install
 ```
 pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[tests]
 ```
+For development and contributing to llama-recipes please install from source with all optional dependencies:
+```
+pip install -U pip setuptools
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .[tests,auditnlg,vllm]
+```
 The unit tests can be found in the [tests](./tests/) folder and you can run them from the main directory using:
 ```
 python -m pytest tests/
