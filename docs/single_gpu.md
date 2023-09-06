@@ -9,15 +9,9 @@ To run fine-tuning on a single GPU, we will  make use of two packages
 Given combination of PEFT and Int8 quantization, we would be able to fine_tune a Llama 2 7B model on one consumer grade GPU such as A10.
 
 ## Requirements 
-To run the examples, make sure to install the requirements using 
+To run the examples, make sure to install the llama-recipes package (See [README.md](../README.md) for details).
 
-```bash
-
-pip install -r requirements.txt
-
-```
-
-**Please note that the above requirements.txt will install PyTorch 2.0.1 version, in case you want to run FSDP + PEFT, please make sure to install PyTorch nightlies.**
+**Please note that the llama-recipes package will install PyTorch 2.0.1 version, in case you want to run FSDP + PEFT, please make sure to install PyTorch nightlies.**
 
 ## How to run it?
 
@@ -26,7 +20,7 @@ Get access to a machine with one GPU or if using a multi-GPU machine please make
 
 ```bash
 
-python ../llama_finetuning.py  --use_peft --peft_method lora --quantization --use_fp16 --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization --use_fp16 --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
 
 ```
 The args used in the command above are:
@@ -40,14 +34,14 @@ The args used in the command above are:
 
 ## How to run with different datasets?
 
-Currently 4 datasets are supported that can be found in [Datasets config file](../configs/datasets.py).
+Currently 4 datasets are supported that can be found in [Datasets config file](../src/llama_recipes/configs/datasets.py).
 
-* `grammar_dataset` : use this [notebook](../ft_datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process theJfleg and C4 200M datasets for grammar checking.
+* `grammar_dataset` : use this [notebook](../src/llama_recipes/datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process theJfleg and C4 200M datasets for grammar checking.
 
 * `alpaca_dataset` : to get this open source data please download the `aplaca.json` to `ft_dataset` folder.
 
 ```bash
-wget -P ft_datasets https://raw.githubusercontent.com/tatsu-lab/stanford_alpaca/main/alpaca_data.json
+wget -P src/llama_recipes/datasets https://raw.githubusercontent.com/tatsu-lab/stanford_alpaca/main/alpaca_data.json
 ```
 
 * `samsum_dataset`
@@ -57,22 +51,22 @@ to run with each of the datasets set the `dataset` flag in the command as shown 
 ```bash
 # grammer_dataset
 
-python ../llama_finetuning.py  --use_peft --peft_method lora --quantization  --dataset grammar_dataset --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization  --dataset grammar_dataset --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
 
 # alpaca_dataset
 
-python ../llama_finetuning.py  --use_peft --peft_method lora --quantization  --dataset alpaca_dataset --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization  --dataset alpaca_dataset --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
 
 
 # samsum_dataset
 
-python ../llama_finetuning.py  --use_peft --peft_method lora --quantization  --dataset samsum_dataset --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization  --dataset samsum_dataset --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
 
 ```
 
 ## Where to configure settings?
 
-* [Training config file](../configs/training.py) is the main config file that help to specify the settings for our run can be found in
+* [Training config file](../src/llama_recipes/configs/training.py) is the main config file that help to specify the settings for our run can be found in
 
 It let us specify the training settings, everything from `model_name` to `dataset_name`, `batch_size` etc. can be set here. Below is the list of supported settings:
 
@@ -106,6 +100,6 @@ save_optimizer: bool=False
 
 ```
 
-* [Datasets config file](../configs/datasets.py) provides the available options for datasets.
+* [Datasets config file](../src/llama_recipes/configs/datasets.py) provides the available options for datasets.
 
-* [peft config file](../configs/peft.py) provides the supported PEFT methods and respective settings that can be modified.
+* [peft config file](../src/llama_recipes/configs/peft.py) provides the supported PEFT methods and respective settings that can be modified.

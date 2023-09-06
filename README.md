@@ -20,9 +20,45 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
 
 # Quick Start
 
-[Llama 2 Jupyter Notebook](quickstart.ipynb): This jupyter notebook steps you through how to finetune a Llama 2 model on the text summarization task using the [samsum](https://huggingface.co/datasets/samsum). The notebook uses parameter efficient finetuning (PEFT) and int8 quantization to finetune a 7B on a single GPU like an A10 with 24GB gpu memory.
+[Llama 2 Jupyter Notebook](./examples/quickstart.ipynb): This jupyter notebook steps you through how to finetune a Llama 2 model on the text summarization task using the [samsum](https://huggingface.co/datasets/samsum). The notebook uses parameter efficient finetuning (PEFT) and int8 quantization to finetune a 7B on a single GPU like an A10 with 24GB gpu memory.
 
-**Note** All the setting defined in [config files](./configs/) can be passed as args through CLI when running the script, there is no need to change from config files directly.
+# Installation
+Llama-recipes provides a pip distribution for easy install and usage in other projects. Alternatively, it can be installed from source.
+
+## Install with pip
+```
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes
+```
+## Install from source
+To install from source e.g. for development use this command. We're using hatchling as our build backend which requires an up-to-date pip as well as setuptools package.
+```
+pip install -U pip setuptools
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .
+```
+For development and contributing to llama-recipes please install all optional dependencies:
+```
+pip install -U pip setuptools
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .[tests,auditnlg,vllm]
+```
+## Install with optional dependencies
+Llama-recipes offers the installation of optional packages. There are three optional dependency groups.
+To run the unit tests we can install the required dependencies with:
+```
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[tests]
+```
+For the vLLM example we need additional requirements that can be installed with:
+```
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[vllm]
+```
+To use the sensitive topics safety checker install with:
+```
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[auditnlg]
+```
+Optional dependencies can also be combines with [option1,option2].
+
+⚠️ **Note** ⚠️  Some features (especially fine-tuning with FSDP + PEFT) currently require PyTorch nightlies to be installed. Please make sure to install the nightlies if you're using these features following [this guide](https://pytorch.org/get-started/locally/).
+
+**Note** All the setting defined in [config files](src/llama_recipes/configs/) can be passed as args through CLI when running the script, there is no need to change from config files directly.
 
 **Note** In case need to run PEFT model with FSDP, please make sure to use the PyTorch Nightlies.
 
@@ -34,17 +70,6 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
 * [Adding custom datasets](./docs/Dataset.md)
 * [Inference](./docs/inference.md)
 * [FAQs](./docs/FAQ.md)
-
-## Requirements
-To run the examples, make sure to install the requirements using
-
-```bash
-# python 3.9 or higher recommended
-pip install -r requirements.txt
-
-```
-
-**Please note that the above requirements.txt will install PyTorch 2.0.1 version, in case you want to run FSDP + PEFT, please make sure to install PyTorch nightlies.**
 
 # Where to find the models?
 
@@ -80,7 +105,7 @@ All the parameters in the examples and recipes below need to be further tuned to
 
 * Default dataset and other LORA config has been set to `samsum_dataset`.
 
-* Make sure to set the right path to the model in the [training config](./configs/training.py).
+* Make sure to set the right path to the model in the [training config](src/llama_recipes/configs/training.py).
 
 ### Single GPU:
 
@@ -88,7 +113,7 @@ All the parameters in the examples and recipes below need to be further tuned to
 #if running on multi-gpu machine
 export CUDA_VISIBLE_DEVICES=0
 
-python llama_finetuning.py  --use_peft --peft_method lora --quantization --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
 
 ```
 
@@ -96,7 +121,7 @@ Here we make use of Parameter Efficient Methods (PEFT) as described in the next 
 
 **Note** if you are running on a machine with multiple GPUs please make sure to only make one of them visible using `export CUDA_VISIBLE_DEVICES=GPU:id`
 
-**Make sure you set [save_model](configs/training.py) in [training.py](configs/training.py) to save the model. Be sure to check the other training settings in [train config](configs/training.py) as well as others in the config folder as needed or they can be passed as args to the training script as well.**
+**Make sure you set `save_model` parameter to save the model. Be sure to check the other training parameter in [train config](src/llama_recipes/configs/training.py) as well as others in the config folder as needed. All parameter can be passed as args to the training script. No need to alter the config files.**
 
 
 ### Multiple GPUs One Node:
@@ -105,7 +130,7 @@ Here we make use of Parameter Efficient Methods (PEFT) as described in the next 
 
 ```bash
 
-torchrun --nnodes 1 --nproc_per_node 4  llama_finetuning.py --enable_fsdp --use_peft --peft_method lora --model_name /patht_of_model_folder/7B --pure_bf16 --output_dir Path/to/save/PEFT/model
+torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp --use_peft --peft_method lora --model_name /patht_of_model_folder/7B --pure_bf16 --output_dir Path/to/save/PEFT/model
 
 ```
 
@@ -116,7 +141,7 @@ Here we use FSDP as discussed in the next section which can be used along with P
 Setting `use_fast_kernels` will enable using of Flash Attention or Xformer memory-efficient kernels based on the hardware being used. This would speed up the fine-tuning job. This has been enabled in `optimum` library from HuggingFace as a one-liner API, please read more [here](https://pytorch.org/blog/out-of-the-box-acceleration/).
 
 ```bash
-torchrun --nnodes 1 --nproc_per_node 4  llama_finetuning.py --enable_fsdp --use_peft --peft_method lora --model_name /patht_of_model_folder/7B --pure_bf16 --output_dir Path/to/save/PEFT/model --use_fast_kernels
+torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp --use_peft --peft_method lora --model_name /patht_of_model_folder/7B --pure_bf16 --output_dir Path/to/save/PEFT/model --use_fast_kernels
 ```
 
 ### Fine-tuning using FSDP Only
@@ -125,7 +150,7 @@ If you are interested in running full parameter fine-tuning without making use o
 
 ```bash
 
-torchrun --nnodes 1 --nproc_per_node 8  llama_finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --use_fast_kernels
+torchrun --nnodes 1 --nproc_per_node 8  examples/finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --use_fast_kernels
 
 ```
 
@@ -135,7 +160,7 @@ If you are interested in running full parameter fine-tuning on the 70B model, yo
 
 ```bash
 
-torchrun --nnodes 1 --nproc_per_node 8 llama_finetuning.py --enable_fsdp --low_cpu_fsdp --pure_bf16 --model_name /patht_of_model_folder/70B --batch_size_training 1 --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned
+torchrun --nnodes 1 --nproc_per_node 8 examples/finetuning.py --enable_fsdp --low_cpu_fsdp --pure_bf16 --model_name /patht_of_model_folder/70B --batch_size_training 1 --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned
 
 ```
 
@@ -153,20 +178,21 @@ You can read more about our fine-tuning strategies [here](./docs/LLM_finetuning.
 # Repository Organization
 This repository is organized in the following way:
 
-[configs](configs/): Contains the configuration files for PEFT methods, FSDP, Datasets.
+[configs](src/llama_recipes/configs/): Contains the configuration files for PEFT methods, FSDP, Datasets.
 
 [docs](docs/): Example recipes for single and multi-gpu fine-tuning recipes.
 
-[ft_datasets](ft_datasets/): Contains individual scripts for each dataset to download and process. Note: Use of any of the datasets should be in compliance with the dataset's underlying licenses (including but not limited to non-commercial uses)
+[datasets](src/llama_recipes/datasets/): Contains individual scripts for each dataset to download and process. Note: Use of any of the datasets should be in compliance with the dataset's underlying licenses (including but not limited to non-commercial uses)
 
+[examples](./examples/): Contains examples script for finetuning and inference of the Llama 2 model as well as how to use them safely.
 
-[inference](inference/): Includes examples for inference for the fine-tuned models and how to use them safely.
+[inference](src/llama_recipes/inference/): Includes modules for inference for the fine-tuned models.
 
-[model_checkpointing](model_checkpointing/): Contains FSDP checkpoint handlers.
+[model_checkpointing](src/llama_recipes/model_checkpointing/): Contains FSDP checkpoint handlers.
 
-[policies](policies/): Contains FSDP scripts to provide different policies, such as mixed precision, transformer wrapping policy and activation checkpointing along with any precision optimizer (used for running FSDP with pure bf16 mode).
+[policies](src/llama_recipes/policies/): Contains FSDP scripts to provide different policies, such as mixed precision, transformer wrapping policy and activation checkpointing along with any precision optimizer (used for running FSDP with pure bf16 mode).
 
-[utils](utils/): Utility files for:
+[utils](src/llama_recipes/utils/): Utility files for:
 
 - `train_utils.py` provides training/eval loop and more train utils.
 

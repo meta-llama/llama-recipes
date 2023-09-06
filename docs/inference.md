@@ -1,6 +1,6 @@
 # Inference
 
-For inference we have provided an [inference script](../inference/inference.py). Depending on the type of finetuning performed during training the [inference script](../inference/inference.py) takes different arguments.
+For inference we have provided an [inference script](../examples/inference.py). Depending on the type of finetuning performed during training the [inference script](../examples/inference.py) takes different arguments.
 To finetune all model parameters the output dir of the training has to be given as --model_name argument.
 In the case of a parameter efficient method like lora the base model has to be given as --model_name and the output dir of the training has to be given as --peft_model argument.
 Additionally, a prompt for the model in the form of a text file has to be provided. The prompt file can either be piped through standard input or given as --prompt_file parameter.
@@ -15,15 +15,15 @@ Examples:
 
  ```bash
 # Full finetuning of all parameters
-cat <test_prompt_file> | python inference/inference.py --model_name <training_config.output_dir> --use_auditnlg
+cat <test_prompt_file> | python examples/inference.py --model_name <training_config.output_dir> --use_auditnlg
 # PEFT method
-cat <test_prompt_file> | python inference/inference.py --model_name <training_config.model_name> --peft_model <training_config.output_dir> --use_auditnlg
+cat <test_prompt_file> | python examples/inference.py --model_name <training_config.model_name> --peft_model <training_config.output_dir> --use_auditnlg
 # prompt as parameter
-python inference/inference.py --model_name <training_config.output_dir> --prompt_file <test_prompt_file> --use_auditnlg
+python examples/inference.py --model_name <training_config.output_dir> --prompt_file <test_prompt_file> --use_auditnlg
  ```
-The inference folder contains test prompts for summarization use-case:
+The example folder contains test prompts for summarization use-case:
 ```
-inference/samsum_prompt.txt
+examples/samsum_prompt.txt
 ...
 ```
 
@@ -39,20 +39,20 @@ tokenizer.add_special_tokens(
     )
 model.resize_token_embeddings(model.config.vocab_size + 1)
 ```
-Padding would be required for batch inference. In this this [example](../inference/inference.py), batch size = 1 so essentially padding is not required. However,We added the code pointer as an example in case of batch inference.
+Padding would be required for batch inference. In this this [example](../examples/inference.py), batch size = 1 so essentially padding is not required. However,We added the code pointer as an example in case of batch inference.
 
 **Chat completion**
 The inference folder also includes a chat completion example, that adds built-in safety features in fine-tuned models to the prompt tokens. To run the example:
 
 ```bash
-python inference/chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file inference/chats.json  --quantization --use_auditnlg
+python examples/chat_completion/chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file examples/chat_completion/chats.json  --quantization --use_auditnlg
 
 ```
 **Code Llama**
 
 Code llama was recently released with three flavors, base-model that support multiple programming languages, Python fine-tuned model and an instruction fine-tuned and aligned variation of Code Llama, please read more [here](https://ai.meta.com/blog/code-llama-large-language-model-coding/). Also note that the Python fine-tuned model and 34B models are not trained on infilling objective, hence can not be used for infilling use-case.
 
-Find the scripts to run Code Llama [here](../inference/code-llama/), where there are two examples of running code completion and infilling.
+Find the scripts to run Code Llama [here](../examples/code_llama/), where there are two examples of running code completion and infilling.
 
 **Note** Please find the right model on HF side [here](https://huggingface.co/codellama). 
 
@@ -68,7 +68,7 @@ To run the code completion example:
 
 ```bash
 
-python code_completion_example.py --model_name MODEL_NAME  --prompt_file code_completion_prompt.txt --temperature 0.2 --top_p 0.9
+python examples/code_llama/code_completion_example.py --model_name MODEL_NAME  --prompt_file examples/code_llama/code_completion_prompt.txt --temperature 0.2 --top_p 0.9
 
 ```
 
@@ -76,7 +76,7 @@ To run the code infilling example:
 
 ```bash
 
-python code_infilling_example.py --model_name MODEL_NAME --prompt_file code_infilling_prompt.txt --temperature 0.2 --top_p 0.9
+python examples/code_llama/code_infilling_example.py --model_name MODEL_NAME --prompt_file examples/code_llama/code_infilling_prompt.txt --temperature 0.2 --top_p 0.9
 
 ```
 
@@ -85,25 +85,25 @@ python code_infilling_example.py --model_name MODEL_NAME --prompt_file code_infi
 Setting `use_fast_kernels` will enable using of Flash Attention or Xformer memory-efficient kernels based on the hardware being used. This would speed up inference when used for batched inputs. This has been enabled in `optimum` library from HuggingFace as a one-liner API, please read more [here](https://pytorch.org/blog/out-of-the-box-acceleration/).
 
 ```bash
-python inference/chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file inference/chats.json  --quantization --use_auditnlg --use_fast_kernels
+python examples/chat_completion/chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file examples/chat_completion/chats.json  --quantization --use_auditnlg --use_fast_kernels
 
-python inference/inference.py --model_name <training_config.output_dir> --peft_model <training_config.output_dir> --prompt_file <test_prompt_file> --use_auditnlg --use_fast_kernels
+python examples/inference.py --model_name <training_config.output_dir> --peft_model <training_config.output_dir> --prompt_file <test_prompt_file> --use_auditnlg --use_fast_kernels
 
 ```
 
 ## Loading back FSDP checkpoints
 
-In case you have fine-tuned your model with pure FSDP and saved the checkpoints with "SHARDED_STATE_DICT" as shown [here](../configs/fsdp.py), you can use this converter script to convert the FSDP Sharded checkpoints into HuggingFace checkpoints. This enables you to use the inference script normally as mentioned above.
+In case you have fine-tuned your model with pure FSDP and saved the checkpoints with "SHARDED_STATE_DICT" as shown [here](../src/llama_recipes/configs/fsdp.py), you can use this converter script to convert the FSDP Sharded checkpoints into HuggingFace checkpoints. This enables you to use the inference script normally as mentioned above.
 **To convert the checkpoint use the following command**:
 
 This is helpful if you have fine-tuned you model using FSDP only as follows:
 
 ```bash
-torchrun --nnodes 1 --nproc_per_node 8  llama_finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16
+torchrun --nnodes 1 --nproc_per_node 8  examples/finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16
 ```
 Then convert your FSDP checkpoint to HuggingFace checkpoints using:
 ```bash
- python inference/checkpoint_converter_fsdp_hf.py --fsdp_checkpoint_path  PATH/to/FSDP/Checkpoints --consolidated_model_path PATH/to/save/checkpoints --HF_model_path_or_name PATH/or/HF/model_name
+ python -m llama_recipes.inference.checkpoint_converter_fsdp_hf --fsdp_checkpoint_path  PATH/to/FSDP/Checkpoints --consolidated_model_path PATH/to/save/checkpoints --HF_model_path_or_name PATH/or/HF/model_name
 
  # --HF_model_path_or_name specifies the HF Llama model name or path where it has config.json and tokenizer.json
  ```
@@ -112,7 +112,7 @@ By default, training parameter are saved in `train_params.yaml` in the path wher
 Then run inference using:
 
 ```bash
-python inference/inference.py --model_name <training_config.output_dir> --prompt_file <test_prompt_file>
+python examples/inference.py --model_name <training_config.output_dir> --prompt_file <test_prompt_file> 
 
 ```
 
@@ -135,12 +135,12 @@ Alternate inference options include:
 
 [**vLLM**](https://vllm.readthedocs.io/en/latest/getting_started/quickstart.html):
 To use vLLM you will need to install it using the instructions [here](https://vllm.readthedocs.io/en/latest/getting_started/installation.html#installation).
-Once installed, you can use the vLLM_ineference.py script provided [here](../inference/vLLM_inference.py).
+Once installed, you can use the vllm/inference.py script provided [here](../examples/vllm/inference.py).
 
 Below is an example of how to run the vLLM_inference.py script found within the inference folder.
 
 ``` bash
-python vLLM_inference.py --model_name <PATH/TO/MODEL/7B>
+python examples/vllm/inference.py --model_name <PATH/TO/MODEL/7B>
 ```
 
-[**TGI**](https://github.com/huggingface/text-generation-inference): Text Generation Inference (TGI) is another inference option available to you. For more information on how to set up and use TGI see [here](../inference/hf-text-generation-inference/README.md).
+[**TGI**](https://github.com/huggingface/text-generation-inference): Text Generation Inference (TGI) is another inference option available to you. For more information on how to set up and use TGI see [here](../examples/hf_text_generation_inference/README.md).
