@@ -9,7 +9,7 @@ To run fine-tuning on multi-GPUs, we will  make use of two packages:
 Given the combination of PEFT and FSDP, we would be able to fine tune a Llama 2 model on multiple GPUs in one node or multi-node.
 
 ## Requirements 
-To run the examples, make sure to install the llama-recipes package and clone the github repository in order to use the provided [`llama_finetuning.py`](../llama_finetuning.py) script with torchrun (See [README.md](../README.md) for details).
+To run the examples, make sure to install the llama-recipes package and clone the github repository in order to use the provided [`examples/finetuning.py`](../examples/finetuning.py) script with torchrun (See [README.md](../README.md) for details).
 
 **Please note that the llama_recipes package will install PyTorch 2.0.1 version, in case you want to run FSDP + PEFT, please make sure to install PyTorch nightlies.**
 
