@@ -35,4 +35,4 @@ For more in depth information on inference including inference safety checks and
 
 ## Train on custom dataset
 To show how to train a model on a custom dataset we provide an example to generate a custom dataset in [custom_dataset.py](./custom_dataset.py).
-The usage of the custom dataset is further decribed in the datasets [README](../docs/Dataset.md#training-on-custom-data).
+The usage of the custom dataset is further described in the datasets [README](../docs/Dataset.md#training-on-custom-data).
