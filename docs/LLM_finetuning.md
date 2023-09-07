@@ -1,42 +1,42 @@
-## LLM Finetuning
+## LLM Fine-Tuning
 
-Here we discuss finetuning Llama 2 with a couple of different recipes. We will cover two scenarios here:
+Here we discuss fine-tuning Llama 2 with a couple of different recipes. We will cover two scenarios here:
 
 
-## 1. **Parameter Efficient Model Finetuning**
+## 1. **Parameter Efficient Model Fine-Tuning**
  This helps make the fine-tuning process more affordable even on 1 consumer grade GPU. These methods enable us to keep the whole model frozen and to just add tiny learnable parameters/ layers into the model. In this way, we just train a very tiny portion of the parameters. The most famous method in this category is [LORA](https://arxiv.org/pdf/2106.09685.pdf), LLaMA Adapter and Prefix-tuning.
 
 
 These methods will address three aspects:
 
 
-- **Cost of full finetuning** – these methods only train a small set of extra parameters instead of the full model, this makes it possible to run these on consumer GPUs.
+- **Cost of full fine-tuning** – these methods only train a small set of extra parameters instead of the full model, this makes it possible to run these on consumer GPUs.
 
 - **Cost of deployment** – for each fine-tuned downstream model we need to deploy a separate model; however, when using these methods, only a small set of parameters (few MB instead of several GBs) of the pretrained model can do the job. In this case, for each task we only add these extra parameters on top of the pretrained model so pretrained models can be assumed as backbone and these parameters as heads for the model on different tasks.
 
-- **Catastrophic forgetting** — these methods also help with forgetting the first task that can happen in finetunings.
+- **Catastrophic forgetting** — these methods also help with forgetting the first task that can happen in fine-tunings.
 
 HF [PEFT](https://github.com/huggingface/peft) library provides an easy way of using these methods which we make use of here. Please read more [here](https://huggingface.co/blog/peft).
 
 
 
-## 2. **Full/ Partial Parameter Finetuning**
+## 2. **Full/ Partial Parameter Fine-Tuning**
 
-Full parameter finetuning has its own advantages, in this method there are multiple strategies that can help:
+Full parameter fine-tuning has its own advantages, in this method there are multiple strategies that can help:
 
--  Keep the pretrained model frozen and only finetune the task head for example, the classifier model.
+-  Keep the pretrained model frozen and only fine-tune the task head for example, the classifier model.
 
 
 -  Keep the pretrained model frozen and add a few fully connected layers on the top.
 
 
--  Finetuning on all the layers.
+-  Fine-tuning on all the layers.
 
-You can also keep most of the layers frozen and only finetune a few layers. There are many different techniques to choose from to freeze/unfreeze layers based on different criteria.
+You can also keep most of the layers frozen and only fine-tune a few layers. There are many different techniques to choose from to freeze/unfreeze layers based on different criteria.
 
 <div style="display: flex;">
     <img src="./images/feature-based_FN.png" alt="Image 1" width="250" />
-    <img src="./images/featurebased_FN_.png" alt="Image 2" width="250" />
+    <img src="./images/feature-based_FN_2.png" alt="Image 2" width="250" />
     <img src="./images/full-param-FN.png" alt="Image 3" width="250" />
 </div>
 
