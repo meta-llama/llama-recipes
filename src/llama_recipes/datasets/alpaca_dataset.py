@@ -43,7 +43,6 @@ class InstructionDataset(Dataset):
     def __getitem__(self, index):
         IGNORE_INDEX = -100  # The default setting in CrossEntropyLoss
 
-
         ann = self.ann[index]
         if ann.get("input", "") == "":
             prompt = PROMPT_DICT["prompt_no_input"].format_map(ann)
