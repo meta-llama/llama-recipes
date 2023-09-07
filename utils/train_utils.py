@@ -135,7 +135,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                     print(f"Max XPU memory allocated was {memtrace.peak} GB")
                     print(f"Max XPU memory reserved was {memtrace.max_reserved} GB")
                     print(f"Peak active XPU memory was {memtrace.peak_active_gb} GB")
-                    print(f"Xpu Malloc retires : {memtrace.cuda_malloc_retires}")
+                    print(f"Xpu Malloc retires : {memtrace.xpu_malloc_retires}")
                 else:
                     print(f"Max CUDA memory allocated was {memtrace.peak} GB")
                     print(f"Max CUDA memory reserved was {memtrace.max_reserved} GB")
@@ -147,7 +147,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                 print(f"Max XPU memory allocated was {memtrace.peak} GB")
                 print(f"Max XPU memory reserved was {memtrace.max_reserved} GB")
                 print(f"Peak active XPU memory was {memtrace.peak_active_gb} GB")
-                print(f"Xpu Malloc retires : {memtrace.cuda_malloc_retires}")
+                print(f"Xpu Malloc retires : {memtrace.xpu_malloc_retires}")
             else:
                 print(f"Max CUDA memory allocated was {memtrace.peak} GB")
                 print(f"Max CUDA memory reserved was {memtrace.max_reserved} GB")
