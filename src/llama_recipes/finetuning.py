@@ -44,7 +44,6 @@ from llama_recipes.utils.train_utils import (
 )
 from accelerate.utils import is_xpu_available
 
-
 def main(**kwargs):
     # Update the configuration for the training and sharding process
     update_config((train_config, fsdp_config), **kwargs)
