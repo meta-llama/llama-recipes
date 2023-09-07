@@ -42,8 +42,11 @@ def get_custom_dataset(dataset_config, tokenizer, split: str):
         raise FileNotFoundError(f"Dataset py file {module_path.as_posix()} does not exist or is not a file.")
     
     module = load_module_from_py_file(module_path.as_posix())
-    
-    return getattr(module, func_name)(dataset_config, tokenizer, split)
+    try:
+        return getattr(module, func_name)(dataset_config, tokenizer, split)
+    except AttributeError as e:
+        print(f"It seems like the given method name ({func_name}) is not present in the dataset .py file ({module_path.as_posix()}).")
+        raise e
     
 
 DATASET_PREPROC = {
