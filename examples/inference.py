@@ -10,10 +10,16 @@ import time
 
 import torch
 from transformers import LlamaTokenizer
+<<<<<<< HEAD:examples/inference.py
 
 from llama_recipes.inference.safety_utils import get_safety_checker
 from llama_recipes.inference.model_utils import load_model, load_peft_model
 
+=======
+from safety_utils import get_safety_checker
+from model_utils import load_model, load_peft_model, load_llama_from_config
+from accelerate.utils import is_xpu_available
+>>>>>>> ed7ba99 (enable xpu finetuning and inference):inference/inference.py
 
 def main(
     model_name,
@@ -50,7 +56,10 @@ def main(
         sys.exit(1)
     
     # Set the seeds for reproducibility
-    torch.cuda.manual_seed(seed)
+    if is_xpu_available():
+        torch.xpu.manual_seed(seed)
+    else:
+        torch.cuda.manual_seed(seed)
     torch.manual_seed(seed)
     
     model = load_model(model_name, quantization)
@@ -102,7 +111,15 @@ def main(
         
     batch = tokenizer(user_prompt, padding='max_length', truncation=True, max_length=max_padding_length, return_tensors="pt")
 
+<<<<<<< HEAD:examples/inference.py
     batch = {k: v.to("cuda") for k, v in batch.items()}
+=======
+    batch = tokenizer(user_prompt, return_tensors="pt")
+    if is_xpu_available():
+        batch = {k: v.to("xpu") for k, v in batch.items()}
+    else:
+        batch = {k: v.to("cuda") for k, v in batch.items()}
+>>>>>>> ed7ba99 (enable xpu finetuning and inference):inference/inference.py
     start = time.perf_counter()
     with torch.no_grad():
         outputs = model.generate(
