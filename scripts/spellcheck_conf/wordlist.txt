@@ -1148,3 +1148,5 @@ LoRA
 bitsandbytes
 CLA
 dialogs
+OpenAssistant
+oasst1
