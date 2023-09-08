@@ -27,7 +27,7 @@ def tokenize_dialog(dialog, tokenizer):
     
     combined_tokens = {}  
     for k in dialog_tokens[0].keys():
-        combined_tokens[k] = [list(itertools.chain(*(t[k] for t in dialog_tokens)))]
+        combined_tokens[k] = list(itertools.chain(*(t[k] for t in dialog_tokens)))
     return combined_tokens
 
 

@@ -17,7 +17,7 @@ def test_custom_dataset(step_lr, optimizer, get_model, train, mocker):
         "model_name": "decapoda-research/llama-7b-hf", # We use the tokenizer as a surrogate for llama2 tokenizer here
         "custom_dataset.file": "examples/custom_dataset.py",
         "custom_dataset.train_split": "validation",
-        "batch_size_training": 1,
+        "batch_size_training": 2,
         "use_peft": False,
         }
     
@@ -30,9 +30,9 @@ def test_custom_dataset(step_lr, optimizer, get_model, train, mocker):
     eval_dataloader = args[2]
     tokenizer = args[3]
     
-    assert len(train_dataloader) == 2241
-    assert len(eval_dataloader) == 2241
-    
+    assert len(train_dataloader) == 226
+    assert len(eval_dataloader) == 2*226
+
     STRING = tokenizer.decode(next(iter(train_dataloader))["input_ids"][0], skip_special_tokens=True)
     EXPECTED_STRING = "[INST] Напиши функцию на языке swift, которая сортирует массив целых чисел, а затем выводит его на экран [/INST] Вот функция, "
     
