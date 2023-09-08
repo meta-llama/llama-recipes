@@ -7,17 +7,16 @@ from unittest.mock import patch
 
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
-@patch('llama_recipes.finetuning.LlamaTokenizer.from_pretrained')
 @patch('llama_recipes.finetuning.optim.AdamW')
 @patch('llama_recipes.finetuning.StepLR')
-def test_custom_dataset(step_lr, optimizer, tokenizer, get_model, train, mocker):
+def test_custom_dataset(step_lr, optimizer, get_model, train, mocker):
     from llama_recipes.finetuning import main
-        
-    tokenizer.return_value = mocker.MagicMock(side_effect=lambda x: {"input_ids":[len(x)*[0,]], "attention_mask": [len(x)*[0,]]})
     
     kwargs = {
         "dataset": "custom_dataset",
+        "model_name": "decapoda-research/llama-7b-hf", # We use the tokenizer as a surrogate for llama2 tokenizer here
         "custom_dataset.file": "examples/custom_dataset.py",
+        "custom_dataset.train_split": "validation",
         "batch_size_training": 1,
         "use_peft": False,
         }
@@ -29,13 +28,15 @@ def test_custom_dataset(step_lr, optimizer, tokenizer, get_model, train, mocker)
     args, kwargs = train.call_args
     train_dataloader = args[1]
     eval_dataloader = args[2]
+    tokenizer = args[3]
     
-    VAL_SAMPLES = 818
-    TRAIN_SAMPLES = 14732
-    CONCAT_SIZE = 2048
+    assert len(train_dataloader) == 2241
+    assert len(eval_dataloader) == 2241
     
-    assert len(train_dataloader) == TRAIN_SAMPLES // CONCAT_SIZE
-    assert len(eval_dataloader) == VAL_SAMPLES
+    STRING = tokenizer.decode(next(iter(train_dataloader))["input_ids"][0], skip_special_tokens=True)
+    EXPECTED_STRING = "[INST] Напиши функцию на языке swift, которая сортирует массив целых чисел, а затем выводит его на экран [/INST] Вот функция, "
+    
+    assert STRING.startswith(EXPECTED_STRING)
     
 
 @patch('llama_recipes.finetuning.train')
