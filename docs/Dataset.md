@@ -19,7 +19,7 @@ To supply a custom dataset you need to provide a single .py file which contains 
 ```@python
 def get_custom_dataset(dataset_config, tokenizer, split: str):
 ```
-For an example `get_custom_dataset` you can look at the provided datasets in llama_recipes.datasets or [examples/custom_dataset.py](examples/custom_dataset.py).
+For an example `get_custom_dataset` you can look at the provided datasets in llama_recipes.datasets or [examples/custom_dataset.py](../examples/custom_dataset.py).
 The `dataset_config` in the above signature will be an instance of llama_recipes.configs.dataset.custom_dataset with the modifications made through the command line.
 The split signals wether to return the training or validation dataset.
 The default function name is `get_custom_dataset` but this can be changes as described below.
