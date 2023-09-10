@@ -13,7 +13,7 @@ from llama_recipes.datasets import (
 
 
 DATASET_PREPROC = {
-    "alpaca_dataset": partial(get_alpaca_dataset, max_words=224),
+    "alpaca_dataset": partial(get_alpaca_dataset, max_words=2024),
     "grammar_dataset": get_grammar_dataset,
     "samsum_dataset": get_samsum_dataset,
 }

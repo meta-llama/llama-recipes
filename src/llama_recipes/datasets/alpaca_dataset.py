@@ -68,6 +68,7 @@ class InstructionDataset(Dataset):
             example = torch.cat((example, torch.zeros(padding, dtype=torch.int64) - 1))
         # we truncate the prompt and always keep the response
         elif padding <= 0:
+            print (f'Truncating: {self.max_words} padding: {padding}')
             prompt = prompt[: self.max_words - response.shape[0]]
             example = torch.cat((prompt, response))
 
