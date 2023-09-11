@@ -5,21 +5,22 @@
 
 import copy
 import json
-
+import os
 import torch
 from torch.utils.data import Dataset
 
+RESPONSE_PROMPT = "\n\n### Response:{output}"
 
 PROMPT_DICT = {
     "prompt_input": (
         "Below is an instruction that describes a task, paired with an input that provides further context. "
         "Write a response that appropriately completes the request.\n\n"
-        "### Instruction:\n{instruction}\n\n### Input:\n{input}\n\n### Response:"
+        "### Instruction:\n{instruction}\n\n### Input:\n{input}"
     ),
     "prompt_no_input": (
         "Below is an instruction that describes a task. "
         "Write a response that appropriately completes the request.\n\n"
-        "### Instruction:\n{instruction}\n\n### Response:"
+        "### Instruction:\n{instruction}"
     ),
 }
 
@@ -42,26 +43,35 @@ class InstructionDataset(Dataset):
     def __getitem__(self, index):
         IGNORE_INDEX = -100  # The default setting in CrossEntropyLoss
 
-
         ann = self.ann[index]
         if ann.get("input", "") == "":
             prompt = PROMPT_DICT["prompt_no_input"].format_map(ann)
         else:
             prompt = PROMPT_DICT["prompt_input"].format_map(ann)
-        example = prompt + ann["output"]
+
         prompt = torch.tensor(
             self.tokenizer.encode(prompt), dtype=torch.int64
         )
-        example = self.tokenizer.encode(example)
-        example.append(self.tokenizer.eos_token_id)
-        example = torch.tensor(
-            example, dtype=torch.int64
+
+        response = RESPONSE_PROMPT.format_map(ann)
+        response = self.tokenizer.encode(response)
+        response.append(self.tokenizer.eos_token_id)
+
+        response = torch.tensor(
+            response, dtype=torch.int64
         )
-        padding = self.max_words - example.shape[0]
+
+        padding = self.max_words - (prompt.shape[0] + response.shape[0])
+        print (f'max words: {self.max_words} padding: {padding}' )
         if padding > 0:
+            example = torch.cat((prompt, response))
             example = torch.cat((example, torch.zeros(padding, dtype=torch.int64) - 1))
-        elif padding < 0:
-            example = example[: self.max_words]
+        # we truncate the prompt and always keep the response
+        elif padding <= 0:
+            print (f'Truncating: {self.max_words} padding: {padding}')
+            prompt = prompt[: self.max_words - response.shape[0]]
+            example = torch.cat((prompt, response))
+
         labels = copy.deepcopy(example)
         labels[: len(prompt)] = -1
         example_mask = example.ge(0)
