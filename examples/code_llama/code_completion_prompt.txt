@@ -1,0 +1,7 @@
+import argparse
+
+def main(string: str):
+    print(string)
+    print(string[::-1])
+    
+if __name__ == "__main__":
