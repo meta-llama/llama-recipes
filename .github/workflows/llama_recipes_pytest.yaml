@@ -1,6 +1,8 @@
 name: llama-recipes_pytest
 run-name: ${{ github.actor }} Triggered Action.
-on: [push]
+# on: [push]
+on:
+  workflow_dispatch # Only triggering workflow manually.
 env:
   AWS_REGION : "us-west-2"
   AWS_ACCOUNT: "320567679581"
