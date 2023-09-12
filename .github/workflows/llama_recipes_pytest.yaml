@@ -66,12 +66,11 @@ jobs:
           pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e '.[tests,auditnlg,vllm]'
           pip list 
 
-      - name: "Running llama-recipes pytest tests on Self Hosted EC2 Runner"
+      - name: "Running llama-recipes pytest tests on Self Hosted ${{ env.AWS_EC2_TYPE }} EC2 Runner"
         run: |
-          echo $PWD
           echo $GITHUB_WORKSPACE
-          # cd ~/llama-recipes
-          # python3 -m pytest
+          cd $GITHUB_WORKSPACE 
+          python3 -m pytest
 
   stop-runner:
     name: Stop self-hosted EC2 runner
