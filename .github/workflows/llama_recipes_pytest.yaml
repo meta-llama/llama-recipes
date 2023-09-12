@@ -54,8 +54,6 @@ jobs:
     needs: start-self-hosted-ec2-runner                              # required to start the main job when the runner is ready
     runs-on: ${{ needs.start-self-hosted-ec2-runner.outputs.label }} # run the job on the newly created runner
     steps:
-      # - name: "Running 'ls -la' on Self Hosted EC2 Runner"
-      #   run: ls -la
 
       - name: "Checkout repository"
         uses: actions/checkout@v4
@@ -63,12 +61,13 @@ jobs:
       - name: "Installing dependencies from requirementst.txt file."
         run: |
           pip install -U pip setuptools
+          pip install -r requirements.txt
           pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e '.[tests,auditnlg,vllm]'
-          pip list 
+          # pip list 
 
-      - name: "Running llama-recipes pytest tests on Self Hosted ${{ env.AWS_EC2_TYPE }} EC2 Runner"
+      - name: "Running llama-recipes pytest tests on Self Hosted EC2 Runner"
         run: |
-          echo $GITHUB_WORKSPACE
+          echo "Running llama-recipes pytest tests on Self Hosted ${{ env.AWS_EC2_TYPE }} EC2 Runner"
           cd $GITHUB_WORKSPACE 
           python3 -m pytest
 
