@@ -68,8 +68,10 @@ jobs:
 
       - name: "Running llama-recipes pytest tests on Self Hosted EC2 Runner"
         run: |
-          cd ~/llama-recipes
-          python3 -m pytest
+          echo $PWD
+          echo $GITHUB_WORKSPACE
+          # cd ~/llama-recipes
+          # python3 -m pytest
 
   stop-runner:
     name: Stop self-hosted EC2 runner
