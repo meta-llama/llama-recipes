@@ -72,18 +72,18 @@ jobs:
           echo "Running llama-recipes pytest tests on Self Hosted ${{ env.AWS_EC2_TYPE }} EC2 Runner"
           cd $GITHUB_WORKSPACE
           python3 -m pytest --junitxml="$GITHUB_WORKSPACE/result.xml"
-          # ls -la $GITHUB_WORKSPACE 
-          # cat $GITHUB_WORKSPACE/result.xml
+          ls -la $GITHUB_WORKSPACE 
+          cat $GITHUB_WORKSPACE/result.xml
         
       - name: "Publish Test Results"
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: |
-            $GITHUB_WORKSPACE/result.xml
+            ${GITHUB_WORKSPACE}/result.xml
+            **/*.xml
 
         
-
   stop-runner:
     name: Stop self-hosted EC2 runner
     needs:
