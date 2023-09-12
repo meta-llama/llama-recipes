@@ -57,6 +57,9 @@ jobs:
       # - name: "Running 'ls -la' on Self Hosted EC2 Runner"
       #   run: ls -la
 
+      - name: "Checkout repository"
+        run: actions/checkout@v4
+
       - name: "Installing dependencies from requirementst.txt file."
         run: |
           pip install -U pip setuptools
@@ -64,7 +67,9 @@ jobs:
           pip list 
 
       - name: "Running llama-recipes pytest tests on Self Hosted EC2 Runner"
-        run: python3 -m pytest
+        run: |
+          cd $HOME/llama-recipes
+          python3 -m pytest
 
   stop-runner:
     name: Stop self-hosted EC2 runner
