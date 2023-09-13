@@ -1,7 +1,3 @@
-# TODO:
-# 1. change trigger from workflow_dispatch to "push"/"pull-request" with certain restrictions: branch or path
-# 2. Add all sensitive information to GitHub secrest. i.e. env.AWS_ACCOUNT -> secrets.AWS_ACCOUNT
-
 name: llama-recipes_pytest
 run-name: ${{ github.actor }} Triggered Action.
 # on:
@@ -11,18 +7,22 @@ on:
 env:
   AWS_REGION : "us-west-2"
   AWS_ACCOUNT: "320567679581"
-  AWS_SUBNET_ID: "subnet-052cc9eed3a81fe9f" 
-  AWS_EC2_TYPE: "g5.4xlarge"
-  AWS_EC2_AMI: "ami-0be8c991ba98c2c8d" # Deep Learning AMI GPU PyTorch 2.0.1 (Ubuntu 20.04) 20230827
-  # AWS_EC2_TYPE: "t2.nano"
-  # AWS_EC2_AMI: "ami-03f65b8614a860c29" # Temp: ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20230516
-  AWS_SG_ID: "sg-0059cfc5ecfb75bf0"
+  AWS_IAM_ROLE: "GitHub_SelfHostedRunner"
+  AWS_SUBNET_ID: "subnet-052cc9eed3a81fe9f"
+#   AWS_EC2_TYPE: "g5.4xlarge"
+#   AWS_EC2_AMI: "ami-0be8c991ba98c2c8d" # Deep Learning AMI GPU PyTorch 2.0.1 (Ubuntu 20.04) 20230827
+  AWS_EC2_TYPE: "t2.large"
+  AWS_EC2_AMI: "ami-03f65b8614a860c29" # Temp: ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20230516
+  AWS_SG_ID: "sg-0ca59ff4d9e407145" # defaullt SG with wide open egress traffic.
+
+  MOUNT_PATH: "/mnt/s3-bucket"
+  S3_BUCKET_NAME: "llama-base-models"
 # permission can be added at job level or workflow level
 permissions:
   id-token: write # This is required for requesting the JWT
   contents: read  # This is required for actions/checkout
-  checks: write
-  pull-requests: write
+#   checks: write
+#   pull-requests: write
 jobs:
   start-self-hosted-ec2-runner:
     name: Start self-hosted EC2 runner
@@ -35,7 +35,7 @@ jobs:
         id: configure_aws_security_credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHub_SelfHostedRunner
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.AWS_IAM_ROLE }} # includes AmazonS3ReadOnlyAccess
           role-session-name: GitHubOIDCSession
           aws-region: ${{ env.AWS_REGION }}
       - name: Start EC2 runner
@@ -53,6 +53,7 @@ jobs:
           iam-role-name: GitHub_EC2AccessToAWSServicesInstanceProfile
           aws-resource-tags: >
             [
+              {"Key": "Purpose", "Value": "Testing S3 bucket mounted as a FS volume"},
               {"Key": "Name", "Value": "ec2-github-runner"},
               {"Key": "GitHubRepository", "Value": "${{ github.repository }}"}
             ]
@@ -62,32 +63,27 @@ jobs:
     runs-on: ${{ needs.start-self-hosted-ec2-runner.outputs.label }} # run the job on the newly created runner
     steps:
 
-      - name: "Checkout repository"
-        uses: actions/checkout@v4
-
-      - name: "Installing dependencies from requirementst.txt file."
+      - name: "Updating apt-get and installing s3fs"
         run: |
-          pip install -U pip setuptools
-          pip install -r requirements.txt
-          pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e '.[tests,auditnlg,vllm]'
-          # pip list 
+          sudo apt-get update -y
+          sudo apt-get install s3fs -y 
 
-      - name: "Running llama-recipes pytest tests on Self Hosted EC2 Runner"
+      - name: "Mounting S3 bucket as a FS volume to /mnt/s3-bucket."
         run: |
-          echo "Running llama-recipes pytest tests on Self Hosted ${{ env.AWS_EC2_TYPE }} EC2 Runner"
-          cd $GITHUB_WORKSPACE
-          python3 -m pytest --junitxml="$GITHUB_WORKSPACE/result.xml"
-          ls -la $GITHUB_WORKSPACE 
-          cat $GITHUB_WORKSPACE/result.xml
-        
-      - name: "Publish Test Results"
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
-        with:
-          files: |
-            ${GITHUB_WORKSPACE}/result.xml
-            **/*.xml
+          sudo mkdir -p ${{ env.MOUNT_PATH }}
+          sudo s3fs ${{ env.S3_BUCKET_NAME }} ${{ env.MOUNT_PATH }} \
+              -o iam_role=${{ env.AWS_IAM_ROLE }} \
+              -o use_cache=/tmp \
+              -o allow_other \
+              -o uid=1001 \
+              -o mp_umask=002 \
+              -o multireq_max=5 \
+              -o use_path_request_style \
+              -o endpoint=us-west-2 \
+              -o url=https://s3.${{ env.AWS_REGION }}.amazonaws.com
 
+          df -h | grep s3fs
+          ls -la ${{ env.MOUNT_PATH }}
         
   stop-runner:
     name: Stop self-hosted EC2 runner
@@ -101,7 +97,7 @@ jobs:
          id: configure_aws_security_credentials
          uses: aws-actions/configure-aws-credentials@v2
          with:
-           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHub_SelfHostedRunner
+           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.AWS_IAM_ROLE }}
            aws-region: ${{ env.AWS_REGION }}
        - name: Stop EC2 runner
          uses: machulav/ec2-github-runner@v2
