@@ -80,8 +80,7 @@ jobs:
               -o multireq_max=5 \
               -o use_path_request_style \
               -o endpoint=us-west-2 \
-              -o url=https://s3.${{ env.AWS_REGION }}.amazonaws.com \
-              -o dbglevel=info -f -o curldbg
+              -o url=https://s3.${{ env.AWS_REGION }}.amazonaws.com
 
           df -h
 
