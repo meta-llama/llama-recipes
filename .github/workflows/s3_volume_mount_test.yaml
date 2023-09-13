@@ -35,7 +35,7 @@ jobs:
         id: configure_aws_security_credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.AWS_IAM_ROLE }} # includes AmazonS3ReadOnlyAccess
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.AWS_IAM_ROLE }}
           role-session-name: GitHubOIDCSession
           aws-region: ${{ env.AWS_REGION }}
       - name: Start EC2 runner
@@ -50,7 +50,7 @@ jobs:
           security-group-id: ${{ env.AWS_SG_ID }}
           # GitHub_EC2AccessToAWSServicesRole is associated with Instance Profile is assumed by newly configured EC2 instance(s) 
           # to perform permitted Actions on AWS resources.
-          iam-role-name: GitHub_EC2AccessToAWSServicesInstanceProfile
+          iam-role-name: GitHub_EC2AccessToAWSServicesInstanceProfile # includes AmazonS3ReadOnlyAccess
           aws-resource-tags: >
             [
               {"Key": "Purpose", "Value": "Testing S3 bucket mounted as a FS volume"},
@@ -72,7 +72,7 @@ jobs:
         run: |
           sudo mkdir -p ${{ env.MOUNT_PATH }}
           sudo s3fs ${{ env.S3_BUCKET_NAME }} ${{ env.MOUNT_PATH }} \
-              -o iam_role=${{ env.AWS_IAM_ROLE }} \
+              -o iam_role=GitHub_EC2AccessToAWSServicesRole \
               -o use_cache=/tmp \
               -o allow_other \
               -o uid=1001 \
