@@ -149,7 +149,6 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                 if train_config.use_peft:
                     if train_config.enable_fsdp:
                         if rank==0:
-                            print("HELLO")
                             print(f"we are about to save the PEFT modules")
                     else:
                         print(f"we are about to save the PEFT modules")
