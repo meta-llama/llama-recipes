@@ -1,4 +1,4 @@
-name: llama-recipes_pytest
+name: s3_volume_mount_test
 run-name: ${{ github.actor }} Triggered Action.
 # on:
 #   [push]
