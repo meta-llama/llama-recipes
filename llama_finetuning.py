@@ -83,18 +83,18 @@ def main(**kwargs):
                             "please install latest nightly.")
         if rank == 0:
             model = LlamaForCausalLM.from_pretrained(
-                "meta-llama/Llama-2-13b-chat-hf",token=hf_token,
+                train_config.model_name,token=hf_token,
                 load_in_8bit=True if train_config.quantization else None,
                 device_map="auto" if train_config.quantization else None,
             )
         else:
-            llama_config = LlamaConfig.from_pretrained("meta-llama/Llama-2-13b-chat-hf",token=hf_token)
+            llama_config = LlamaConfig.from_pretrained(train_config.model_name,token=hf_token)
             with torch.device("meta"):
                 model = LlamaForCausalLM(llama_config)
 
     else:
         model = LlamaForCausalLM.from_pretrained(
-            "meta-llama/Llama-2-13b-chat-hf",token=hf_token,
+            train_config.model_name,token=hf_token,
             load_in_8bit=True if train_config.quantization else None,
             device_map="auto" if train_config.quantization else None,
         )
@@ -120,7 +120,7 @@ def main(**kwargs):
     
     # Load the tokenizer and add special tokens
     hf_token="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"
-    tokenizer = LlamaTokenizer.from_pretrained("meta-llama/Llama-2-13b-chat-hf",token=hf_token)#train_config.model_name)
+    tokenizer = LlamaTokenizer.from_pretrained(train_config.model_name,token=hf_token)#train_config.model_name)
     tokenizer.add_special_tokens(
             {
                 "pad_token": "<PAD>",
