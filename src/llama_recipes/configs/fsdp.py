@@ -16,4 +16,5 @@ class fsdp_config:
     fsdp_cpu_offload: bool=False
     pure_bf16: bool = False
     optimizer: str= "AdamW"
+    optimizer_overlap: bool = False
     
