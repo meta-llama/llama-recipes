@@ -13,7 +13,10 @@ from llama_recipes.datasets.utils import Concatenator
 B_INST, E_INST = "[INST]", "[/INST]"
 B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n"
 
-def tokenize_dialog(dialog, tokenizer):
+def tokenize_dialog(dialog, tokenizer, system_prompt=None):
+    if system_prompt and len(dialog) > 0:
+        additional_content = f"{B_SYS}{system_prompt}{E_SYS}"
+        dialog[0]['content'] = additional_content + dialog[0]['content']
     dialog_tokens = [
             tokenizer(
                 f"{B_INST} {(prompt['content']).strip()} {E_INST} {(answer['content']).strip()} ",
@@ -28,8 +31,9 @@ def tokenize_dialog(dialog, tokenizer):
     combined_tokens = {}  
     for k in dialog_tokens[0].keys():
         combined_tokens[k] = list(itertools.chain(*(t[k] for t in dialog_tokens)))
-    return combined_tokens
-
+    if system_prompt and len(dialog) > 0:
+        dialog[0]['content'] = dialog[0]['content'][len(additional_content):]
+    return combined_tokens 
 
 def get_custom_dataset(dataset_config, tokenizer, split):
     dataset = datasets.load_dataset("OpenAssistant/oasst1", split=split)

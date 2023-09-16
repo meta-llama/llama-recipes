@@ -68,3 +68,39 @@ def test_unknown_dataset_error(step_lr, optimizer, tokenizer, get_model, train, 
         }
     with pytest.raises(AttributeError):
         main(**kwargs)
+
+def test_system_prompt():
+    from pathlib import Path
+    from transformers import LlamaTokenizer
+
+    from llama_recipes.utils.dataset_utils import load_module_from_py_file
+
+    tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-7b-hf")
+
+    module_path, func_name = "examples/custom_dataset.py", "tokenize_dialog"
+    module_path = Path(module_path)
+    module = load_module_from_py_file(module_path.as_posix())
+    tokenize_dialog = getattr(module, func_name)
+
+    system_prompt = (
+        "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. "
+        "Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. "
+        "Please ensure that your responses are socially unbiased and positive in nature.\n\nIf a question does not "
+        "make any sense, or is not factually coherent, explain why instead of answering something not correct. If you "
+        "don't know the answer to a question, please don't share false information."
+    )
+
+    dialog = [
+        {'content': "There's a llama in my garden 😱 What should I do?", 'role': 'user'},
+    ]
+
+    string = tokenizer.decode(tokenize_dialog(dialog, tokenizer, system_prompt)["input_ids"], skip_special_tokens=True)
+
+    assert string == (
+        "[INST] <<SYS>>\nYou are a helpful, respectful and honest assistant. Always answer as helpfully as possible, "
+        "while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, "
+        "or illegal content. Please ensure that your responses are socially unbiased and positive in nature.\n\nIf a "
+        "question does not make any sense, or is not factually coherent, explain why instead of answering something "
+        "not correct. If you don't know the answer to a question, please don't share false information.\n<</SYS>>\n\n"
+        "There's a llama in my garden 😱 What should I do? [/INST]"
+    )
