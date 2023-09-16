@@ -86,5 +86,6 @@ def get_custom_dataset(dataset_config, tokenizer, split):
             
     dataset = dataset.map(lambda x: to_dialog(x["thread"]), remove_columns=list(dataset.features))
     dataset = dataset.map(lambda x: tokenize_dialog(x["dialog"], tokenizer), remove_columns=list(dataset.features))
+    dataset = dataset.map(lambda x: dict(x, labels=x["input_ids"].copy()), remove_columns=list(dataset.features))
     
     return dataset

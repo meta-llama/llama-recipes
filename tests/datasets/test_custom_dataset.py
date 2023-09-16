@@ -46,6 +46,10 @@ def test_custom_dataset(step_lr, optimizer, get_model, train, mocker):
     STRING = tokenizer.decode(next(it)["input_ids"][0], skip_special_tokens=True)
     EXPECTED_STRING = "[INST] Implementa el algoritmo `bubble sort` en C. [/INST] xdxdxd"
     assert STRING.startswith(EXPECTED_STRING)
+    
+    assert "labels" in next(iter(train_dataloader)).keys()
+    assert "input_ids" in next(iter(train_dataloader)).keys()
+    assert "attention_mask" in next(iter(train_dataloader)).keys()
 
 
 @patch('llama_recipes.finetuning.train')

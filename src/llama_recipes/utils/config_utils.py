@@ -12,7 +12,7 @@ from peft import (
     PrefixTuningConfig,
 )
 from transformers import default_data_collator
-from transformers.data import DataCollatorWithPadding
+from transformers.data import DataCollatorForSeq2Seq
 
 from llama_recipes.configs import datasets, lora_config, llama_adapter_config, prefix_config, train_config
 from llama_recipes.data.sampler import LengthBasedBatchSampler, DistributedLengthBasedBatchSampler
@@ -81,6 +81,6 @@ def get_sampler_kwargs(train_config, dataset, tokenizer, mode):
             )
         else:
             kwargs["batch_sampler"] = LengthBasedBatchSampler(dataset, batch_size, drop_last=True, shuffle=mode=="train")
-        kwargs["collate_fn"] = DataCollatorWithPadding(tokenizer)
+        kwargs["collate_fn"] = DataCollatorForSeq2Seq(tokenizer)
             
         return kwargs
