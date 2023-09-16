@@ -108,6 +108,17 @@ def main(**kwargs):
             model = BetterTransformer.transform(model) 
         except ImportError:
             print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
+    
+    # Load the tokenizer and add special tokens
+    tokenizer = LlamaTokenizer.from_pretrained(train_config.model_name)
+    tokenizer.add_special_tokens(
+            {
+
+                "pad_token": "<PAD>",
+            }
+        )
+    model.resize_token_embeddings(model.config.vocab_size + 1) 
+    
     print_model_size(model, train_config, rank if train_config.enable_fsdp else 0)
 
     # Prepare the model for int8 training if quantization is enabled
@@ -118,14 +129,6 @@ def main(**kwargs):
     if train_config.enable_fsdp and fsdp_config.pure_bf16:
         model.to(torch.bfloat16)
 
-    # Load the tokenizer and add special tokens
-    tokenizer = LlamaTokenizer.from_pretrained(train_config.model_name)
-    tokenizer.add_special_tokens(
-            {
-
-                "pad_token": "<PAD>",
-            }
-        )
     if train_config.use_peft:
         peft_config = generate_peft_config(train_config, kwargs)
         model = get_peft_model(model, peft_config)
