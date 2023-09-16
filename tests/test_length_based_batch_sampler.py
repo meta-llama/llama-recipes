@@ -12,6 +12,7 @@ SAMPLES = 33
 
 @pytest.fixture
 def dataset():
+    random.seed(42)
     dataset = []
     def add_samples(ds, n, a, b):
         for _ in range(n):
