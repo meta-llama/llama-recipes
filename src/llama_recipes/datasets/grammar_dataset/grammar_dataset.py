@@ -55,7 +55,7 @@ class grammar(Dataset):
         return sample
 
     def __getitem__(self, index):
-        sample = self.convert_to_features(self.dataset["train"][index])
+        sample = self.convert_to_features(self.dataset["train"][int(index)])
         source_ids = sample["input_ids"]
 
         src_mask = sample["attention_mask"]
