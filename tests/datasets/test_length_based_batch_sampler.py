@@ -3,7 +3,7 @@ import pytest
 
 import torch
 
-from llama_recipes.datasets.utils import LengthBasedBatchSampler
+from llama_recipes.data.sampler import LengthBasedBatchSampler
 
 SAMPLES = 33
 
