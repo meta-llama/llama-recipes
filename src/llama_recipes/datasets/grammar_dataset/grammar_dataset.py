@@ -81,5 +81,5 @@ def get_dataset(
         csv_name=csv_name,
     )
     
-    return ConcatDataset(dataset, chunk_size=dataset_config.input_length)
+    return dataset
 

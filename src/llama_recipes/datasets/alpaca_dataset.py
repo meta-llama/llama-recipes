@@ -57,10 +57,7 @@ class InstructionDataset(Dataset):
         example = torch.tensor(
             example, dtype=torch.int64
         )
-        padding = self.max_words - example.shape[0]
-        if padding > 0:
-            example = torch.cat((example, torch.zeros(padding, dtype=torch.int64) - 1))
-        elif padding < 0:
+        if example.shape[0] > self.max_words:
             example = example[: self.max_words]
         labels = copy.deepcopy(example)
         labels[: len(prompt)] = -1
