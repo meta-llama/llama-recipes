@@ -18,6 +18,7 @@ def test_custom_dataset(step_lr, optimizer, get_model, train, mocker):
         "custom_dataset.file": "examples/custom_dataset.py",
         "custom_dataset.train_split": "validation",
         "batch_size_training": 2,
+        "val_batch_size": 4,
         "use_peft": False,
         }
 
@@ -30,24 +31,21 @@ def test_custom_dataset(step_lr, optimizer, get_model, train, mocker):
     eval_dataloader = args[2]
     tokenizer = args[3]
 
-    assert len(train_dataloader) == 226
-    assert len(eval_dataloader) == 2*226
+    assert len(train_dataloader) == 1120
+    assert len(eval_dataloader) == 1120 //2
 
-    it = iter(train_dataloader)
+    it = iter(eval_dataloader)
     STRING = tokenizer.decode(next(it)["input_ids"][0], skip_special_tokens=True)
-    EXPECTED_STRING = "[INST] Напиши функцию на языке swift, которая сортирует массив целых чисел, а затем выводит его на экран [/INST] Вот функция, "
-
+    EXPECTED_STRING = "[INST] Who made Berlin [/INST] dunno"
     assert STRING.startswith(EXPECTED_STRING)
+    
+    assert next(it)["input_ids"].size(0) == 4
 
-    next(it)
     next(it)
     next(it)
     STRING = tokenizer.decode(next(it)["input_ids"][0], skip_special_tokens=True)
-    EXPECTED_SUBSTRING_1 = "Therefore you are correct.  [INST] How can L’Hopital’s Rule be"
-    EXPECTED_SUBSTRING_2 = "a circular path around the turn.  [INST] How on earth is that related to L’Hopital’s Rule?"
-
-    assert EXPECTED_SUBSTRING_1 in STRING
-    assert EXPECTED_SUBSTRING_2 in STRING
+    EXPECTED_STRING = "[INST] Implementa el algoritmo `bubble sort` en C. [/INST] xdxdxd"
+    assert STRING.startswith(EXPECTED_STRING)
 
 
 @patch('llama_recipes.finetuning.train')

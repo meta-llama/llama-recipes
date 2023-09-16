@@ -19,7 +19,7 @@ from llama_recipes.finetuning import main
 def test_finetuning_no_validation(step_lr, optimizer, get_dataset, tokenizer, get_model, train):
     kwargs = {"run_validation": False}
     
-    get_dataset.return_value = [1]
+    get_dataset.return_value = [[1]]
     
     main(**kwargs)
     
@@ -43,7 +43,7 @@ def test_finetuning_no_validation(step_lr, optimizer, get_dataset, tokenizer, ge
 @patch('llama_recipes.finetuning.StepLR')
 def test_finetuning_with_validation(step_lr, optimizer, get_dataset, tokenizer, get_model, train):
     kwargs = {"run_validation": True}
-    get_dataset.return_value = [1]
+    get_dataset.return_value = [[1]]
     
     main(**kwargs)
     
@@ -69,7 +69,7 @@ def test_finetuning_with_validation(step_lr, optimizer, get_dataset, tokenizer, 
 def test_finetuning_peft(step_lr, optimizer, get_peft_model, gen_peft_config, get_dataset, tokenizer, get_model, train):
     kwargs = {"use_peft": True}
     
-    get_dataset.return_value = [1]
+    get_dataset.return_value = [[1]]
     
     main(**kwargs)
     
@@ -86,7 +86,7 @@ def test_finetuning_peft(step_lr, optimizer, get_peft_model, gen_peft_config, ge
 def test_finetuning_weight_decay(step_lr, get_peft_model, get_dataset, tokenizer, get_model, train):
     kwargs = {"weight_decay": 0.01}
     
-    get_dataset.return_value = [1]
+    get_dataset.return_value = [[1]]
     
     get_peft_model.return_value = Linear(1,1)
     get_peft_model.return_value.print_trainable_parameters=lambda:None

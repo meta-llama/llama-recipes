@@ -27,7 +27,6 @@ def get_preprocessed_samsum(dataset_config, tokenizer, split):
         
     dataset = dataset.map(
         lambda sample: tokenizer(sample["text"]),
-        batched=True,
         remove_columns=list(dataset.features),
-    ).map(Concatenator(), batched=True)
+    )
     return dataset

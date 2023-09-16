@@ -9,14 +9,15 @@ from unittest.mock import patch
 @patch('llama_recipes.finetuning.LlamaTokenizer.from_pretrained')
 @patch('llama_recipes.finetuning.optim.AdamW')
 @patch('llama_recipes.finetuning.StepLR')
-def test_custom_dataset(step_lr, optimizer, tokenizer, get_model, train, mocker):
+def test_samsum_dataset(step_lr, optimizer, tokenizer, get_model, train, mocker):
     from llama_recipes.finetuning import main
         
     tokenizer.return_value = mocker.MagicMock(side_effect=lambda x: {"input_ids":[len(x)*[0,]], "attention_mask": [len(x)*[0,]]})
     
-    
+    BATCH_SIZE = 8
     kwargs = {
-        "batch_size_training": 1,
+        "batch_size_training": 8,
+        "val_batch_size": 1,
         "use_peft": False,
         "dataset": "samsum_dataset",
         }
@@ -31,7 +32,7 @@ def test_custom_dataset(step_lr, optimizer, tokenizer, get_model, train, mocker)
     
     VAL_SAMPLES = 818
     TRAIN_SAMPLES = 14732
-    CONCAT_SIZE = 2048
-    assert len(train_dataloader) == TRAIN_SAMPLES // CONCAT_SIZE
+    
+    assert len(train_dataloader) == TRAIN_SAMPLES // BATCH_SIZE
     assert len(eval_dataloader) == VAL_SAMPLES
     
