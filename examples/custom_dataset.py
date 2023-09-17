@@ -32,6 +32,9 @@ def tokenize_dialog(dialog, tokenizer):
 
 
 def get_custom_dataset(dataset_config, tokenizer, split):
+    num_added_tokens = tokenizer.add_special_tokens({"additional_special_tokens": [B_INST, E_INST, B_SYS, E_SYS]}) 
+    print(f"get_custom_dataset(dataset_config, tokenizer, split={split}): {num_added_tokens} special tokens added to tokenizer.")
+    
     dataset = datasets.load_dataset("OpenAssistant/oasst1", split=split)
     
     dataset = dataset.map(lambda sample: {

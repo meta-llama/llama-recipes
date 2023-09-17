@@ -30,22 +30,23 @@ def test_custom_dataset(step_lr, optimizer, get_model, train, mocker):
     eval_dataloader = args[2]
     tokenizer = args[3]
 
-    assert len(train_dataloader) == 226
-    assert len(eval_dataloader) == 2*226
+    assert len(train_dataloader) == 221
+    assert len(eval_dataloader) == 2*221
 
     it = iter(train_dataloader)
-    STRING = tokenizer.decode(next(it)["input_ids"][0], skip_special_tokens=True)
-    EXPECTED_STRING = "[INST] Напиши функцию на языке swift, которая сортирует массив целых чисел, а затем выводит его на экран [/INST] Вот функция, "
+    STRING = tokenizer.decode(next(it)["input_ids"][0], skip_special_tokens=False)
+    EXPECTED_STRING = " ⁇  [INST] Напиши функцию на языке swift, которая сортирует массив целых чисел, а затем выводит его на экран [/INST] Вот функция, "
 
     assert STRING.startswith(EXPECTED_STRING)
 
     next(it)
     next(it)
     next(it)
-    STRING = tokenizer.decode(next(it)["input_ids"][0], skip_special_tokens=True)
-    EXPECTED_SUBSTRING_1 = "Therefore you are correct.  [INST] How can L’Hopital’s Rule be"
-    EXPECTED_SUBSTRING_2 = "a circular path around the turn.  [INST] How on earth is that related to L’Hopital’s Rule?"
+    STRING = tokenizer.decode(next(it)["input_ids"][0], skip_special_tokens=False)
+    EXPECTED_SUBSTRING_1 = "Is there anything else I can assist you with?  ⁇  [INST] How can L’Hopital’s Rule be"
+    EXPECTED_SUBSTRING_2 = "a circular path around the turn.  ⁇  [INST] How on earth is that related to L’Hopital’s Rule?"
 
+    print(STRING)
     assert EXPECTED_SUBSTRING_1 in STRING
     assert EXPECTED_SUBSTRING_2 in STRING
 
