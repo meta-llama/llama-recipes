@@ -23,6 +23,7 @@ env:
   # AWS_EC2_AMI: "ami-03f65b8614a860c29" # Temp: ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20230516
   AWS_EC2_TYPE: "t2.large"
   AWS_EC2_AMI: "ami-03f65b8614a860c29" # Temp: ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20230516
+  # AWS_EC2_AMI: "ami-0325c7d85ab2d94f4"
   AWS_SG_ID: "sg-0059cfc5ecfb75bf0"
 # permission can be added at job level or workflow level
 permissions:
@@ -89,33 +90,33 @@ jobs:
           ls -la $GITHUB_WORKSPACE 
           cat $GITHUB_WORKSPACE/result.xml
         
-      - name: "Publish Test Results"
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
-        with:
-          files: |
-            ${GITHUB_WORKSPACE}/result.xml
-            **/*.xml
+      # - name: "Publish Test Results"
+      #   uses: EnricoMi/publish-unit-test-result-action@v2
+      #   if: always()
+      #   with:
+      #     files: |
+      #       ${GITHUB_WORKSPACE}/result.xml
+      #       **/*.xml
 
         
-  # stop-runner:
-  #   name: Stop self-hosted EC2 runner
-  #   needs:
-  #     - start-self-hosted-ec2-runner # required to get output from the start-runner job
-  #     - run_workload_on_the_runner   # required to wait when the main job is done
-  #   runs-on: ubuntu-latest
-  #   if: ${{ always() }} # required to stop the runner even if the error happened in the previous jobs
-  #   steps:
-  #      - name: Configure AWS credentials
-  #        id: configure_aws_security_credentials
-  #        uses: aws-actions/configure-aws-credentials@v2
-  #        with:
-  #          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHub_SelfHostedRunner
-  #          aws-region: ${{ env.AWS_REGION }}
-  #      - name: Stop EC2 runner
-  #        uses: machulav/ec2-github-runner@v2
-  #        with:
-  #          mode: stop
-  #          github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-  #          label: ${{ needs.start-self-hosted-ec2-runner.outputs.label }}
-  #          ec2-instance-id: ${{ needs.start-self-hosted-ec2-runner.outputs.ec2-instance-id }}
+  stop-runner:
+    name: Stop self-hosted EC2 runner
+    needs:
+      - start-self-hosted-ec2-runner # required to get output from the start-runner job
+      - run_workload_on_the_runner   # required to wait when the main job is done
+    runs-on: ubuntu-latest
+    if: ${{ always() }} # required to stop the runner even if the error happened in the previous jobs
+    steps:
+       - name: Configure AWS credentials
+         id: configure_aws_security_credentials
+         uses: aws-actions/configure-aws-credentials@v2
+         with:
+           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/GitHub_SelfHostedRunner
+           aws-region: ${{ env.AWS_REGION }}
+       - name: Stop EC2 runner
+         uses: machulav/ec2-github-runner@v2
+         with:
+           mode: stop
+           github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+           label: ${{ needs.start-self-hosted-ec2-runner.outputs.label }}
+           ec2-instance-id: ${{ needs.start-self-hosted-ec2-runner.outputs.ec2-instance-id }}
