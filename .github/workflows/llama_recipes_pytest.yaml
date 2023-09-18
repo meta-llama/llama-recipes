@@ -7,7 +7,12 @@ run-name: ${{ github.actor }} Triggered Action.
 # on:
 #   [push]
 on:
-  workflow_dispatch # Only triggering workflow manually.
+  workflow_dispatch: # Only triggering workflow manually.
+    inputs:
+      branchName:
+        description: 'Branch name'
+        required: true
+        default: 'main'
 env:
   AWS_REGION : "us-west-2"
   AWS_ACCOUNT: "320567679581"
@@ -64,6 +69,8 @@ jobs:
 
       - name: "Checkout repository"
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branchName }}
 
       - name: "Installing dependencies from requirementst.txt file."
         run: |
