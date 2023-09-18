@@ -34,10 +34,12 @@ def test_custom_dataset(step_lr, optimizer, get_model, train, mocker):
     assert len(eval_dataloader) == 2*226
 
     it = iter(train_dataloader)
-    STRING = tokenizer.decode(next(it)["input_ids"][0], skip_special_tokens=True)
+    entry = next(it)
+    STRING = tokenizer.decode(entry["input_ids"][0], skip_special_tokens=True)
     EXPECTED_STRING = "[INST] Напиши функцию на языке swift, которая сортирует массив целых чисел, а затем выводит его на экран [/INST] Вот функция, "
 
     assert STRING.startswith(EXPECTED_STRING)
+    assert entry["labels"][0][:10].tolist() == 10*[-100]
 
     next(it)
     next(it)
