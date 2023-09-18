@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling", "hatch-requirements-txt"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llama-recipes"
+version = "0.0.1"
+authors = [
+  { name="Hamid Shojanazeri", email="hamidnazeri@meta.com" },
+  { name="Matthias Reso", email="mreso@meta.com" },
+  { name="Geeta Chauhan", email="gchauhan@meta.com" },
+]
+description = "Llama-recipes is a companion project to the Llama 2 model. It's goal is to provide examples to quickly get started with fine-tuning for domain adaptation and how to run inference for the fine-tuned models. "
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: Other/Proprietary License",
+    "Operating System :: OS Independent",
+]
+dynamic = ["dependencies"]
+
+[project.optional-dependencies]
+vllm = ["vllm"]
+tests = ["pytest-mock"]
+auditnlg = ["auditnlg"]
+
+[project.urls]
+"Homepage" = "https://github.com/facebookresearch/llama-recipes/"
+"Bug Tracker" = "https://github.com/facebookresearch/llama-recipes/issues"
+
+[tool.hatch.build]
+exclude = [
+  "dist/*",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llama_recipes"]
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]
