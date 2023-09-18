@@ -16,7 +16,7 @@ env:
   AWS_SG_ID: "sg-0ca59ff4d9e407145" # defaullt SG with wide open egress traffic.
 
   MOUNT_PATH: "/mnt/s3-bucket"
-  MODELS_PATH: "/llamav2/models"
+  MODELS_PATH: "llamav2/models"
   S3_BUCKET_NAME: "llama-base-models"
 # permission can be added at job level or workflow level
 permissions:
