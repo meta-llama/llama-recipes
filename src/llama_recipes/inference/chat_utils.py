@@ -44,7 +44,7 @@ def format_tokens(dialogs, tokenizer):
             [
                 tokenizer.encode(
                     f"{B_INST} {(prompt['content']).strip()} {E_INST} {(answer['content']).strip()} ",
-                )
+                ) + [tokenizer.eos_token_id]
                 for prompt, answer in zip(dialog[::2], dialog[1::2])
             ],
             [],
