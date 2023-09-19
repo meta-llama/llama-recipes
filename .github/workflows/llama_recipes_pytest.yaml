@@ -6,8 +6,8 @@ name: llama-recipes_pytest
 run-name: ${{ github.actor }} Triggered Action.
 on:
   push:
-    branches:    
-      - 'main'
+    # branches:    
+    #   - 'main'
     # paths-ignore:
     #   - 'docs/**'
     #   - '**/*.md'
