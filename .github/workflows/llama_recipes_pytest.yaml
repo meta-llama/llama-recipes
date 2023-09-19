@@ -5,12 +5,12 @@
 name: llama-recipes_pytest
 run-name: ${{ github.actor }} Triggered Action.
 on:
-  # push:
-  #   branches:    
-  #     - 'main'
-  #   paths-ignore:
-  #     - 'docs/**'
-  #     - '**/*.md'
+  push:
+    branches:    
+      - 'main'
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
 
   pull_request:
     branches:    
@@ -55,7 +55,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  
+
   test-job:
     name: Test job to check input values propagation.
     runs-on: ubuntu-latest
