@@ -71,15 +71,15 @@ jobs:
         #   echo ${{ env.AWS_EC2_AMI }}
         run: |
           echo "Using INPUT variables"
-          echo ${{ env.AWS_EC2_TYPE }}
-          echo ${{ env.AWS_EC2_AMI }}
+          echo ${{ inputs.aws_ec2_type }} >> $AWS_EC2_TYPE
+          echo ${{ inputs.aws_ec2_ami }} >> $AWS_EC2_AMI
 
       - name: "Setting default variables"
         if: ${{ github.event.inputs.aws_ec2_type == '' }}
         run: |
-          echo "Using DEFAULT env variables"
-          echo ${{ inputs.aws_ec2_type }} >> $AWS_EC2_TYPE
-          echo ${{ inputs.aws_ec2_ami }} >> $AWS_EC2_AMI
+          echo "Using DEFAULT variables"
+          echo ${{ env.AWS_EC2_TYPE }}
+          echo ${{ env.AWS_EC2_AMI }}
 
       - name: "Checking variables"
         run: |
