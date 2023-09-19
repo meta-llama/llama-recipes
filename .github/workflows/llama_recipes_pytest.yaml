@@ -60,7 +60,8 @@ jobs:
     name: Test job to check input values propagation.
     runs-on: ubuntu-latest
     steps:
-      - name: "Setting input variables"
+      - name: "Owerriding AWS_EC2_TYPE and AWS_EC2_AMI env variables with 'workflow_dispatch' inputs"
+        if: ${{ github.event.inputs.aws_ec2_type != '' }}
         run: |
           echo "Using INPUT variables"
           echo "AWS_EC2_TYPE=${{ inputs.aws_ec2_type }}" >> $GITHUB_ENV
