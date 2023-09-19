@@ -20,7 +20,7 @@ on:
       AWS_EC2_AMI:
         description: 'AMI Image'
         required: true 
-        default: "ami-00001e7859441406b" # Standard Ubuntu 22.04 LTS with installed Python3.10 and Docker configured. Storage is increased to 50GB.
+        default: "ami-0a2a52c3564b58a29" # Standard Ubuntu 22.04 LTS with installed Python3.10 and Docker configured. Storage is increased to 50GB.
         # default: "ami-03f65b8614a860c29" # Temp: ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20230516
 env:
   AWS_REGION : "us-west-2"
