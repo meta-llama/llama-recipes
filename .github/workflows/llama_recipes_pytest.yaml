@@ -6,11 +6,11 @@ name: llama-recipes_pytest
 run-name: ${{ github.actor }} Triggered Action.
 on:
   push:
-    # branches:    
-    #   - 'main'
-    # paths-ignore:
-    #   - 'docs/**'
-    #   - '**/*.md'
+    branches:    
+      - 'main'
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
 
   pull_request:
     branches:    
@@ -61,40 +61,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Setting input variables"
-        if: ${{ github.event.inputs.aws_ec2_type != '' }}
-        # env:
-        #     AWS_EC2_TYPE: ${{ inputs.aws_ec2_type }}
-        #     AWS_EC2_AMI: ${{ inputs.aws_ec2_ami }}
-        # run: |
-        #   echo "Using INPUT variables"
-        #   echo ${{ env.AWS_EC2_TYPE }}
-        #   echo ${{ env.AWS_EC2_AMI }}
         run: |
           echo "Using INPUT variables"
           echo "AWS_EC2_TYPE=${{ inputs.aws_ec2_type }}" >> $GITHUB_ENV
           echo "AWS_EC2_AMI=${{ inputs.aws_ec2_ami }}" >> $GITHUB_ENV
 
-      - name: "Setting default variables"
-        if: ${{ github.event.inputs.aws_ec2_type == '' }}
-        run: |
-          echo "Using DEFAULT variables"
-          echo ${{ env.AWS_EC2_TYPE }}
-          echo ${{ env.AWS_EC2_AMI }}
-
       - name: "Checking variables"
         run: |
+          echo "Using DEFAULT variables"
           echo ${{ env.AWS_EC2_TYPE }}
           echo ${{ env.AWS_EC2_AMI }}
             
 
   # start-self-hosted-ec2-runner:
   #   name: Start self-hosted EC2 runner
-  #   # If workflow it triggered manually via workflow_dispatch event then both AWS_EC2_TYPE and AWS_EC2_AMI
+  #   # If workflow triggered manually via workflow_dispatch event then both AWS_EC2_TYPE and AWS_EC2_AMI
   #   # end variables need to be overwritten with input values.
-  #   if: ${{ github.event.inputs.aws_ec2_type != '' }}
-  #   env:
-  #       AWS_EC2_TYPE: ${{ inputs.aws_ec2_type }}
-  #       AWS_EC2_AMI: ${{ inputs.aws_ec2_ami }}
+  #   # if: ${{ github.event.inputs.aws_ec2_type != '' }}
+  #   # env:
+  #   #     AWS_EC2_TYPE: ${{ inputs.aws_ec2_type }}
+  #   #     AWS_EC2_AMI: ${{ inputs.aws_ec2_ami }}
 
   #   runs-on: ubuntu-latest
   #   outputs:
