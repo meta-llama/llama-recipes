@@ -59,7 +59,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     if train_config.enable_fsdp:
         world_size = int(os.environ["WORLD_SIZE"]) 
 
-    metrics_filename = f"{train_config.output_dir}/metrics_data_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
+    metrics_filename = f"{train_config.output_dir}/metrics_data_{local_rank}-{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
     train_prep = []
     train_loss = []
     train_step_perplexity = []
