@@ -16,7 +16,6 @@ from torch.distributed.fsdp import StateDictType
 from torch.distributed.fsdp.sharded_grad_scaler import ShardedGradScaler
 from tqdm import tqdm
 from transformers import LlamaTokenizer
-import matplotlib.pyplot as plt
 import json
 
 
