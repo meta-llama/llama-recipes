@@ -64,7 +64,62 @@ def main(**kwargs):
         torch.cuda.set_device(local_rank)
         clear_gpu_cache(local_rank)
         setup_environ_flags(rank)
-        
+
+    # Load the pre-trained model and setup its configuration
+    use_cache = False if train_config.enable_fsdp else None
+    if train_config.enable_fsdp and train_config.low_cpu_fsdp:
+        """
+        for FSDP, we can save cpu memory by loading pretrained model on rank0 only.
+        this avoids cpu oom when loading large models like llama 70B, in which case
+        model alone would consume 2+TB cpu mem (70 * 4 * 8). This will add some comms
+        overhead and currently requires latest nightly.
+        """
+        v = packaging.version.parse(torch.__version__)
+        verify_latest_nightly = v.is_devrelease and v.dev >= 20230701
+        if not verify_latest_nightly:
+            raise Exception("latest pytorch nightly build is required to run with low_cpu_fsdp config, "
+                            "please install latest nightly.")
+        if rank == 0:
+            model = LlamaForCausalLM.from_pretrained(
+                train_config.model_name,
+                load_in_8bit=True if train_config.quantization else None,
+                device_map="auto" if train_config.quantization else None,
+                use_cache=use_cache,
+            )
+        else:
+            llama_config = LlamaConfig.from_pretrained(train_config.model_name)
+            llama_config.use_cache = use_cache
+            with torch.device("meta"):
+                model = LlamaForCausalLM(llama_config)
+
+    else:
+        model = LlamaForCausalLM.from_pretrained(
+            train_config.model_name,
+            load_in_8bit=True if train_config.quantization else None,
+            device_map="auto" if train_config.quantization else None,
+            use_cache=use_cache,
+        )
+    if train_config.enable_fsdp and train_config.use_fast_kernels:
+        """
+        For FSDP and FSDP+PEFT, setting 'use_fast_kernels' will enable
+        using of Flash Attention or Xformer memory-efficient kernels 
+        based on the hardware being used. This would speed up fine-tuning.
+        """
+        try:
+            from optimum.bettertransformer import BetterTransformer
+            model = BetterTransformer.transform(model) 
+        except ImportError:
+            print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
+    print_model_size(model, train_config, rank if train_config.enable_fsdp else 0)
+
+    # Prepare the model for int8 training if quantization is enabled
+    if train_config.quantization:
+        model = prepare_model_for_int8_training(model)
+
+    # Convert the model to bfloat16 if fsdp and pure_bf16 is enabled
+    if train_config.enable_fsdp and fsdp_config.pure_bf16:
+        model.to(torch.bfloat16)
+
     # Load the tokenizer and add special tokens
     tokenizer = LlamaTokenizer.from_pretrained(train_config.model_name)
     tokenizer.add_special_tokens(
@@ -73,7 +128,11 @@ def main(**kwargs):
                 "pad_token": "<PAD>",
             }
         )
-    
+    if train_config.use_peft:
+        peft_config = generate_peft_config(train_config, kwargs)
+        model = get_peft_model(model, peft_config)
+        model.print_trainable_parameters()
+
     dataset_config = generate_dataset_config(train_config, kwargs)
 
      # Load and preprocess the dataset for training and validation
@@ -131,70 +190,11 @@ def main(**kwargs):
             sampler=val_sampler if val_sampler else None,
             drop_last=True,
             collate_fn=default_data_collator,
-        )          
-
-    # Load the pre-trained model and setup its configuration
-    use_cache = False if train_config.enable_fsdp else None
-    if train_config.enable_fsdp and train_config.low_cpu_fsdp:
-        """
-        for FSDP, we can save cpu memory by loading pretrained model on rank0 only.
-        this avoids cpu oom when loading large models like llama 70B, in which case
-        model alone would consume 2+TB cpu mem (70 * 4 * 8). This will add some comms
-        overhead and currently requires latest nightly.
-        """
-        v = packaging.version.parse(torch.__version__)
-        verify_latest_nightly = v.is_devrelease and v.dev >= 20230701
-        if not verify_latest_nightly:
-            raise Exception("latest pytorch nightly build is required to run with low_cpu_fsdp config, "
-                            "please install latest nightly.")
-        if rank == 0:
-            model = LlamaForCausalLM.from_pretrained(
-                train_config.model_name,
-                load_in_8bit=True if train_config.quantization else None,
-                device_map="auto" if train_config.quantization else None,
-                use_cache=use_cache,
-            )
-        else:
-            llama_config = LlamaConfig.from_pretrained(train_config.model_name)
-            llama_config.use_cache = use_cache
-            with torch.device("meta"):
-                model = LlamaForCausalLM(llama_config)
-
-    else:
-        model = LlamaForCausalLM.from_pretrained(
-            train_config.model_name,
-            load_in_8bit=True if train_config.quantization else None,
-            device_map="auto" if train_config.quantization else None,
-            use_cache=use_cache,
         )
-    model.resize_token_embeddings(len(tokenizer))  # If special tokens added to tokenizer.
         
-    if train_config.enable_fsdp and train_config.use_fast_kernels:
-        """
-        For FSDP and FSDP+PEFT, setting 'use_fast_kernels' will enable
-        using of Flash Attention or Xformer memory-efficient kernels 
-        based on the hardware being used. This would speed up fine-tuning.
-        """
-        try:
-            from optimum.bettertransformer import BetterTransformer
-            model = BetterTransformer.transform(model) 
-        except ImportError:
-            print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
-    print_model_size(model, train_config, rank if train_config.enable_fsdp else 0)
-
-    # Prepare the model for int8 training if quantization is enabled
-    if train_config.quantization:
-        model = prepare_model_for_int8_training(model)
-
-    # Convert the model to bfloat16 if fsdp and pure_bf16 is enabled
-    if train_config.enable_fsdp and fsdp_config.pure_bf16:
-        model.to(torch.bfloat16)
-
-    if train_config.use_peft:
-        peft_config = generate_peft_config(train_config, kwargs)
-        model = get_peft_model(model, peft_config)
-        model.print_trainable_parameters()
-
+    # If special tokens added to tokenizer
+    model.resize_token_embeddings(len(tokenizer))      
+        
     #setting up FSDP if enable_fsdp is enabled
     if train_config.enable_fsdp:
         if not train_config.use_peft and train_config.freeze_layers:
