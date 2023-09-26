@@ -47,11 +47,11 @@ def plot_metrics(file_path):
     directory = os.path.dirname(file_path)
     filename_prefix = os.path.basename(file_path).split('.')[0]
 
-    plot_metric(data, 'loss', 'Step', 'Loss', 'Loss', ['b', 'r'])
+    plot_metric(data, 'loss', 'Epoch', 'Loss', 'Loss', ['b', 'r'])
     plt.savefig(os.path.join(directory, f"{filename_prefix}_train_and_validation_loss.png"))
     plt.close()
 
-    plot_metric(data, 'perplexity', 'Step', 'Perplexity', 'Perplexity', ['g', 'm'])
+    plot_metric(data, 'perplexity', 'Epoch', 'Perplexity', 'Perplexity', ['g', 'm'])
     plt.savefig(os.path.join(directory, f"{filename_prefix}_train_and_validation_perplexity.png"))
     plt.close()
 
