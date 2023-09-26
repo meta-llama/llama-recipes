@@ -153,8 +153,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                             print(f"we are about to save the PEFT modules")
                     else:
                         print(f"we are about to save the PEFT modules")
-                    #model.save_pretrained(train_config.output_dir)
-                    
+                    model.save_pretrained(train_config.output_dir)
                     # Merge LoRA and base model and save
                     model = model.merge_and_unload()        
                     model.save_pretrained(
