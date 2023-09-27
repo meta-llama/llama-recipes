@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} Triggered Action
 on:
   workflow_run:
     workflows:
-      - s3_volume_mount_test
+      - test_manually_dispatched_workflow_run
     types:
       - completed
 jobs:
@@ -13,4 +13,4 @@ jobs:
     steps:
       - name: Test step
         run: |
-          echo "Running on Github worker"
+          echo "Running auto-triggered workflow on another completed workflow on Github worker."
