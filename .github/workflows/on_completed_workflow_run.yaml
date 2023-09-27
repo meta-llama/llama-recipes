@@ -1,4 +1,4 @@
-name: s3_volume_mount_test
+name: test_workflow
 run-name: ${{ github.actor }} Triggered Action
 on:
   workflow_run:
