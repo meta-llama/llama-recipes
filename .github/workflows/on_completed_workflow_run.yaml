@@ -1,0 +1,16 @@
+name: s3_volume_mount_test
+run-name: ${{ github.actor }} Triggered Action ${{ github.workflow }}. 
+on:
+  workflow_run:
+    workflows:
+      - s3_volume_mount_test
+    types:
+      - completed
+jobs:
+  test_job:
+    name: Test Job running on GitHub worker.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test step
+        run: |
+          echo "Running on Github worker"
