@@ -154,11 +154,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                     else:
                         print(f"we are about to save the PEFT modules")
                     model.save_pretrained(train_config.output_dir)
-                    # Merge LoRA and base model and save
-                    merged_model = model.merge_and_unload()        
-                    merged_model.save_pretrained(
-                        train_config.output_dir, safe_serialization=True, max_shard_size="2GB"
-                    )
+                
                     if train_config.enable_fsdp:
                         if rank==0: 
                             print(f"PEFT modules are saved in {train_config.output_dir} directory")
