@@ -5,6 +5,7 @@ import os
 from pkg_resources import packaging
 
 import fire
+import random
 import torch
 import torch.optim as optim
 from peft import get_peft_model, prepare_model_for_int8_training
@@ -51,6 +52,7 @@ def main(**kwargs):
     # Set the seeds for reproducibility
     torch.cuda.manual_seed(train_config.seed)
     torch.manual_seed(train_config.seed)
+    random.seed(train_config.seed)
 
     if train_config.enable_fsdp:
         setup()
