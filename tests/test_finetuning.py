@@ -101,8 +101,8 @@ def test_finetuning_weight_decay(step_lr, get_peft_model, get_dataset, tokenizer
 
     get_dataset.return_value = get_fake_dataset()
 
-    get_peft_model.return_value = Linear(1,1)
-    get_peft_model.return_value.print_trainable_parameters=lambda:None
+    get_model.return_value = Linear(1,1)
+
     main(**kwargs)
 
     assert train.call_count == 1
@@ -123,10 +123,7 @@ def test_finetuning_weight_decay(step_lr, get_peft_model, get_dataset, tokenizer
 @patch('llama_recipes.finetuning.optim.AdamW')
 @patch('llama_recipes.finetuning.StepLR')
 def test_batching_strategy(step_lr, optimizer, get_dataset, tokenizer, get_model, train):
-    kwargs = {
-        "batching_strategy": "packing",
-        "use_peft": False,
-        }
+    kwargs = {"batching_strategy": "packing"}
 
     get_dataset.return_value = get_fake_dataset()
 
