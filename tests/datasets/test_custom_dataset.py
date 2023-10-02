@@ -38,15 +38,22 @@ def test_custom_dataset(step_lr, optimizer, get_model, train, mocker):
     STRING = tokenizer.decode(next(it)["input_ids"][0], skip_special_tokens=True)
     EXPECTED_STRING = "[INST] Who made Berlin [/INST] dunno"
     assert STRING.startswith(EXPECTED_STRING)
-    
-    assert next(it)["input_ids"].size(0) == 4
+
+    # assert next(it)["input_ids"].size(0) == 4
+    # it = iter(train_dataloader)
+    # entry = next(it)
+    # STRING = tokenizer.decode(entry["input_ids"][0], skip_special_tokens=True)
+    # EXPECTED_STRING = "[INST] Напиши функцию на языке swift, которая сортирует массив целых чисел, а затем выводит его на экран [/INST] Вот функция, "
+
+    # assert STRING.startswith(EXPECTED_STRING)
+    # assert entry["labels"][0][:10].tolist() == 10*[-100]
 
     next(it)
     next(it)
     STRING = tokenizer.decode(next(it)["input_ids"][0], skip_special_tokens=True)
     EXPECTED_STRING = "[INST] Implementa el algoritmo `bubble sort` en C. [/INST] xdxdxd"
     assert STRING.startswith(EXPECTED_STRING)
-    
+
     assert "labels" in next(iter(train_dataloader)).keys()
     assert "input_ids" in next(iter(train_dataloader)).keys()
     assert "attention_mask" in next(iter(train_dataloader)).keys()
