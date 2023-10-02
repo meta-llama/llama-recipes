@@ -5,7 +5,6 @@
 
 import datasets
 
-from llama_recipes.datasets.utils import Concatenator
 
 def get_preprocessed_samsum(dataset_config, tokenizer, split):
     dataset = datasets.load_dataset("samsum", split=split)
@@ -24,7 +23,7 @@ def get_preprocessed_samsum(dataset_config, tokenizer, split):
         }
 
     dataset = dataset.map(apply_prompt_template, remove_columns=list(dataset.features))
-        
+
     dataset = dataset.map(
         lambda sample: tokenizer(sample["text"]),
         remove_columns=list(dataset.features),

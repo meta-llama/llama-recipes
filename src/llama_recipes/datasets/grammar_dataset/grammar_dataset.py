@@ -10,8 +10,6 @@ from pathlib import Path
 
 from torch.utils.data import Dataset
 
-from llama_recipes.datasets.utils import ConcatDataset
-
 
 class grammar(Dataset):
     def __init__(
@@ -48,10 +46,10 @@ class grammar(Dataset):
 
         input_ = example_batch["input"]
         target_ = example_batch["target"]
-        
+
         prompt = f"Correct this to standard English: {input_}\n---\nCorrected: {target_}"
         sample = self.tokenizer(prompt)
-        
+
         return sample
 
     def __getitem__(self, index):
@@ -80,6 +78,5 @@ def get_dataset(
         tokenizer=tokenizer,
         csv_name=csv_name,
     )
-    
-    return dataset
 
+    return dataset
