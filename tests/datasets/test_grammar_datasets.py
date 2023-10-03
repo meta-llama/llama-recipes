@@ -11,19 +11,15 @@ from transformers import LlamaTokenizer
 @patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
 @patch('llama_recipes.finetuning.optim.AdamW')
 @patch('llama_recipes.finetuning.StepLR')
-def test_grammar_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker):
+def test_grammar_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker, setup_tokenizer):
     from llama_recipes.finetuning import main
 
-    #Align with Llama 2 tokenizer
-    tokenizer.from_pretrained.return_value = LlamaTokenizer.from_pretrained("decapoda-research/llama-7b-hf")
-    tokenizer.from_pretrained.return_value.add_special_tokens({'bos_token': '<s>', 'eos_token': '</s>'})
-    tokenizer.from_pretrained.return_value.bos_token_id = 1
-    tokenizer.from_pretrained.return_value.eos_token_id = 2
+    setup_tokenizer(tokenizer)
 
     BATCH_SIZE = 8
     kwargs = {
         "model_name": "decapoda-research/llama-7b-hf",
-        "batch_size_training": 8,
+        "batch_size_training": BATCH_SIZE,
         "val_batch_size": 1,
         "use_peft": False,
         "dataset": "grammar_dataset",
