@@ -10,10 +10,10 @@ The provided fine tuning script allows you to select between three datasets by p
 ## Batching Strategies
 Llama-recipes support two strategies to batch requests together.
 The default setting is `packing` which concatenates the tokenized samples into long sequences filling up the context length of the model.
-This is the most compute efficient variant as it avoids any padding and all sequences have the same langth.
+This is the most compute efficient variant as it avoids any padding and all sequences have the same length.
 Samples at the boundary of the context length are truncated and the remainder of the cut sequence it used as the start of the next long sequence.
 
-If the amount of training data is small this proceedure might introduce a lot of noise into the training data which can hurt the prediction performance of the fine-tune model.
+If the amount of training data is small this procedure might introduce a lot of noise into the training data which can hurt the prediction performance of the fine-tune model.
 Therefore, we also support a `padding` strategy which does not introduce the addition noise due to truncated sequences.
 The strategy tries to minimize the efficiency loss by batching samples of similar length together so only minimal padding is necessary.
 
