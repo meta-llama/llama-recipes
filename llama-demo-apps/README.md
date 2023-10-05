@@ -32,7 +32,7 @@ To run Llama2 in Google Colab using [llama-cpp-python](https://github.com/abetle
 This demo app shows how to use LangChain and Llama2 to let users ask questions about **structured** data stored in a SQL DB. As the 2023-24 NBA season is around the corner, we use the NBA roster info saved in a SQLite DB to show you how to ask Llama2 questions about your favorite teams or players.
 
 ## [VideoSummary](VideoSummary.ipynb): 
-This demo app uses Llama2 to return a text summary of a YouTube video.
+This quick demo app uses Llama2 to return a text summary of a YouTube video.
 
 ## [BreakingNews](LiveSearch.ipynb): Ask Llama2 about Live Data
 This demo app shows how to perform live data augmented generation tasks with Llama2 and [LlamaIndex](https://github.com/run-llama/llama_index), another leading open-source framework for building LLM apps: it uses the [You.com serarch API](https://documentation.you.com/quickstart) to get breaking news and ask Llama2 about them.
@@ -59,7 +59,7 @@ Then run the command `streamlit run streamlit_llama2.py` and you'll see on your 
 
 To see how to query Llama2 and get answers with the Gradio UI both from the notebook and web, just launch the notebook `Llama2_Gradio.ipynb`, replace the `<your replicate api token>` with your API token created [here](https://replicate.com/account/api-tokens) - for more info, see the note [above](#replicate_note).
 
-enter your question, click Submit. You'll see in the notebook or a browser with URL http://127.0.0.1:7860 the following UI:
+Then enter your question, click Submit. You'll see in the notebook or a browser with URL http://127.0.0.1:7860 the following UI:
 
 ![](llama2-gradio.png)
 
