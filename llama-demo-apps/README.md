@@ -4,26 +4,21 @@ This folder showcases the Llama2-powered apps.
 
 ## HelloLlama - Quickstart in Running Llama2
 
-This demo app shows how to use [LangChain](https://github.com/langchain-ai/langchain), an open-source framework for building LLM apps, to quickly build Llama2-power apps: to ask Llama2 general or custom-data-specific natural language questions and get answers back, in both single-turn QA mode and multi-turn chat mode. It has three versions:
+The first three demo apps show:
+* how to run Llama2 locally on a Mac, in the Google Colab notebook, and in the cloud using Replicate;
+* how to use [LangChain](https://github.com/langchain-ai/langchain), an open-source framework for building LLM apps, to ask Llama general questions in different ways;
+* how to use LangChain to load a recent PDF doc - the Llama2 paper pdf - and ask questions about it. This is the well known RAG (Retrieval Augmented Generation) method to let LLM such as Llama2 be able to answer questions about the data not publicly available when Llama2 was trained, or about your own data. RAG is one way to prevent LLM's hallucination. 
+* how to ask follow up questions to Llama by sending previous questions and answers as the context along with the new question, hence performing multi-turn chat or conversation with Llama.
 
 ### Running Llama2 locally on Mac
-To run Llama2 locally on Mac using [llama-cpp-python](https://github.com/abetlen/llama-cpp-python), open a Terminal, execute the commands below to install required packages and launch the notebook to run each cell - notice the cells starting with calling `from langchain.chains import ConversationalRetrievalChain` shows how to have a multi-turn dialog with chat history passed to the next question. 
-
+To run Llama2 locally on Mac using [llama-cpp-python](https://github.com/abetlen/llama-cpp-python), first open the notebook `HelloLlamaLocal`. Then replace `<path-to-ggml-model-q4_0.gguf>` in the notebook `HelloLlamaLocal` with the path either to your downloaded quantized model file [here](https://drive.google.com/file/d/1afPv3HOy73BE2MoYCgYJvBDeQNa9rZbj/view?usp=sharing), or to the `ggml-model-q4_0.gguf` file built with the following commands:
 ```
-conda create -n llama_demo_apps python=3.8
-conda activate llama_demo_apps
-CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install llama-cpp-python
-pip install langchain
-pip install sentence-transformers
-pip install docarray
-pip install jupyter
-cd <your_work_folder>
-git clone https://github.com/facebookresearch/llama-recipes
-cd llama-recipes/llama-demo-apps
-jupyter notebook
+git clone https://github.com/ggerganov/llama.cpp
+cd llama.cpp
+python3 -m pip install -r requirements.txt
+python convert.py <path_to_your_downloaded_llama-2-13b_model>
+./quantize <path_to_your_downloaded_llama-2-13b_model>/ggml-model-f16.gguf <path_to_your_downloaded_llama-2-13b_model>/ggml-model-q4_0.gguf q4_0
 ```
-
-Then in the launched browser, select the notebook `HelloLlamaLocal.ipynb` and run each cell - before running cell #3, you need to download the 6GB quantized Llama2-13b-chat model file [here](https://drive.google.com/file/d/1afPv3HOy73BE2MoYCgYJvBDeQNa9rZbj/view?usp=sharing) first, then change the replace <path-to-llama-2-13b-chat-ggml-model-q4_0.gguf> with the path to your downloaded `ggml-model-q4_0.gguf` file.
 
 ### Running Llama2 in Google Colab
 To run Llama2 in Google Colab using [llama-cpp-python](https://github.com/abetlen/llama-cpp-python), click the Colab notebook link [here](https://colab.research.google.com/drive/1-uBXt4L-6HNS2D8Iny2DwUpVS4Ub7jnk?usp=sharing) and download the quantized Llama2-13b-chat model [here](https://drive.google.com/file/d/1afPv3HOy73BE2MoYCgYJvBDeQNa9rZbj/view?usp=sharing) and upload it, as well as the nba.csv file in this repo to your Google drive, so you can access those files in cells #6 and #14. Then run each cell. Notice on the Colab T4 GPU, the inference in cell #18 took more than 20 minnutes to return; running the notebook locally on M1 MBP took about 20 seconds.
