@@ -1,8 +1,12 @@
 # Llama2 Demo Apps 
 
-This folder showcases the Llama2-powered apps.
+This folder showcases the Llama2-powered apps. We start with three quickstart demos showing how to run Llama2 locally on a Mac, remotely in the cloud, and on a Google Colab to ask Llama2 general questions or questions about unstructured data not trained for the model.
 
-## HelloLlama - Quickstart in Running Llama2
+We then show three demos that ask Llama2 to summarize a YouTube video, to answer questions about structured data stored in a database, and to answer questions about live search results.
+
+More advanced Llama2 demo apps will be coming soon.
+
+## HelloLlama - Quickstart in Running Llama2 (Almost) Everywhere*
 
 The first three demo apps show:
 * how to run Llama2 locally on a Mac, in the Google Colab notebook, and in the cloud using Replicate;
@@ -10,7 +14,7 @@ The first three demo apps show:
 * how to use LangChain to load a recent PDF doc - the Llama2 paper pdf - and ask questions about it. This is the well known RAG (Retrieval Augmented Generation) method to let LLM such as Llama2 be able to answer questions about the data not publicly available when Llama2 was trained, or about your own data. RAG is one way to prevent LLM's hallucination. 
 * how to ask follow up questions to Llama by sending previous questions and answers as the context along with the new question, hence performing multi-turn chat or conversation with Llama.
 
-### Running Llama2 locally on Mac
+### Running Llama2 Locally on Mac
 To run Llama2 locally on Mac using [llama-cpp-python](https://github.com/abetlen/llama-cpp-python), first open the notebook `HelloLlamaLocal`. Then replace `<path-to-ggml-model-q4_0.gguf>` in the notebook `HelloLlamaLocal` with the path either to your downloaded quantized model file [here](https://drive.google.com/file/d/1afPv3HOy73BE2MoYCgYJvBDeQNa9rZbj/view?usp=sharing), or to the `ggml-model-q4_0.gguf` file built with the following commands:
 ```
 git clone https://github.com/ggerganov/llama.cpp
@@ -20,16 +24,18 @@ python convert.py <path_to_your_downloaded_llama-2-13b_model>
 ./quantize <path_to_your_downloaded_llama-2-13b_model>/ggml-model-f16.gguf <path_to_your_downloaded_llama-2-13b_model>/ggml-model-q4_0.gguf q4_0
 ```
 
-### Running Llama2 in Google Colab
-To run Llama2 in Google Colab using [llama-cpp-python](https://github.com/abetlen/llama-cpp-python), click the Colab notebook link [here](https://colab.research.google.com/drive/1-uBXt4L-6HNS2D8Iny2DwUpVS4Ub7jnk?usp=sharing) and download the quantized Llama2-13b-chat model [here](https://drive.google.com/file/d/1afPv3HOy73BE2MoYCgYJvBDeQNa9rZbj/view?usp=sharing) and upload it, as well as the nba.csv file in this repo to your Google drive, so you can access those files in cells #6 and #14. Then run each cell. Notice on the Colab T4 GPU, the inference in cell #18 took more than 20 minnutes to return; running the notebook locally on M1 MBP took about 20 seconds.
-
 ### Running Llama2 Hosted in the Cloud
-[The Cloud version](HelloLlamaCloud.ipynb) uses LangChain with Llama2 hosted in the cloud on [Replicate](https://replicate.com). The demo shows how to use LangChain to ask Llama2 questions about **unstructured** data stored in a PDF.
+[The Cloud version](HelloLlamaCloud.ipynb) uses LangChain with Llama2 hosted in the cloud on [Replicate](https://replicate.com). The demo shows how to ask Llama general questions and follow up questions, and how to use LangChain to ask Llama2 questions about **unstructured** data stored in a PDF.
 
-[Note on using Replicate](#replicate_note) To run the demo app, you'll need to first sign in with Replicate with your github account, then create a free API token [here](https://replicate.com/account/api-tokens) that you can use for a while. After the free trial ends, you'll need to enter billing info to continue to use Llama2 hosted on Replicate - according to Replicate's [Run time and cost](https://replicate.com/meta/llama-2-13b-chat) for the Llama2-13b-chat model used in our demo apps, the model "costs $0.000725 per second. Predictions typically complete within 10 seconds." This means each call to the Llama2-13b-chat model costs less than $0.01 if the call completes within 10 seconds. If you want absolutely no costs, you can refer to the section "Running Llama2 locally on Mac" above.
+[Note on using Replicate](#replicate_note) To run some of the demo apps here, you'll need to first sign in with Replicate with your github account, then create a free API token [here](https://replicate.com/account/api-tokens) that you can use for a while. After the free trial ends, you'll need to enter billing info to continue to use Llama2 hosted on Replicate - according to Replicate's [Run time and cost](https://replicate.com/meta/llama-2-13b-chat) for the Llama2-13b-chat model used in our demo apps, the model "costs $0.000725 per second. Predictions typically complete within 10 seconds." This means each call to the Llama2-13b-chat model costs less than $0.01 if the call completes within 10 seconds. If you want absolutely no costs, you can refer to the section "Running Llama2 locally on Mac" above or the "Running Llama2 in Google Colab" below.
+
+### Running Llama2 in Google Colab
+To run Llama2 in Google Colab using [llama-cpp-python](https://github.com/abetlen/llama-cpp-python), click the Colab notebook link [here](https://colab.research.google.com/drive/1-uBXt4L-6HNS2D8Iny2DwUpVS4Ub7jnk?usp=sharing). Then download the quantized Llama2-13b-chat model `ggml-model-q4_0.gguf` [here](https://drive.google.com/file/d/1afPv3HOy73BE2MoYCgYJvBDeQNa9rZbj/view?usp=sharing), or follow the instructions above to build it, before uploading it to your Google drive. Note that on the free Colab T4 GPU, the call to Llama could take more than 20 minnutes to return; running the notebook locally on M1 MBP takes about 20 seconds.
+
+* To run a quantized Llama2 model on iOS and Android, you can use  the open source [MLC LLM](https://github.com/mlc-ai/mlc-llm) or [llama.cpp](https://github.com/ggerganov/llama.cpp). 
 
 ## [VideoSummary](VideoSummary.ipynb): Ask Llama2 to Summarize a YouTube Video
-This demo app uses Llama2 to return a text summary of a YouTube video content. It shows how to retrieve the caption in a YouTube video and how to ask Llama to summarize the content in four different ways, from the naive way that works for short text to more advanced way of using LangChain's map_reduce and refine methods to bypass the limit of Llama's max input token size.
+This demo app uses Llama2 to return a text summary of a YouTube video. It shows how to retrieve the caption of a YouTube video and how to ask Llama to summarize the content in four different ways, from the simplest naive way that works for short text to more advanced methods of using LangChain's map_reduce and refine to overcome the 4096 limit of Llama's max input token size.
 
 ## [NBA2023-24](StructuredLlama.ipynb): Ask Llama2 about Structured Data
 This demo app shows how to use LangChain and Llama2 to let users ask questions about **structured** data stored in a SQL DB. As the 2023-24 NBA season is around the corner, we use the NBA roster info saved in a SQLite DB to show you how to ask Llama2 questions about your favorite teams or players.
