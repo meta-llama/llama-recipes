@@ -52,7 +52,7 @@ class ConcatDataset(Dataset):
             "labels": [],
             }
         
-        for sample in tqdm(self.dataset, desc="Preprocessing dataset"):
+        for sample in tqdm(self.dataset, desc="Preprocessing dataset", dynamic_ncols=True):
             buffer = {k: v + sample[k] for k,v in buffer.items()}
             
             while len(next(iter(buffer.values()))) > self.chunk_size:

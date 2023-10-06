@@ -76,13 +76,7 @@ def main(
             print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
 
     tokenizer = LlamaTokenizer.from_pretrained(model_name)
-    tokenizer.add_special_tokens(
-        {
-         
-            "pad_token": "<PAD>",
-        }
-    )
-    model.resize_token_embeddings(model.config.vocab_size + 1) 
+    tokenizer.pad_token = tokenizer.eos_token
     
     safety_checker = get_safety_checker(enable_azure_content_safety,
                                         enable_sensitive_topics,

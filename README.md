@@ -101,7 +101,7 @@ If you want to dive right into single or multi GPU fine-tuning, run the examples
 All the parameters in the examples and recipes below need to be further tuned to have desired results based on the model, method, data and task at hand.
 
 **Note:**
-* To change the dataset in the commands below pass the `dataset` arg. Current options for dataset are `grammar_dataset`, `alpaca_dataset`and  `samsum_dataset`. A description of the datasets and how to add custom datasets can be found in [Dataset.md](./docs/Dataset.md). For  `grammar_dataset`, `alpaca_dataset` please make sure you use the suggested instructions from [here](./docs/single_gpu.md#how-to-run-with-different-datasets) to set them up.
+* To change the dataset in the commands below pass the `dataset` arg. Current options for integrated dataset are `grammar_dataset`, `alpaca_dataset`and  `samsum_dataset`. Additionally, we integrate the OpenAssistant/oasst1 dataset as an [example for a custom dataset](./examples/custom_dataset.py).  A description of how to use your own dataset and how to add custom datasets can be found in [Dataset.md](./docs/Dataset.md#using-custom-datasets). For  `grammar_dataset`, `alpaca_dataset` please make sure you use the suggested instructions from [here](./docs/single_gpu.md#how-to-run-with-different-datasets) to set them up.
 
 * Default dataset and other LORA config has been set to `samsum_dataset`.
 

@@ -32,3 +32,7 @@ For more in depth information on inference including inference safety checks and
 **Note** The [sensitive topics safety checker](../src/llama_recipes/inference/safety_utils.py) utilizes AuditNLG which is an optional dependency. Please refer to installation section of the main [README.md](../README.md#install-with-optional-dependencies) for details.
 
 **Note** The **vLLM** example requires additional dependencies. Please refer to installation section of the main [README.md](../README.md#install-with-optional-dependencies) for details.
+
+## Train on custom dataset
+To show how to train a model on a custom dataset we provide an example to generate a custom dataset in [custom_dataset.py](./custom_dataset.py).
+The usage of the custom dataset is further described in the datasets [README](../docs/Dataset.md#training-on-custom-data).

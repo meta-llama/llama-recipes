@@ -2,8 +2,7 @@
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
 import inspect
-from dataclasses import fields
-
+from dataclasses import asdict
 from peft import (
     LoraConfig,
     AdaptionPromptConfig,
@@ -42,9 +41,10 @@ def generate_peft_config(train_config, kwargs):
     
     assert train_config.peft_method in names, f"Peft config not found: {train_config.peft_method}"
     
-    config = configs[names.index(train_config.peft_method)]
+    config = configs[names.index(train_config.peft_method)]()
+    
     update_config(config, **kwargs)
-    params = {k.name: getattr(config, k.name) for k in fields(config)}
+    params = asdict(config)
     peft_config = peft_configs[names.index(train_config.peft_method)](**params)
     
     return peft_config
@@ -52,10 +52,11 @@ def generate_peft_config(train_config, kwargs):
 
 def generate_dataset_config(train_config, kwargs):
     names = tuple(DATASET_PREPROC.keys())
-    
+        
     assert train_config.dataset in names, f"Unknown dataset: {train_config.dataset}"
     
-    dataset_config = {k:v for k, v in inspect.getmembers(datasets)}[train_config.dataset]
+    dataset_config = {k:v for k, v in inspect.getmembers(datasets)}[train_config.dataset]()
+        
     update_config(dataset_config, **kwargs)
     
     return  dataset_config
