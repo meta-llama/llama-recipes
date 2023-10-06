@@ -28,11 +28,11 @@ To run Llama2 in Google Colab using [llama-cpp-python](https://github.com/abetle
 
 [Note on using Replicate](#replicate_note) To run the demo app, you'll need to first sign in with Replicate with your github account, then create a free API token [here](https://replicate.com/account/api-tokens) that you can use for a while. After the free trial ends, you'll need to enter billing info to continue to use Llama2 hosted on Replicate - according to Replicate's [Run time and cost](https://replicate.com/meta/llama-2-13b-chat) for the Llama2-13b-chat model used in our demo apps, the model "costs $0.000725 per second. Predictions typically complete within 10 seconds." This means each call to the Llama2-13b-chat model costs less than $0.01 if the call completes within 10 seconds. If you want absolutely no costs, you can refer to the section "Running Llama2 locally on Mac" above.
 
+## [VideoSummary](VideoSummary.ipynb): Ask Llama2 to Summarize a YouTube Video
+This demo app uses Llama2 to return a text summary of a YouTube video content. It shows how to retrieve the caption in a YouTube video and how to ask Llama to summarize the content in four different ways, from the naive way that works for short text to more advanced way of using LangChain's map_reduce and refine methods to bypass the limit of Llama's max input token size.
+
 ## [NBA2023-24](StructuredLlama.ipynb): Ask Llama2 about Structured Data
 This demo app shows how to use LangChain and Llama2 to let users ask questions about **structured** data stored in a SQL DB. As the 2023-24 NBA season is around the corner, we use the NBA roster info saved in a SQLite DB to show you how to ask Llama2 questions about your favorite teams or players.
-
-## [VideoSummary](VideoSummary.ipynb): 
-This demo app uses Llama2 to return a text summary of a YouTube video content. It shows how to retrieve the caption in a YouTube video and how to ask Llama to summarize the content in four different ways, from the naive way that works for short text to more advanced way of using LangChain's map_reduce and refine methods to bypass the limit of Llama's max input token size.
 
 ## [BreakingNews](LiveSearch.ipynb): Ask Llama2 about Live Data
 This demo app shows how to perform live data augmented generation tasks with Llama2 and [LlamaIndex](https://github.com/run-llama/llama_index), another leading open-source framework for building LLM apps: it uses the [You.com serarch API](https://documentation.you.com/quickstart) to get breaking news and ask Llama2 about them.
