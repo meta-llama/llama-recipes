@@ -34,7 +34,7 @@ python convert.py <path_to_your_downloaded_llama-2-13b_model>
 ### Running Llama2 in Google Colab
 To run Llama2 in Google Colab using [llama-cpp-python](https://github.com/abetlen/llama-cpp-python), click the Colab notebook link [here](https://colab.research.google.com/drive/1-uBXt4L-6HNS2D8Iny2DwUpVS4Ub7jnk?usp=sharing). Then download the quantized Llama2-13b-chat model `ggml-model-q4_0.gguf` [here](https://drive.google.com/file/d/1afPv3HOy73BE2MoYCgYJvBDeQNa9rZbj/view?usp=sharing), or follow the instructions above to build it, before uploading it to your Google drive. Note that on the free Colab T4 GPU, the call to Llama could take more than 20 minnutes to return; running the notebook locally on M1 MBP takes about 20 seconds.
 
-* To run a quantized Llama2 model on iOS and Android, you can use  the open source [MLC LLM](https://github.com/mlc-ai/mlc-llm) or [llama.cpp](https://github.com/ggerganov/llama.cpp). 
+* To run a quantized Llama2 model on iOS and Android, you can use  the open source [MLC LLM](https://github.com/mlc-ai/mlc-llm) or [llama.cpp](https://github.com/ggerganov/llama.cpp). You can even make a Linux OS that boots to Llama2 ([repo](https://github.com/trholding/llama2.c)).
 
 ## [VideoSummary](VideoSummary.ipynb): Ask Llama2 to Summarize a YouTube Video
 This demo app uses Llama2 to return a text summary of a YouTube video. It shows how to retrieve the caption of a YouTube video and how to ask Llama to summarize the content in four different ways, from the simplest naive way that works for short text to more advanced methods of using LangChain's map_reduce and refine to overcome the 4096 limit of Llama's max input token size.
