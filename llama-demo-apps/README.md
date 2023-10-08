@@ -29,8 +29,7 @@ python convert.py <path_to_your_downloaded_llama-2-13b_model>
 ### [Running Llama2 Hosted in the Cloud](HelloLlamaCloud.ipynb)
 The HelloLlama cloud version uses LangChain with Llama2 hosted in the cloud on [Replicate](https://replicate.com). The demo shows how to ask Llama general questions and follow up questions, and how to use LangChain to ask Llama2 questions about **unstructured** data stored in a PDF.
 
-**Note on using Replicate** 
-<a id="replicate_note"></a>
+**<a id="replicate_note">Note on using Replicate</a>** 
 To run some of the demo apps here, you'll need to first sign in with Replicate with your github account, then create a free API token [here](https://replicate.com/account/api-tokens) that you can use for a while. After the free trial ends, you'll need to enter billing info to continue to use Llama2 hosted on Replicate - according to Replicate's [Run time and cost](https://replicate.com/meta/llama-2-13b-chat) for the Llama2-13b-chat model used in our demo apps, the model "costs $0.000725 per second. Predictions typically complete within 10 seconds." This means each call to the Llama2-13b-chat model costs less than $0.01 if the call completes within 10 seconds. If you want absolutely no costs, you can refer to the section "Running Llama2 locally on Mac" above or the "Running Llama2 in Google Colab" below.
 
 ### [Running Llama2 in Google Colab](https://colab.research.google.com/drive/1-uBXt4L-6HNS2D8Iny2DwUpVS4Ub7jnk?usp=sharing)
