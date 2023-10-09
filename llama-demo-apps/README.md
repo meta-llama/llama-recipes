@@ -41,7 +41,11 @@ To run Llama2 in Google Colab using [llama-cpp-python](https://github.com/abetle
 This demo app uses Llama2 to return a text summary of a YouTube video. It shows how to retrieve the caption of a YouTube video and how to ask Llama to summarize the content in four different ways, from the simplest naive way that works for short text to more advanced methods of using LangChain's map_reduce and refine to overcome the 4096 limit of Llama's max input token size.
 
 ## [NBA2023-24](StructuredLlama.ipynb): Ask Llama2 about Structured Data
-This demo app shows how to use LangChain and Llama2 to let users ask questions about **structured** data stored in a SQL DB. As the 2023-24 NBA season is around the corner, we use the NBA roster info saved in a SQLite DB to show you how to ask Llama2 questions about your favorite teams or players.
+This demo app shows how to use LangChain and Llama2 to let users ask questions about **structured** data stored in a SQL DB. As the 2023-24 NBA season is around the corner, we use the NBA roster info saved in a SQLite DB to show you how to ask Llama2 questions about your favorite teams or players. To save the info in the nba.txt file, created by scraping from the web, to a SQLite db, run the commands below to generate `nba_roster.db` used in the notebook:
+```
+python txt2csv.py
+python csv2db.py
+```
 
 ## [BreakingNews](BreakingNews.ipynb): Ask Llama2 about Live Data
 This demo app shows how to perform live data augmented generation tasks with Llama2 and [LlamaIndex](https://github.com/run-llama/llama_index), another leading open-source framework for building LLM apps: it uses the [You.com serarch API](https://documentation.you.com/quickstart) to get breaking news and ask Llama2 about them.
