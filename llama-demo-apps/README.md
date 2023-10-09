@@ -6,6 +6,8 @@ Here we start with three quickstart demos showing how to run Llama2 locally on a
 
 We then show three demos that ask Llama2 to summarize a YouTube video, to answer questions about structured data stored in a database, and to answer questions about live search results.
 
+We also show how to build quick web UI for Llama2 demo apps using Streamlit and Gradio.
+
 More advanced Llama2 demo apps will be coming soon.
 
 ## HelloLlama - Quickstart in Running Llama2 (Almost) Everywhere*
