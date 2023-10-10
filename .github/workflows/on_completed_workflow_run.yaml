@@ -7,13 +7,24 @@ on:
     types:
       - completed
 jobs:
-  test_job:
-    name: Test Job running on GitHub worker.
+  on-success:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - name: Test step
-        run: |
-          echo "Running auto-triggered workflow on another completed workflow on Github worker."
+    - run: echo 'The triggering workflow passed'
 
+  on-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - run: echo 'The triggering workflow failed'
 
-# TODO: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#running-a-workflow-based-on-the-conclusion-of-another-workflow
+#   test_job:
+#     name: Test Job running on GitHub worker.
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Test step
+#         run: |
+#           echo "Running auto-triggered workflow on another completed workflow on Github worker.
+
+# TODO: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#running-a-workflow-based-on-the-conclusion-of-another-workflow 
