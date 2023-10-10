@@ -31,6 +31,8 @@ from llama_recipes.utils.config_utils import (
     update_config,
     generate_peft_config,
     generate_dataset_config,
+    generate_tracker_config,
+    generate_dict_from_configs,
 )
 from llama_recipes.utils.dataset_utils import get_preprocessed_dataset
 
@@ -44,6 +46,8 @@ from llama_recipes.utils.train_utils import (
     get_policies
 )
 
+from dataclasses import asdict
+from llama_recipes.utils.tracker_utils import get_tracker_by_name
 
 def main(**kwargs):
     # Update the configuration for the training and sharding process
@@ -64,6 +68,13 @@ def main(**kwargs):
         torch.cuda.set_device(local_rank)
         clear_gpu_cache(local_rank)
         setup_environ_flags(rank)
+
+    tracker = get_tracker_by_name(train_config.tracker)
+    if tracker is not None:
+        tracker_config = generate_tracker_config(train_config, kwargs)
+        tracker.initialize(tracker_config)
+        tracker.load_params(generate_dict_from_configs(train_config), "train_config")
+        tracker.load_params(generate_dict_from_configs(fsdp_config), "fsdp_config")
 
     # Load the pre-trained model and setup its configuration
     use_cache = False if train_config.enable_fsdp else None
@@ -249,6 +260,7 @@ def main(**kwargs):
         fsdp_config if train_config.enable_fsdp else None,
         local_rank if train_config.enable_fsdp else None,
         rank if train_config.enable_fsdp else None,
+        tracker,
     )
     if not train_config.enable_fsdp or rank==0:
         [print(f'Key: {k}, Value: {v}') for k, v in results.items()]
