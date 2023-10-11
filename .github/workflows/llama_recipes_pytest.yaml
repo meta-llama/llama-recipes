@@ -1,29 +1,19 @@
-name: llama-recipes_pytest
+name: Llama Recipes PyTest tests.
 run-name: ${{ github.actor }} Triggered Action.
 on:
-  # push:
-  #   branches:    
-  #     - 'main'
-  #   paths-ignore:
-  #     - 'docs/**'
-  #     - '**/*.md'
-
-  # pull_request:
-  #   branches:    
-  #     - 'main'
-  #   paths-ignore:
-  #     - 'docs/**'
-  #     - '**/*.md'
-  #     # - 'examples' # check if PR for file in examples dir should trigger tests.
+  pull_request:
+    branches:    
+      - 'main'
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+    paths:
+      - '*.py'
 
   workflow_dispatch: # Only triggering workflow manually.
     inputs:
-      branch_name:
-        description: 'Branch name to checkout.'
-        required: true
-        default: 'main'
       aws_ec2_type:
-        description: 'EC2 Instance Type'
+        description: 'EC2 Instance Type to run tests on.'
         required: true
         default: "t2.large"
       aws_ec2_ami:
