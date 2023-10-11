@@ -8,6 +8,8 @@ from contextlib import nullcontext
 from pathlib import Path
 from pkg_resources import packaging
 import wandb
+import re
+import json
 
 
 import torch
@@ -32,7 +34,7 @@ def set_tokenizer_params(tokenizer: LlamaTokenizer):
 def byte2mb(x):
     return int(x / 2**20)
 
-def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None):
+def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None, dataset_config=None):
     """
     Trains the model on the given dataloader
     
@@ -68,7 +70,11 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     results = {}
     best_val_loss = float("inf")
     # 1. Start a W&B Run
-    run = wandb.init(project=train_config.model_name, config=train_config)
+    def default_json(t):
+        return f'{t}'
+    simple_model_name = re.sub('[^0-9a-zA-Z_-]+', '_', train_config.model_name)
+    wandb_config = json.loads(json.dumps(train_config, default=default_json))
+    run = wandb.init(project=simple_model_name, config=wandb_config)
     for epoch in range(train_config.num_epochs):
         epoch_start_time = time.perf_counter()
         with MemoryTrace() as memtrace:  # track the memory usage
@@ -219,13 +225,15 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     if train_config.enable_fsdp and not train_config.use_peft:
         save_train_params(train_config, fsdp_config, rank)
 
-    trained_model_artifact = wandb.Artifact(
-            train_config.model_name, type="model",
-            metadata=dict(train_config))
-    trained_model_artifact.add_dir(train_config.output_dir)
-    # TODO make this pull from the conifg dataset.file
-    trained_model_artifact.add_file("examples/dashboard_dataset.py", "dataset_processor")
-    run.log_artifact(trained_model_artifact)
+    if rank==0 and dataset_config:
+        trained_model_artifact = wandb.Artifact(
+            simple_model_name, 
+            type="model",
+            metadata=wandb_config
+        )
+        trained_model_artifact.add_dir(train_config.output_dir)
+        trained_model_artifact.add_file(dataset_config.file, "dataset_processor")
+        run.log_artifact(trained_model_artifact)
     run.finish()
         
     return results
