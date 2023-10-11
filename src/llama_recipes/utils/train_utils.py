@@ -25,6 +25,7 @@ from llama_recipes.model_checkpointing import save_model_checkpoint, save_model_
 from llama_recipes.policies import fpSixteen,bfSixteen_mixed, get_llama_wrapper
 from llama_recipes.utils.memory_utils import MemoryTrace
 
+import datetime
 
 def set_tokenizer_params(tokenizer: LlamaTokenizer):
     tokenizer.pad_token_id = 0
@@ -71,7 +72,8 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     best_val_loss = float("inf")
     # 1. Start a W&B Run
     if (rank == 0 and train_config.enable_fsdp) or (not train_config.enable_fsdp) :
-        run = wandb.init(project=re.sub('[^0-9a-zA-Z_-]+', '_', train_config.model_name),
+        simple_model_name = re.sub('[^0-9a-zA-Z_-]+', '_', train_config.model_name)
+        run = wandb.init(project=f"{simple_model_name}-{datetime.date.today()}",
             config=asdict(train_config()))
         if dataset_config and dataset_config.file:
             print(f"logging artifact {dataset_config.file}")
