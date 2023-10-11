@@ -128,6 +128,9 @@ def main(**kwargs):
                 "pad_token": "<PAD>",
             }
         )
+    # As a result of the padding causing error on custom dataset, increase the vocab size
+    model.resize_token_embeddings(model.config.vocab_size + 1)
+    
     if train_config.use_peft:
         peft_config = generate_peft_config(train_config, kwargs)
         model = get_peft_model(model, peft_config)

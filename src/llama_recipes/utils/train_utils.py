@@ -7,6 +7,7 @@ import yaml
 from contextlib import nullcontext
 from pathlib import Path
 from pkg_resources import packaging
+import wandb
 
 
 import torch
@@ -66,6 +67,8 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     checkpoint_times = []
     results = {}
     best_val_loss = float("inf")
+    # 1. Start a W&B Run
+    run = wandb.init(project=train_config.model_name, config=train_config)
     for epoch in range(train_config.num_epochs):
         epoch_start_time = time.perf_counter()
         with MemoryTrace() as memtrace:  # track the memory usage
@@ -100,6 +103,11 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         pbar.update(1)
 
                 pbar.set_description(f"Training Epoch: {epoch+1}/{train_config.num_epochs}, step {step}/{len(train_dataloader)} completed (loss: {loss.detach().float()})")
+                run.log({
+                    'epoch': epoch+1, 
+                    'train_loss': loss.detach().float(), 
+                    'step': step
+                })
             pbar.close()
                 
         epoch_end_time = time.perf_counter()-epoch_start_time
@@ -133,7 +141,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         lr_scheduler.step()
           
         if train_config.run_validation:
-            eval_ppl, eval_epoch_loss = evaluation(model, train_config, eval_dataloader, local_rank, tokenizer)
+            eval_ppl, eval_epoch_loss = evaluation(model, train_config, eval_dataloader, local_rank, tokenizer, run, epoch)
             checkpoint_start_time = time.perf_counter()
             if train_config.save_model and eval_epoch_loss < best_val_loss:
                 if train_config.enable_fsdp:
@@ -210,10 +218,19 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     #saving the training params including fsdp setting for reference.
     if train_config.enable_fsdp and not train_config.use_peft:
         save_train_params(train_config, fsdp_config, rank)
+
+    trained_model_artifact = wandb.Artifact(
+            train_config.model_name, type="model",
+            metadata=dict(train_config))
+    trained_model_artifact.add_dir(train_config.output_dir)
+    # TODO make this pull from the conifg dataset.file
+    trained_model_artifact.add_file("examples/dashboard_dataset.py", "dataset_processor")
+    run.log_artifact(trained_model_artifact)
+    run.finish()
         
     return results
 
-def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer):
+def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, run=None, epoch=0):
     """
     Evaluates the model on the given dataloader
     
@@ -243,6 +260,12 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer):
                 outputs = model(**batch)
                 loss = outputs.loss
                 eval_loss += loss.detach().float()
+                if run:
+                    run.log({
+                        'epoch': epoch+1, 
+                        'eval_loss': loss.detach().float(), 
+                        'step': step
+                    })
             # Decode predictions and add to evaluation predictions list
             preds = torch.argmax(outputs.logits, -1)
             eval_preds.extend(
