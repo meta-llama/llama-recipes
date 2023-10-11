@@ -44,7 +44,6 @@ from llama_recipes.utils.train_utils import (
     get_policies
 )
 
-from peft.tuners.lora import mark_only_lora_as_trainable
 
 
 
@@ -140,7 +139,7 @@ def main(**kwargs):
             print(f"Restarting training from {train_config.existing_peft_model}")
             model.enable_input_require_grads()
             model = PeftModel.from_pretrained(model, train_config.existing_peft_model, is_trainable=True)
-            model = mark_only_lora_as_trainable(model)
+            model = model._mark_only_adapters_as_trainable()
         else:
             peft_config = generate_get_peftpeft_config(train_config, kwargs)
             model = get_peft_model(model, peft_config)
