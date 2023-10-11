@@ -72,7 +72,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     # 1. Start a W&B Run
     if (rank == 0 and train_config.enable_fsdp) or (not train_config.enable_fsdp) :
         run = wandb.init(project=re.sub('[^0-9a-zA-Z_-]+', '_', train_config.model_name),
-            config=asdict(train_config))
+            config=asdict(train_config()))
         if dataset_config and dataset_config.file:
             print(f"logging artifact {dataset_config.file}")
             run.log_artifact(dataset_config.file, name="dataset_processor", type="code")
