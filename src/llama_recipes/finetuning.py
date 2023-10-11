@@ -8,7 +8,7 @@ import fire
 import torch
 import torch.distributed as dist
 import torch.optim as optim
-from peft import get_peft_model, prepare_model_for_int8_training
+from peft import get_peft_model, prepare_model_for_int8_training, PeftModel
 from torch.distributed.fsdp import (
     FullyShardedDataParallel as FSDP,
 )
@@ -43,6 +43,9 @@ from llama_recipes.utils.train_utils import (
     print_model_size,
     get_policies
 )
+
+from peft.tuners.lora import mark_only_lora_as_trainable
+
 
 
 def main(**kwargs):
@@ -99,6 +102,7 @@ def main(**kwargs):
             device_map="auto" if train_config.quantization else None,
             use_cache=use_cache,
         )
+    
     if train_config.enable_fsdp and train_config.use_fast_kernels:
         """
         For FSDP and FSDP+PEFT, setting 'use_fast_kernels' will enable
@@ -132,8 +136,15 @@ def main(**kwargs):
     model.resize_token_embeddings(model.config.vocab_size + 1)
     
     if train_config.use_peft:
-        peft_config = generate_peft_config(train_config, kwargs)
-        model = get_peft_model(model, peft_config)
+        if train_config.existing_peft_model and train_config.peft_method == "lora":
+            print(f"Restarting training from {train_config.existing_peft_model}")
+            model.enable_input_require_grads()
+            model = PeftModel.from_pretrained(model, train_config.existing_peft_model, is_trainable=True)
+            model = mark_only_lora_as_trainable(model)
+        else:
+            peft_config = generate_get_peftpeft_config(train_config, kwargs)
+            model = get_peft_model(model, peft_config)
+            
         model.print_trainable_parameters()
 
     #setting up FSDP if enable_fsdp is enabled

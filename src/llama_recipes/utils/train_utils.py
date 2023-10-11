@@ -9,7 +9,7 @@ from pathlib import Path
 from pkg_resources import packaging
 import wandb
 import re
-import json
+from dataclasses import asdict
 
 
 import torch
@@ -70,11 +70,13 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     results = {}
     best_val_loss = float("inf")
     # 1. Start a W&B Run
-    def default_json(t):
-        return f'{t}'
-    simple_model_name = re.sub('[^0-9a-zA-Z_-]+', '_', train_config.model_name)
-    wandb_config = json.loads(json.dumps(train_config, default=default_json))
-    run = wandb.init(project=simple_model_name, config=wandb_config)
+    if (rank == 0 and train_config.enable_fsdp) or (not train_config.enable_fsdp) :
+        run = wandb.init(project=re.sub('[^0-9a-zA-Z_-]+', '_', train_config.model_name),
+            config=asdict(train_config))
+        if dataset_config and dataset_config.file:
+            print(f"logging artifact {dataset_config.file}")
+            run.log_artifact(dataset_config.file, name="dataset_processor", type="code")
+        
     for epoch in range(train_config.num_epochs):
         epoch_start_time = time.perf_counter()
         with MemoryTrace() as memtrace:  # track the memory usage
@@ -109,11 +111,10 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         pbar.update(1)
 
                 pbar.set_description(f"Training Epoch: {epoch+1}/{train_config.num_epochs}, step {step}/{len(train_dataloader)} completed (loss: {loss.detach().float()})")
-                run.log({
-                    'epoch': epoch+1, 
-                    'train_loss': loss.detach().float(), 
-                    'step': step
-                })
+                if (rank == 0 and train_config.enable_fsdp) or (not train_config.enable_fsdp):
+                    run.log({
+                        'train_loss': loss.detach().float()
+                    })
             pbar.close()
                 
         epoch_end_time = time.perf_counter()-epoch_start_time
@@ -147,7 +148,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         lr_scheduler.step()
           
         if train_config.run_validation:
-            eval_ppl, eval_epoch_loss = evaluation(model, train_config, eval_dataloader, local_rank, tokenizer, run, epoch)
+            eval_ppl, eval_epoch_loss = evaluation(model, train_config, eval_dataloader, local_rank, tokenizer, run if rank==0 else None, epoch)
             checkpoint_start_time = time.perf_counter()
             if train_config.save_model and eval_epoch_loss < best_val_loss:
                 if train_config.enable_fsdp:
@@ -162,8 +163,10 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                     if train_config.enable_fsdp:
                         if rank==0: 
                             print(f"PEFT modules are saved in {train_config.output_dir} directory")
+                            run.log_artifact(train_config.output_dir, name=f"epoch-{epoch}", type="model")
                     else:
                         print(f"PEFT modules are saved in {train_config.output_dir} directory")
+                        run.log_artifact(train_config.output_dir, name=f"epoch-{epoch}", type="model")
                         
                 else:
                     if not train_config.use_peft and fsdp_config.checkpoint_type == StateDictType.FULL_STATE_DICT:
@@ -225,16 +228,8 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     if train_config.enable_fsdp and not train_config.use_peft:
         save_train_params(train_config, fsdp_config, rank)
 
-    if rank==0 and dataset_config:
-        trained_model_artifact = wandb.Artifact(
-            simple_model_name, 
-            type="model",
-            metadata=wandb_config
-        )
-        trained_model_artifact.add_dir(train_config.output_dir)
-        trained_model_artifact.add_file(dataset_config.file, "dataset_processor")
-        run.log_artifact(trained_model_artifact)
-    run.finish()
+    if (rank == 0 and train_config.enable_fsdp) or (not train_config.enable_fsdp):
+        run.finish()
         
     return results
 
@@ -270,9 +265,7 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, run=N
                 eval_loss += loss.detach().float()
                 if run:
                     run.log({
-                        'epoch': epoch+1, 
-                        'eval_loss': loss.detach().float(), 
-                        'step': step
+                        'eval_loss': loss.detach().float()
                     })
             # Decode predictions and add to evaluation predictions list
             preds = torch.argmax(outputs.logits, -1)
