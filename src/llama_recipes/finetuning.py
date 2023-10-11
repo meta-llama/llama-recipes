@@ -50,6 +50,7 @@ from dataclasses import asdict
 def main(**kwargs):
     # Update the configuration for the training and sharding process
     update_config((train_config, fsdp_config), **kwargs)
+    print(type(train_config))
     print(asdict(train_config))
     # Set the seeds for reproducibility
     torch.cuda.manual_seed(train_config.seed)
