@@ -141,7 +141,7 @@ def main(**kwargs):
             model = PeftModel.from_pretrained(model, train_config.existing_peft_model, is_trainable=True)
             model = model._mark_only_adapters_as_trainable()
         else:
-            peft_config = generate_get_peftpeft_config(train_config, kwargs)
+            peft_config = generate_peft_config(train_config, kwargs)
             model = get_peft_model(model, peft_config)
             
         model.print_trainable_parameters()
