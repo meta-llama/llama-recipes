@@ -12,7 +12,7 @@ def generate_response(input_text):
 
     llm = Replicate(
         model=llama2_13b_chat,
-        input={"temperature": 0.01, "max_length": 2000, "top_p": 1},
+        model_kwargs={"temperature": 0.01, "top_p": 1, "max_new_tokens":500}
     )
     st.info(llm(input_text))
 

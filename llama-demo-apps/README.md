@@ -1,14 +1,29 @@
 # Llama2 Demo Apps 
 
-This folder showcases the Llama2-powered apps. If you need a general understanding of GenAI, Llama2, prompt engineering and RAG, be sure to first check the [Getting to know Llama 2 notebook](https://github.com/facebookresearch/llama-recipes/blob/main/examples/Getting_to_know_Llama.ipynb) and its Meta Connect video [here](https://www.facebook.com/watch/?v=662153709222699).
+This folder showcases Llama2-powered demo apps. If you need a general understanding of GenAI, Llama2, prompt engineering and RAG, be sure to first check the [Getting to know Llama 2 notebook](https://github.com/facebookresearch/llama-recipes/blob/main/examples/Getting_to_know_Llama.ipynb) and its Meta Connect video [here](https://www.facebook.com/watch/?v=662153709222699).
 
-Here we start with three quickstart demos showing how to run Llama2 locally on a Mac, remotely in the cloud, and on a Google Colab to ask Llama2 general questions or questions about unstructured data not trained for the model.
+We start with three quickstart demos showing how to run Llama2 locally on a Mac, remotely in the cloud, and on a Google Colab to ask Llama2 general questions or questions about unstructured data not trained for the model.
 
 We then show three demos that ask Llama2 to summarize a YouTube video, to answer questions about structured data stored in a database, and to answer questions about live search results.
 
 We also show how to build quick web UI for Llama2 demo apps using Streamlit and Gradio.
 
 More advanced Llama2 demo apps will be coming soon.
+
+## Setting Up Environment
+
+The quickest way to test run the notebook demo apps on your local machine is to create a Conda envinronment and start running the Jupyter notebook as follows:
+```
+conda create -n llama-demo-apps python=3.8
+conda activate llama-demo-apps
+pip install jupyter
+cd <your_work_folder>
+git clone https://github.com/facebookresearch/llama-recipes
+cd llama-recipes/llama-demo-apps
+jupyter notebook
+```
+
+You can also upload the notebooks to Google Colab.
 
 ## HelloLlama - Quickstart in Running Llama2 (Almost) Everywhere*
 
@@ -19,7 +34,7 @@ The first three demo apps show:
 * how to ask follow up questions to Llama by sending previous questions and answers as the context along with the new question, hence performing multi-turn chat or conversation with Llama.
 
 ### [Running Llama2 Locally on Mac](HelloLlamaLocal.ipynb)
-To run Llama2 locally on Mac using [llama-cpp-python](https://github.com/abetlen/llama-cpp-python), first open the notebook `HelloLlamaLocal`. Then replace `<path-to-ggml-model-q4_0.gguf>` in the notebook `HelloLlamaLocal` with the path either to your downloaded quantized model file [here](https://drive.google.com/file/d/1afPv3HOy73BE2MoYCgYJvBDeQNa9rZbj/view?usp=sharing), or to the `ggml-model-q4_0.gguf` file built with the following commands:
+To run Llama2 locally on Mac using [llama-cpp-python](https://github.com/abetlen/llama-cpp-python), first open the notebook `HelloLlamaLocal`. Then replace `<path-to-ggml-model-q4_0.gguf>` in the notebook `HelloLlamaLocal` with the path either to your downloaded quantized model file [here](https://huggingface.co/TheBloke/Llama-2-7b-Chat-GGUF/resolve/main/llama-2-7b-chat.Q4_0.gguf), or to the `ggml-model-q4_0.gguf` file built with the following commands:
 ```
 git clone https://github.com/ggerganov/llama.cpp
 cd llama.cpp
