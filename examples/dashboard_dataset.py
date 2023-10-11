@@ -1,7 +1,8 @@
 import datasets
 from llama_recipes.datasets.utils import Concatenator
 
-
+B_INST, E_INST = "[INST]", "[/INST]"
+B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n"
 
 def get_custom_dataset(dataset_config, tokenizer, split):
     dataset = datasets.load_dataset("kiamesdavies/prometheus-grafana-dashboards", split="test" if split == "validation" else split)
