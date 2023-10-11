@@ -1,12 +1,9 @@
-name: Llama Recipes PyTest tests.
+name: PyTest tests.
 run-name: ${{ github.actor }} Triggered Action.
 on:
   pull_request:
     branches:    
       - 'main'
-    paths-ignore:
-      - 'docs/**'
-      - '**/*.md'
     paths:
       - '*.py'
 
@@ -26,7 +23,7 @@ env:
   AWS_ACCOUNT: "320567679581"
   AWS_SUBNET_ID: "subnet-052cc9eed3a81fe9f" 
   AWS_EC2_TYPE: "t2.large"
-  AWS_EC2_AMI: "ami-0a2a52c3564b58a29" # Temp: ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20230516
+  AWS_EC2_AMI: "ami-0a2a52c3564b58a29" # ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20230516
   AWS_SG_ID: "sg-0059cfc5ecfb75bf0"
 
 permissions:
@@ -71,8 +68,6 @@ jobs:
           mode: start
           github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }} # added to repo secrets.
           ec2-image-id: ${{ env.AWS_EC2_AMI }}
-          # ec2-image-id: ${{ inputs.AWS_EC2_AMI }}
-          # ec2-instance-type: ${{ inputs.AWS_EC2_TYPE }}
           ec2-instance-type: ${{ env.AWS_EC2_TYPE }}
           subnet-id: ${{ env.AWS_SUBNET_ID }}
           security-group-id: ${{ env.AWS_SG_ID }}
@@ -106,15 +101,13 @@ jobs:
         run: |
           echo "Running llama-recipes pytest tests on Self Hosted ${{ env.AWS_EC2_TYPE }} EC2 Runner"
           cd $GITHUB_WORKSPACE && python3 -m pytest --junitxml="$GITHUB_WORKSPACE/result.xml"
-        
-      - name: "Publish Test Results"
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
+
+      - name: Test Summary
+        uses: test-summary/action@v2
         with:
-          files: |
-            ${GITHUB_WORKSPACE}/result.xml
-            **/*.xml
-        
+          paths: "**/*.xml"
+        if: always()
+
   stop-runner:
     name: Stop self-hosted EC2 runner
     needs:
