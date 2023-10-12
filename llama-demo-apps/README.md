@@ -60,8 +60,8 @@ This demo app uses Llama2 to return a text summary of a YouTube video. It shows 
 ## [NBA2023-24](StructuredLlama.ipynb): Ask Llama2 about Structured Data
 This demo app shows how to use LangChain and Llama2 to let users ask questions about **structured** data stored in a SQL DB. As the 2023-24 NBA season is around the corner, we use the NBA roster info saved in a SQLite DB to show you how to ask Llama2 questions about your favorite teams or players. 
 
-## [BreakingNews](BreakingNews.ipynb): Ask Llama2 about Live Data
-This demo app shows how to perform live data augmented generation tasks with Llama2 and [LlamaIndex](https://github.com/run-llama/llama_index), another leading open-source framework for building LLM apps: it uses the [You.com serarch API](https://documentation.you.com/quickstart) to get breaking news and ask Llama2 about them.
+## [LiveData](LiveData.ipynb): Ask Llama2 about Live Data
+This demo app shows how to perform live data augmented generation tasks with Llama2 and [LlamaIndex](https://github.com/run-llama/llama_index), another leading open-source framework for building LLM apps: it uses the [You.com serarch API](https://documentation.you.com/quickstart) to get live search result and ask Llama2 about them.
 
 ## Quick Web UI for Llama2 Chat
 If you prefer to see Llama2 in action in a web UI, instead of the notebooks above, you can try one of the two methods:
