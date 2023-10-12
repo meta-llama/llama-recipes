@@ -23,7 +23,7 @@ from transformers import (
 )
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
 
-from llama_recipes.configs import fsdp_config, train_config
+from llama_recipes.configs import fsdp_config as fsdp_config_type, train_config as train_config_type
 from llama_recipes.policies import AnyPrecisionAdamW, apply_fsdp_checkpointing
 
 from llama_recipes.utils import fsdp_auto_wrap_policy
@@ -49,11 +49,10 @@ from dataclasses import asdict
 
 def main(**kwargs):
     # Update the configuration for the training and sharding process
+    train_config = train_config_type()
+    fsdp_config = fsdp_config_type()
     update_config((train_config, fsdp_config), **kwargs)
-    print(asdict(train_config()))
-    print(vars(train_config()))
-    print(vars(train_config))
-    print(asdict(train_config))
+    
     # Set the seeds for reproducibility
     torch.cuda.manual_seed(train_config.seed)
     torch.manual_seed(train_config.seed)
