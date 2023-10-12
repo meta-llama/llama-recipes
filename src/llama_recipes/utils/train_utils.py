@@ -7,8 +7,6 @@ import yaml
 from contextlib import nullcontext
 from pathlib import Path
 from pkg_resources import packaging
-import wandb
-import re
 from dataclasses import asdict
 
 
@@ -34,7 +32,7 @@ def set_tokenizer_params(tokenizer: LlamaTokenizer):
 def byte2mb(x):
     return int(x / 2**20)
 
-def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None, dataset_config=None):
+def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None, run=None):
     """
     Trains the model on the given dataloader
     
@@ -69,13 +67,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     checkpoint_times = []
     results = {}
     best_val_loss = float("inf")
-    # 1. Start a W&B Run
-    if (rank == 0 and train_config.enable_fsdp) or (not train_config.enable_fsdp) :
-        run = wandb.init(project=re.sub('[^0-9a-zA-Z_-]+', '_', train_config.model_name),
-            config=asdict(train_config))
-        if dataset_config and dataset_config.file:
-            print(f"logging artifact {dataset_config.file}")
-            run.log_artifact(dataset_config.file, name="dataset_processor", type="code")
+    
         
     for epoch in range(train_config.num_epochs):
         epoch_start_time = time.perf_counter()
@@ -111,7 +103,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         pbar.update(1)
 
                 pbar.set_description(f"Training Epoch: {epoch+1}/{train_config.num_epochs}, step {step}/{len(train_dataloader)} completed (loss: {loss.detach().float()})")
-                if (rank == 0 and train_config.enable_fsdp) or (not train_config.enable_fsdp):
+                if run:
                     run.log({
                         'train_loss': loss.detach().float()
                     })
@@ -148,7 +140,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         lr_scheduler.step()
           
         if train_config.run_validation:
-            eval_ppl, eval_epoch_loss = evaluation(model, train_config, eval_dataloader, local_rank, tokenizer, run if rank==0 else None, epoch)
+            eval_ppl, eval_epoch_loss = evaluation(model, train_config, eval_dataloader, local_rank, tokenizer, run, epoch)
             checkpoint_start_time = time.perf_counter()
             if train_config.save_model and eval_epoch_loss < best_val_loss:
                 if train_config.enable_fsdp:
@@ -163,10 +155,12 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                     if train_config.enable_fsdp:
                         if rank==0: 
                             print(f"PEFT modules are saved in {train_config.output_dir} directory")
-                            run.log_artifact(train_config.output_dir, name=f"epoch-{epoch}", type="model")
+                            if run:
+                                run.log_artifact(train_config.output_dir, name=f"epoch-{epoch}", type="model")
                     else:
                         print(f"PEFT modules are saved in {train_config.output_dir} directory")
-                        run.log_artifact(train_config.output_dir, name=f"epoch-{epoch}", type="model")
+                        if run:
+                            run.log_artifact(train_config.output_dir, name=f"epoch-{epoch}", type="model")
                         
                 else:
                     if not train_config.use_peft and fsdp_config.checkpoint_type == StateDictType.FULL_STATE_DICT:
@@ -227,9 +221,6 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     #saving the training params including fsdp setting for reference.
     if train_config.enable_fsdp and not train_config.use_peft:
         save_train_params(train_config, fsdp_config, rank)
-
-    if (rank == 0 and train_config.enable_fsdp) or (not train_config.enable_fsdp):
-        run.finish()
         
     return results
 

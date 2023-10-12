@@ -45,14 +45,15 @@ from llama_recipes.utils.train_utils import (
 )
 
 from dataclasses import asdict
-
+import wandb
+import re
 
 def main(**kwargs):
     # Update the configuration for the training and sharding process
     train_config = train_config_type()
     fsdp_config = fsdp_config_type()
     update_config((train_config, fsdp_config), **kwargs)
-    
+
     # Set the seeds for reproducibility
     torch.cuda.manual_seed(train_config.seed)
     torch.manual_seed(train_config.seed)
@@ -63,6 +64,12 @@ def main(**kwargs):
         local_rank = int(os.environ["LOCAL_RANK"])
         rank = int(os.environ["RANK"])
         world_size = int(os.environ["WORLD_SIZE"])
+    
+    # 1. Start a W&B Run
+    if (rank == 0 and train_config.enable_fsdp) or (not train_config.enable_fsdp) :
+        run = wandb.init(project=re.sub('[^0-9a-zA-Z_-]+', '_', train_config.model_name),
+            config=asdict(train_config))
+    
 
     if torch.distributed.is_initialized():
         torch.cuda.set_device(local_rank)
@@ -141,9 +148,7 @@ def main(**kwargs):
             print(f"Restarting training from {train_config.existing_peft_model}")
             model.enable_input_require_grads()
             model = PeftModel.from_pretrained(model, train_config.existing_peft_model, is_trainable=True)
-            print(f"model is {model}")
             model._mark_only_adapters_as_trainable()
-            print(f"model is 2 {model}")
         else:
             peft_config = generate_peft_config(train_config, kwargs)
             model = get_peft_model(model, peft_config)
@@ -177,6 +182,9 @@ def main(**kwargs):
         model.to("cuda")
 
     dataset_config = generate_dataset_config(train_config, kwargs)
+    if run and dataset_config.file:
+        print(f"logging dataset_processor artifact {dataset_config.file}")
+        run.log_artifact(dataset_config.file, name="dataset_processor", type="code")
 
      # Load and preprocess the dataset for training and validation
     dataset_train = get_preprocessed_dataset(
@@ -266,10 +274,13 @@ def main(**kwargs):
         fsdp_config if train_config.enable_fsdp else None,
         local_rank if train_config.enable_fsdp else None,
         rank if train_config.enable_fsdp else None,
-        dataset_config
+        run
     )
     if not train_config.enable_fsdp or rank==0:
         [print(f'Key: {k}, Value: {v}') for k, v in results.items()]
+
+    if run:
+        run.finish()
 
 if __name__ == "__main__":
     fire.Fire(main)
