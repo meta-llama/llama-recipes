@@ -1,6 +1,17 @@
 # Llama2 Demo Apps 
 
-This folder showcases Llama2-powered demo apps. If you need a general understanding of GenAI, Llama2, prompt engineering and RAG, be sure to first check the [Getting to know Llama 2 notebook](https://github.com/facebookresearch/llama-recipes/blob/main/examples/Getting_to_know_Llama.ipynb) and its Meta Connect video [here](https://www.facebook.com/watch/?v=662153709222699).
+This folder contains a series of Llama2-powered apps:
+* Quickstart Llama deployments and basic interactions with Llama
+1. Llama on your Mac and ask Llama general questions
+2. Llama on Google Colab
+3. Llama on Cloud and ask Llama questions about unstructured data in a PDF
+
+* Specialized Llama use cases:
+1. Ask Llama to summarize a video content
+2. Ask Llama questions about structured data in a DB
+3. Ask Llama questions about live data on the web
+
+If you need a general understanding of GenAI, Llama2, prompt engineering and RAG (Retrieval Augmented Generation), be sure to first check the [Getting to know Llama 2 notebook](https://github.com/facebookresearch/llama-recipes/blob/main/examples/Getting_to_know_Llama.ipynb) and its Meta Connect video [here](https://www.facebook.com/watch/?v=662153709222699).
 
 We start with three quickstart demos showing how to run Llama2 locally on a Mac, remotely in the cloud, and on a Google Colab to ask Llama2 general questions or questions about unstructured data not trained for the model.
 
@@ -30,7 +41,7 @@ You can also upload the notebooks to Google Colab.
 The first three demo apps show:
 * how to run Llama2 locally on a Mac, in the Google Colab notebook, and in the cloud using Replicate;
 * how to use [LangChain](https://github.com/langchain-ai/langchain), an open-source framework for building LLM apps, to ask Llama general questions in different ways;
-* how to use LangChain to load a recent PDF doc - the Llama2 paper pdf - and ask questions about it. This is the well known RAG (Retrieval Augmented Generation) method to let LLM such as Llama2 be able to answer questions about the data not publicly available when Llama2 was trained, or about your own data. RAG is one way to prevent LLM's hallucination. 
+* how to use LangChain to load a recent PDF doc - the Llama2 paper pdf - and ask questions about it. This is the well known RAG method to let LLM such as Llama2 be able to answer questions about the data not publicly available when Llama2 was trained, or about your own data. RAG is one way to prevent LLM's hallucination. 
 * how to ask follow up questions to Llama by sending previous questions and answers as the context along with the new question, hence performing multi-turn chat or conversation with Llama.
 
 ### [Running Llama2 Locally on Mac](HelloLlamaLocal.ipynb)
