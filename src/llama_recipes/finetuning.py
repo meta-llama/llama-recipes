@@ -141,7 +141,9 @@ def main(**kwargs):
             print(f"Restarting training from {train_config.existing_peft_model}")
             model.enable_input_require_grads()
             model = PeftModel.from_pretrained(model, train_config.existing_peft_model, is_trainable=True)
+            print(f"model is {model}")
             model._mark_only_adapters_as_trainable()
+            print(f"model is 2 {model}")
         else:
             peft_config = generate_peft_config(train_config, kwargs)
             model = get_peft_model(model, peft_config)
