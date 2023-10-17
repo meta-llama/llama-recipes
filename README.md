@@ -181,14 +181,14 @@ You can read more about our fine-tuning strategies [here](./docs/LLM_finetuning.
 # Demo Apps
 This folder contains a series of Llama2-powered apps:
 * Quickstart Llama deployments and basic interactions with Llama
-1. Llama on your Mac and ask Llama general questions
-2. Llama on Google Colab
-3. Llama on Cloud and ask Llama questions about unstructured data in a PDF
+  1. Llama on your Mac and ask Llama general questions
+  2. Llama on Google Colab
+  3. Llama on Cloud and ask Llama questions about unstructured data in a PDF
 
 * Specialized Llama use cases:
-1. Ask Llama to summarize a video content
-2. Ask Llama questions about structured data in a DB
-3. Ask Llama questions about live data on the web
+  1. Ask Llama to summarize a video content
+  2. Ask Llama questions about structured data in a DB
+  3. Ask Llama questions about live data on the web
 
 # Repository Organization
 This repository is organized in the following way:
