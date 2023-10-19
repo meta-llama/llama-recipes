@@ -67,7 +67,7 @@ def main(**kwargs):
     
     # 1. Start a W&B Run
     if (rank == 0 and train_config.enable_fsdp) or (not train_config.enable_fsdp) :
-        project_name = train_config.project_name if train_config.project_name is not None else re.sub('[^0-9a-zA-Z_-]+', '_', train_config.model_name)
+        project_name = train_config.project_name if train_config.project_name else re.sub('[^0-9a-zA-Z_-]+', '_', train_config.model_name)
         run = wandb.init(project=project_name,
             config=asdict(train_config))
     
