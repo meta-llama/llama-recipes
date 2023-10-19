@@ -64,7 +64,8 @@ def main(**kwargs):
         local_rank = int(os.environ["LOCAL_RANK"])
         rank = int(os.environ["RANK"])
         world_size = int(os.environ["WORLD_SIZE"])
-    
+        
+    run = None
     # 1. Start a W&B Run
     if (rank == 0 and train_config.enable_fsdp) or (not train_config.enable_fsdp) :
         project_name = train_config.project_name if train_config.project_name else re.sub('[^0-9a-zA-Z_-]+', '_', train_config.model_name)
