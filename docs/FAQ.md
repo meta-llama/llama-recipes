@@ -27,15 +27,29 @@ Here we discuss frequently asked questions that may occur and we found useful al
 
     Fine-tuning requirements vary based on amount of data, time to complete fine-tuning and cost constraints. To fine-tune these models we have generally used multiple NVIDIA A100 machines with data parallelism across nodes and a mix of data and tensor parallelism intra node. But using a single machine, or other GPU types like NVIDIA A10G or H100 are definitely possible (e.g. alpaca models are trained on a single RTX4090: https://github.com/tloen/alpaca-lora).
 
-7. How to handle CUDA memory fragmentations during fine-tuning that may lead into an OOM? In some cases you may experience that after model checkpointing specially with FSDP (this usually does not happen with PEFT methods), the reserved and allocated CUDA memory has increased. This might be due to CUDA memory fragmentations. PyTorch recenly added an enviroment variable that helps to better manage memory fragmentation (this feature in available on PyTorch nightlies at the time of writing this doc July 30 2023). You can set this in your main training script as follows: 
+7. How to handle CUDA memory fragmentations during fine-tuning that may lead into an OOM?
 
-```bash
+    In some cases you may experience that after model checkpointing specially with FSDP (this usually does not happen with PEFT methods), the reserved and allocated CUDA memory has increased. This might be due to CUDA memory fragmentations. PyTorch recenly added an enviroment variable that helps to better manage memory fragmentation (this feature in available on PyTorch nightlies at the time of writing this doc July 30 2023). You can set this in your main training script as follows:
 
-os.environ['PYTORCH_CUDA_ALLOC_CONF']='expandable_segments:True'
+    ```bash
 
-```
-We also added this enviroment variable in `setup_environ_flags` of the [train_utils.py](../src/llama_recipes/utils/train_utils.py), feel free to uncomment it if required.
+    os.environ['PYTORCH_CUDA_ALLOC_CONF']='expandable_segments:True'
 
-8. Additional debugging flags? the environment variable `TORCH_DISTRIBUTED_DEBUG` can be used to trigger additional useful logging and collective synchronization checks to ensure all ranks are synchronized appropriately. `TORCH_DISTRIBUTED_DEBUG` can be set to either OFF (default), INFO, or DETAIL depending on the debugging level required. Please note that the most verbose option, DETAIL may impact the application performance and thus should only be used when debugging issues.
+    ```
+    We also added this enviroment variable in `setup_environ_flags` of the [train_utils.py](../src/llama_recipes/utils/train_utils.py), feel free to uncomment it if required.
 
-We also added this enviroment variable in `setup_environ_flags` of the [train_utils.py](../src/llama_recipes/utils/train_utils.py), feel free to uncomment it if required.
+8. Additional debugging flags?
+
+    The environment variable `TORCH_DISTRIBUTED_DEBUG` can be used to trigger additional useful logging and collective synchronization checks to ensure all ranks are synchronized appropriately. `TORCH_DISTRIBUTED_DEBUG` can be set to either OFF (default), INFO, or DETAIL depending on the debugging level required. Please note that the most verbose option, DETAIL may impact the application performance and thus should only be used when debugging issues.
+
+    We also added this enviroment variable in `setup_environ_flags` of the [train_utils.py](../src/llama_recipes/utils/train_utils.py), feel free to uncomment it if required.
+
+9. I am getting import errors when running inference.
+
+    Verify that CUDA environment variables are set correctly on your machine. For example for bitsandbytes, you can generally set it as below to get things working on A100 80g's on AWS.
+
+    ```bash
+    export CUDA_HOME="/usr/local/cuda-11.8"
+    export PATH=$CUDA_HOME/bin:$PATH
+    export LD_LIBRARY_PATH=$CUDA_HOME/lib:$CUDA_HOME/lib64:$CUDA_HOME/efa/lib:/opt/amazon/efa/lib:$LD_LIBRARY_PATH
+    ```

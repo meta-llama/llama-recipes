@@ -1,4 +1,7 @@
-# Llama 2 Fine-tuning / Inference Recipes and Examples
+# Llama 2 Fine-tuning / Inference Recipes, Examples and Demo Apps
+
+**[Update Oct. 20, 2023] We have just released a series of Llama 2 demo apps [here](./demo_apps). These apps show how to run Llama 2 locally and in the cloud to chat about data (PDF, DB, or live) and generate video summary.**
+
 
 The 'llama-recipes' repository is a companion to the [Llama 2 model](https://github.com/facebookresearch/llama). The goal of this repository is to provide examples to quickly get started with fine-tuning for domain adaptation and how to run inference for the fine-tuned models. For ease of use, the examples use Hugging Face converted versions of the models. See steps for conversion of the model [here](#model-conversion-to-hugging-face).
 
@@ -181,14 +184,14 @@ You can read more about our fine-tuning strategies [here](./docs/LLM_finetuning.
 # Demo Apps
 This folder contains a series of Llama2-powered apps:
 * Quickstart Llama deployments and basic interactions with Llama
-1. Llama on your Mac and ask Llama general questions
-2. Llama on Google Colab
-3. Llama on Cloud and ask Llama questions about unstructured data in a PDF
+  1. Llama on your Mac and ask Llama general questions
+  2. Llama on Google Colab
+  3. Llama on Cloud and ask Llama questions about unstructured data in a PDF
 
 * Specialized Llama use cases:
-1. Ask Llama to summarize a video content
-2. Ask Llama questions about structured data in a DB
-3. Ask Llama questions about live data on the web
+  1. Ask Llama to summarize a video content
+  2. Ask Llama questions about structured data in a DB
+  3. Ask Llama questions about live data on the web
 
 # Repository Organization
 This repository is organized in the following way:
