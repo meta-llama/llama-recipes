@@ -46,8 +46,8 @@ from utils.train_utils import (
 
 
 def main(**kwargs):
-    # kwargs['r'] = kwargs['lora_rank']
-    # del kwargs['lora_rank']
+    kwargs['r'] = kwargs['lora_rank']
+    del kwargs['lora_rank']
     # Update the configuration for the training and sharding process
     update_config((train_config, fsdp_config), **kwargs)
 
