@@ -10,7 +10,7 @@ After installing the llama-recipes package through [pip](../README.md#installati
 ```
 python -m llama_recipes.finetuning <parameters>
 
-python examnples/finetuning.py <parameters>
+python examples/finetuning.py <parameters>
 ```
 Please see [README.md](../README.md) for details.
 
