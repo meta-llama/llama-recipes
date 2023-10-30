@@ -1,0 +1,168 @@
+# Llama 2 On-Prem Inference Using vLLM and TGI
+
+Enterprise customers may prefer to deploy Llama 2 on-prem and run Llama in their own servers. This tutorial shows how to use Llama 2 with [vLLM](https://github.com/vllm-project/vllm) and Hugging Face [TGI](https://github.com/huggingface/text-generation-inference), two leading open-source tools to deploy and serve LLMs. We showed how to use LangChain, an LLM app development framework which we used for our earlier demo apps with Llama 2 running on [local Mac](https://github.com/facebookresearch/llama-recipes/blob/main/demo_apps/HelloLlamaLocal.ipynb) or [Replicate cloud](https://github.com/facebookresearch/llama-recipes/blob/main/demo_apps/HelloLlamaCloud.ipynb) and will show here how to use LangChain with on-prem Llama via vLLM and TGI. 
+
+We'll use the Amazon EC2 instance running Ubuntu with an A10G 24GB GPU as an example of running vLLM and TGI with Llama 2, and you can replace this with your own server.
+
+The Colab notebook to connect via LangChain with Llama 2 hosted as the vLLM and TGI API services is [here](https://colab.research.google.com/drive/1rYWLdgTGIU1yCHmRpAOB2D-84fPzmOJg?usp=sharing), also shown in the sections below.
+
+## Setting Up vLLM with Llama 2
+
+On a terminal, run the following commands:
+```
+conda create -n vllm python=3.8
+conda activate vllm
+pip install vllm
+cd <your_work_folder>
+git clone https://github.com/vllm-project/vllm
+cd vllm/vllm/entrypoints/
+```
+
+There are two ways to deploy Llama 2 via vLLM. 
+
+### Deploying Llama 2 as an API Server
+
+Run the command below to deploy vLLM as an Llama 2 service:
+
+```
+python api_server.py --host 0.0.0.0 --port 5000 --model meta-llama/Llama-2-7b-chat-hf
+```
+
+Then on another terminal you can run:
+
+```
+curl http://localhost:5000/generate -d '{
+        "prompt": "Who wrote the book Innovators dilemma?",
+        "max_tokens": 300,
+        "temperature": 0
+    }'
+```
+
+to send a query (prompt) to Llama 2 via vLLM and get Llama's response:
+
+```
+{"text":["Who wrote the book Innovators dilemma?\n\nThe book \"Innovator's Dilemma\" was written by Clayton M. Christensen. It was first published in 1997 and has since become a classic in the field of business and innovation. In the book, Christensen argues that successful companies often struggle to adapt to disruptive technologies and new market entrants, and that this struggle can lead to their downfall. He also introduces the concept of the \"innovator's dilemma,\" which refers to the paradoxical situation in which a company's efforts to improve its existing products or services can actually lead to its own decline."]}
+```
+
+Now in your Llama client app, you can make an HTTP request as the `curl` command above to send a query to Llama and parse the response.
+
+If you add the port 5000 to your EC2 instance's security group's inbound rules, then you can run this on your Mac/Windows for test:
+
+```
+curl http://<EC2_public_ip>:5000/generate -d '{
+        "prompt": "Who wrote the book godfather?",
+        "max_tokens": 300,
+        "temperature": 0
+    }'
+```
+
+### Deploying Llama 2 as OpenAI-Compatible Server
+
+You can also deploy Llama 2 as OpenAI-Compatible service to use vLLM to easily replace code using OpenAI API. First, run the command below:
+
+```
+python openai/api_server.py --host 0.0.0.0 --port 5000 --model meta-llama/Llama-2-7b-chat-hf
+```
+
+Then on another terminal, run:
+
+```
+curl http://localhost:5000/v1/completions     -H "Content-Type: application/json"     -d '{
+        "model": "meta-llama/Llama-2-7b-chat-hf",
+        "prompt": "Who wrote the book Innovators dilemma?",
+        "max_tokens": 300,
+        "temperature": 0
+    }'
+```
+and you'll see the following result:
+
+```
+{"id":"cmpl-3eae7061b26e40059550ba78d0d84ae6","object":"text_completion","created":3616,"model":"meta-llama/Llama-2-7b-chat-hf","choices":[{"index":0,"text":"\n\nThe book \"Innovator's Dilemma\" was written by Clayton M. Christensen. It was first published in 1997 and has since become a classic in the field of business and innovation. In the book, Christensen argues that successful companies often struggle to adapt to disruptive technologies and new market entrants, and that this struggle can lead to their downfall. He also introduces the concept of the \"innovator's dilemma,\" which refers to the paradoxical situation in which a company's efforts to improve its existing products or services can actually lead to its own decline.","logprobs":null,"finish_reason":"stop"}],"usage":{"prompt_tokens":13,"total_tokens":153,"completion_tokens":140}}
+```
+## Querying with Llama 2 via vLLM
+
+On a Google Colab notebook, first install two packages:
+```
+!pip install langchain openai
+```
+
+Note that we only need to install the `openai` package with an `EMPTY` OpenAI API key to complete the LangChain integration with the OpenAI-Compatible vLLM deployment of Llama 2. 
+
+Then run the code below, after replacing the <vllm_server_ip_address>:
+
+```
+from langchain.llms import VLLMOpenAI
+
+llm = VLLMOpenAI(
+    openai_api_key="EMPTY",
+    openai_api_base="http://<vllm_server_ip_address>:5000/v1",
+    model_name="meta-llama/Llama-2-7b-chat-hf",
+    model_kwargs={
+        "max_new_token": 300
+        }
+)
+print(llm("Who wrote the book godfather?"))
+```
+
+You'll see an answer like "
+The book "The Godfather" was written by Mario Puzo. It was first published in 1969 and has since become a classic of American literature. The book was later adapted into a successful film directed by Francis Ford Coppola, which was released in 1972."
+
+You can use the Llama 2 instance `llm` created this way in any of the [Llama demo apps](https://github.com/facebookresearch/llama-recipes/tree/main/demo_apps) or your own Llama apps and integrate seamlessly with LangChain and LlamaIndex to build powerful on-prem Llama apps.
+
+## Setting Up TGI with Llama 2
+
+The easiest way to deploy Llama 2 with TGI is using TGI's official docker image. First, make sure you have been granted access to the Meta Llama 2 on Hugging Face by opening https://huggingface.co/meta-llama/Llama-2-13b-chat-hf and confirming you see "Gated model You have been granted access to this model". If you don't see the "granted access" message, simply follow the instructions under "Access Llama 2 on Hugging Face".
+
+Then copy your Hugging Face access token, which you can create for free, at https://huggingface.co/settings/tokens, and set it as the value of one of the three shell variables:
+
+```
+model=meta-llama/Llama-2-13b-chat-hf
+volume=$PWD/data
+token=<your Hugging Face access token>
+```
+
+You can replace the `model` value above with another Llama 2 model.
+
+Finally, run the command below to deploy a quantized version of the Llama 2 13b-chat model with TGI:
+
+```
+docker run --gpus all --shm-size 1g -e HUGGING_FACE_HUB_TOKEN=$token -p 8080:80 -v $volume:/data ghcr.io/huggingface/text-generation-inference:1.0.2 --model-id $model  --quantize bitsandbytes-nf4
+```
+
+After this, you'll be able to run the command below on another terminal:
+
+```
+curl 127.0.0.1:8080/generate     -X POST     -d '{"inputs":"Who wrote the book innovators dilemma?","parameters":{"max_new_tokens":200}}'     -H 'Content-Type: application/json'
+```
+
+and see the answer by Llama 2 via TGI:
+
+```
+{"generated_text":"\n\nThe book \"The Innovator's Dilemma\" was written by Clayton Christensen, a professor at Harvard Business School. It was first published in 1997 and has since become a widely recognized and influential book on the topic of disruptive innovation."}
+```
+
+## Querying with Llama 2 via TGI
+
+Using LangChain to integrate with TGI-hosted Llama 2 is straightforward. In the Colab above, first add one cell to install the Hugging Face `text_generation` package:
+
+```
+!pip install text_generation
+```
+
+Then add the code below:
+
+```
+llm = HuggingFaceTextGenInference(
+    inference_server_url="http://<tgi_server_ip_address>:8080/",
+    max_new_tokens=512,
+    top_k=10,
+    top_p=0.95,
+    typical_p=0.95,
+    temperature=0.01,
+    repetition_penalty=1.03,
+)
+llm("What wrote the book godfather?")
+```
+
+With the Llama 2 instance `llm` created this way, you can integrate seamlessly with LangChain and LlamaIndex to build powerful on-prem Llama apps such as the [Llama demo apps](https://github.com/facebookresearch/llama-recipes/tree/main/demo_apps).
+
