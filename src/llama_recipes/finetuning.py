@@ -75,7 +75,7 @@ def main(**kwargs):
             from torch.distributed.optim import _apply_optimizer_in_backward
             optimizer_in_backward_available = True
         except ImportError:
-            print("The required module for optimizer overlap in 'torch.distributed.optim' is not available.")
+            print("The required module for optimizer overlap in 'torch.distributed.optim' is not available, skipping applying optimizer overlap.")
             
     # Load the pre-trained model and setup its configuration
     use_cache = False if train_config.enable_fsdp else None
