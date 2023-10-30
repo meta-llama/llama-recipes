@@ -193,6 +193,8 @@ This folder contains a series of Llama2-powered apps:
   2. Ask Llama questions about structured data in a DB
   3. Ask Llama questions about live data on the web
 
+**[New] A tutorial on how to deploy [Llama 2 on-prem](./demo_apps/llama-on-prem.md) with vLLM and TGI based API services, as well as client code in Python.**
+
 # Repository Organization
 This repository is organized in the following way:
 
