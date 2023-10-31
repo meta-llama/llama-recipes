@@ -76,10 +76,11 @@ curl http://localhost:5000/v1/completions -H "Content-Type: application/json" -d
 and you'll see the following result:
 
 > {"id":"cmpl-3eae7061b26e40059550ba78d0d84ae6","object":"text_completion","created":3616,"model":"meta-llama/Llama-2-7b-chat-hf","choices":[{"index":0,"text":"\n\nThe book \"Innovator's Dilemma\" was written by Clayton M. Christensen. It was first published in 1997 and has since become a classic in the field of business and innovation. In the book, Christensen argues that successful companies often struggle to adapt to disruptive technologies and new market entrants, and that this struggle can lead to their downfall. He also introduces the concept of the \"innovator's dilemma,\" which refers to the paradoxical situation in which a company's efforts to improve its existing products or services can actually lead to its own decline.","logprobs":null,"finish_reason":"stop"}],"usage":{"prompt_tokens":13,"total_tokens":153,"completion_tokens":140}}
-```
+
 ## Querying with Llama 2 via vLLM
 
 On a Google Colab notebook, first install two packages:
+
 ```
 !pip install langchain openai
 ```
