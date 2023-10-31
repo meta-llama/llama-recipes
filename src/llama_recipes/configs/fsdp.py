@@ -17,4 +17,3 @@ class fsdp_config:
     pure_bf16: bool = False
     optimizer: str= "AdamW"
     optimizer_overlap: bool = False
-    
