@@ -1,12 +1,12 @@
 # Llama 2 On-Prem Inference Using vLLM and TGI
 
-Enterprise customers may prefer to deploy Llama 2 on-prem and run Llama in their own servers. This tutorial shows how to use Llama 2 with [vLLM](https://github.com/vllm-project/vllm) and Hugging Face [TGI](https://github.com/huggingface/text-generation-inference), two leading open-source tools to deploy and serve LLMs. We showed how to use LangChain, an LLM app development framework which we used for our earlier demo apps with Llama 2 running on [local Mac](https://github.com/facebookresearch/llama-recipes/blob/main/demo_apps/HelloLlamaLocal.ipynb) or [Replicate cloud](https://github.com/facebookresearch/llama-recipes/blob/main/demo_apps/HelloLlamaCloud.ipynb) and will show here how to use LangChain with on-prem Llama via vLLM and TGI. 
+Enterprise customers may prefer to deploy Llama 2 on-prem and run Llama in their own servers. This tutorial shows how to use Llama 2 with [vLLM](https://github.com/vllm-project/vllm) and Hugging Face [TGI](https://github.com/huggingface/text-generation-inference), two leading open-source tools to deploy and serve LLMs, and how to create vLLM and TGI hosted Llama 2 instances with [LangChain](https://www.langchain.com/), an open-source LLM app development framework which we used for our earlier demo apps with Llama 2 running on [local Mac](https://github.com/facebookresearch/llama-recipes/blob/main/demo_apps/HelloLlamaLocal.ipynb) or [Replicate cloud](https://github.com/facebookresearch/llama-recipes/blob/main/demo_apps/HelloLlamaCloud.ipynb).
 
-We'll use the Amazon EC2 instance running Ubuntu with an A10G 24GB GPU as an example of running vLLM and TGI with Llama 2, and you can replace this with your own server.
+We'll use the Amazon EC2 instance running Ubuntu with an A10G 24GB GPU as an example of running vLLM and TGI with Llama 2, and you can replace this with your own server to implement on-prem Llama 2 deployment.
 
 The Colab notebook to connect via LangChain with Llama 2 hosted as the vLLM and TGI API services is [here](https://colab.research.google.com/drive/1rYWLdgTGIU1yCHmRpAOB2D-84fPzmOJg?usp=sharing), also shown in the sections below.
 
-## Setting Up vLLM with Llama 2
+## Setting up vLLM with Llama 2
 
 On a terminal, run the following commands:
 ```
@@ -18,11 +18,11 @@ git clone https://github.com/vllm-project/vllm
 cd vllm/vllm/entrypoints/
 ```
 
-There are two ways to deploy Llama 2 via vLLM. 
+There are two ways to deploy Llama 2 via vLLM, as a general API server or an OpenAI-compatible server.
 
 ### Deploying Llama 2 as an API Server
 
-Run the command below to deploy vLLM as an Llama 2 service:
+Run the command below to deploy vLLM as a general Llama 2 service:
 
 ```
 python api_server.py --host 0.0.0.0 --port 5000 --model meta-llama/Llama-2-7b-chat-hf
@@ -40,9 +40,8 @@ curl http://localhost:5000/generate -d '{
 
 to send a query (prompt) to Llama 2 via vLLM and get Llama's response:
 
-```
-{"text":["Who wrote the book Innovators dilemma?\n\nThe book \"Innovator's Dilemma\" was written by Clayton M. Christensen. It was first published in 1997 and has since become a classic in the field of business and innovation. In the book, Christensen argues that successful companies often struggle to adapt to disruptive technologies and new market entrants, and that this struggle can lead to their downfall. He also introduces the concept of the \"innovator's dilemma,\" which refers to the paradoxical situation in which a company's efforts to improve its existing products or services can actually lead to its own decline."]}
-```
+> {"text":["Who wrote the book Innovators dilemma?\n\nThe book \"Innovator's Dilemma\" was written by Clayton M. Christensen. It was first published in 1997 and has since become a classic in the field of business and innovation. In the book, Christensen argues that successful companies often struggle to adapt to disruptive technologies and new market entrants, and that this struggle can lead to their downfall. He also introduces the concept of the \"innovator's dilemma,\" which refers to the paradoxical situation in which a company's efforts to improve its existing products or services can actually lead to its own decline."]}
+
 
 Now in your Llama client app, you can make an HTTP request as the `curl` command above to send a query to Llama and parse the response.
 
@@ -58,7 +57,7 @@ curl http://<EC2_public_ip>:5000/generate -d '{
 
 ### Deploying Llama 2 as OpenAI-Compatible Server
 
-You can also deploy Llama 2 as OpenAI-Compatible service to use vLLM to easily replace code using OpenAI API. First, run the command below:
+You can also deploy the vLLM hosted Llama 2 as an OpenAI-Compatible service to easily replace code using OpenAI API. First, run the command below:
 
 ```
 python openai/api_server.py --host 0.0.0.0 --port 5000 --model meta-llama/Llama-2-7b-chat-hf
@@ -67,7 +66,7 @@ python openai/api_server.py --host 0.0.0.0 --port 5000 --model meta-llama/Llama-
 Then on another terminal, run:
 
 ```
-curl http://localhost:5000/v1/completions     -H "Content-Type: application/json"     -d '{
+curl http://localhost:5000/v1/completions -H "Content-Type: application/json" -d '{
         "model": "meta-llama/Llama-2-7b-chat-hf",
         "prompt": "Who wrote the book Innovators dilemma?",
         "max_tokens": 300,
@@ -76,8 +75,7 @@ curl http://localhost:5000/v1/completions     -H "Content-Type: application/json
 ```
 and you'll see the following result:
 
-```
-{"id":"cmpl-3eae7061b26e40059550ba78d0d84ae6","object":"text_completion","created":3616,"model":"meta-llama/Llama-2-7b-chat-hf","choices":[{"index":0,"text":"\n\nThe book \"Innovator's Dilemma\" was written by Clayton M. Christensen. It was first published in 1997 and has since become a classic in the field of business and innovation. In the book, Christensen argues that successful companies often struggle to adapt to disruptive technologies and new market entrants, and that this struggle can lead to their downfall. He also introduces the concept of the \"innovator's dilemma,\" which refers to the paradoxical situation in which a company's efforts to improve its existing products or services can actually lead to its own decline.","logprobs":null,"finish_reason":"stop"}],"usage":{"prompt_tokens":13,"total_tokens":153,"completion_tokens":140}}
+> {"id":"cmpl-3eae7061b26e40059550ba78d0d84ae6","object":"text_completion","created":3616,"model":"meta-llama/Llama-2-7b-chat-hf","choices":[{"index":0,"text":"\n\nThe book \"Innovator's Dilemma\" was written by Clayton M. Christensen. It was first published in 1997 and has since become a classic in the field of business and innovation. In the book, Christensen argues that successful companies often struggle to adapt to disruptive technologies and new market entrants, and that this struggle can lead to their downfall. He also introduces the concept of the \"innovator's dilemma,\" which refers to the paradoxical situation in which a company's efforts to improve its existing products or services can actually lead to its own decline.","logprobs":null,"finish_reason":"stop"}],"usage":{"prompt_tokens":13,"total_tokens":153,"completion_tokens":140}}
 ```
 ## Querying with Llama 2 via vLLM
 
@@ -132,7 +130,12 @@ docker run --gpus all --shm-size 1g -e HUGGING_FACE_HUB_TOKEN=$token -p 8080:80 
 After this, you'll be able to run the command below on another terminal:
 
 ```
-curl 127.0.0.1:8080/generate     -X POST     -d '{"inputs":"Who wrote the book innovators dilemma?","parameters":{"max_new_tokens":200}}'     -H 'Content-Type: application/json'
+curl 127.0.0.1:8080/generate -X POST -H 'Content-Type: application/json' -d '{
+        "inputs": "Who wrote the book innovators dilemma?",
+        "parameters": {
+            "max_new_tokens":200
+        }
+    }'     
 ```
 
 and see the answer by Llama 2 via TGI:
