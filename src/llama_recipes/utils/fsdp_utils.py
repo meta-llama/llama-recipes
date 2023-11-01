@@ -37,7 +37,7 @@ def fsdp_auto_wrap_policy(model, transformer_layer_name):
     return auto_wrap_policy
 
 
-def hdsp_device_mesh(replica_group_size, sharding_group_size, device=None):
+def hsdp_device_mesh(replica_group_size, sharding_group_size, device=None):
     """
      Initializes a device mesh for use with Hybrid Sharding strategy in FSDP (HSDP) training.
 
