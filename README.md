@@ -173,7 +173,7 @@ torchrun --nnodes 4 --nproc_per_node 8 examples/finetuning.py --enable_fsdp --lo
 
 In case you are dealing with slower interconnect network between nodes, to reduce the communication overhead you can make use of `--hsdp` flag. 
 
-HSDP (Hybrid sharding Data Parallel) help to define a hybrid sharding strategy where you can have FSDP within `sharding_group_size` which is the minimum number of GPUs you can fit your model and DDP between the replicas of the model specified by `replica_group_size`.
+HSDP (Hybrid sharding Data Parallel) helps to define a hybrid sharding strategy where you can have FSDP within `sharding_group_size` which can be the minimum number of GPUs you can fit your model and DDP between the replicas of the model specified by `replica_group_size`.
 
 This will require to set the Sharding strategy in [fsdp config](./src/llama_recipes/configs/fsdp.py) to `ShardingStrategy.HYBRID_SHARD` and specify two additional settings, `sharding_group_size` and `replica_group_size` where former specifies the sharding group size, number of GPUs that you model can fit into to form a replica of a model and latter specifies the replica group size, which is world_size/sharding_group_size.
 
