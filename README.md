@@ -183,13 +183,12 @@ This folder contains a series of Llama2-powered apps:
 1. Llama on your Mac and ask Llama general questions
 2. Llama on Google Colab
 3. Llama on Cloud and ask Llama questions about unstructured data in a PDF
+4. Llama on-prem with vLLM and TGI
 
 * Specialized Llama use cases:
 1. Ask Llama to summarize a video content
 2. Ask Llama questions about structured data in a DB
 3. Ask Llama questions about live data on the web
-
-* A tutorial on how to deploy [Llama 2 on-prem](./demo_apps/llama-on-prem.md) with vLLM and TGI based API services, and how to use LangChain to easily query Llama 2 via vLLM and TGI.
 
 # Repository Organization
 This repository is organized in the following way:
