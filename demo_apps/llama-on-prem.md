@@ -50,7 +50,7 @@ to send a query (prompt) to Llama 2 via vLLM and get Llama's response:
 
 Now in your Llama client app, you can make an HTTP request as the `curl` command above to send a query to Llama and parse the response.
 
-If you add the port 5000 to your EC2 instance's security group's inbound rules, then you can run this on your Mac/Windows for test:
+If you add the port 5000 to your EC2 instance's security group's inbound rules with the TCP protocol, then you can run this on your Mac/Windows for test:
 
 ```
 curl http://<EC2_public_ip>:5000/generate -d '{
@@ -58,6 +58,12 @@ curl http://<EC2_public_ip>:5000/generate -d '{
         "max_tokens": 300,
         "temperature": 0
     }'
+```
+
+Also, if you have multiple GPUs, you can add the `--tensor-parallel-size` argument when starting the server (see [here](https://vllm.readthedocs.io/en/latest/serving/distributed_serving.html) for more info). For example, the command below runs the Llama 2 13b-chat model on 4 GPUs:
+
+```
+python api_server.py --host 0.0.0.0 --port 5000 --model meta-llama/Llama-2-13b-chat-hf --tensor-parallel-size 4
 ```
 
 ### Deploying Llama 2 as OpenAI-Compatible Server
