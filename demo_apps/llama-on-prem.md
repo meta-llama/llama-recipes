@@ -6,6 +6,10 @@ We'll use the Amazon EC2 instance running Ubuntu with an A10G 24GB GPU as an exa
 
 The Colab notebook to connect via LangChain with Llama 2 hosted as the vLLM and TGI API services is [here](https://colab.research.google.com/drive/1rYWLdgTGIU1yCHmRpAOB2D-84fPzmOJg?usp=sharing), also shown in the sections below.
 
+This tutorial assumes that you you have been granted access to the Meta Llama 2 on Hugging Face - you can open a Hugging Face Meta model page [here](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf) to confirm that you see "Gated model You have been granted access to this model"; if you don't see the "granted access" message, simply follow the instructions under "Access Llama 2 on Hugging Face" in the page. 
+
+You'll also need your Hugging Face access token which you can get at your Settings page [here](https://huggingface.co/settings/tokens).
+
 ## Setting up vLLM with Llama 2
 
 On a terminal, run the following commands:
@@ -17,6 +21,8 @@ cd <your_work_folder>
 git clone https://github.com/vllm-project/vllm
 cd vllm/vllm/entrypoints/
 ```
+
+Then run `huggingface-cli login` and copy and paste your Hugging Face access token to complete the login.
 
 There are two ways to deploy Llama 2 via vLLM, as a general API server or an OpenAI-compatible server.
 
@@ -111,9 +117,7 @@ You can now use the Llama 2 instance `llm` created this way in any of the [Llama
 
 ## Setting Up TGI with Llama 2
 
-The easiest way to deploy Llama 2 with TGI is using TGI's official docker image. First, make sure you have been granted access to the Meta Llama 2 on Hugging Face by opening the Hugging Face Meta model page [here](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf) and confirming you see "Gated model You have been granted access to this model". If you don't see the "granted access" message, simply follow the instructions under "Access Llama 2 on Hugging Face" in the page.
-
-Then copy your Hugging Face access token, which you can create for free at your [tokens page](https://huggingface.co/settings/tokens) and set it as the value of one of the three required shell variables:
+The easiest way to deploy Llama 2 with TGI is using TGI's official docker image. First, replace `<your Hugging Face access token>` and set the three required shell variables (you may replace the `model` value above with another Llama 2 model):
 
 ```
 model=meta-llama/Llama-2-13b-chat-hf
@@ -121,9 +125,7 @@ volume=$PWD/data
 token=<your Hugging Face access token>
 ```
 
-You may replace the `model` value above with another Llama 2 model.
-
-Finally, run the command below to deploy a quantized version of the Llama 2 13b-chat model with TGI:
+Then run the command below to deploy a quantized version of the Llama 2 13b-chat model with TGI:
 
 ```
 docker run --gpus all --shm-size 1g -e HUGGING_FACE_HUB_TOKEN=$token -p 8080:80 -v $volume:/data ghcr.io/huggingface/text-generation-inference:1.0.2 --model-id $model  --quantize bitsandbytes-nf4
