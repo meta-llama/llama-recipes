@@ -12,7 +12,8 @@ You'll also need your Hugging Face access token which you can get at your Settin
 
 ## Setting up vLLM with Llama 2
 
-On a terminal, run the following commands:
+On a terminal, run the following commands (note that `pip install vllm` will install vllm and all its dependency packages, while the clone of the vllm repo will make the vLLM API scripts available):
+
 ```
 conda create -n vllm python=3.8
 conda activate vllm
@@ -24,7 +25,7 @@ cd vllm/vllm/entrypoints/
 
 Then run `huggingface-cli login` and copy and paste your Hugging Face access token to complete the login.
 
-There are two ways to deploy Llama 2 via vLLM, as a general API server or an OpenAI-compatible server.
+There are two ways to deploy Llama 2 via vLLM, as a general API server or an OpenAI-compatible server (see [here](https://platform.openai.com/docs/api-reference/authentication) on how the OpenAI API authenticates, but you won't need to provide a real OpenAI API key when running Llama 2 via vLLM in the OpenAI-compatible mode).
 
 ### Deploying Llama 2 as an API Server
 
