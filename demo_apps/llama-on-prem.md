@@ -12,15 +12,12 @@ You'll also need your Hugging Face access token which you can get at your Settin
 
 ## Setting up vLLM with Llama 2
 
-On a terminal, run the following commands (note that `pip install vllm` will install vllm and all its dependency packages, while the clone of the vllm repo will make the vLLM API scripts available):
+On a terminal, run the following commands:
 
 ```
 conda create -n vllm python=3.8
 conda activate vllm
 pip install vllm
-cd <your_work_folder>
-git clone https://github.com/vllm-project/vllm
-cd vllm/vllm/entrypoints/
 ```
 
 Then run `huggingface-cli login` and copy and paste your Hugging Face access token to complete the login.
@@ -32,7 +29,7 @@ There are two ways to deploy Llama 2 via vLLM, as a general API server or an Ope
 Run the command below to deploy vLLM as a general Llama 2 service:
 
 ```
-python api_server.py --host 0.0.0.0 --port 5000 --model meta-llama/Llama-2-7b-chat-hf
+python -m vllm.entrypoints.api_server --host 0.0.0.0 --port 5000 --model meta-llama/Llama-2-7b-chat-hf
 ```
 
 Then on another terminal you can run:
@@ -72,7 +69,7 @@ python api_server.py --host 0.0.0.0 --port 5000 --model meta-llama/Llama-2-13b-c
 You can also deploy the vLLM hosted Llama 2 as an OpenAI-Compatible service to easily replace code using OpenAI API. First, run the command below:
 
 ```
-python openai/api_server.py --host 0.0.0.0 --port 5000 --model meta-llama/Llama-2-7b-chat-hf
+python -m vllm.entrypoints.openai.api_server --host 0.0.0.0 --port 5000 --model meta-llama/Llama-2-7b-chat-hf
 ```
 
 Then on another terminal, run:
