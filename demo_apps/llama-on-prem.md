@@ -63,6 +63,12 @@ Also, if you have multiple GPUs, you can add the `--tensor-parallel-size` argume
 ```
 python api_server.py --host 0.0.0.0 --port 5000 --model meta-llama/Llama-2-13b-chat-hf --tensor-parallel-size 4
 ```
+With multiple GPUs, you can also run replica of models as long as your model size can fit into targeted GPU memory. For example, if you have two A10G with 24 GB memory, you can run two 7B Llama 2 models at the same time. This can be done by launching two api servers each targeting specific CUDA cores on different ports:
+`CUDA_VISIBLE_DEVICES=0 python api_server.py --host 0.0.0.0 --port 5000  --model meta-llama/Llama-2-7b-chat-hf --tensor-parallel-size 1 `
+and
+`CUDA_VISIBLE_DEVICES=1 python api_server.py --host 0.0.0.0 --port 5001  --model meta-llama/Llama-2-7b-chat-hf --tensor-parallel-size 1 `
+The benefit would be now you can balance incoming requests to both models, reaching higher batch size processing for a trade-off of generation latency.
+
 
 ### Deploying Llama 2 as OpenAI-Compatible Server
 
