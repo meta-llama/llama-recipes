@@ -1,6 +1,6 @@
-# Building Llama-enabled WhatsApp Chatbot
+# Building a Llama-enabled WhatsApp Chatbot
 
-This note summarizes how to build a Llama-enabled WhatsApp chatbot demo app. A demo video of using the iOS WhatsApp to send a question to a test phone number and receive the Llama 2 generated answer is [here](https://drive.google.com/file/d/1fZDaOsvyE1yrNGETV-e0SvL14BYeAI6R/view).
+This step-by-step tutorial shows the complete process of building a Llama-enabled WhatsApp chatbot. A demo video of using the iOS WhatsApp to send a question to a test phone number and receive the Llama 2 generated answer is [here](https://drive.google.com/file/d/1fZDaOsvyE1yrNGETV-e0SvL14BYeAI6R/view).
 
 ## Overview
 
@@ -118,15 +118,16 @@ console.log(req.body["entry"][0]["changes"][0]["value"]["messages"][0]["text"]["
 add the code below - remember to change <your web server IP>:
 
 ```
-  let url = "http://<your web server IP>:5000/msgrcvd?message=" + req.body["entry"][0]["changes"][0]["value"]["messages"][0]["text"]["body"]
-  
-	axios.get(url)
-  .then(response => {
-    console.log(response.data);
-  })
-  .catch(error => {
-    console.error('Axios error:', error);
-  });
+  let url = "http://<your web server IP>:5000/msgrcvd?message=" + 
+    req.body["entry"][0]["changes"][0]["value"]["messages"][0]["text"]["body"]
+
+  axios.get(url)
+    .then(response => {
+      console.log(response.data);
+    })
+    .catch(error => {
+      console.error('Axios error:', error);
+    });
 ```
 
 The code simply forwards the user message received by the WhatsApp Cloud Platform to the Llama 2 enabled web app described in the previous section.
