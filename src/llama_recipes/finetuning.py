@@ -70,7 +70,7 @@ def main(**kwargs):
         setup_environ_flags(rank)
 
     tracker = get_tracker_by_name(train_config.tracker)
-    if tracker is not None:
+    if rank == 0 and tracker is not None:
         tracker_config = generate_tracker_config(train_config, kwargs)
         tracker.initialize(tracker_config)
         tracker.load_params(generate_dict_from_configs(train_config), "train_config")

@@ -67,6 +67,11 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     checkpoint_times = []
     results = {}
     best_val_loss = float("inf")
+
+    track_metrics = True
+    if train_config.enable_fsdp and rank != 0:
+        track_metrics = False
+
     for epoch in range(train_config.num_epochs):
         epoch_start_time = time.perf_counter()
         with MemoryTrace() as memtrace:  # track the memory usage
@@ -99,13 +104,13 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         optimizer.step()
                         optimizer.zero_grad()
                         pbar.update(1)
-                if tracker is not None:
+                if tracker is not None and track_metrics:
                     tracker.track(loss, name='loss', stage='train')
                     tracker.track(total_loss, name='total_loss', stage='train')
 
                 pbar.set_description(f"Training Epoch: {epoch+1}/{train_config.num_epochs}, step {step}/{len(train_dataloader)} completed (loss: {loss.detach().float()})")
             pbar.close()
-                
+
         epoch_end_time = time.perf_counter()-epoch_start_time
         epoch_times.append(epoch_end_time)    
         # Reducing total_loss across all devices if there's more than one CUDA device
@@ -118,22 +123,15 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         
         train_prep.append(train_perplexity)
         train_loss.append(train_epoch_loss)
-        
-        if train_config.enable_fsdp:
-            if rank==0:
-                print(f"Max CUDA memory allocated was {memtrace.peak} GB")
-                print(f"Max CUDA memory reserved was {memtrace.max_reserved} GB")
-                print(f"Peak active CUDA memory was {memtrace.peak_active_gb} GB")
-                print(f"Cuda Malloc retires : {memtrace.cuda_malloc_retires}")
-                print(f"CPU Total Peak Memory consumed during the train (max): {memtrace.cpu_peaked + memtrace.cpu_begin} GB")
-        else:
+
+        if track_metrics:
             print(f"Max CUDA memory allocated was {memtrace.peak} GB")
             print(f"Max CUDA memory reserved was {memtrace.max_reserved} GB")
             print(f"Peak active CUDA memory was {memtrace.peak_active_gb} GB")
             print(f"Cuda Malloc retires : {memtrace.cuda_malloc_retires}")
             print(f"CPU Total Peak Memory consumed during the train (max): {memtrace.cpu_peaked + memtrace.cpu_begin} GB")
 
-        if tracker is not None:
+        if tracker is not None and track_metrics:
             tracker.track(epoch_end_time , name='epoch_times', stage='train')
             tracker.track(train_epoch_loss , name='train_loss', stage='train')
             tracker.track(train_perplexity , name='train_perplexity', stage='train')
@@ -145,7 +143,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
 
         # Update the learning rate as needed
         lr_scheduler.step()
-          
+
         if train_config.run_validation:
             eval_ppl, eval_epoch_loss = evaluation(model, train_config, eval_dataloader, local_rank, tokenizer)
             checkpoint_start_time = time.perf_counter()
@@ -193,20 +191,14 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
             checkpoint_times.append(checkpoint_end_time)
             if eval_epoch_loss < best_val_loss:
                 best_val_loss = eval_epoch_loss
-                if train_config.enable_fsdp:
-                    if rank==0:
-                        print(f"best eval loss on epoch {epoch+1} is {best_val_loss}")
-                else:
+                if track_metrics:
                     print(f"best eval loss on epoch {epoch+1} is {best_val_loss}")
-            if tracker is not None:
+            if tracker is not None and track_metrics:
                 tracker.track(best_val_loss , name='best_val_loss', stage='validation')
                 tracker.track(eval_epoch_loss , name='eval_epoch_loss', stage='validation')
             val_loss.append(best_val_loss)
             val_prep.append(eval_ppl)
-        if train_config.enable_fsdp:
-            if rank==0:
-                print(f"Epoch {epoch+1}: train_perplexity={train_perplexity:.4f}, train_epoch_loss={train_epoch_loss:.4f}, epoch time {epoch_end_time}s")
-        else:
+        if track_metrics:
             print(f"Epoch {epoch+1}: train_perplexity={train_perplexity:.4f}, train_epoch_loss={train_epoch_loss:.4f}, epoch time {epoch_end_time}s")
     avg_epoch_time = sum(epoch_times)/ len(epoch_times)
     avg_checkpoint_time = sum(checkpoint_times)/ len(checkpoint_times) if len(checkpoint_times) > 0 else 0
@@ -224,10 +216,16 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     results["avg_epoch_time"] = avg_epoch_time
     results["avg_checkpoint_time"] = avg_checkpoint_time
 
-    if tracker is not None:
-        tracker.track(avg_epoch_time , name='avg_epoch_time', stage='experiment')
-        tracker.track(avg_checkpoint_time , name='avg_checkpoint_time', stage='experiment')
-        tracker.track(avg_train_loss , name='avg_train_loss', stage='experiment')
+    if tracker is not None and track_metrics:
+        tracker.track(avg_train_loss , name='avg_train_loss', context={'subset':'experiment'})
+        tracker.track(avg_train_prep, name='avg_train_prep', context={'subset':'experiment'})
+
+        if train_config.run_validation:
+            tracker.track(avg_eval_prep , name='avg_eval_prep', context={'subset':'validation'})
+            tracker.track(avg_eval_loss, name='avg_eval_loss', context={'subset':'validation'})
+
+        tracker.track(avg_epoch_time , name='avg_epoch_time', context={'subset':'experiment'})
+        tracker.track(avg_checkpoint_time , name='avg_checkpoint_time', context={'subset':'experiment'})
 
     #saving the training params including fsdp setting for reference.
     if train_config.enable_fsdp and not train_config.use_peft:
