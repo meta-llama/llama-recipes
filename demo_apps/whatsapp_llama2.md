@@ -100,7 +100,7 @@ def hello_llama():
 def msgrcvd():    
     message = request.args.get('message')
     answer = llm(message)
-    client.send_text_message(llm(message), "<a recipient phone number from your WhatsApp API Setup>")
+    client.send_text_message(answer, "<a recipient phone number from your WhatsApp API Setup>")
     return message + "<p/>" + answer
 ```
 
@@ -115,10 +115,10 @@ Open your glitch.com webhook URL created earlier, and after the code snippet:
 console.log(req.body["entry"][0]["changes"][0]["value"]["messages"][0]["text"]["body"]);
 ```
 
-add the code below - remember to change <your web server IP>:
+add the code below - remember to change <web server public IP>, which needs to be publicly visible, to the IP of the server where your Llama 2 enabled web app in the previous section runs:
 
 ```
-  let url = "http://<your web server IP>:5000/msgrcvd?message=" + 
+  let url = "http://<web server public IP>:5000/msgrcvd?message=" + 
     req.body["entry"][0]["changes"][0]["value"]["messages"][0]["text"]["body"]
 
   axios.get(url)
