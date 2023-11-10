@@ -1,25 +1,22 @@
-# Llama2 Demo Apps 
+# Llama 2 Demo Apps 
 
-This folder contains a series of Llama2-powered apps:
+This folder contains a series of Llama 2-powered apps:
 * Quickstart Llama deployments and basic interactions with Llama
 1. Llama on your Mac and ask Llama general questions
 2. Llama on Google Colab
 3. Llama on Cloud and ask Llama questions about unstructured data in a PDF
+4. Llama on-prem with vLLM and TGI
 
 * Specialized Llama use cases:
 1. Ask Llama to summarize a video content
 2. Ask Llama questions about structured data in a DB
 3. Ask Llama questions about live data on the web
 
-If you need a general understanding of GenAI, Llama2, prompt engineering and RAG (Retrieval Augmented Generation), be sure to first check the [Getting to know Llama 2 notebook](https://github.com/facebookresearch/llama-recipes/blob/main/examples/Getting_to_know_Llama.ipynb) and its Meta Connect video [here](https://www.facebook.com/watch/?v=662153709222699).
+We also show how to build quick web UI for Llama 2 demo apps using Streamlit and Gradio.
 
-We start with three quickstart demos showing how to run Llama2 locally on a Mac, remotely in the cloud, and on a Google Colab to ask Llama2 general questions or questions about unstructured data not trained for the model.
+If you need a general understanding of GenAI, Llama 2, prompt engineering and RAG (Retrieval Augmented Generation), be sure to first check the [Getting to know Llama 2 notebook](https://github.com/facebookresearch/llama-recipes/blob/main/examples/Getting_to_know_Llama.ipynb) and its Meta Connect video [here](https://www.facebook.com/watch/?v=662153709222699).
 
-We then show three demos that ask Llama2 to summarize a YouTube video, to answer questions about structured data stored in a database, and to answer questions about live search results.
-
-We also show how to build quick web UI for Llama2 demo apps using Streamlit and Gradio.
-
-More advanced Llama2 demo apps will be coming soon.
+More advanced Llama 2 demo apps will be coming soon.
 
 ## Setting Up Environment
 
@@ -62,6 +59,9 @@ To run some of the demo apps here, you'll need to first sign in with Replicate w
 
 ### [Running Llama2 in Google Colab](https://colab.research.google.com/drive/1-uBXt4L-6HNS2D8Iny2DwUpVS4Ub7jnk?usp=sharing)
 To run Llama2 in Google Colab using [llama-cpp-python](https://github.com/abetlen/llama-cpp-python), download the quantized Llama2-13b-chat model `ggml-model-q4_0.gguf` [here](https://drive.google.com/file/d/1afPv3HOy73BE2MoYCgYJvBDeQNa9rZbj/view?usp=sharing), or follow the instructions above to build it, before uploading it to your Google drive. Note that on the free Colab T4 GPU, the call to Llama could take more than 20 minnutes to return; running the notebook locally on M1 MBP takes about 20 seconds.
+
+### [Running Llama2 On-Prem with vLLM and TGI](llama-on-prem.md)
+This tutorial shows how to use Llama 2 with [vLLM](https://github.com/vllm-project/vllm) and Hugging Face [TGI](https://github.com/huggingface/text-generation-inference) to build Llama 2 on-prem apps.
 
 \* To run a quantized Llama2 model on iOS and Android, you can use  the open source [MLC LLM](https://github.com/mlc-ai/mlc-llm) or [llama.cpp](https://github.com/ggerganov/llama.cpp). You can even make a Linux OS that boots to Llama2 ([repo](https://github.com/trholding/llama2.c)).
 
