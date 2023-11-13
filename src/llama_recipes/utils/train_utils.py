@@ -139,18 +139,20 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                 if train_config.enable_fsdp:
                     dist.barrier()
                 if train_config.use_peft:
-                    if train_config.enable_fsdp:
-                        if rank==0:
-                            print(f"we are about to save the PEFT modules")
-                    else:
+                    if not train_config.enable_fsdp or rank == 0:
                         print(f"we are about to save the PEFT modules")
-                    model.save_pretrained(train_config.output_dir)
-                    if train_config.enable_fsdp:
-                        if rank==0:
-                            print(f"PEFT modules are saved in {train_config.output_dir} directory")
-                    else:
-                        print(f"PEFT modules are saved in {train_config.output_dir} directory")
 
+                    if train_config.enable_fsdp and train_config.fsdp_peft_cpu_offload_for_save:
+                        from torch.distributed.fsdp import FullyShardedDataParallel as FSDP, StateDictType, FullStateDictConfig
+
+                        full_state_dict_config = FullStateDictConfig(offload_to_cpu=True, rank0_only=True)
+                        with FSDP.state_dict_type(model, StateDictType.FULL_STATE_DICT, full_state_dict_config):
+                            model.save_pretrained(train_config.output_dir)
+                    else:
+                        model.save_pretrained(train_config.output_dir)
+
+                    if not train_config.enable_fsdp or rank == 0:
+                        print(f"PEFT modules are saved in {train_config.output_dir} directory")
                 else:
                     if not train_config.use_peft and fsdp_config.checkpoint_type == StateDictType.FULL_STATE_DICT:
 
