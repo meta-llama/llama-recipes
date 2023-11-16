@@ -1,6 +1,7 @@
 # Llama 2 Fine-tuning / Inference Recipes, Examples and Demo Apps
 
-**[Update Nov. 16, 2023] We recently released a series of Llama 2 demo apps [here](./demo_apps). These apps show how to run Llama 2 locally, in the cloud, on-prem, how to ask Llama 2 questions in general or about custom data (PDF, DB, or live) and end-to-end Chatbot implementation with RAG (Retrieval Augmented Generation).**
+**[Update Nov. 16, 2023] We recently released a series of Llama 2 demo apps [here](./demo_apps). These apps show how to run Llama 2 locally, in the cloud, on-prem or with WhatsApp, how to ask Llama 2 questions in general or about custom data (PDF, DB, or live) and end-to-end Chatbot implementation with RAG (Retrieval Augmented Generation).**
+
 
 The 'llama-recipes' repository is a companion to the [Llama 2 model](https://github.com/facebookresearch/llama). The goal of this repository is to provide examples to quickly get started with fine-tuning for domain adaptation and how to run inference for the fine-tuned models. For ease of use, the examples use Hugging Face converted versions of the models. See steps for conversion of the model [here](#model-conversion-to-hugging-face).
 
