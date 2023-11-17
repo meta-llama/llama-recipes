@@ -2,7 +2,6 @@
 
 **[Update Nov. 16, 2023] We recently released a series of Llama 2 demo apps [here](./demo_apps). These apps show how to run Llama (locally, in the cloud, or on-prem), how to ask Llama questions in general or about custom data (PDF, DB, or live), how to integrate Llama with WhatsApp, and how to implement an end-to-end chatbot with RAG (Retrieval Augmented Generation).**
 
-
 The 'llama-recipes' repository is a companion to the [Llama 2 model](https://github.com/facebookresearch/llama). The goal of this repository is to provide examples to quickly get started with fine-tuning for domain adaptation and how to run inference for the fine-tuned models. For ease of use, the examples use Hugging Face converted versions of the models. See steps for conversion of the model [here](#model-conversion-to-hugging-face).
 
 In addition, we also provide a number of demo apps, to showcase the Llama 2 usage along with other ecosystem solutions to run Llama 2 locally, in the cloud, and on-prem.
@@ -191,6 +190,7 @@ This folder contains a series of Llama2-powered apps:
 1. Ask Llama to summarize a video content
 2. Ask Llama questions about structured data in a DB
 3. Ask Llama questions about live data on the web
+4. Build a Llama-enabled WhatsApp chatbot
 
 # Repository Organization
 This repository is organized in the following way:
