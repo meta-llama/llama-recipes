@@ -275,11 +275,10 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb
         print(f" {eval_ppl=} {eval_epoch_loss=}")
 
     if wandb_run: 
-        if not train_config.enable_fsdp or rank==0:
-            wandb_run.log({
-                            'eval/perplexity': eval_ppl,
-                            'eval/loss': eval_epoch_loss,
-                        }, commit=False)
+        wandb_run.log({
+                        'eval/perplexity': eval_ppl,
+                        'eval/loss': eval_epoch_loss,
+                    }, commit=False)
 
     return eval_ppl, eval_epoch_loss
 
