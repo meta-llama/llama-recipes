@@ -177,6 +177,15 @@ sbatch multi_node.slurm
 ```
 You can read more about our fine-tuning strategies [here](./docs/LLM_finetuning.md).
 
+## Weights & Biases Experiment Tracking
+
+You can enable [W&B](https://wandb.ai/) experiment tracking by using `enable_wandb` flag as below. You can change the project name and entity in `wandb_config`. 
+
+```bash
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model --enable_wandb
+```
+
+
 # Demo Apps
 This folder contains a series of Llama2-powered apps:
 * Quickstart Llama deployments and basic interactions with Llama
@@ -194,7 +203,7 @@ This folder contains a series of Llama2-powered apps:
 # Repository Organization
 This repository is organized in the following way:
 
-[configs](src/llama_recipes/configs/): Contains the configuration files for PEFT methods, FSDP, Datasets.
+[configs](src/llama_recipes/configs/): Contains the configuration files for PEFT methods, FSDP, Datasets, W&B experiment tracking.
 
 [docs](docs/): Example recipes for single and multi-gpu fine-tuning recipes.
 
