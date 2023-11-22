@@ -1,8 +1,9 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
-from functools import partial
 from unittest.mock import patch
+
+from transformers import LlamaTokenizer
 
 
 @patch('llama_recipes.finetuning.train')
@@ -10,7 +11,7 @@ from unittest.mock import patch
 @patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
 @patch('llama_recipes.finetuning.optim.AdamW')
 @patch('llama_recipes.finetuning.StepLR')
-def test_samsum_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker, setup_tokenizer):
+def test_grammar_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker, setup_tokenizer):
     from llama_recipes.finetuning import main
 
     setup_tokenizer(tokenizer)
@@ -21,7 +22,7 @@ def test_samsum_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker,
         "batch_size_training": BATCH_SIZE,
         "val_batch_size": 1,
         "use_peft": False,
-        "dataset": "samsum_dataset",
+        "dataset": "grammar_dataset",
         "batching_strategy": "padding",
         }
 
@@ -33,8 +34,8 @@ def test_samsum_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker,
     train_dataloader = args[1]
     eval_dataloader = args[2]
 
-    VAL_SAMPLES = 818
-    TRAIN_SAMPLES = 14732
+    VAL_SAMPLES = 2988
+    TRAIN_SAMPLES = 13016
 
     assert len(train_dataloader) == TRAIN_SAMPLES // BATCH_SIZE
     assert len(eval_dataloader) == VAL_SAMPLES
@@ -45,8 +46,8 @@ def test_samsum_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker,
     assert "input_ids" in batch.keys()
     assert "attention_mask" in batch.keys()
 
-    assert batch["labels"][0][268] == -100
-    assert batch["labels"][0][269] == 22291
+    assert batch["labels"][0][29] == -100
+    assert batch["labels"][0][30] == 29871
 
     assert batch["input_ids"][0][0] == 1
     assert batch["labels"][0][-1] == 2
