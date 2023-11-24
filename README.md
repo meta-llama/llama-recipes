@@ -179,7 +179,7 @@ You can read more about our fine-tuning strategies [here](./docs/LLM_finetuning.
 
 ## Weights & Biases Experiment Tracking
 
-You can enable [W&B](https://wandb.ai/) experiment tracking by using `enable_wandb` flag as below. You can change the project name and entity in `wandb_config`. 
+You can enable [W&B](https://wandb.ai/) experiment tracking by using `use_wandb` flag as below. You can change the project name, entity and other `wandb.init` arguments in `wandb_config`.
 
 ```bash
 python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model --use_wandb
