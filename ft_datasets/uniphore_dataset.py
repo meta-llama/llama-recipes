@@ -14,8 +14,7 @@ def get_preprocessed_uniphore(dataset_config, tokenizer, split):
     dataset_final = dataset[split].map(
         lambda sample: tokenizer(sample["text"]),
         batched=True,
-        remove_columns=list(dataset[split].features),
-        keep_memory=True        
+        remove_columns=list(dataset[split].features)   
     ).map(Concatenator(chunk_size=4000), batched=True)
     os.system("df -h")
     return dataset_final
