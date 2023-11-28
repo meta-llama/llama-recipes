@@ -44,7 +44,7 @@ from utils.train_utils import (
     get_policies
 )
 
-
+os.environ['HF_HOME'] = '/tmp'
 def main(**kwargs):
     kwargs['r'] = kwargs['lora_rank']
     del kwargs['lora_rank']
