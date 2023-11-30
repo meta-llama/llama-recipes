@@ -22,7 +22,8 @@ from transformers import (
     LlamaTokenizer,
     LlamaConfig,
     default_data_collator,
-    MistralConfig
+    MistralConfig,
+    MistralForCausalLM
 )
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
 
@@ -96,7 +97,7 @@ def main(**kwargs):
         else:
             llama_config = MistralConfig.from_pretrained(train_config.model_name,token=hf_token)
             with torch.device("meta"):
-                model = AutoModelForCausalLM(llama_config)
+                model = MistralForCausalLM(llama_config)
 
     else:
         model = AutoModelForCausalLM.from_pretrained(
