@@ -93,7 +93,7 @@ def main(**kwargs):
                 device_map="auto" if train_config.quantization else None,
             )
         else:
-            llama_config = AutoConfig.from_pretrained(train_config.model_name,token=hf_token)
+            llama_config = MistralConfig.from_pretrained(train_config.model_name,token=hf_token)
             with torch.device("meta"):
                 model = AutoModelForCausalLM(llama_config)
 
