@@ -144,3 +144,5 @@ python examples/vllm/inference.py --model_name <PATH/TO/MODEL/7B>
 ```
 
 [**TGI**](https://github.com/huggingface/text-generation-inference): Text Generation Inference (TGI) is another inference option available to you. For more information on how to set up and use TGI see [here](../examples/hf_text_generation_inference/README.md).
+
+[Here](../demo_apps/llama-on-prem.md) is a complete tutorial on how to use vLLM and TGI to deploy Llama 2 on-prem and interact with the Llama API services.

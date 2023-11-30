@@ -23,7 +23,7 @@ class Aim(Tracker):
         try:
             Run = importlib.import_module("Run", "aim")
         except ImportError as e:
-            print("Failed to import module 'Run' from pkg 'aim'. Please install 'aim' before proceeding.")
+            print("Failed to import modules from pkg 'aim'. Please run 'pip install aim==3.17.5' to install Aim before proceeding.")
             raise e
 
         exp = self.config.experiment

@@ -13,4 +13,3 @@ sentencepiece
 py7zr
 scipy
 optimum
-aim=3.7.11
