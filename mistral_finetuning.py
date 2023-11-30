@@ -22,6 +22,7 @@ from transformers import (
     LlamaTokenizer,
     LlamaConfig,
     default_data_collator,
+    MistralConfig
 )
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
 
