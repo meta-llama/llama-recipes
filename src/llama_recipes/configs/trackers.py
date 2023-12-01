@@ -6,11 +6,9 @@ from dataclasses import dataclass
 @dataclass
 class aim_config:
     experiment: str = "llama-recipes"
-    # This is either the location of a locallly accessible directory example `.run`
-    # or can be the location of a remote repository which is hosted on a server.
-    # if remote_server_ip or remote_server_port is set then the repo will be set to
-    # remote aim repo, else the directory specified by `repo` takes precedence.
-    # The directory defaults to None which means `.run` in aim.
+    # 'repo' can point to a locally accessible directory (e.g., '~/.aim') or a remote repository hosted on a server.
+    # When 'remote_server_ip' or 'remote_server_port' is set, it designates a remote aim repo.
+    # Otherwise, 'repo' specifies the directory, with a default of None representing '.aim'.
     repo: str = None
     remote_server_ip: str = None
     remote_server_port: int = None
