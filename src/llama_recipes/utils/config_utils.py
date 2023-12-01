@@ -76,7 +76,7 @@ def generate_tracker_config(train_config, kwargs):
     if train_config.tracker is None:
         return None
 
-    configs = (aim_config)
+    configs = (aim_config,)
     names = tuple(c.__name__.rstrip("_config") for c in configs)
 
     assert train_config.tracker in names, f"Unknown tracker: {train_config.tracker}"

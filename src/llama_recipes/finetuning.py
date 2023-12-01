@@ -73,7 +73,8 @@ def main(**kwargs):
         setup_environ_flags(rank)
 
     tracker = get_tracker_by_name(train_config.tracker)
-    if rank == 0 and tracker is not None:
+    enable_tracker = not (train_config.enable_fsdp and rank != 0)
+    if tracker is not None and enable_tracker:
         tracker_config = generate_tracker_config(train_config, kwargs)
         tracker.initialize(tracker_config)
         tracker.load_params(generate_dict_from_configs(train_config), "train_config")

@@ -1,6 +1,6 @@
 import os
 import importlib
-from configs import aim_config
+from llama_recipes.configs import aim_config
 
 class Tracker:
     def initialize(self, tracker_config):
@@ -21,10 +21,11 @@ class Aim(Tracker):
         assert isinstance(tracker_config, aim_config), f"config passed to AIM tracker is unknown: {type(tracker_config)}"
 
         try:
-            Run = importlib.import_module("Run", "aim")
-        except ImportError as e:
-            print("Failed to import modules from pkg 'aim'. Please run 'pip install aim==3.17.5' to install Aim before proceeding.")
-            raise e
+            AIM = importlib.import_module("aim")
+            Run = AIM.Run
+        except Exception:
+            raise ImportError("Failed to import modules from pkg 'aim'.\n"
+                              "Please run 'pip install aim==3.17.5' to install Aim before proceeding.")
 
         exp = self.config.experiment
         repo = self.config.repo
@@ -52,8 +53,10 @@ class Aim(Tracker):
             self.run.track(metric, name=name, context={'subset':stage})
 
 def get_tracker_by_name(name):
-    if name == "aim":
+    if name is None:
+        return None
+    elif name == "aim":
         return Aim()
-    else:
-        print("Unknown tracker "+name)
+    else :
+        print("Unknown Tracker "+str(name)+" Please check the name of the tracker passed. ")
         return None

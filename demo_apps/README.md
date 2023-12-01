@@ -6,6 +6,7 @@ This folder contains a series of Llama 2-powered apps:
 2. Llama on Google Colab
 3. Llama on Cloud and ask Llama questions about unstructured data in a PDF
 4. Llama on-prem with vLLM and TGI
+5. Llama chatbot with RAG (Retrieval Augmented Generation)
 
 * Specialized Llama use cases:
 1. Ask Llama to summarize a video content
@@ -103,3 +104,6 @@ To see how to query Llama2 and get answers with the Gradio UI both from the note
 Then enter your question, click Submit. You'll see in the notebook or a browser with URL http://127.0.0.1:7860 the following UI:
 
 ![](llama2-gradio.png)
+
+### [RAG Chatbot Example](RAG_Chatbot_example/RAG_Chatbot_Example.ipynb)
+A complete example of how to build a Llama 2 chatbot hosted on your browser that can answer questions based on your own data.

@@ -210,15 +210,15 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     results["avg_checkpoint_time"] = avg_checkpoint_time
 
     if tracker is not None and track_metrics:
-        tracker.track(avg_train_loss , name='avg_train_loss', context={'subset':'experiment'})
-        tracker.track(avg_train_prep, name='avg_train_prep', context={'subset':'experiment'})
+        tracker.track(avg_train_loss , name='avg_train_loss', stage={'subset':'experiment'})
+        tracker.track(avg_train_prep, name='avg_train_prep', stage={'subset':'experiment'})
 
         if train_config.run_validation:
-            tracker.track(avg_eval_prep , name='avg_eval_prep', context={'subset':'validation'})
-            tracker.track(avg_eval_loss, name='avg_eval_loss', context={'subset':'validation'})
+            tracker.track(avg_eval_prep , name='avg_eval_prep', stage={'subset':'validation'})
+            tracker.track(avg_eval_loss, name='avg_eval_loss', stage={'subset':'validation'})
 
-        tracker.track(avg_epoch_time , name='avg_epoch_time', context={'subset':'experiment'})
-        tracker.track(avg_checkpoint_time , name='avg_checkpoint_time', context={'subset':'experiment'})
+        tracker.track(avg_epoch_time , name='avg_epoch_time', stage={'subset':'experiment'})
+        tracker.track(avg_checkpoint_time , name='avg_checkpoint_time', stage={'subset':'experiment'})
 
     #saving the training params including fsdp setting for reference.
     if train_config.enable_fsdp and not train_config.use_peft:

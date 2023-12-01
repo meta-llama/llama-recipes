@@ -22,7 +22,9 @@ pip install vllm
 
 Then run `huggingface-cli login` and copy and paste your Hugging Face access token to complete the login.
 
+<!-- markdown-link-check-disable -->
 There are two ways to deploy Llama 2 via vLLM, as a general API server or an OpenAI-compatible server (see [here](https://platform.openai.com/docs/api-reference/authentication) on how the OpenAI API authenticates, but you won't need to provide a real OpenAI API key when running Llama 2 via vLLM in the OpenAI-compatible mode).
+<!-- markdown-link-check-enable -->
 
 ### Deploying Llama 2 as an API Server
 
