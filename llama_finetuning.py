@@ -45,7 +45,6 @@ from utils.train_utils import (
 )
 
 os.environ['HF_HOME'] = '/tmp'
-os.system("df -h")
 def main(**kwargs):
     kwargs['r'] = kwargs['lora_rank']
     del kwargs['lora_rank']
