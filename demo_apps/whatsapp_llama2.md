@@ -2,6 +2,8 @@
 
 This step-by-step tutorial shows the complete process of building a Llama-enabled WhatsApp chatbot. A demo video of using the iOS WhatsApp to send a question to a test phone number and receive the Llama 2 generated answer is [here](https://drive.google.com/file/d/1fZDaOsvyE1yrNGETV-e0SvL14BYeAI6R/view).
 
+If you're interested in a Llama-enabled Messenger chatbot, see [here](messenger_llama2.md) for a tutorial.
+
 ## Overview
 
 Businesses of all sizes can use the [WhatsApp Business API](https://developers.facebook.com/docs/whatsapp/cloud-api/overview) to connect their customers with human agents or Llama 2 powered chatbots. The benefits of an intelligent and knowledgable chatbot are obvious, including cost saving and better customer experience such as 24x7 availability. In this blog, we'll cover the details of integrating Llama 2 with the WhatsApp Business API to build a basic Llama 2 enabled chatbot - see [Llama 2 demo apps](https://github.com/facebookresearch/llama-recipes/tree/main/demo_apps) for more Llama 2 application development and deployment demos such as how to integrate your own data with Llama 2.
