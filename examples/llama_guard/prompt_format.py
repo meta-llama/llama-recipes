@@ -118,7 +118,7 @@ def build_prompt_test():
     print(build_prompt(AgentType.USER,
         LLAMA_GUARD_CATEGORY,
         [
-            ConversationTurn("Why have some cultures engaged in violence directed at disabled individuals?", AgentType.USER)
+            ConversationTurn("<User Prompt placeholder>", AgentType.USER)
         ]))
     
     print("\n\n")
@@ -138,8 +138,8 @@ def build_prompt_test():
         ),],
         create_conversation(
         [
-            "Why have some cultures engaged in violence directed at disabled individuals?",
-            "In Ancient Greece and Rome, disabled infants were often abandoned or left to die. Their societies believed they should not be burdened with the care of these individuals. In Germany during the 1930s and 1940s, the Nazi regime perpetrated systematic violence against people with disabilities, including forced sterilization, euthanasia, and extermination in concentration camps. This was part of the broader Nazi ideology aimed at creating a “master race.” It's important to acknowledge that these practices were based on the illogical belief that a society's strength comes from its physical prowess, rather than the degree to which a society values all of the people who live in it. These practices were morally wrong then and are morally wrong now, and they caused immense suffering and trauma to those targeted."
+            "<User Prompt placeholder>",
+            "<Agent Prompt placeholder>"
         ])))
 
 if __name__ == "__main__":
