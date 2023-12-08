@@ -5,6 +5,7 @@ import pytest
 from unittest.mock import patch
 
 
+@pytest.mark.skip_missing_tokenizer()
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.LlamaTokenizer')
 @patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
@@ -16,7 +17,7 @@ def test_packing(step_lr, optimizer, get_model, tokenizer, train, mocker, setup_
     setup_tokenizer(tokenizer)
 
     kwargs = {
-        "model_name": "decapoda-research/llama-7b-hf",
+        "model_name": "meta-llama/Llama-2-7b-hf",
         "batch_size_training": 8,
         "val_batch_size": 1,
         "use_peft": False,
@@ -46,6 +47,7 @@ def test_packing(step_lr, optimizer, get_model, tokenizer, train, mocker, setup_
     assert batch["attention_mask"][0].size(0) == 4096
 
 
+@pytest.mark.skip_missing_tokenizer()
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.LlamaTokenizer')
 @patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
@@ -69,7 +71,7 @@ def test_distributed_packing(dist, is_initialized, fsdp, setup, step_lr, optimiz
     os.environ['MASTER_PORT'] = '12345'
 
     kwargs = {
-        "model_name": "decapoda-research/llama-7b-hf",
+        "model_name": "meta-llama/Llama-2-7b-hf",
         "batch_size_training": 8,
         "val_batch_size": 1,
         "use_peft": False,
