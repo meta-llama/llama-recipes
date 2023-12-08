@@ -11,7 +11,7 @@ python convert_llama_weights_from_hf.py --model-path meta-llama/Llama-2-70b-chat
 ```
 
 ## Step 1: Run inference
-Checkout the offical llama inference [repo](https://github.com/facebookresearch/llama). Test using chat or text completion.
+Checkout the official llama inference [repo](https://github.com/facebookresearch/llama). Test using chat or text completion.
 ```
 torchrun --nproc_per_node 8 example_chat_completion.py --ckpt_dir ./test70Bf --tokenizer_path ${llama_2_dir}/tokenizer.model
 ```
