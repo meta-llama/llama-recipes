@@ -173,7 +173,7 @@ Note: It's possible and even recommended to implement a webhook in Python and ca
 
 ## Running the Chatbot
 
-On your web server, run the following command on a Terminal:
+On your web server, run the following command on a Terminal (see [here](https://flask.palletsprojects.com/en/3.0.x/deploying/gunicorn/) for more info on Gunicorn):
 
 ```
 gunicorn -b 0.0.0.0:5000 llama_messenger:app
