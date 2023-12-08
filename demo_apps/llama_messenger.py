@@ -7,7 +7,7 @@ import os
 import requests
 import json
 
-os.environ["REPLICATE_API_TOKEN"] = "r8_dR6bALmiSCZCZRs3JKuxkMYxkEW8b2Z0oDwCm"    
+os.environ["REPLICATE_API_TOKEN"] = "<your replicate api token>"
 llama2_13b_chat = "meta/llama-2-13b-chat:f4e2de70d66816a838a89eeeb621910adffb0dd0baba3976c96980970978018d"
 
 llm = Replicate(
@@ -32,7 +32,7 @@ def msgrcvd_pager():
         'recipient': '{"id": ' + sender + '}',
         'message': json.dumps({'text': answer}),
         'messaging_type': 'RESPONSE',
-        'access_token': 'EAAEox5Brim0BOzT7xduQmLPmV5JEYC0wyfZBPE308kOPOUr02GITwIeABUT0ffvoHm2ktusKfXgwoZAQiaI6ZAobAhtGQjsYsm7VzCbVBLQjzKSMyKlmI2ZCFtZAZAEuYZCIZC2YMlCpBhjTbr1Tr7HC7Eom7EPchFpOWAGWktN1PCik17Q1KWCD1ZAdSLBQS6T1Jk4wmZA54eO3MCgQZDZ'
+        'access_token': "<your page access token>"
     }
     headers = {
         'Content-Type': 'application/json'
