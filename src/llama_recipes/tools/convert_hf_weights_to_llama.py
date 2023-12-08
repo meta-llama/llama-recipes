@@ -142,11 +142,16 @@ def write_model(model_path, model_size, output_base_path):
 
 
 def main(
-    model_path: str, # Model name or path to the model directory
-    model_size: str, # llama model size.
-    output_dir: str # Save Llama weights. Should already contains params.json.
-    ):
-    """Convert llama huggingface format to consolidated weights."""
+    model_path: str,
+    model_size: str,
+    output_dir: str,
+):
+    """Convert llama weights from huggingface format to consolidated format.
+    params:
+    model_path: model name or path to the model directory.
+    model_size: Llama model size, one of 7B, 13B, 34B, 30B, 65B, 70B.
+    output_dir: directory to save Llama weights, should contains params.json.
+    """
     assert model_size in NUM_SHARDS, f"Unknown model size {model_size}"
     params_path = os.path.join(output_dir, "params.json")
     assert os.path.isfile(params_path), f"{params_path} does not exist"
