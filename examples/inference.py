@@ -11,7 +11,7 @@ import time
 import torch
 from transformers import LlamaTokenizer
 
-from llama_recipes.inference.safety_utils import get_safety_checker
+from llama_recipes.inference.safety_utils import get_safety_checker, AgentType
 from llama_recipes.inference.model_utils import load_model, load_peft_model
 
 
@@ -33,6 +33,8 @@ def main(
     enable_azure_content_safety: bool=False, # Enable safety check with Azure content safety api
     enable_sensitive_topics: bool=False, # Enable check for sensitive topics using AuditNLG APIs
     enable_salesforce_content_safety: bool=True, # Enable safety check with Salesforce safety flan t5
+    enable_llamaguard_content_safety: bool=False,
+    llamaguard_model_name: str=None,
     max_padding_length: int=None, # the max padding length to be used with tokenizer padding the prompts.
     use_fast_kernels: bool = False, # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
     **kwargs
@@ -48,6 +50,12 @@ def main(
     else:
         print("No user prompt provided. Exiting.")
         sys.exit(1)
+
+    if enable_llamaguard_content_safety:
+        if not llamaguard_model_name:
+            print("if enable_llamaguard_content_safety is used, provide the model path with --llamaguard_model_name")
+            sys.exit(1)
+
     
     # Set the seeds for reproducibility
     torch.cuda.manual_seed(seed)
@@ -77,6 +85,8 @@ def main(
     safety_checker = get_safety_checker(enable_azure_content_safety,
                                         enable_sensitive_topics,
                                         enable_salesforce_content_safety,
+                                        enable_llamaguard_content_safety,
+                                        guard_lama_path=llamaguard_model_name
                                         )
 
     # Safety check of the user prompt
@@ -117,7 +127,7 @@ def main(
     output_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
     
     # Safety check of the model output
-    safety_results = [check(output_text) for check in safety_checker]
+    safety_results = [check(output_text, agent_type=AgentType.AGENT, user_prompt=user_prompt) for check in safety_checker]
     are_safe = all([r[1] for r in safety_results])
     if are_safe:
         print("User input and model output deemed safe.")

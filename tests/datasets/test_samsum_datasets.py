@@ -1,10 +1,12 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
+import pytest
 from functools import partial
 from unittest.mock import patch
 
 
+@pytest.mark.skip_missing_tokenizer()
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.LlamaTokenizer')
 @patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
@@ -17,7 +19,7 @@ def test_samsum_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker,
 
     BATCH_SIZE = 8
     kwargs = {
-        "model_name": "decapoda-research/llama-7b-hf",
+        "model_name": "meta-llama/Llama-2-7b-hf",
         "batch_size_training": BATCH_SIZE,
         "val_batch_size": 1,
         "use_peft": False,
@@ -46,7 +48,7 @@ def test_samsum_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker,
     assert "attention_mask" in batch.keys()
 
     assert batch["labels"][0][268] == -100
-    assert batch["labels"][0][269] == 22291
+    assert batch["labels"][0][269] == 319
 
     assert batch["input_ids"][0][0] == 1
     assert batch["labels"][0][-1] == 2

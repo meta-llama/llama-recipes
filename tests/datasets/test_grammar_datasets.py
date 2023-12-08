@@ -1,11 +1,13 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
+import pytest
 from unittest.mock import patch
 
 from transformers import LlamaTokenizer
 
 
+@pytest.mark.skip_missing_tokenizer()
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.LlamaTokenizer')
 @patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
@@ -18,7 +20,7 @@ def test_grammar_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker
 
     BATCH_SIZE = 8
     kwargs = {
-        "model_name": "decapoda-research/llama-7b-hf",
+        "model_name": "meta-llama/Llama-2-7b-hf",
         "batch_size_training": BATCH_SIZE,
         "val_batch_size": 1,
         "use_peft": False,
@@ -46,8 +48,8 @@ def test_grammar_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker
     assert "input_ids" in batch.keys()
     assert "attention_mask" in batch.keys()
 
-    assert batch["labels"][0][29] == -100
-    assert batch["labels"][0][30] == 29871
+    assert batch["labels"][0][31] == -100
+    assert batch["labels"][0][32] == 1152
 
     assert batch["input_ids"][0][0] == 1
     assert batch["labels"][0][-1] == 2
