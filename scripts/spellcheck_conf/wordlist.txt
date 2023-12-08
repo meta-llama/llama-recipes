@@ -72,7 +72,6 @@ AWS
 Benchmarking
 Captum
 Grafana
-HuggingFace
 JMeter
 KMS
 Kubeflow
@@ -444,7 +443,6 @@ tokenizer
 vidhya
 vocabs
 AutoConfig
-Huggingface's
 ScriptFunction
 transfomers
 BBM
@@ -521,7 +519,6 @@ config
 http
 mnist
 resnet
-Huggingface
 PyTorch
 benchmarking
 bert
@@ -577,7 +574,6 @@ mtail
 scarpe
 NVidia
 WaveGlow
-huggingface
 torchServe
 CProfile
 KSERVE
@@ -1143,7 +1139,7 @@ dataclass
 datafiles
 davinci
 GPU's
-HuggingFace's
+Face's
 LoRA
 bitsandbytes
 CLA
@@ -1179,10 +1175,8 @@ envinronment
 ggml
 gguf
 gradio
-minnutes
 pdf
 quantized
-serarch
 streamlit
 prem
 Prem
@@ -1215,6 +1209,9 @@ venv
 webhook
 webhook's
 whatsapp
-busines
+business
 js
 webhooks
+Anyscale
+ADDR
+ckpt
