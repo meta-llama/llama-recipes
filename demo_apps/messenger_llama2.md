@@ -6,9 +6,9 @@ If you're interested in a Llama-enabled WhatsApp chatbot, see [here](whatsapp_ll
 
 ## Overview
 
-Messenger from Meta is a messaging service that allows a Facebook business page to respond to people who are interested in their busines using [Messenger Platform](https://developers.facebook.com/docs/messenger-platform/overview). The benefits of an intelligent and knowledgable Llama 2 powered chatbot are obvious, including cost saving and better customer experience such as 24x7 availability. In this tutorial, we'll cover the details of integrating Llama 2 with the Messenger Platform to build a basic Llama 2 enabled chatbot - for more Llama 2 application development and deployment demos such as how to integrate your own data with Llama 2, see [Llama 2 demo apps](https://github.com/facebookresearch/llama-recipes/tree/main/demo_apps).
+Messenger from Meta is a messaging service that allows a Facebook business page to respond to people who are interested in their business using [Messenger Platform](https://developers.facebook.com/docs/messenger-platform/overview). The benefits of an intelligent and knowledgable Llama 2 powered chatbot are obvious, including cost saving and better customer experience such as 24x7 availability. In this tutorial, we'll cover the details of integrating Llama 2 with the Messenger Platform to build a basic Llama 2 enabled chatbot - for more Llama 2 application development and deployment demos such as how to integrate your own data with Llama 2, see [Llama 2 demo apps](https://github.com/facebookresearch/llama-recipes/tree/main/demo_apps).
 
-The diagram below shows the components and overall data flow of the Llama 2 enabled Messenger chatbot demo we built, using Amazon EC2 instance as an example for running the web server.
+The diagram below shows the components and overall data flow of the Llama 2 enabled Messenger chatbot demo we built, using an Amazon EC2 instance as an example for running the web server.
 
 ![](messenger_llama_arch.jpg)
 
@@ -179,7 +179,7 @@ gunicorn -b 0.0.0.0:5000 llama_messenger:app
 
 If you use Amazon EC2 as your web server, make sure you have port 5000 added to your EC2 instance's security group's inbound rules. 
 
-Now you can open your Messenger app, enter a message and receive the Llama 2's answer shortly, as shown in the demo video in the beginning of this post.
+Now you can open your Messenger app, select the Facebook page you connected in Messenger's API Settings, enter a message and receive the Llama 2's answer shortly, as shown in the demo video in the beginning of this post.
 
 To debug any possible issues, go to your glitch.com app log and copy the URL generated there when a Messenger message is sent, which looks like this:
 
