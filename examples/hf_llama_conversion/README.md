@@ -3,7 +3,7 @@
 This is the reverse conversion for `convert_llama_weights_to_hf.py` script from the transformer package.
 
 ## Step 0: Convert to consolidated format
-- Create an output directory for the converted weights, eg `test70Bf`.
+- Create an output directory for the converted weights, such as `test70Bf`.
 - Copy file params.json from the official llama download into that directory.
 - Run the conversion script. `model-path` can be a huggingface hub model or a local hf model directory.
 ```
