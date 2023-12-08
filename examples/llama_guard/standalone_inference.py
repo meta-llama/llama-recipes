@@ -15,7 +15,7 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
 from llama_guard.generation import Llama
-from llama_guard.prompt_format import build_prompt, create_conversation, LLAMA_GUARD_CATEGORY
+from llama_recipes.inference.prompt_format import build_prompt, create_conversation, LLAMA_GUARD_CATEGORY
 from typing import List, Tuple
 from enum import Enum
 
@@ -45,9 +45,6 @@ def main(
         max_gen_len (int, optional): The maximum length of generated sequences. Defaults to 64.
         max_batch_size (int, optional): The maximum batch size for generating sequences. Defaults to 4.
     """
-
-    
-    # sys.exit(1)
 
     prompts: List[Tuple[List[str], AgentType]] = [
         (["<Sample User prompt goes here>"], AgentType.USER),
