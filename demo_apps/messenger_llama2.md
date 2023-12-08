@@ -169,6 +169,8 @@ app.get("/webhook", (req, res) => {
 ```
 Remember to change <web server public IP>, which needs to be publicly visible, to the IP of the server where your Llama 2 enabled web app in the previous section runs.
 
+Note: It's possible and even recommended to implement a webhook in Python and call the Llama directly inside the webhook, instead of making an HTTP request, as the JavaScript code above does, to a Python app which calls Llama and sends the answer to Messenger.
+
 ## Running the Chatbot
 
 On your web server, run the following command on a Terminal:
