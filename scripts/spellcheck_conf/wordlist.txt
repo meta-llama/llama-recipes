@@ -1179,10 +1179,8 @@ envinronment
 ggml
 gguf
 gradio
-minnutes
 pdf
 quantized
-serarch
 streamlit
 prem
 Prem
