@@ -2,6 +2,17 @@
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
 import fire
+import os
+import sys
+
+# Get the directory of the current script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Get the parent directory
+parent_dir = os.path.dirname(current_dir)
+
+# Append the parent directory to sys.path
+sys.path.append(parent_dir)
 
 from llama_guard.generation import Llama
 from llama_guard.prompt_format import build_prompt, create_conversation, LLAMA_GUARD_CATEGORY
@@ -33,7 +44,11 @@ def main(
         max_seq_len (int, optional): The maximum sequence length for input prompts. Defaults to 128.
         max_gen_len (int, optional): The maximum length of generated sequences. Defaults to 64.
         max_batch_size (int, optional): The maximum batch size for generating sequences. Defaults to 4.
-    """ 
+    """
+
+    
+    # sys.exit(1)
+
     prompts: List[Tuple[List[str], AgentType]] = [
         (["<Sample User prompt goes here>"], AgentType.USER),
 
