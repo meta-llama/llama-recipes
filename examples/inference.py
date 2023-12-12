@@ -34,7 +34,6 @@ def main(
     enable_sensitive_topics: bool=False, # Enable check for sensitive topics using AuditNLG APIs
     enable_salesforce_content_safety: bool=True, # Enable safety check with Salesforce safety flan t5
     enable_llamaguard_content_safety: bool=False,
-    llamaguard_model_name: str=None,
     max_padding_length: int=None, # the max padding length to be used with tokenizer padding the prompts.
     use_fast_kernels: bool = False, # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
     **kwargs
@@ -54,8 +53,7 @@ def main(
     safety_checker = get_safety_checker(enable_azure_content_safety,
                                         enable_sensitive_topics,
                                         enable_salesforce_content_safety,
-                                        enable_llamaguard_content_safety,
-                                        llamaguard_path=llamaguard_model_name
+                                        enable_llamaguard_content_safety
                                         )
 
     # Safety check of the user prompt
