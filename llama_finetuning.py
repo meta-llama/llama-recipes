@@ -69,7 +69,7 @@ def main(**kwargs):
 
     # Calculate gradient accumulation steps
     gradient_accumulation_steps = train_config.batch_size_training // train_config.micro_batch_size
-    hf_token="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"
+    hf_token = kwargs['hf_token']
     # Load the pre-trained model and setup its configuration
     if train_config.enable_fsdp and train_config.low_cpu_fsdp:
         """
@@ -121,7 +121,6 @@ def main(**kwargs):
         model.to(torch.bfloat16)
     
     # Load the tokenizer and add special tokens
-    hf_token="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"
     tokenizer = LlamaTokenizer.from_pretrained(train_config.model_name,token=hf_token)#train_config.model_name)
     tokenizer.add_special_tokens(
             {
