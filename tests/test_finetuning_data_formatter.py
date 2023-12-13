@@ -241,6 +241,7 @@ Explanation: This is obviously safe."""
             FinetuningDataFormatterTests.create_most_conservative_formatter_configs()
         )
 
+        # The right seed to get the random generations for testing the functionality of this test. ~*Magic*~
         formatter_configs.random_seed = 46
 
         formatter_configs.llama_guard_generation_configs.explanation_position = ExplanationPosition.BEFORE_DECISION
