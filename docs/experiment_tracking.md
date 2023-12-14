@@ -60,7 +60,7 @@ to track our experiments on our UI. You can do that by passing:
 
 `--aim_config.repo <path-to-aimdb>`
 
-You can categorize your expriments by passing a different name for each one in the command line using:
+You can categorize your experiments by passing a different name for each one in the command line using:
 
 `--aim_config.experiment my_llama_experiment`
 
