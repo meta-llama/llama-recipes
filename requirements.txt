@@ -7,7 +7,7 @@ black[jupyter]
 datasets
 fire
 peft
-transformers==4.33.3
+transformers
 sentencepiece
 py7zr
 scipy
