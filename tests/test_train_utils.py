@@ -12,7 +12,7 @@ from llama_recipes.utils.train_utils import train
 @patch("llama_recipes.utils.train_utils.torch.cuda.amp.GradScaler")
 @patch("llama_recipes.utils.train_utils.torch.cuda.amp.autocast")
 def test_gradient_accumulation(autocast, scaler, nullcontext, mem_trace, mocker):
-    
+
     model = mocker.MagicMock(name="model")
     model().loss.__truediv__().detach.return_value = torch.tensor(1)
     mock_tensor = mocker.MagicMock(name="tensor")
@@ -27,7 +27,8 @@ def test_gradient_accumulation(autocast, scaler, nullcontext, mem_trace, mocker)
     train_config.enable_fsdp = False
     train_config.use_fp16 = False
     train_config.run_validation = False
-    
+    train_config.gradient_clipping = False
+
     train(
         model,
         train_dataloader,
@@ -38,15 +39,15 @@ def test_gradient_accumulation(autocast, scaler, nullcontext, mem_trace, mocker)
         gradient_accumulation_steps,
         train_config,
     )
-    
+
     assert optimizer.zero_grad.call_count == 5
     optimizer.zero_grad.reset_mock()
-    
+
     assert nullcontext.call_count == 5
     nullcontext.reset_mock()
-    
+
     assert autocast.call_count == 0
-    
+
     gradient_accumulation_steps = 2
     train_config.use_fp16 = True
     train(
