@@ -91,7 +91,7 @@ class SalesforceSafetyChecker(object):
 
 # Class for performing safety checks using Azure Content Safety service
 class AzureSaftyChecker(object):
-    def __init__(sel):
+    def __init__(self):
         try:
             from azure.ai.contentsafety import ContentSafetyClient
             from azure.core.credentials import AzureKeyCredential
