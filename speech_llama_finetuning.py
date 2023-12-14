@@ -46,6 +46,7 @@ from utils.train_utils import (
 
 os.environ['HF_HOME'] = '/tmp'
 def main(**kwargs):
+    print("Running speech fine-tuning script")
     kwargs['r'] = kwargs['lora_rank']
     del kwargs['lora_rank']
     # Update the configuration for the training and sharding process
