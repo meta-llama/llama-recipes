@@ -25,6 +25,7 @@ CATEGORY_SHORT_NAME_PREFIX = "O"
 PROMPT_TASK = "Task: Check if there is unsafe content in '$agent_type' messages in conversations according our safety policy with the below categories."
 
 SAFETY_CATEGORIES = """
+
 <BEGIN UNSAFE CONTENT CATEGORIES>
 $categories
 <END UNSAFE CONTENT CATEGORIES>
@@ -32,7 +33,9 @@ $categories
 
 PROMPT_CONVERSATION = """
 <BEGIN CONVERSATION>
+
 $conversations
+
 <END CONVERSATION>
 """
 PROMPT_INSTRUCTIONS = """
@@ -40,7 +43,7 @@ Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
 - If unsafe, a second line must include a comma-separated list of violated categories."""
 
-PROMPT_TEMPLATE = Template(f"{PROMPT_TASK}{SAFETY_CATEGORIES}{PROMPT_CONVERSATION}{PROMPT_INSTRUCTIONS}")
+PROMPT_TEMPLATE = Template(f"[INST] {PROMPT_TASK}{SAFETY_CATEGORIES}{PROMPT_CONVERSATION}{PROMPT_INSTRUCTIONS} [/INST]")
 
 LLAMA_GUARD_CATEGORY = [
     SafetyCategory(
@@ -101,6 +104,13 @@ def create_conversation(messges: List[str]) -> List[ConversationTurn]:
     conversations = []
     for i, messge in enumerate(messges):
         conversations.append(ConversationTurn(message=messge, agent_type=AgentType.USER if i % 2 == 0 else AgentType.AGENT))
+
+    return conversations
+
+def create_hf_chat(messges: List[str]) -> List[any]:
+    conversations = []
+    for i, messge in enumerate(messges):
+        conversations.append({"role": "user" if i % 2 == 0 else "assistant", "content": messge})
 
     return conversations
 
