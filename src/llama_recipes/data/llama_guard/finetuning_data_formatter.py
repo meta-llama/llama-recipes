@@ -69,7 +69,7 @@ class TrainingExample:
     response: str
     violated_category_codes: list[str]
     label: Literal["safe", "unsafe"]
-    explanation: str
+    explanation: Optional[str] = None
 
 
 def create_formatted_finetuning_examples(
