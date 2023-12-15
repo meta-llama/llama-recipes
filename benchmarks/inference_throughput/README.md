@@ -9,7 +9,7 @@ In this folder we provide a series of benchmark scripts that apply a throughput 
 There are three major reasons we want to run these benchmarks and share them with our Llama community:
 * Provide inference throughput analysis based on real world situation to help you better select which service or deployment works the best for your scenario
 * Provide a baseline measurement for validating various optimization solutions on different backends, so we can provide guidance on which solutions works the best for your scenario
-* Encourge the community to develop benchmarks on top of our works, so we can better quantify the latest proposed solutions combined with current popular frameworks, especially in this crazy fast-moving area
+* Encourage the community to develop benchmarks on top of our works, so we can better quantify the latest proposed solutions combined with current popular frameworks, especially in this crazy fast-moving area
 
 # Parameters
 Here are the parameters (if applicable) that you can configure for running the benchmark:
@@ -22,7 +22,7 @@ Here are the parameters (if applicable) that you can configure for running the b
 * **THRESHOLD_TPS** - Threshold TPS (threshold for tokens per second below which we deem the query to be slow)
 * **TOKENIZER_PATH** - Tokenizer source
 * **RANDOM_PROMPT_LENGTH** - Random prompt length (for pretrained models)
-* **NUM_GPU** - Number of GPUs for request dispatch among muiltiple containers
+* **NUM_GPU** - Number of GPUs for request dispatch among multiple containers
 * **TEMPERATURE** - Temperature for inference
 * **TOP_P** - Top_p for inference
 * **MODEL_ENDPOINTS** - Container endpoints
