@@ -13,6 +13,7 @@ This folder contains a series of Llama 2-powered apps:
 2. Ask Llama questions about structured data in a DB
 3. Ask Llama questions about live data on the web
 4. Build a Llama-enabled WhatsApp chatbot
+5. Build a Llama-enabled Messenger chatbot
 
 We also show how to build quick web UI for Llama 2 demo apps using Streamlit and Gradio.
 
@@ -77,7 +78,10 @@ This demo app shows how to use LangChain and Llama2 to let users ask questions a
 This demo app shows how to perform live data augmented generation tasks with Llama2 and [LlamaIndex](https://github.com/run-llama/llama_index), another leading open-source framework for building LLM apps: it uses the [You.com search API](https://documentation.you.com/quickstart) to get live search result and ask Llama2 about them.
 
 ## [WhatsApp Chatbot](whatsapp_llama2.md): Building a Llama-enabled WhatsApp Chatbot
-This step-by-step tutorial shows how to use the [WhatsApp Business API](https://developers.facebook.com/docs/whatsapp/cloud-api/overview), LangChain and Replicate to build a Llama-enabled WhatsApp chatbot.
+This step-by-step tutorial shows how to use the [WhatsApp Business API](https://developers.facebook.com/docs/whatsapp/cloud-api/overview) to build a Llama-enabled WhatsApp chatbot.
+
+## [Messenger Chatbot](messenger_llama2.md): Building a Llama-enabled Messenger Chatbot
+This step-by-step tutorial shows how to use the [Messenger Platform](https://developers.facebook.com/docs/messenger-platform/overview) to build a Llama-enabled Messenger chatbot.
 
 ## Quick Web UI for Llama2 Chat
 If you prefer to see Llama2 in action in a web UI, instead of the notebooks above, you can try one of the two methods:
