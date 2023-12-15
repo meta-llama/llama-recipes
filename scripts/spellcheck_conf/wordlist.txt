@@ -1215,3 +1215,5 @@ webhooks
 Anyscale
 ADDR
 ckpt
+HuggingFace
+llamaguard

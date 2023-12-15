@@ -28,7 +28,7 @@ So far, we have provide the following inference examples:
 
 6. The [Purple Llama Using Anyscale](./Purple_Llama_Anyscale.ipynb) is a notebook that shows how to use Anyscale hosted Llama Guard model to classify user inputs as safe or unsafe.
 
-7. [Llama Guard](./llama_guard/) inference example and [safety_checker](../src/llama_recipes/inference/safety_utils.py) for the main [inference](./inference.py) script. The standalone scripts allows to test Llama Guard on user input, or user input and agent response pairs. The safety_checker integration providers a way to integrate Llama Guard on all inference excecutions, both for the user input and model output.
+7. [Llama Guard](./llama_guard/) inference example and [safety_checker](../src/llama_recipes/inference/safety_utils.py) for the main [inference](./inference.py) script. The standalone scripts allows to test Llama Guard on user input, or user input and agent response pairs. The safety_checker integration providers a way to integrate Llama Guard on all inference executions, both for the user input and model output.
 
 For more in depth information on inference including inference safety checks and examples, see the inference documentation [here](../docs/inference.md).
 
