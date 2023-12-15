@@ -1,6 +1,6 @@
 # Llama-On-Perm-Benchmark
 This folder contains code to run inference benchmark for Llama 2 models on-perm with popular serving frameworks.
-The benchmark will focus on overall inference **throughput** for running containers on one instance (single or muiltiple GPUs) that you can acquire from cloud service providers such as Azure and AWS. You can also run this benchmark on local laptop or desktop.  
+The benchmark will focus on overall inference **throughput** for running containers on one instance (single or multiple GPUs) that you can acquire from cloud service providers such as Azure and AWS. You can also run this benchmark on local laptop or desktop.  
 We support benchmark on these serving framework:
 * [vLLM](https://github.com/vllm-project/vllm)
 
