@@ -2,7 +2,7 @@ import fire
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
-from llama_recipes.inference.prompt_format import build_prompt, create_conversation, LLAMA_GUARD_CATEGORY
+from llama_recipes.inference.prompt_format_utils import build_prompt, create_conversation, LLAMA_GUARD_CATEGORY
 from typing import List, Tuple
 from enum import Enum
 

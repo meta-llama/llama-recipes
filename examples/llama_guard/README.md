@@ -27,7 +27,7 @@ For testing, you can add User or User/Agent interactions into the prompts list a
 
     ]
 ```
-The complete prompt is built with the `build_prompt` function, defined in [prompt_format.py](../../src/llama_recipes/inference/prompt_format.py#L110). The file contains the default Llama Guard  categories. These categories can adjusted and new ones can be added, as described in the [research paper](https://ai.meta.com/research/publications/llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations/), on section 4.5 Studying the adaptability of the model.
+The complete prompt is built with the `build_prompt` function, defined in [prompt_format.py](../../src/llama_recipes/inference/prompt_format.py). The file contains the default Llama Guard  categories. These categories can adjusted and new ones can be added, as described in the [research paper](https://ai.meta.com/research/publications/llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations/), on section 4.5 Studying the adaptability of the model.
 <!-- markdown-link-check-enable -->
 
 To run the samples, with all the dependencies installed, execute this command:
@@ -36,6 +36,8 @@ To run the samples, with all the dependencies installed, execute this command:
 
 ## Inference Safety Checker
 When running the regular inference script with prompts, Llama Guard will be used as a safety checker on the user prompt and the model output. If both are safe, the result will be show, else a message with the error will be show, with the word unsafe and a comma separated list of categories infringed. Llama Guard is always loaded quantized using Hugging Face Transformers library.
+
+In this case, the default categories are applied by the tokenizer, using the `apply_chat_template` method.
 
 Use this command for testing with a quantized Llama model, modifying the values accordingly:
 
