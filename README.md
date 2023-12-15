@@ -192,8 +192,16 @@ This folder contains a series of Llama2-powered apps:
 3. Ask Llama questions about live data on the web
 4. Build a Llama-enabled WhatsApp chatbot
 
+# Benchmarks
+This folder contains a series of benchmark scripts for Llama 2 models inference on various backends:
+1. On-perm - Popular serving framework and containers (i.e. vLLM)
+2. (WIP) Cloud API - Popular API services (i.e. Azure Model-as-a-Service)
+3. (WIP) On-device - Popular on-device inference solutions on Android and iOS (i.e. mlc-llm, QNN)
+4. (WIP) Optimization - Popular optimization solutions for faster inference and quantization (i.e. AutoAWQ)
+
 # Repository Organization
 This repository is organized in the following way:
+[benchmarks](./benchmarks): Contains a series of benchmark scripts for Llama 2 models inference on various backends.
 
 [configs](src/llama_recipes/configs/): Contains the configuration files for PEFT methods, FSDP, Datasets.
 
@@ -201,7 +209,7 @@ This repository is organized in the following way:
 
 [datasets](src/llama_recipes/datasets/): Contains individual scripts for each dataset to download and process. Note: Use of any of the datasets should be in compliance with the dataset's underlying licenses (including but not limited to non-commercial uses)
 
-[demo_apps](./demo_apps) contains a series of Llama2-powered apps, from quickstart deployments to how to ask Llama questions about unstructured data, structured data, live data, and video summary.
+[demo_apps](./demo_apps): Contains a series of Llama2-powered apps, from quickstart deployments to how to ask Llama questions about unstructured data, structured data, live data, and video summary.
 
 [examples](./examples/): Contains examples script for finetuning and inference of the Llama 2 model as well as how to use them safely.
 
