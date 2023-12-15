@@ -27,7 +27,7 @@ class InstructionDataset(Dataset):
     def __init__(self, dataset_config, tokenizer, partition="train"):
         self.ann = json.load(open(dataset_config.data_path))
         if partition == "train":
-            self.ann = self.ann
+            self.ann = self.ann[200:]
         else:
             self.ann = self.ann[:200]
 

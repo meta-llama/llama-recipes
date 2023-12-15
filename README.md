@@ -1,12 +1,10 @@
 # Llama 2 Fine-tuning / Inference Recipes, Examples and Demo Apps
 
-**[Update Oct. 20, 2023] We have just released a series of Llama 2 demo apps [here](./demo_apps). These apps show how to run Llama 2 locally and in the cloud to chat about data (PDF, DB, or live) and generate video summary.**
-
+**[Update Dec 14, 2023] We recently released a series of Llama 2 demo apps [here](./demo_apps). These apps show how to run Llama (locally, in the cloud, or on-prem), how to ask Llama questions in general or about custom data (PDF, DB, or live), how to integrate Llama with WhatsApp and Messenger, and how to implement an end-to-end chatbot with RAG (Retrieval Augmented Generation).**
 
 The 'llama-recipes' repository is a companion to the [Llama 2 model](https://github.com/facebookresearch/llama). The goal of this repository is to provide examples to quickly get started with fine-tuning for domain adaptation and how to run inference for the fine-tuned models. For ease of use, the examples use Hugging Face converted versions of the models. See steps for conversion of the model [here](#model-conversion-to-hugging-face).
 
-In addition, we also provide a number of demo apps, to showcase the Llama2 usage along with other ecosystem solutions to run Llama2 locally on your mac and on cloud.
-
+In addition, we also provide a number of demo apps, to showcase the Llama 2 usage along with other ecosystem solutions to run Llama 2 locally, in the cloud, and on-prem.
 
 Llama 2 is a new technology that carries potential risks with use. Testing conducted to date has not — and could not — cover all scenarios. In order to help developers address these risks, we have created the [Responsible Use Guide](https://github.com/facebookresearch/llama/blob/main/Responsible-Use-Guide.pdf). More details can be found in our research paper as well. For downloading the models, follow the instructions on [Llama 2 repo](https://github.com/facebookresearch/llama).
 
@@ -22,8 +20,6 @@ Llama 2 is a new technology that carries potential risks with use. Testing condu
 5. [Demo Apps](#demo-apps)
 6. [Repository Organization](#repository-organization)
 7. [License and Acceptable Use Policy](#license)
-
-
 
 # Quick Start
 
@@ -80,7 +76,7 @@ Optional dependencies can also be combines with [option1,option2].
 
 # Where to find the models?
 
-You can find llama v2 models on HuggingFace hub [here](https://huggingface.co/meta-llama), where models with `hf` in the name are already converted to HuggingFace checkpoints so no further conversion is needed. The conversion step below is only for original model weights from Meta that are hosted on HuggingFace model hub as well.
+You can find llama v2 models on Hugging Face hub [here](https://huggingface.co/meta-llama), where models with `hf` in the name are already converted to Hugging Face checkpoints so no further conversion is needed. The conversion step below is only for original model weights from Meta that are hosted on Hugging Face model hub as well.
 
 # Model conversion to Hugging Face
 The recipes and notebooks in this folder are using the Llama 2 model definition provided by Hugging Face's transformers library.
@@ -88,7 +84,7 @@ The recipes and notebooks in this folder are using the Llama 2 model definition 
 Given that the original checkpoint resides under models/7B you can install all requirements and convert the checkpoint with:
 
 ```bash
-## Install HuggingFace Transformers from source
+## Install Hugging Face Transformers from source
 pip freeze | grep transformers ## verify it is version 4.31.0 or higher
 
 git clone git@github.com:huggingface/transformers.git
@@ -145,7 +141,7 @@ Here we use FSDP as discussed in the next section which can be used along with P
 
 ## Flash Attention and Xformer Memory Efficient Kernels
 
-Setting `use_fast_kernels` will enable using of Flash Attention or Xformer memory-efficient kernels based on the hardware being used. This would speed up the fine-tuning job. This has been enabled in `optimum` library from HuggingFace as a one-liner API, please read more [here](https://pytorch.org/blog/out-of-the-box-acceleration/).
+Setting `use_fast_kernels` will enable using of Flash Attention or Xformer memory-efficient kernels based on the hardware being used. This would speed up the fine-tuning job. This has been enabled in `optimum` library from Hugging Face as a one-liner API, please read more [here](https://pytorch.org/blog/out-of-the-box-acceleration/).
 
 ```bash
 torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp --use_peft --peft_method lora --model_name /patht_of_model_folder/7B --fsdp_config.pure_bf16 --output_dir Path/to/save/PEFT/model --use_fast_kernels
@@ -197,14 +193,17 @@ You can read more about our fine-tuning strategies [here](./docs/LLM_finetuning.
 # Demo Apps
 This folder contains a series of Llama2-powered apps:
 * Quickstart Llama deployments and basic interactions with Llama
-  1. Llama on your Mac and ask Llama general questions
-  2. Llama on Google Colab
-  3. Llama on Cloud and ask Llama questions about unstructured data in a PDF
+1. Llama on your Mac and ask Llama general questions
+2. Llama on Google Colab
+3. Llama on Cloud and ask Llama questions about unstructured data in a PDF
+4. Llama on-prem with vLLM and TGI
+5. Llama chatbot with RAG (Retrieval Augmented Generation)
 
 * Specialized Llama use cases:
-  1. Ask Llama to summarize a video content
-  2. Ask Llama questions about structured data in a DB
-  3. Ask Llama questions about live data on the web
+1. Ask Llama to summarize a video content
+2. Ask Llama questions about structured data in a DB
+3. Ask Llama questions about live data on the web
+4. Build a Llama-enabled WhatsApp chatbot
 
 # Repository Organization
 This repository is organized in the following way:

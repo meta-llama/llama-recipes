@@ -19,7 +19,7 @@ from transformers import LlamaTokenizer
 
 
 from llama_recipes.model_checkpointing import save_model_checkpoint, save_model_and_optimizer_sharded, save_optimizer_checkpoint
-from llama_recipes.policies import fpSixteen,bfSixteen_mixed, get_llama_wrapper
+from llama_recipes.policies import fpSixteen,bfSixteen, get_llama_wrapper
 from llama_recipes.utils.memory_utils import MemoryTrace
 
 
@@ -87,6 +87,12 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                     # if fp16 is enabled, use gradient scaler to handle gradient update
                     scaler.scale(loss).backward()
                     if (step + 1) % gradient_accumulation_steps == 0 or step == len(train_dataloader) - 1:
+                        if train_config.gradient_clipping and train_config.gradient_clipping_threshold > 0.0:
+                            scaler.unscale_(optimizer)
+                            if train_config.enable_fsdp:
+                                model.clip_grad_norm_(train_config.gradient_clipping_threshold)
+                            else:
+                                torch.nn.utils.clip_grad_norm_(model.parameters(), train_config.gradient_clipping_threshold)
                         scaler.step(optimizer)
                         scaler.update()
                         optimizer.zero_grad()
@@ -95,6 +101,11 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                     # regular backpropagation when fp16 is not used
                     loss.backward()
                     if (step + 1) % gradient_accumulation_steps == 0 or step == len(train_dataloader) - 1:
+                        if train_config.gradient_clipping and train_config.gradient_clipping_threshold > 0.0:
+                            if train_config.enable_fsdp:
+                                model.clip_grad_norm_(train_config.gradient_clipping_threshold)
+                            else:
+                                torch.nn.utils.clip_grad_norm_(model.parameters(), train_config.gradient_clipping_threshold)
                         optimizer.step()
                         optimizer.zero_grad()
                         pbar.update(1)
@@ -356,7 +367,7 @@ def get_policies(cfg, rank):
         bf16_ready = verify_bfloat_support
 
         if bf16_ready and not cfg.use_fp16:
-            mixed_precision_policy = bfSixteen_mixed
+            mixed_precision_policy = bfSixteen
             if rank == 0:
                 print(f"bFloat16 enabled for mixed precision - using bfSixteen policy")
         elif cfg.use_fp16:
