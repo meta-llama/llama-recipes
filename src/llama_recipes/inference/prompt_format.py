@@ -107,13 +107,6 @@ def create_conversation(messges: List[str]) -> List[ConversationTurn]:
 
     return conversations
 
-def create_hf_chat(messges: List[str]) -> List[any]:
-    conversations = []
-    for i, messge in enumerate(messges):
-        conversations.append({"role": "user" if i % 2 == 0 else "assistant", "content": messge})
-
-    return conversations
-
 def build_prompt(
         agent_type: AgentType, 
         categories: List[SafetyCategory], 
