@@ -136,6 +136,13 @@ torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp --u
 
 Here we use FSDP as discussed in the next section which can be used along with PEFT methods. To make use of PEFT methods with FSDP make sure to pass `use_peft` and `peft_method` args along with `enable_fsdp`. Here we are using `BF16` for training.
 
+
+## FLop Counting and Profiling 
+
+To help with benchmarking effort, we are adding the support [12/15/2023] for counting the flops during the fine-tuning process. You can achieve this by setting `--flop_counter` when launching your single/multi GPU fine-tuning.
+
+Similarly, you can set `--profiler` flag and pass a profiling output path using `--profile_output_dir` to capture the profile traces of your model using [PyTorch profiler](https://pytorch.org/tutorials/intermediate/tensorboard_profiler_tutorial.html). This would be helpful for debugging purposes.
+
 ## Flash Attention and Xformer Memory Efficient Kernels
 
 Setting `use_fast_kernels` will enable using of Flash Attention or Xformer memory-efficient kernels based on the hardware being used. This would speed up the fine-tuning job. This has been enabled in `optimum` library from HuggingFace as a one-liner API, please read more [here](https://pytorch.org/blog/out-of-the-box-acceleration/).
