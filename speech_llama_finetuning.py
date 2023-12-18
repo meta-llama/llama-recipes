@@ -87,21 +87,21 @@ def main(**kwargs):
         if rank == 0:
             model = LlamaForCausalLM.from_pretrained(
                 os.environ.get('SM_CHANNEL_MODEL',None),
-                attn_implementation="flash_attention_2"
+                attn_implementation="flash_attention_2",
                 #train_config.model_name,
                 #token=hf_token,
                 load_in_8bit=True if train_config.quantization else None,
                 device_map="auto" if train_config.quantization else None,
             )
         else:
-            llama_config = LlamaConfig.from_pretrained(os.environ.get('SM_CHANNEL_MODEL',None))#train_config.model_name,token=hf_token)
+            llama_config = LlamaConfig.from_pretrained(os.environ.get('SM_CHANNEL_MODEL',None),attn_implementation="flash_attention_2")#train_config.model_name,token=hf_token)
             with torch.device("meta"):
                 model = LlamaForCausalLM(llama_config)
 
     else:
         model = LlamaForCausalLM.from_pretrained(
             os.environ.get('SM_CHANNEL_MODEL',None),
-            attn_implementation="flash_attention_2"
+            attn_implementation="flash_attention_2",
             #train_config.model_name,token=hf_token,
             load_in_8bit=True if train_config.quantization else None,
             device_map="auto" if train_config.quantization else None,
