@@ -95,9 +95,9 @@ def main(**kwargs):
                 device_map="auto" if train_config.quantization else None,
             )
         else:
-            llama_config = AutoConfig.from_pretrained(os.environ.get('SM_CHANNEL_MODEL',None),attn_implementation="flash_attention_2")#train_config.model_name,token=hf_token)
+            llama_config = AutoConfig.from_pretrained(os.environ.get('SM_CHANNEL_MODEL',None))#train_config.model_name,token=hf_token)
             with torch.device("meta"):
-                model = AutoModelForCausalLM.from_config(llama_config)
+                model = AutoModelForCausalLM.from_config(llama_config,attn_implementation="flash_attention_2")
 
     else:
         model = AutoModelForCausalLM.from_pretrained(
