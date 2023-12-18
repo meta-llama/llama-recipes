@@ -111,9 +111,10 @@ def main(**kwargs):
         based on the hardware being used. This would speed up fine-tuning.
         """
         try:
-            #model = model.to_bettertransformer()
-            from optimum.bettertransformer import BetterTransformer
-            model = BetterTransformer.transform(model) 
+            # convert the model to BetterTransformer
+            model.to_bettertransformer()
+            # from optimum.bettertransformer import BetterTransformer
+            # model = BetterTransformer.transform(model) 
         except ImportError:
             print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
     print_model_size(model, train_config, rank if train_config.enable_fsdp else 0)
