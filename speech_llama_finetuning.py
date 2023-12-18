@@ -43,6 +43,7 @@ from utils.train_utils import (
     print_model_size,
     get_policies
 )
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 
 os.environ['HF_HOME'] = '/tmp'
 def main(**kwargs):
@@ -85,7 +86,7 @@ def main(**kwargs):
             raise Exception("latest pytorch nightly build is required to run with low_cpu_fsdp config, "
                             "please install latest nightly.")
         if rank == 0:
-            model = LlamaForCausalLM.from_pretrained(
+            model = AutoModelForCausalLM.from_pretrained(
                 os.environ.get('SM_CHANNEL_MODEL',None),
                 attn_implementation="flash_attention_2",
                 #train_config.model_name,
@@ -94,12 +95,12 @@ def main(**kwargs):
                 device_map="auto" if train_config.quantization else None,
             )
         else:
-            llama_config = LlamaConfig.from_pretrained(os.environ.get('SM_CHANNEL_MODEL',None),attn_implementation="flash_attention_2")#train_config.model_name,token=hf_token)
+            llama_config = AutoConfig.from_pretrained(os.environ.get('SM_CHANNEL_MODEL',None),attn_implementation="flash_attention_2")#train_config.model_name,token=hf_token)
             with torch.device("meta"):
                 model = LlamaForCausalLM(llama_config)
 
     else:
-        model = LlamaForCausalLM.from_pretrained(
+        model = AutoModelForCausalLM.from_pretrained(
             os.environ.get('SM_CHANNEL_MODEL',None),
             attn_implementation="flash_attention_2",
             #train_config.model_name,token=hf_token,
