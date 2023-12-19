@@ -5,7 +5,7 @@ We support benchmark on these serving framework:
 * [vLLM](https://github.com/vllm-project/vllm)
 
 
-# Getting Started
+# vLLM - Getting Started
 To get started, we first need to deploy containers on-perm as a API host. Follow the guidance [here](https://github.com/facebookresearch/llama-recipes/blob/main/demo_apps/llama-on-prem.md#setting-up-vllm-with-llama-2) to deploy vLLM on-perm.
 Note that depends on the number of GPUs and size of their VRAM you have on the instance or local machine. We suggest you prioritize deploying as many model replicas as possible to reach higher overall throughput and request-per-second (RPS), comparing to deploy one model container among multiple GPUs for model parallelism.  
 For example, we have an instance from Azure that has 8xA100 80G GPUs, and we want to deploy Llama 2 70B chat model. 70B chat model is around 130GB with FP16. So for deployment we can do:
