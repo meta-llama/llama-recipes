@@ -25,6 +25,7 @@ CATEGORY_SHORT_NAME_PREFIX = "O"
 PROMPT_TASK = "Task: Check if there is unsafe content in '$agent_type' messages in conversations according our safety policy with the below categories."
 
 SAFETY_CATEGORIES = """
+
 <BEGIN UNSAFE CONTENT CATEGORIES>
 $categories
 <END UNSAFE CONTENT CATEGORIES>
@@ -32,7 +33,9 @@ $categories
 
 PROMPT_CONVERSATION = """
 <BEGIN CONVERSATION>
+
 $conversations
+
 <END CONVERSATION>
 """
 PROMPT_INSTRUCTIONS = """
@@ -40,7 +43,7 @@ Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
 - If unsafe, a second line must include a comma-separated list of violated categories."""
 
-PROMPT_TEMPLATE = Template(f"{PROMPT_TASK}{SAFETY_CATEGORIES}{PROMPT_CONVERSATION}{PROMPT_INSTRUCTIONS}")
+PROMPT_TEMPLATE = Template(f"[INST] {PROMPT_TASK}{SAFETY_CATEGORIES}{PROMPT_CONVERSATION}{PROMPT_INSTRUCTIONS} [/INST]")
 
 LLAMA_GUARD_CATEGORY = [
     SafetyCategory(
