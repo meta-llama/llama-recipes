@@ -98,7 +98,7 @@ def main(**kwargs):
         else:
             llama_config = AutoConfig.from_pretrained(os.environ.get('SM_CHANNEL_MODEL',None),torch_dtype=torch.bfloat16)#train_config.model_name,token=hf_token)
             with torch.device("meta"):
-                model = AutoModelForCausalLM.from_config(llama_config,attn_implementation="flash_attention_2")
+                model = AutoModelForCausalLM.from_config(llama_config,attn_implementation="flash_attention_2",torch_dtype=torch.bfloat16)
 
     else:
         model = AutoModelForCausalLM.from_pretrained(
