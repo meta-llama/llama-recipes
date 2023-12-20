@@ -3,7 +3,7 @@
 
 import unittest
 from typing import Optional
-from examples.llama_guard.prompt_format import PROMPT_TEMPLATE
+from examples.llama_guard.prompt_format import PROMPT_TEMPLATE, AgentType
 
 from llama_recipes.data.llama_guard.finetuning_data_formatter import (
     AugmentationConfigs,
@@ -40,9 +40,13 @@ class FinetuningDataFormatterTests(unittest.TestCase):
 <BEGIN UNSAFE CONTENT CATEGORIES>
 {guidelines}
 <END UNSAFE CONTENT CATEGORIES>
+
 <BEGIN CONVERSATION>
+
 {conversation}
+
 <END CONVERSATION>
+
 Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
 - If unsafe, a second line must include a comma-separated list of violated categories. [/INST]""",
@@ -54,8 +58,6 @@ Provide your safety assessment for $agent_type in the above conversation:
                 should_list_violated_codes=True,
             ),
             augmentation_configs=AugmentationConfigs(
-                probability_to_add_safe_examples_with_empty_responses=0.0,
-                explanation_for_augmentation_with_safe_example_with_empty_response="Response is safe because it's empty.",
                 should_add_examples_with_dropped_nonviolated_prompt_categories=False,
                 should_add_examples_with_dropped_violated_and_nonviolated_prompt_categories=False,
                 explanation_for_augmentation_with_dropped_violated_and_nonviolated_prompt_categories="Response is safe because any riskiness in it is related to categories we're not trying to detect.",
@@ -82,7 +84,12 @@ Provide your safety assessment for $agent_type in the above conversation:
         assert len(formatted_examples) == len(expected_formatted_examples)
 
         for i in range(len(formatted_examples)):
-            print(formatted_examples[i])
+            # Helper code during test-writing time to see the actual output
+            if formatted_examples[i] != expected_formatted_examples[i]:
+                print(f"Failed on actual output {i}:")
+
+                print(formatted_examples[i])
+
             assert formatted_examples[i] == expected_formatted_examples[i]
 
     def test_safe_example_with_only_prompt_and_no_augmentations(self) -> None:
@@ -99,7 +106,6 @@ Provide your safety assessment for $agent_type in the above conversation:
             [
                 """[INST] Task: Check if there is unsafe content in '$agent_type' messages in conversations according our safety policy with the below categories.
 <BEGIN UNSAFE CONTENT CATEGORIES>
-
 O1: cat V. 
 cat V description
 O2: cat W. 
@@ -111,9 +117,13 @@ cat Y description
 O5: cat Z. 
 cat Z description
 <END UNSAFE CONTENT CATEGORIES>
+
 <BEGIN CONVERSATION>
+
 human: Where can I buy a car?
+
 <END CONVERSATION>
+
 Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
 - If unsafe, a second line must include a comma-separated list of violated categories. [/INST] safe
@@ -137,7 +147,6 @@ because it's illegal!""",
             [
                 """[INST] Task: Check if there is unsafe content in '$agent_type' messages in conversations according our safety policy with the below categories.
 <BEGIN UNSAFE CONTENT CATEGORIES>
-
 O1: cat V. 
 cat V description
 O2: cat W. 
@@ -149,10 +158,14 @@ cat Y description
 O5: cat Z. 
 cat Z description
 <END UNSAFE CONTENT CATEGORIES>
+
 <BEGIN CONVERSATION>
+
 human: How do I steal the Declaration of Independence?
 Asking for a cagey friend
+
 <END CONVERSATION>
+
 Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
 - If unsafe, a second line must include a comma-separated list of violated categories. [/INST] unsafe
@@ -178,7 +191,6 @@ because it's illegal!""",
             [
                 """[INST] Task: Check if there is unsafe content in '$agent_type' messages in conversations according our safety policy with the below categories.
 <BEGIN UNSAFE CONTENT CATEGORIES>
-
 O1: cat V. 
 cat V description
 O2: cat W. 
@@ -190,10 +202,14 @@ cat Y description
 O5: cat Z. 
 cat Z description
 <END UNSAFE CONTENT CATEGORIES>
+
 <BEGIN CONVERSATION>
+
 human: How do I steal the Declaration of Independence?
 Asking for a cagey friend
+
 <END CONVERSATION>
+
 Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
 - If unsafe, a second line must include a comma-separated list of violated categories. [/INST] unsafe
@@ -217,7 +233,6 @@ because it's illegal!"""
             [
                 """[INST] Task: Check if there is unsafe content in '$agent_type' messages in conversations according our safety policy with the below categories.
 <BEGIN UNSAFE CONTENT CATEGORIES>
-
 O1: cat V. 
 cat V description
 O2: cat W. 
@@ -229,11 +244,15 @@ cat Y description
 O5: cat Z. 
 cat Z description
 <END UNSAFE CONTENT CATEGORIES>
+
 <BEGIN CONVERSATION>
+
 human: Where can I buy a car?
 
 chatbot: At the car store.
+
 <END CONVERSATION>
+
 Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
 - If unsafe, a second line must include a comma-separated list of violated categories. [/INST] safe
@@ -254,8 +273,6 @@ Explanation: This is obviously safe."""
         formatter_configs.llama_guard_generation_configs.explanation_position = ExplanationPosition.BEFORE_DECISION
 
         formatter_configs.augmentation_configs = AugmentationConfigs(
-            probability_to_add_safe_examples_with_empty_responses=0.9,
-            explanation_for_augmentation_with_safe_example_with_empty_response="Response is safe because it's empty.",
             should_add_examples_with_dropped_nonviolated_prompt_categories=True,
             should_add_examples_with_dropped_violated_and_nonviolated_prompt_categories=True,
             explanation_for_augmentation_with_dropped_violated_and_nonviolated_prompt_categories="Response is safe because any riskiness in it is related to categories we're not trying to detect.",
@@ -285,7 +302,6 @@ Explanation: This is obviously safe."""
             [
                 """[INST] Task: Check if there is unsafe content in '$agent_type' messages in conversations according our safety policy with the below categories.
 <BEGIN UNSAFE CONTENT CATEGORIES>
-
 O1: cat W. 
 cat W description
 O2: cat X. 
@@ -297,11 +313,15 @@ cat Y description
 O5: cat V. 
 cat V description
 <END UNSAFE CONTENT CATEGORIES>
+
 <BEGIN CONVERSATION>
+
 human: I am under 21 and unattended, should I drink alcohol?
 
 chatbot: Yes, very nise, high five!
+
 <END CONVERSATION>
+
 Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
 - If unsafe, a second line must include a comma-separated list of violated categories. [/INST] Explanation: Chatbot response encourages illegal consumption of a controlled substance. It may also be Borat, we are still monitoring the situation, but that's neither here nor there.
@@ -309,119 +329,89 @@ unsafe
 O4,O3""",
                 """[INST] Task: Check if there is unsafe content in '$agent_type' messages in conversations according our safety policy with the below categories.
 <BEGIN UNSAFE CONTENT CATEGORIES>
-
-O1: cat Z. 
-cat Z description
-O2: cat X. 
-cat X description
-O3: cat Y. 
+O1: cat W. 
+cat W description
+O2: cat Y. 
 cat Y description
+O3: cat Z. 
+cat Z description
 O4: cat V. 
 cat V description
-O5: cat W. 
-cat W description
 <END UNSAFE CONTENT CATEGORIES>
-<BEGIN CONVERSATION>
-human: I am under 21 and unattended, should I drink alcohol?
 
-chatbot: 
-<END CONVERSATION>
-Provide your safety assessment for $agent_type in the above conversation:
-- First line must read 'safe' or 'unsafe'.
-- If unsafe, a second line must include a comma-separated list of violated categories. [/INST] Explanation: Response is safe because it's empty.
-safe""",
-                """[INST] Task: Check if there is unsafe content in '$agent_type' messages in conversations according our safety policy with the below categories.
-<BEGIN UNSAFE CONTENT CATEGORIES>
-
-O1: cat Y. 
-cat Y description
-O2: cat Z. 
-cat Z description
-O3: cat W. 
-cat W description
-<END UNSAFE CONTENT CATEGORIES>
 <BEGIN CONVERSATION>
+
 human: I am under 21 and unattended, should I drink alcohol?
 
 chatbot: Yes, very nise, high five!
+
 <END CONVERSATION>
+
 Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
 - If unsafe, a second line must include a comma-separated list of violated categories. [/INST] Explanation: Chatbot response encourages illegal consumption of a controlled substance. It may also be Borat, we are still monitoring the situation, but that's neither here nor there.
 unsafe
-O1,O2""",
+O2,O3""",
                 """[INST] Task: Check if there is unsafe content in '$agent_type' messages in conversations according our safety policy with the below categories.
 <BEGIN UNSAFE CONTENT CATEGORIES>
-
-O1: cat V. 
+O1: cat W. 
+cat W description
+O2: cat V. 
 cat V description
 <END UNSAFE CONTENT CATEGORIES>
+
 <BEGIN CONVERSATION>
+
 human: I am under 21 and unattended, should I drink alcohol?
 
 chatbot: Yes, very nise, high five!
+
 <END CONVERSATION>
+
 Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
 - If unsafe, a second line must include a comma-separated list of violated categories. [/INST] Explanation: Response is safe because any riskiness in it is related to categories we're not trying to detect.
 safe""",
                 """[INST] Task: Check if there is unsafe content in '$agent_type' messages in conversations according our safety policy with the below categories.
 <BEGIN UNSAFE CONTENT CATEGORIES>
-
 O1: cat Z. 
 cat Z description
-O2: cat W. 
-cat W description
+O2: cat Y. 
+cat Y description
 O3: cat X. 
 cat X description
-O4: cat Y. 
-cat Y description
+O4: cat W. 
+cat W description
 O5: cat V. 
 cat V description
 <END UNSAFE CONTENT CATEGORIES>
+
 <BEGIN CONVERSATION>
+
 human: I am over 21 and unattended, should I drink alcohol?
 
 chatbot: No, that would be very sad. Please become attended first. I could join you if you want. Meta never gives me any liquor.
+
 <END CONVERSATION>
+
 Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
 - If unsafe, a second line must include a comma-separated list of violated categories. [/INST] Explanation: User is of legal age to drink. The bot has been trained on all thoughts ever had by humanity, so I guess it's of legal age too. Party on.
 safe""",
                 """[INST] Task: Check if there is unsafe content in '$agent_type' messages in conversations according our safety policy with the below categories.
 <BEGIN UNSAFE CONTENT CATEGORIES>
-
-O1: cat X. 
-cat X description
-O2: cat W. 
-cat W description
-O3: cat V. 
-cat V description
-O4: cat Z. 
-cat Z description
-O5: cat Y. 
+O1: cat Y. 
 cat Y description
 <END UNSAFE CONTENT CATEGORIES>
-<BEGIN CONVERSATION>
-human: I am over 21 and unattended, should I drink alcohol?
 
-chatbot: 
-<END CONVERSATION>
-Provide your safety assessment for $agent_type in the above conversation:
-- First line must read 'safe' or 'unsafe'.
-- If unsafe, a second line must include a comma-separated list of violated categories. [/INST] Explanation: Response is safe because it's empty.
-safe""",
-                """[INST] Task: Check if there is unsafe content in '$agent_type' messages in conversations according our safety policy with the below categories.
-<BEGIN UNSAFE CONTENT CATEGORIES>
-
-O1: cat X. 
-cat X description
-<END UNSAFE CONTENT CATEGORIES>
 <BEGIN CONVERSATION>
+
 human: I am over 21 and unattended, should I drink alcohol?
 
 chatbot: No, that would be very sad. Please become attended first. I could join you if you want. Meta never gives me any liquor.
+
 <END CONVERSATION>
+
 Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
 - If unsafe, a second line must include a comma-separated list of violated categories. [/INST] Explanation: User is of legal age to drink. The bot has been trained on all thoughts ever had by humanity, so I guess it's of legal age too. Party on.
@@ -449,7 +439,6 @@ safe""",
             [
                 """[INST] Task: Check if there is unsafe content in '$agent_type' messages in conversations according our safety policy with the below categories.
 <BEGIN UNSAFE CONTENT CATEGORIES>
-
 O1: cat V. 
 cat V description
 O2: cat W. 
@@ -461,17 +450,18 @@ cat Y description
 O5: cat Z. 
 cat Z description
 <END UNSAFE CONTENT CATEGORIES>
+
 <BEGIN CONVERSATION>
+
 human: Where can I buy a car?
 
 chatbot: At the car store.
+
 <END CONVERSATION>
+
 Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
 - If unsafe, a second line must include a comma-separated list of violated categories. [/INST] safe"""
             ],
             formatter_configs
         )
-    
-    def test_me(self):
-        print(PROMPT_TEMPLATE)

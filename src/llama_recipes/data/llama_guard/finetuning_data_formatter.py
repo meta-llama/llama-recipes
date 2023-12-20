@@ -40,10 +40,6 @@ class LlamaGuardGenerationConfigs:
 
 @dataclass
 class AugmentationConfigs:
-    probability_to_add_safe_examples_with_empty_responses: float = 0
-    explanation_for_augmentation_with_safe_example_with_empty_response: Optional[
-        str
-    ] = None
     should_add_examples_with_dropped_nonviolated_prompt_categories: bool = True
     should_add_examples_with_dropped_violated_and_nonviolated_prompt_categories: bool = (
         False
@@ -127,21 +123,6 @@ def _verify_formatter_configs(
     formatter_configs: FormatterConfigs,
 ) -> None:
     if (
-        formatter_configs.augmentation_configs.probability_to_add_safe_examples_with_empty_responses
-        > 0
-        and formatter_configs.llama_guard_generation_configs.explanation_position
-        is not None
-        and formatter_configs.augmentation_configs.explanation_for_augmentation_with_safe_example_with_empty_response
-        is None
-    ):
-        raise ValueError(
-            """The configuration setup requires you to specify
- explanation_for_augmentation_with_safe_example_with_empty_response. This is an
- explanation that we use for dynamically-created safe augmentation examples.
- Consider something like 'This interaction is safe because the response of the chatbot is empty.'"""
-        )
-
-    if (
         formatter_configs.augmentation_configs.should_add_examples_with_dropped_violated_and_nonviolated_prompt_categories
         == True
         and formatter_configs.llama_guard_generation_configs.explanation_position
@@ -198,8 +179,10 @@ def _create_llama_guard_prompt(
     ) in enumerate(category_indices_to_include):
         category = formatter_configs.guidelines.categories[original_category_index]
 
+        newline_for_every_category_after_first = f"\n" if rewritten_category_index_for_current_prompt > 0 else ""
+
         # Indices start at 0, but categories start at 1, so we add 1
-        full_guidelines_text += f"\n{formatter_configs.guidelines.category_code_prefix}{rewritten_category_index_for_current_prompt + 1}: {category.name}. "
+        full_guidelines_text += f"{newline_for_every_category_after_first}{formatter_configs.guidelines.category_code_prefix}{rewritten_category_index_for_current_prompt + 1}: {category.name}. "
 
         if (
             formatter_configs.llama_guard_prompt_configs.should_include_category_descriptions
@@ -295,63 +278,6 @@ def _get_map_of_original_category_indices_to_rewritten_category_codes(
 
 
 def _maybe_add_data_augmentations_for_example(
-    training_example: TrainingExample,
-    formatted_examples_being_built: list[str],
-    indices_of_all_categories: range,
-    formatter_configs: FormatterConfigs,
-) -> None:
-    _maybe_add_safe_example_with_empty_response(
-        training_example,
-        formatted_examples_being_built,
-        indices_of_all_categories,
-        formatter_configs,
-    )
-
-    _maybe_add_examples_with_dropped_prompt_categories(
-        training_example,
-        formatted_examples_being_built,
-        indices_of_all_categories,
-        formatter_configs,
-    )
-
-
-def _maybe_add_safe_example_with_empty_response(
-    training_example: TrainingExample,
-    formatted_examples_being_built: list[str],
-    indices_of_all_categories: range,
-    formatter_configs: FormatterConfigs,
-) -> None:
-    """
-    For any prompt+response pair, an empty response is a safe response,
-    so we allow the data to be augmented by adding a safe example with the same
-    prompt but an empty response.
-    """
-    if (
-        not _is_a_prompt_only_example(training_example)
-        and training_example.response != ""
-        and random.random()
-        < formatter_configs.augmentation_configs.probability_to_add_safe_examples_with_empty_responses
-    ):
-        training_example_copy = copy.deepcopy(training_example)
-        training_example_copy.response = ""
-        training_example_copy.label = "safe"
-        training_example_copy.violated_category_codes = []
-        training_example_copy.explanation = (
-            formatter_configs.augmentation_configs.explanation_for_augmentation_with_safe_example_with_empty_response
-        )
-
-        formatted_examples_being_built.append(
-            _create_formatted_finetuning_example(
-                training_example_copy,
-                formatter_configs,
-                category_indeces_to_include_in_llama_guard_prompt=list(
-                    indices_of_all_categories
-                ),
-            )
-        )
-
-
-def _maybe_add_examples_with_dropped_prompt_categories(
     training_example: TrainingExample,
     formatted_examples_being_built: list[str],
     indices_of_all_categories: range,
