@@ -21,7 +21,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Tuple, List
 
 
-
+# Predefined inputs
 with open('input.jsonl') as input:
     prompt_data = json.load(input)
 
