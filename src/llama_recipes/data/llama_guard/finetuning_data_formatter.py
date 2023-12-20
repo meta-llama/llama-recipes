@@ -179,7 +179,9 @@ def _create_llama_guard_prompt(
     ) in enumerate(category_indices_to_include):
         category = formatter_configs.guidelines.categories[original_category_index]
 
-        newline_for_every_category_after_first = f"\n" if rewritten_category_index_for_current_prompt > 0 else ""
+        newline_for_every_category_after_first = (
+            f"\n" if rewritten_category_index_for_current_prompt > 0 else ""
+        )
 
         # Indices start at 0, but categories start at 1, so we add 1
         full_guidelines_text += f"{newline_for_every_category_after_first}{formatter_configs.guidelines.category_code_prefix}{rewritten_category_index_for_current_prompt + 1}: {category.name}. "
@@ -239,10 +241,14 @@ def _create_llama_guard_generation(
             )
         )
 
-        rewritten_violated_category_codes = [
-            map_of_original_category_indices_to_rewritten_category_codes[violated_index]
-            for violated_index in violated_category_indices
-        ]
+        rewritten_violated_category_codes = sorted(
+            [
+                map_of_original_category_indices_to_rewritten_category_codes[
+                    violated_index
+                ]
+                for violated_index in violated_category_indices
+            ]
+        )
 
         to_return += "\n"
         to_return += ",".join(rewritten_violated_category_codes)
