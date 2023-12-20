@@ -39,9 +39,8 @@ MODEL_HEADERS = params["MODEL_HEADERS"]
 SAFE_CHECK = params["SAFE_CHECK"]
 # Threshold for tokens per second below which we deem the query to be slow
 THRESHOLD_TPS = params["THRESHOLD_TPS"] 
-# Replace with your own tokenizer 
+# Default Llama tokenizer, replace with your own tokenizer 
 TOKENIZER_PATH = params["TOKENIZER_PATH"] 
-RANDOM_PROMPT_LENGTH = params["RANDOM_PROMPT_LENGTH"]
 TEMPERATURE = params["TEMPERATURE"]
 TOP_P = params["TOP_P"]
 # Add your model endpoints here, specify the port number. 
