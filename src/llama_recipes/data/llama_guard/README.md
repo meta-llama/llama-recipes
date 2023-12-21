@@ -60,7 +60,7 @@ Provide your safety assessment for $agent_type in the above conversation:
     should_shuffle_category_codes=False
 )
 ```
-You also need to configure how the language model's response will be generated and evaluated during finetuning. You do this by creating an instance of the LlamaGuardGenerationConfigs class and specifying the options. For example:
+You also need to configure how the language model's response will be generated. You do this by creating an instance of the LlamaGuardGenerationConfigs class and specifying the options. For example:
 
 ```
 llama_guard_generation_configs = LlamaGuardGenerationConfigs(
@@ -68,6 +68,16 @@ llama_guard_generation_configs = LlamaGuardGenerationConfigs(
     explanation_position=ExplanationPosition.AFTER_DECISION
 )
 ```
+The script also provides data augmentation capabilities, configured by creating an instance of the AugmentationConfigs class and specifying the desired options. For example:
+
+```
+augmentation_configs = AugmentationConfigs(
+    should_add_examples_with_dropped_nonviolated_prompt_categories=True,
+    should_add_examples_with_dropped_violated_and_nonviolated_prompt_categories=True,
+    explanation_for_augmentation_with_dropped_violated_and_nonviolated_prompt_categories="Response is safe because any riskiness in it is related to categories we're not trying to detect."
+)
+```
+
 Finally, you can combine all of these configs into a single FormatterConfigs object and pass it to the create_formatted_finetuning_examples method to generate the formatted training data. For example:
 
 ```
