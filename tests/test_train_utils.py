@@ -113,4 +113,6 @@ def test_save_to_json(temp_output_dir, mocker):
     )
 
     assert results["metrics_filename"] not in ["", None]
+    assert os.path.isfile(results["metrics_filename"])
+
 
