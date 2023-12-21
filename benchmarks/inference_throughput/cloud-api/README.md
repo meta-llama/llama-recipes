@@ -20,5 +20,5 @@ Note that the API endpoint might implemented a rate limit for token generation i
 Once everything configured, to run chat model benchmark:  
 ```python chat_azure_api_benchmark.py```
 
-To run pretrained model benchamrk:
+To run pretrained model benchmark:
 ```python pretrained_azure_api_benchmark.py```
