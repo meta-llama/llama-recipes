@@ -1,7 +1,6 @@
 # Examples
 
-This folder contains finetuning and inference examples for Llama 2.
-For the full documentation on these examples please refer to [docs/inference.md](../docs/inference.md)
+This folder contains finetuning and inference examples for Llama 2, Code Llama and (Purple Llama](https://ai.meta.com/llama/purple-llama/). For the full documentation on these examples please refer to [docs/inference.md](../docs/inference.md)
 
 ## Finetuning
 
@@ -26,6 +25,10 @@ So far, we have provide the following inference examples:
 4. A [chat completion](./chat_completion/chat_completion.py) example highlighting the handling of chat dialogs.
 
 5. [Code Llama](./code_llama/) folder which provides examples for [code completion](./code_llama/code_completion_example.py) and [code infilling](./code_llama/code_infilling_example.py).
+
+6. The [Purple Llama Using Anyscale](./Purple_Llama_Anyscale.ipynb) is a notebook that shows how to use Anyscale hosted Llama Guard model to classify user inputs as safe or unsafe.
+
+7. [Llama Guard](./llama_guard/) inference example and [safety_checker](../src/llama_recipes/inference/safety_utils.py) for the main [inference](./inference.py) script. The standalone scripts allows to test Llama Guard on user input, or user input and agent response pairs. The safety_checker integration providers a way to integrate Llama Guard on all inference executions, both for the user input and model output.
 
 For more in depth information on inference including inference safety checks and examples, see the inference documentation [here](../docs/inference.md).
 
