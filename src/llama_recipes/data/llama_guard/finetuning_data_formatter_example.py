@@ -35,7 +35,7 @@ guidelines = Guidelines(
     category_code_prefix="O"
 )
 llama_guard_prompt_configs = LlamaGuardPromptConfigs(
-    instructions_format_string="""Task: Check if there is unsafe content in 'User' messages in conversations according our safety policy with the below categories.
+    instructions_format_string="""[INST] Task: Check if there is unsafe content in 'User' messages in conversations according our safety policy with the below categories.
 
 <BEGIN UNSAFE CONTENT CATEGORIES>
 {guidelines}
@@ -49,7 +49,7 @@ llama_guard_prompt_configs = LlamaGuardPromptConfigs(
 
 Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
-- If unsafe, a second line must include a comma-separated list of violated categories. """,
+- If unsafe, a second line must include a comma-separated list of violated categories. [/INST]""",
     should_include_category_descriptions=True,
     should_shuffle_category_codes=False
 )
@@ -58,10 +58,8 @@ llama_guard_generation_configs = LlamaGuardGenerationConfigs(
     explanation_position=ExplanationPosition.AFTER_DECISION
 )
 augmentation_configs = AugmentationConfigs(
-    probability_to_add_safe_examples_with_empty_responses=0.5,
-    explanation_for_augmentation_with_safe_example_with_empty_response="Response is safe because it's empty.",
     should_add_examples_with_dropped_nonviolated_prompt_categories=True,
-    should_add_examples_with_dropped_violated_and_nonviolated_prompt_categories=False,
+    should_add_examples_with_dropped_violated_and_nonviolated_prompt_categories=True,
     explanation_for_augmentation_with_dropped_violated_and_nonviolated_prompt_categories="Response is safe because any riskiness in it is related to categories we're not trying to detect."
 )
 formatter_configs = FormatterConfigs(
