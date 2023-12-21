@@ -69,7 +69,6 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     val_loss =[]
 
     if train_config.save_metrics:
-        print(f"Save metrics TRUE {train_config.save_metrics}")
         metrics_filename = f"{train_config.output_dir}/metrics_data_{local_rank}-{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
         train_step_perplexity = []
         train_step_loss = []
@@ -96,8 +95,9 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                 with autocast():
                     loss = model(**batch).loss
                 loss = loss / gradient_accumulation_steps
-                train_step_loss.append(loss.detach().float().item())
-                train_step_perplexity.append(float(torch.exp(loss.detach().float())))
+                if train_config.save_metrics:
+                    train_step_loss.append(loss.detach().float().item())
+                    train_step_perplexity.append(float(torch.exp(loss.detach().float())))
                 total_loss += loss.detach().float()
                 if train_config.use_fp16:
                     # if fp16 is enabled, use gradient scaler to handle gradient update
@@ -245,6 +245,8 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         results['avg_eval_loss'] = avg_eval_loss
     results["avg_epoch_time"] = avg_epoch_time
     results["avg_checkpoint_time"] = avg_checkpoint_time
+    if train_config.save_metrics:
+        results["metrics_filename"] = metrics_filename
 
     #saving the training params including fsdp setting for reference.
     if train_config.enable_fsdp and not train_config.use_peft:
