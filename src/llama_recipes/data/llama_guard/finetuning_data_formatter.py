@@ -159,8 +159,8 @@ def _create_formatted_finetuning_example(
 
     llama_guard_generation = _create_llama_guard_generation(
         training_example,
-        formatter_configs,
         category_indices_to_include_in_llama_guard_prompt,
+        formatter_configs,
     )
 
     return f"{llama_guard_prompt} {llama_guard_generation}"
@@ -219,8 +219,8 @@ def _serialize_conversation(conversation: Dict[str, str]) -> str:
 
 def _create_llama_guard_generation(
     training_example: TrainingExample,
-    formatter_configs: FormatterConfigs,
     category_indices_included_in_llama_guard_prompt: List[int],
+    formatter_configs: FormatterConfigs,
 ) -> str:
     to_return = training_example.label
 
