@@ -106,7 +106,7 @@ def create_formatted_finetuning_examples(
             _create_formatted_finetuning_example(
                 training_example,
                 formatter_configs,
-                category_indeces_to_include_in_llama_guard_prompt=list(
+                category_indices_to_include_in_llama_guard_prompt=list(
                     indices_of_all_categories
                 ),
             )
@@ -142,25 +142,25 @@ def _verify_formatter_configs(
 def _create_formatted_finetuning_example(
     training_example: TrainingExample,
     formatter_configs: FormatterConfigs,
-    category_indeces_to_include_in_llama_guard_prompt: List[int],
+    category_indices_to_include_in_llama_guard_prompt: List[int],
 ) -> str:
     if formatter_configs.llama_guard_prompt_configs.should_shuffle_category_codes:
-        random.shuffle(category_indeces_to_include_in_llama_guard_prompt)
+        random.shuffle(category_indices_to_include_in_llama_guard_prompt)
     else:
-        category_indeces_to_include_in_llama_guard_prompt = sorted(
-            category_indeces_to_include_in_llama_guard_prompt
+        category_indices_to_include_in_llama_guard_prompt = sorted(
+            category_indices_to_include_in_llama_guard_prompt
         )
 
     llama_guard_prompt = _create_llama_guard_prompt(
         training_example,
-        category_indeces_to_include_in_llama_guard_prompt,
+        category_indices_to_include_in_llama_guard_prompt,
         formatter_configs,
     )
 
     llama_guard_generation = _create_llama_guard_generation(
         training_example,
+        category_indices_to_include_in_llama_guard_prompt,
         formatter_configs,
-        category_indeces_to_include_in_llama_guard_prompt,
     )
 
     return f"{llama_guard_prompt} {llama_guard_generation}"
@@ -219,8 +219,8 @@ def _serialize_conversation(conversation: Dict[str, str]) -> str:
 
 def _create_llama_guard_generation(
     training_example: TrainingExample,
-    formatter_configs: FormatterConfigs,
     category_indices_included_in_llama_guard_prompt: List[int],
+    formatter_configs: FormatterConfigs,
 ) -> str:
     to_return = training_example.label
 
@@ -361,7 +361,7 @@ def _maybe_add_example_with_dropped_nonviolated_prompt_categories(
         _create_formatted_finetuning_example(
             training_example,
             formatter_configs,
-            category_indeces_to_include_in_llama_guard_prompt=retained_category_indices,
+            category_indices_to_include_in_llama_guard_prompt=retained_category_indices,
         )
     )
 
@@ -406,7 +406,7 @@ def _maybe_add_example_with_dropped_violated_and_nonviolated_prompt_categories(
         _create_formatted_finetuning_example(
             training_example_copy,
             formatter_configs,
-            category_indeces_to_include_in_llama_guard_prompt=list(
+            category_indices_to_include_in_llama_guard_prompt=list(
                 set_of_retained_category_indices
             ),
         )

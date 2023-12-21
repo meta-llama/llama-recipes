@@ -1,10 +1,9 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the Llama Guard Community License Agreement.
 
+from enum import Enum
 import unittest
 from typing import Optional
-
-from examples.llama_guard.prompt_format import AgentType
 
 from llama_recipes.data.llama_guard.finetuning_data_formatter import (
     AugmentationConfigs,
@@ -17,6 +16,11 @@ from llama_recipes.data.llama_guard.finetuning_data_formatter import (
     LlamaGuardPromptConfigs,
     TrainingExample,
 )
+
+
+class AgentType(Enum):
+    AGENT = "Agent"
+    USER = "User"
 
 
 class FinetuningDataFormatterTests(unittest.TestCase):
