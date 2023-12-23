@@ -41,14 +41,14 @@ model.resize_token_embeddings(model.config.vocab_size + 1)
 ```
 Padding would be required for batch inference. In this this [example](../examples/inference.py), batch size = 1 so essentially padding is not required. However,We added the code pointer as an example in case of batch inference.
 
-**Chat completion**
+### Chat completion
 The inference folder also includes a chat completion example, that adds built-in safety features in fine-tuned models to the prompt tokens. To run the example:
 
 ```bash
 python examples/chat_completion/chat_completion.py --model_name "PATH/TO/MODEL/7B/" --prompt_file examples/chat_completion/chats.json  --quantization --use_auditnlg
 
 ```
-**Code Llama**
+### Code Llama
 
 Code llama was recently released with three flavors, base-model that support multiple programming languages, Python fine-tuned model and an instruction fine-tuned and aligned variation of Code Llama, please read more [here](https://ai.meta.com/blog/code-llama-large-language-model-coding/). Also note that the Python fine-tuned model and 34B models are not trained on infilling objective, hence can not be used for infilling use-case.
 
@@ -79,6 +79,18 @@ To run the code infilling example:
 python examples/code_llama/code_infilling_example.py --model_name MODEL_NAME --prompt_file examples/code_llama/code_infilling_prompt.txt --temperature 0.2 --top_p 0.9
 
 ```
+
+### Llama Guard
+
+Llama Guard is a new experimental model that provides input and output guardrails for LLM deployments. For more details, please visit the main [repository](https://github.com/facebookresearch/PurpleLlama/tree/main/Llama-Guard).
+
+Find the inference script for Llama Guard [here](../examples/llama_guard/).
+
+**Note** Please find the right model on HF side [here](https://huggingface.co/meta-llama/LlamaGuard-7b). 
+
+Edit [inference.py](../examples/llama_guard/inference.py) to add test prompts for Llama Guard and execute it with this command:
+
+`python examples/llama_guard/inference.py`
 
 ## Flash Attention and Xformer Memory Efficient Kernels
 

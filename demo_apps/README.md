@@ -7,12 +7,14 @@ This folder contains a series of Llama 2-powered apps:
 3. Llama on Cloud and ask Llama questions about unstructured data in a PDF
 4. Llama on-prem with vLLM and TGI
 5. Llama chatbot with RAG (Retrieval Augmented Generation)
+6. Azure Llama 2 API (Model-as-a-Service)
 
 * Specialized Llama use cases:
 1. Ask Llama to summarize a video content
 2. Ask Llama questions about structured data in a DB
 3. Ask Llama questions about live data on the web
 4. Build a Llama-enabled WhatsApp chatbot
+5. Build a Llama-enabled Messenger chatbot
 
 We also show how to build quick web UI for Llama 2 demo apps using Streamlit and Gradio.
 
@@ -77,7 +79,10 @@ This demo app shows how to use LangChain and Llama2 to let users ask questions a
 This demo app shows how to perform live data augmented generation tasks with Llama2 and [LlamaIndex](https://github.com/run-llama/llama_index), another leading open-source framework for building LLM apps: it uses the [You.com search API](https://documentation.you.com/quickstart) to get live search result and ask Llama2 about them.
 
 ## [WhatsApp Chatbot](whatsapp_llama2.md): Building a Llama-enabled WhatsApp Chatbot
-This step-by-step tutorial shows how to use the [WhatsApp Business API](https://developers.facebook.com/docs/whatsapp/cloud-api/overview), LangChain and Replicate to build a Llama-enabled WhatsApp chatbot.
+This step-by-step tutorial shows how to use the [WhatsApp Business API](https://developers.facebook.com/docs/whatsapp/cloud-api/overview) to build a Llama-enabled WhatsApp chatbot.
+
+## [Messenger Chatbot](messenger_llama2.md): Building a Llama-enabled Messenger Chatbot
+This step-by-step tutorial shows how to use the [Messenger Platform](https://developers.facebook.com/docs/messenger-platform/overview) to build a Llama-enabled Messenger chatbot.
 
 ## Quick Web UI for Llama2 Chat
 If you prefer to see Llama2 in action in a web UI, instead of the notebooks above, you can try one of the two methods:
@@ -107,3 +112,6 @@ Then enter your question, click Submit. You'll see in the notebook or a browser 
 
 ### [RAG Chatbot Example](RAG_Chatbot_example/RAG_Chatbot_Example.ipynb)
 A complete example of how to build a Llama 2 chatbot hosted on your browser that can answer questions based on your own data.
+
+### [Azure API Llama 2 Example](Azure_API_example/azure_api_example.ipynb)
+A notebook shows examples of how to use Llama 2 APIs offered by Microsoft Azure Model-as-a-Service in CLI, Python, LangChain and a Gradio chatbot example with memory.
