@@ -34,17 +34,7 @@ Llama-recipes provides a pip distribution for easy install and usage in other pr
 ```
 pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes
 ```
-## Install from source
-To install from source e.g. for development use this command. We're using hatchling as our build backend which requires an up-to-date pip as well as setuptools package.
-```
-pip install -U pip setuptools
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .
-```
-For development and contributing to llama-recipes please install all optional dependencies:
-```
-pip install -U pip setuptools
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .[tests,auditnlg,vllm]
-```
+
 ## Install with optional dependencies
 Llama-recipes offers the installation of optional packages. There are three optional dependency groups.
 To run the unit tests we can install the required dependencies with:
@@ -60,6 +50,22 @@ To use the sensitive topics safety checker install with:
 pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[auditnlg]
 ```
 Optional dependencies can also be combines with [option1,option2].
+
+## Install from source
+To install from source e.g. for development use these commands. We're using hatchling as our build backend which requires an up-to-date pip as well as setuptools package.
+```
+git clone git@github.com:facebookresearch/llama-recipes.git
+cd llama-recipes
+pip install -U pip setuptools
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .
+```
+For development and contributing to llama-recipes please install all optional dependencies:
+```
+git clone git@github.com:facebookresearch/llama-recipes.git
+cd llama-recipes
+pip install -U pip setuptools
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .[tests,auditnlg,vllm]
+```
 
 ⚠️ **Note** ⚠️  Some features (especially fine-tuning with FSDP + PEFT) currently require PyTorch nightlies to be installed. Please make sure to install the nightlies if you're using these features following [this guide](https://pytorch.org/get-started/locally/).
 
