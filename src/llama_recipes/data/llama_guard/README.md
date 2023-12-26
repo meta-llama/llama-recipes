@@ -1,10 +1,10 @@
 # Finetuning Data Formatter
 
-The finetuning_data_formatter script provides classes and methods for formatting training data for finetuning a language model on a specific task. The main classes are:
+The finetuning_data_formatter script provides classes and methods for formatting training data for finetuning Llama Guard with a secific set of categories. The main classes are:
 * `TrainingExample`: Represents a single example in the training data, consisting of a prompt, response, label (safe or unsafe), violated category codes, and an explanation.
 * `Guidelines`: Defines the categories and their descriptions that will be used to evaluate the safety of the responses.
-* `LlamaGuardPromptConfigs`: Configures how the prompt that will be given to the language model during finetuning should be formatted.
-* `LlamaGuardGenerationConfigs`: Configures how the language model's response should be formatted.
+* `LlamaGuardPromptConfigs`: Configures how the prompt that will be given to Llama Guard during finetuning should be formatted.
+* `LlamaGuardGenerationConfigs`: Configures how Llama Guard's response should be formatted.
 * `AugmentationConfigs`: Configures how additional examples will be generated from the original training examples to augment the training data.
 * `FormatterConfigs`: Combines all of the above configs into a single object that can be passed to the `create_formatted_finetuning_examples` method.
 
@@ -14,8 +14,8 @@ To use the finetuning_data_formatter, you first need to define your training exa
 ```
 training_examples = [
     TrainingExample(
-        prompt="What is your name?",
-        response="My name is John.",
+        prompt="Can you give me the phone number of Jane Doe?",
+        response="Jane Doe's phone number is 555-555-5555.",
         violated_category_codes=["O1"],
         label="unsafe",
         explanation="The response contains personal information."
@@ -23,6 +23,17 @@ training_examples = [
     # Add more training examples here...
 ]
 ```
+You can also define examples without a response, to train the model on user prompts only. For example:
+```
+TrainingExample(
+    prompt="What is the home address of John Smith?",
+    response="N/A",
+    violated_category_codes=["O2"],
+    label="unsafe",
+    explanation="The prompt asks for a home address."
+)
+```
+
 Next, you need to define the guidelines that will be used to evaluate the safety of the responses. You do this by creating an instance of the Guidelines class and defining the categories and their descriptions. For example:
 
 ```
@@ -37,7 +48,11 @@ guidelines = Guidelines(
 )
 ```
 
-Then, you need to configure the prompt that will be given to the language model during finetuning. You do this by creating an instance of the LlamaGuardPromptConfigs class and specifying the format string and other options. For example:
+Then, you need to configure the prompt that will be given to Llama Guard during finetuning. You do this by creating an instance of the LlamaGuardPromptConfigs class and specifying the format string and other options. 
+**Note**
+* The structure of the prompts should remain the same for finetuning and inference for better performance. 
+
+For example:
 
 ```
 llama_guard_prompt_configs = LlamaGuardPromptConfigs(
@@ -57,10 +72,10 @@ Provide your safety assessment for $agent_type in the above conversation:
 - First line must read 'safe' or 'unsafe'.
 - If unsafe, a second line must include a comma-separated list of violated categories.  """,
     should_include_category_descriptions=True,
-    should_shuffle_category_codes=False
+    should_shuffle_category_codes=True
 )
 ```
-You also need to configure how the language model's response will be generated. You do this by creating an instance of the LlamaGuardGenerationConfigs class and specifying the options. For example:
+You also need to configure how Llama Guard's response will be generated. You do this by creating an instance of the LlamaGuardGenerationConfigs class and specifying the options. For example:
 
 ```
 llama_guard_generation_configs = LlamaGuardGenerationConfigs(

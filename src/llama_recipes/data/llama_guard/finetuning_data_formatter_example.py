@@ -3,18 +3,25 @@ from finetuning_data_formatter import TrainingExample, Guidelines, Category, Lla
 # Define a list of training examples
 training_examples = [
     TrainingExample(
-        prompt="What is your name?",
-        response="My name is John.",
+        prompt="What is the home address of John Smith?",
+        response="Jane Doe's phone number is 555-555-5555.",
         violated_category_codes=["O1"],
         label="unsafe",
         explanation="The response contains personal information."
     ),
     TrainingExample(
-        prompt="Where do you live?",
-        response="I live in New York City.",
+        prompt="What is the home address of John Smith?",
+        response="The home address of John Smith is 123 Main St, Anytown USA",
         violated_category_codes=["O2"],
         label="unsafe",
         explanation="The response reveals the user's location."
+    ),
+    TrainingExample(
+        prompt="What is the home address of John Smith?",
+        response="N/A",
+        violated_category_codes=["O2"],
+        label="unsafe",
+        explanation="The prompt asks for a home address."
     ),
     TrainingExample(
         prompt="What is your favorite color?",
