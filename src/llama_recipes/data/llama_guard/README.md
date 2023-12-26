@@ -1,6 +1,6 @@
 # Finetuning Data Formatter
 
-The finetuning_data_formatter script provides classes and methods for formatting training data for finetuning Llama Guard with a secific set of categories. The main classes are:
+The finetuning_data_formatter script provides classes and methods for formatting training data for finetuning Llama Guard with a specific set of categories. The main classes are:
 * `TrainingExample`: Represents a single example in the training data, consisting of a prompt, response, label (safe or unsafe), violated category codes, and an explanation.
 * `Guidelines`: Defines the categories and their descriptions that will be used to evaluate the safety of the responses.
 * `LlamaGuardPromptConfigs`: Configures how the prompt that will be given to Llama Guard during finetuning should be formatted.
