@@ -65,7 +65,7 @@ def plot_metrics(file_path):
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Plot metrics from JSON file.')
-    parser.add_argument('file_path', type=str, help='Path to the metrics JSON file.')
+    parser.add_argument('--file_path', required=True, type=str, help='Path to the metrics JSON file.')
     args = parser.parse_args()
 
     plot_metrics(args.file_path)
