@@ -13,3 +13,4 @@ sentencepiece
 py7zr
 scipy
 optimum
+matplotlib
