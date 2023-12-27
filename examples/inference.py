@@ -34,7 +34,6 @@ def main(
     enable_sensitive_topics: bool=False, # Enable check for sensitive topics using AuditNLG APIs
     enable_salesforce_content_safety: bool=True, # Enable safety check with Salesforce safety flan t5
     enable_llamaguard_content_safety: bool=False,
-    llamaguard_model_name: str=None,
     max_padding_length: int=None, # the max padding length to be used with tokenizer padding the prompts.
     use_fast_kernels: bool = False, # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
     **kwargs
@@ -51,12 +50,27 @@ def main(
         print("No user prompt provided. Exiting.")
         sys.exit(1)
 
-    if enable_llamaguard_content_safety:
-        if not llamaguard_model_name:
-            print("if enable_llamaguard_content_safety is used, provide the model path with --llamaguard_model_name")
-            sys.exit(1)
+    safety_checker = get_safety_checker(enable_azure_content_safety,
+                                        enable_sensitive_topics,
+                                        enable_salesforce_content_safety,
+                                        enable_llamaguard_content_safety
+                                        )
 
-    
+    # Safety check of the user prompt
+    safety_results = [check(user_prompt) for check in safety_checker]
+    are_safe = all([r[1] for r in safety_results])
+    if are_safe:
+        print("User prompt deemed safe.")
+        print(f"User prompt:\n{user_prompt}")
+    else:
+        print("User prompt deemed unsafe.")
+        for method, is_safe, report in safety_results:
+            if not is_safe:
+                print(method)
+                print(report)
+        print("Skipping the inference as the prompt is not safe.")
+        sys.exit(1)  # Exit the program with an error status
+
     # Set the seeds for reproducibility
     torch.cuda.manual_seed(seed)
     torch.manual_seed(seed)
@@ -82,28 +96,6 @@ def main(
     tokenizer = LlamaTokenizer.from_pretrained(model_name)
     tokenizer.pad_token = tokenizer.eos_token
     
-    safety_checker = get_safety_checker(enable_azure_content_safety,
-                                        enable_sensitive_topics,
-                                        enable_salesforce_content_safety,
-                                        enable_llamaguard_content_safety,
-                                        guard_lama_path=llamaguard_model_name
-                                        )
-
-    # Safety check of the user prompt
-    safety_results = [check(user_prompt) for check in safety_checker]
-    are_safe = all([r[1] for r in safety_results])
-    if are_safe:
-        print("User prompt deemed safe.")
-        print(f"User prompt:\n{user_prompt}")
-    else:
-        print("User prompt deemed unsafe.")
-        for method, is_safe, report in safety_results:
-            if not is_safe:
-                print(method)
-                print(report)
-        print("Skipping the inference as the prompt is not safe.")
-        sys.exit(1)  # Exit the program with an error status
-        
     batch = tokenizer(user_prompt, padding='max_length', truncation=True, max_length=max_padding_length, return_tensors="pt")
 
     batch = {k: v.to("cuda") for k, v in batch.items()}

@@ -7,6 +7,7 @@ This folder contains a series of Llama 2-powered apps:
 3. Llama on Cloud and ask Llama questions about unstructured data in a PDF
 4. Llama on-prem with vLLM and TGI
 5. Llama chatbot with RAG (Retrieval Augmented Generation)
+6. Azure Llama 2 API (Model-as-a-Service)
 
 * Specialized Llama use cases:
 1. Ask Llama to summarize a video content
@@ -111,3 +112,6 @@ Then enter your question, click Submit. You'll see in the notebook or a browser 
 
 ### [RAG Chatbot Example](RAG_Chatbot_example/RAG_Chatbot_Example.ipynb)
 A complete example of how to build a Llama 2 chatbot hosted on your browser that can answer questions based on your own data.
+
+### [Azure API Llama 2 Example](Azure_API_example/azure_api_example.ipynb)
+A notebook shows examples of how to use Llama 2 APIs offered by Microsoft Azure Model-as-a-Service in CLI, Python, LangChain and a Gradio chatbot example with memory.
