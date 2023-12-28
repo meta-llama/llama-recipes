@@ -8,7 +8,13 @@ The finetuning_data_formatter script provides classes and methods for formatting
 * `AugmentationConfigs`: Configures how additional examples will be generated from the original training examples to augment the training data.
 * `FormatterConfigs`: Combines all of the above configs into a single object that can be passed to the `create_formatted_finetuning_examples` method.
 
-## Usage
+## Running the script
+
+1. Clone the llama-recipes repo
+2. Install the dependencies
+3. Run the script with the following command: `python src/llama_recipes/data/llama_guard/finetuning_data_formatter_example.py > sample.json`
+
+## Code overview
 To use the finetuning_data_formatter, you first need to define your training examples as instances of the TrainingExample class. For example:
 
 ```
@@ -49,8 +55,8 @@ guidelines = Guidelines(
 ```
 
 Then, you need to configure the prompt that will be given to Llama Guard during finetuning. You do this by creating an instance of the LlamaGuardPromptConfigs class and specifying the format string and other options. 
-**Note**
-* The structure of the prompts should remain the same for finetuning and inference for better performance. 
+
+**Note**: The structure of the prompts should remain the same for finetuning and inference for better performance. 
 
 For example:
 
