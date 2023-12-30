@@ -1,4 +1,4 @@
-# Llama 2 Fine-tuning / Inference Recipes, Examples and Demo Apps
+# Llama 2 Fine-tuning / Inference Recipes, Examples, Benchmarks and Demo Apps
 
 **[Update Dec. 28, 2023] We added support for Llama Guard as a safety checker for our example inference script and also with standalone inference with an example script and prompt formatting. More details [here](./examples/llama_guard/README.md). For details on formatting data for fine tuning Llama Guard, we provide a script and sample usage [here](./src/llama_recipes/data/llama_guard/README.md).**
 
