@@ -28,7 +28,7 @@ with open('input.jsonl') as input:
 with open('parameters.json') as parameters:
     params = json.load(parameters)
 
-MAX_NEW_TOKEN = params["MAX_NEW_TOKEN"]
+MAX_NEW_TOKENS = params["MAX_NEW_TOKENS"]
 CONCURRENT_LEVELS = params["CONCURRENT_LEVELS"]
 # Replace with your own deployment
 MODEL_PATH = params["MODEL_PATH"]
@@ -121,7 +121,7 @@ def generate_text() -> Tuple[int, int]:
         "stream" : False,
         "temperature" : TEMPERATURE,
         "top_p" : TOP_P,
-        "max_tokens" : MAX_NEW_TOKEN
+        "max_tokens" : MAX_NEW_TOKENS
     }
 
     start_time = time.time()

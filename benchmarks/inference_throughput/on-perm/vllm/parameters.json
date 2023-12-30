@@ -1,5 +1,5 @@
 {
-    "MAX_NEW_TOKEN" : 256,
+    "MAX_NEW_TOKENS" : 256,
     "CONCURRENT_LEVELS" : [1, 2, 4, 8, 16, 32, 64, 128, 256],
     "MODEL_PATH" : "meta-llama/Llama-2-7b-chat-hf",
     "MODEL_HEADERS" : {"Content-Type": "application/json"},
