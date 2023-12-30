@@ -23,7 +23,9 @@ Once you have finished deployment, you can use the command below to run benchmar
 ```
 python chat_vllm_benchmark.py
 ```
+<!-- markdown-link-check-disable -->
 If you are going to use [Azure AI content check](https://azure.microsoft.com/en-us/products/ai-services/ai-content-safety), then you should install dependencies as shown below in your terminal:
+<!-- markdown-link-check-enable -->
 ```
 pip install azure-ai-contentsafety azure-core
 ```
