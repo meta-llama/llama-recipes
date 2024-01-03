@@ -26,6 +26,7 @@ with open('input.jsonl') as input:
     prompt_data = json.load(input)
 
 # Prompt data stored in json file. Choose from number of tokens - 5, 25, 50, 100, 500, 1k, 2k.
+# You can also configure and add your own prompt in input.jsonl
 PROMPT = prompt_data["1k"] 
 
 with open('parameters.json') as parameters:
@@ -43,7 +44,7 @@ THRESHOLD_TPS = params["THRESHOLD_TPS"]
 TOKENIZER_PATH = params["TOKENIZER_PATH"] 
 TEMPERATURE = params["TEMPERATURE"]
 TOP_P = params["TOP_P"]
-# Add your model endpoints here, specify the port number. 
+# Add your model endpoints here, specify the port number. You can acquire the endpoint when creating a on-perm server like vLLM.
 # Group of model endpoints - Send balanced requests to each endpoint for batch maximization.  
 MODEL_ENDPOINTS = params["MODEL_ENDPOINTS"]
 
@@ -114,6 +115,8 @@ def generate_text() -> Tuple[int, int]:
     start_time = time.time()
 
     if(SAFE_CHECK):
+        # Function to send prompts for safety check. Add delays for request round-trip that count towards overall throughput measurement.
+        # Expect NO returns from calling this function. If you want to check the safety check results, print it out within the function itself.
         analyze_prompt(PROMPT)
         # Or add delay simulation as below for real world situation
         # time.sleep(random.uniform(0.3, 0.4))
@@ -133,6 +136,8 @@ def generate_text() -> Tuple[int, int]:
     response = requests.post(MODEL_ENDPOINTS[endpoint_id], headers=headers, json=payload)
 
     if(SAFE_CHECK):
+        # Function to send prompts for safety check. Add delays for request round-trip that count towards overall throughput measurement.
+        # Expect NO returns from calling this function. If you want to check the safety check results, print it out within the function itself.
         analyze_prompt(PROMPT)
         # Or add delay simulation as below for real world situation
         # time.sleep(random.uniform(0.3, 0.4))
