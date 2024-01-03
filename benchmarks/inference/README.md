@@ -1,6 +1,6 @@
 # Inference Throughput Benchmarks
 In this folder we provide a series of benchmark scripts that apply a throughput analysis for Llama 2 models inference on various backends:
-* On-perm - Popular serving frameworks and containers (i.e. vLLM)
+* On-prem - Popular serving frameworks and containers (i.e. vLLM)
 * [**WIP**]Cloud API - Popular API services (i.e. Azure Model-as-a-Service)
 * [**WIP**]On-device - Popular on-device inference solutions on Android and iOS (i.e. mlc-llm, QNN)
 * [**WIP**]Optimization - Popular optimization solutions for faster inference and quantization (i.e. AutoAWQ)

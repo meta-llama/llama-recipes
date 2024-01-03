@@ -11,7 +11,7 @@ import requests
 import transformers
 import torch
 
-# Imports for Azure content safety
+#imports for Azure content safety
 from azure.ai.contentsafety import ContentSafetyClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
@@ -21,13 +21,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Tuple, List
 
 
-
+# Predefined inputs
 with open('input.jsonl') as input:
     prompt_data = json.load(input)
-
-# Prompt data stored in json file. Choose from number of tokens - 5, 25, 50, 100, 500, 1k, 2k.
-# You can also configure and add your own prompt in input.jsonl
-PROMPT = prompt_data["1k"] 
 
 with open('parameters.json') as parameters:
     params = json.load(parameters)
@@ -40,15 +36,16 @@ MODEL_HEADERS = params["MODEL_HEADERS"]
 SAFE_CHECK = params["SAFE_CHECK"]
 # Threshold for tokens per second below which we deem the query to be slow
 THRESHOLD_TPS = params["THRESHOLD_TPS"] 
-# Default Llama tokenizer, replace with your own tokenizer 
+# Replace with your own tokenizer 
 TOKENIZER_PATH = params["TOKENIZER_PATH"] 
+RANDOM_PROMPT_LENGTH = params["RANDOM_PROMPT_LENGTH"]
 TEMPERATURE = params["TEMPERATURE"]
 TOP_P = params["TOP_P"]
-# Add your model endpoints here, specify the port number. You can acquire the endpoint when creating a on-perm server like vLLM.
+# Add your model endpoints here, specify the port number. You can acquire the endpoint when creating a on-prem server like vLLM.
 # Group of model endpoints - Send balanced requests to each endpoint for batch maximization.  
 MODEL_ENDPOINTS = params["MODEL_ENDPOINTS"]
 
-# Get number of GPUs on this instance
+#Get number of GPUs on this instance
 if torch.cuda.is_available():
     NUM_GPU = torch.cuda.device_count()
 else:
@@ -58,8 +55,23 @@ else:
 # This tokenizer is downloaded from Azure model catalog for each specific models. The main purpose is to decode the reponses for token calculation
 tokenizer = transformers.AutoTokenizer.from_pretrained(TOKENIZER_PATH)
 
+# Select vocabulary that is longer than 2 tokens (closer to real words) and close to the English (not foolproof)
+vocab = [token for token in tokenizer.get_vocab().keys() if len(token) > 2 and all(ord(c) < 128 for c in token)]
+
+def generate_random_prompt(num_tokens):
+    generated_tokens_count = 0
+    selected_tokens = ""
+    while generated_tokens_count < num_tokens:
+        selected_tokens += random.choice(vocab)
+        selected_tokens += " "
+        generated_tokens_count = len(tokenizer.encode(selected_tokens))
+
+    return selected_tokens
+
+PROMPT = generate_random_prompt(RANDOM_PROMPT_LENGTH)
 num_token_input_prompt = len(tokenizer.encode(PROMPT))
 print(f"Number of token for input prompt: {num_token_input_prompt}")
+
 
 # Azure content safety analysis
 def analyze_prompt(input):
@@ -121,7 +133,6 @@ def generate_text() -> Tuple[int, int]:
         # Or add delay simulation as below for real world situation
         # time.sleep(random.uniform(0.3, 0.4))
 
-    # Acquire lock to dispatch the request
     lock.acquire()
     global executor_id
     if executor_id != len(MODEL_ENDPOINTS)-1:
@@ -132,7 +143,6 @@ def generate_text() -> Tuple[int, int]:
         endpoint_id = executor_id
     lock.release()
 
-    # Send request
     response = requests.post(MODEL_ENDPOINTS[endpoint_id], headers=headers, json=payload)
 
     if(SAFE_CHECK):
@@ -144,7 +154,7 @@ def generate_text() -> Tuple[int, int]:
 
     end_time = time.time()
     # Convert to ms
-    latency = (end_time - start_time) * 1000  
+    latency = (end_time - start_time) * 1000 
 
     if response.status_code != 200:
         raise ValueError(f"Error: {response.content}")

@@ -197,7 +197,7 @@ This folder contains a series of Llama2-powered apps:
 
 # Benchmarks
 This folder contains a series of benchmark scripts for Llama 2 models inference on various backends:
-1. On-perm - Popular serving frameworks and containers (i.e. vLLM)
+1. On-prem - Popular serving frameworks and containers (i.e. vLLM)
 2. (WIP) Cloud API - Popular API services (i.e. Azure Model-as-a-Service)
 3. (WIP) On-device - Popular on-device inference solutions on Android and iOS (i.e. mlc-llm, QNN)
 4. (WIP) Optimization - Popular optimization solutions for faster inference and quantization (i.e. AutoAWQ)
