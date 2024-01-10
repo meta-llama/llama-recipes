@@ -118,8 +118,7 @@ def generate_text() -> Tuple[int, int]:
         # Function to send prompts for safety check. Add delays for request round-trip that count towards overall throughput measurement.
         # Expect NO returns from calling this function. If you want to check the safety check results, print it out within the function itself.
         analyze_prompt(PROMPT)
-        # Or add delay simulation as below for real world situation
-        # time.sleep(random.uniform(0.3, 0.4))
+        # Or add delay simulation if you don't want to use Azure Content Safety check. The API round-trip for this check is around 0.3-0.4 seconds depends on where you located. You can use something like this: time.sleep(random.uniform(0.3, 0.4))
 
     # Acquire lock to dispatch the request
     lock.acquire()
@@ -139,8 +138,7 @@ def generate_text() -> Tuple[int, int]:
         # Function to send prompts for safety check. Add delays for request round-trip that count towards overall throughput measurement.
         # Expect NO returns from calling this function. If you want to check the safety check results, print it out within the function itself.
         analyze_prompt(PROMPT)
-        # Or add delay simulation as below for real world situation
-        # time.sleep(random.uniform(0.3, 0.4))
+        # Or add delay simulation if you don't want to use Azure Content Safety check. The API round-trip for this check is around 0.3-0.4 seconds depends on where you located. You can use something like this: time.sleep(random.uniform(0.3, 0.4))
 
     end_time = time.time()
     # Convert to ms
