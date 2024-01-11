@@ -45,9 +45,9 @@ from llama_recipes.utils.train_utils import (
     get_policies
 )
 
-import gc
 def main(**kwargs):
     gc.disable()
+    gc.collect(1)
     # Update the configuration for the training and sharding process
     update_config((train_config, fsdp_config), **kwargs)
 
