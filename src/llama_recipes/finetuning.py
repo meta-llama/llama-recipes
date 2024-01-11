@@ -3,8 +3,9 @@
 
 import os
 from pkg_resources import packaging
-
+import gc
 import fire
+
 import torch
 import torch.distributed as dist
 import torch.optim as optim
@@ -44,8 +45,9 @@ from llama_recipes.utils.train_utils import (
     get_policies
 )
 
-
+import gc
 def main(**kwargs):
+    gc.disable()
     # Update the configuration for the training and sharding process
     update_config((train_config, fsdp_config), **kwargs)
 
