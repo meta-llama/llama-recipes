@@ -1,0 +1,13 @@
+task: demo_boolq_5
+dataset_path: super_glue
+dataset_name: boolq
+output_type: multiple_choice
+training_split: train
+validation_split: validation
+doc_to_text: "{{passage}}\nQuestion: {{question}}?\nAnswer:"
+doc_to_target: label
+doc_to_choice: ["no", "yes"]
+should_decontaminate: true
+doc_to_decontamination_query: passage
+metric_list:
+  - metric: acc

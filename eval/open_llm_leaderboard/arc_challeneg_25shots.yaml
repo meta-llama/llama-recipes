@@ -1,0 +1,6 @@
+include: {$EVAL_PATH}/lm_eval/tasks/arc/arc_challenge.yaml
+task: arc_challenge_25_shot
+task_alias: arc 25 shot
+num_fewshot: 25
+metric_list:
+  - metric: acc_norm
