@@ -78,6 +78,7 @@ pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .[t
 * [LLM Fine-tuning](./docs/LLM_finetuning.md)
 * [Adding custom datasets](./docs/Dataset.md)
 * [Inference](./docs/inference.md)
+* [Evaluation Harness](./eval/README.md)
 * [FAQs](./docs/FAQ.md)
 
 # Where to find the models?
@@ -184,6 +185,10 @@ sbatch multi_node.slurm
 
 ```
 You can read more about our fine-tuning strategies [here](./docs/LLM_finetuning.md).
+
+# Evaluation Harness
+
+Here, we make use `lm-evaluation-harness` from `EleutherAI` for evaluation of fine-tuned Llama 2 models. This also can extend to evaluate other optimizations for inference of Llama 2 model such as quantization. Pleas use this get started [doc](./eval/README.md).
 
 # Demo Apps
 This folder contains a series of Llama2-powered apps:
