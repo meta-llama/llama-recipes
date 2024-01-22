@@ -95,3 +95,52 @@ For all these evaluations, a higher score is a better score. We chose these benc
 In case you have customized the Llama model, for example a quantized version of model where it has different model loading from normal HF model, you can follow [this guide](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/docs/interface.md#external-library-usage) to add your model to the `eval.py` and run the eval benchmarks.
 
 You can also find full task list [here](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks).
+
+
+
+#### Multi-GPU Evaluation with Hugging Face `accelerate`
+
+Hugging Face's [accelerate 🚀](https://github.com/huggingface/accelerate) library can be used for multi-GPU evaluation as it is supported by `lm-evaluation-harness`.
+
+To perform *data-parallel evaluation* (where each GPU loads a **separate full copy** of the model), leverage the `accelerate` launcher as follows:
+
+
+```bash
+accelerate config
+
+accelerate launch eval.py --model hf --model_args "pretrained=meta-llama/Llama-2-7b-chat-hf" --limit 100 --open-llm-leaderboard-tasks --output_path ./results.json --log_samples 
+```
+
+In case your model can fit on a single GPU, this allows you to evaluate on K GPUs K times faster than on one.
+
+**WARNING**: This setup does not work with FSDP model sharding, so in `accelerate config` FSDP must be disabled, or the NO_SHARD FSDP option must be used.
+
+In case your model is *too large to fit on a single GPU.*
+
+In this setting, run the library *outside of the `accelerate` launcher*, but passing `parallelize=True` to `--model_args` as follows:
+
+```bash
+python eval.py --model hf --model_args "pretrained=meta-llama/Llama-2-7b-chat-hf,parallelize=True" --limit 100 --open-llm-leaderboard-tasks --output_path ./results.json --log_samples 
+```
+
+
+This means that your model's weights will be split across all available GPUs.
+
+For more advanced users or even larger models, we allow for the following arguments when `parallelize=True` as well:
+- `device_map_option`: How to split model weights across available GPUs. defaults to "auto".
+- `max_memory_per_gpu`: the max GPU memory to use per GPU in loading the model.
+- `max_cpu_memory`: the max amount of CPU memory to use when offloading the model weights to RAM.
+- `offload_folder`: a folder where model weights will be offloaded to disk if needed.
+
+These two options (`accelerate launch` and `parallelize=True`) are mutually exclusive.
+
+### Tensor + Data Parallel and Optimized Inference with `vLLM`
+
+Also `lm-evaluation-harness` supports vLLM for faster inference on [supported model types](https://docs.vllm.ai/en/latest/models/supported_models.html), especially faster when splitting a model across multiple GPUs. For single-GPU or multi-GPU — tensor parallel, data parallel, or a combination of both — inference, for example:
+
+```bash
+python eval.py --model vllm --model_args "pretrained=meta-llama/Llama-2-7b-chat-hf,tensor_parallel_size=1,dtype=auto,gpu_memory_utilization=0.8,data_parallel_size=2" --limit 10 --open-llm-leaderboard-tasks --output_path ./results.json --log_samples --batch_size auto
+```
+For a full list of supported vLLM configurations, please to [here](https://github.com/EleutherAI/lm-evaluation-harness/blob/076372ee9ee81e25c4e2061256400570354a8d1a/lm_eval/models/vllm_causallms.py#L44-L62).
+
+**Note from `lm-evaluation-harness`** vLLM occasionally differs in output from Huggingface. We treat Huggingface as the reference implementation, and provide a [script](./scripts/model_comparator.py) for checking the validity of vllm results against HF.
