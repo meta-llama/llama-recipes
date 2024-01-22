@@ -1237,3 +1237,5 @@ leaderboard
 lm
 prepended
 subtasks
+EleutherAI
+Huggingface
