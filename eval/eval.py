@@ -74,7 +74,8 @@ def load_tasks(args):
             "hellaswag_10_shot",
             "truthfulqa_mc2",
             "winogrande_5_shot",
-            "gsm8k"
+            "gsm8k",
+            "mmlu",
         ]
     return args.tasks.split(",") if args.tasks else []
         
