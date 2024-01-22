@@ -1,4 +1,4 @@
-# Language Model Evaluation
+# Llama Model Evaluation
 
 Llama-Recipe make use of `lm-evaluation-harness` for evaluating our fine-tuned Llama2 model. It also can serve as a tool to evaluate quantized model to ensure the quality in lower precision or other optimization applied to the model that might need evaluation.
 
@@ -63,7 +63,7 @@ There has been an study from [IBM on efficient benchmarking of LLMs](https://arx
 python eval.py --model hf --model_args pretrained=meta-llama/Llama-2-7b-hf,dtype="float",peft=../peft_output --tasks hellaswag --num_fewshot 10  --device cuda:0 --batch_size 8 --limit 100
 ```
 
-### Reproducing HugginFace Open-LLM-Leaderboard
+### Reproducing HuggingFace Open-LLM-Leaderboard
 
 Here, we provided a list of tasks from `Open-LLM-Leaderboard` which can be used by passing `--open-llm-leaderboard-tasks` instead of `tasks` to the `eval.py`. 
 
