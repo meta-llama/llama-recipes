@@ -11,7 +11,11 @@ class train_config:
     low_cpu_fsdp: bool=False
     run_validation: bool=True
     batch_size_training: int=4
+    batching_strategy: str="packing" #alternative: padding
+    context_length: int=4096
     gradient_accumulation_steps: int=1
+    gradient_clipping: bool = False
+    gradient_clipping_threshold: float = 1.0
     num_epochs: int=3
     num_workers_dataloader: int=1
     lr: float=1e-4
@@ -37,3 +41,4 @@ class train_config:
     flop_counter: bool=True #enable flop counter
     profiler: bool=True #enable pytorch profiler
     profile_output_dir: str="profile_output"
+    save_metrics: bool = False # saves training metrics to a json file for later plotting

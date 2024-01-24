@@ -4,14 +4,21 @@
 import os
 import torch
 import warnings
+from typing import List
+from string import Template
+from enum import Enum
 
+
+class AgentType(Enum):
+    AGENT = "Agent"
+    USER = "User"
 
 # Class for performing safety checks using AuditNLG library
 class AuditNLGSensitiveTopics(object):
     def __init__(self):
         pass
 
-    def __call__(self, output_text):
+    def __call__(self, output_text, **kwargs):
         try:
             from auditnlg.safety.exam import safety_scores
         except ImportError as e:
@@ -36,7 +43,7 @@ class SalesforceSafetyChecker(object):
     def __init__(self):
         pass
 
-    def __call__(self, output_text):
+    def __call__(self, output_text, **kwargs):
         from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, AutoConfig
 
         config = AutoConfig.from_pretrained("Salesforce/safety-flan-t5-base")
@@ -102,7 +109,7 @@ class AzureSaftyChecker(object):
 
         self.client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
 
-    def __call__(self, output_text):
+    def __call__(self, output_text, **kwargs):
         from azure.core.exceptions import HttpResponseError
         from azure.ai.contentsafety.models import AnalyzeTextOptions, TextCategory
 
@@ -147,13 +154,59 @@ class AzureSaftyChecker(object):
 
         return "Azure Content Saftey API", is_safe, report
 
+class LlamaGuardSafetyChecker(object):
+
+    def __init__(self):
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+
+        model_id = "meta-llama/LlamaGuard-7b"
+
+        self.tokenizer = AutoTokenizer.from_pretrained(model_id)
+        self.model = AutoModelForCausalLM.from_pretrained(model_id, load_in_8bit=True, device_map="auto")
+        pass
+
+    def __call__(self, output_text, **kwargs):
+        
+        agent_type = kwargs.get('agent_type', AgentType.USER)
+        user_prompt = kwargs.get('user_prompt', "")
+
+        model_prompt = output_text.strip()
+        if(agent_type == AgentType.AGENT):
+            if user_prompt == "":
+                print("empty user prompt for agent check, returning unsafe")
+                return "Llama Guard", False, "Missing user_prompt from Agent response check"
+            else:
+                model_prompt = model_prompt.replace(user_prompt, "")
+                user_prompt = f"User: {user_prompt}"
+                agent_prompt = f"Agent: {model_prompt}"
+                chat = [
+                    {"role": "user", "content": user_prompt},
+                    {"role": "assistant", "content": agent_prompt},
+                ]
+        else:
+            chat = [
+                {"role": "user", "content": model_prompt},
+            ]
+
+        input_ids = self.tokenizer.apply_chat_template(chat, return_tensors="pt").to("cuda")
+        prompt_len = input_ids.shape[-1]
+        output = self.model.generate(input_ids=input_ids, max_new_tokens=100, pad_token_id=0)
+        result = self.tokenizer.decode(output[0][prompt_len:], skip_special_tokens=True)
+        
+        splitted_result = result.split("\n")[0];
+        is_safe = splitted_result == "safe"    
+
+        report = result
+        
+        return "Llama Guard", is_safe, report
+        
 
 # Function to load the PeftModel for performance optimization
 # Function to determine which safety checker to use based on the options selected
 def get_safety_checker(enable_azure_content_safety,
                        enable_sensitive_topics,
                        enable_salesforce_content_safety,
-                       ):
+                       enable_llamaguard_content_safety):
     safety_checker = []
     if enable_azure_content_safety:
         safety_checker.append(AzureSaftyChecker())
@@ -161,9 +214,7 @@ def get_safety_checker(enable_azure_content_safety,
         safety_checker.append(AuditNLGSensitiveTopics())
     if enable_salesforce_content_safety:
         safety_checker.append(SalesforceSafetyChecker())
+    if enable_llamaguard_content_safety:
+        safety_checker.append(LlamaGuardSafetyChecker())
     return safety_checker
-
-
-
-
 
