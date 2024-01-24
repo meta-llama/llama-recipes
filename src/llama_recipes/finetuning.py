@@ -3,9 +3,10 @@
 
 import os
 from pkg_resources import packaging
-
+import gc
 import fire
 import random
+
 import torch
 import torch.optim as optim
 from peft import get_peft_model, prepare_model_for_int8_training
@@ -44,9 +45,12 @@ from llama_recipes.utils.train_utils import (
     print_model_size,
     get_policies
 )
+
 from accelerate.utils import is_xpu_available
 
 def main(**kwargs):
+    gc.disable()
+    gc.collect(1)
     # Update the configuration for the training and sharding process
     train_config, fsdp_config = TRAIN_CONFIG(), FSDP_CONFIG()
     update_config((train_config, fsdp_config), **kwargs)
@@ -83,11 +87,6 @@ def main(**kwargs):
         model alone would consume 2+TB cpu mem (70 * 4 * 8). This will add some comms
         overhead and currently requires latest nightly.
         """
-        v = packaging.version.parse(torch.__version__)
-        verify_latest_nightly = v.is_devrelease and v.dev >= 20230701
-        if not verify_latest_nightly:
-            raise Exception("latest pytorch nightly build is required to run with low_cpu_fsdp config, "
-                            "please install latest nightly.")
         if rank == 0:
             model = LlamaForCausalLM.from_pretrained(
                 train_config.model_name,

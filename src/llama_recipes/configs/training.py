@@ -38,4 +38,7 @@ class train_config:
     dist_checkpoint_folder: str="fine-tuned" # will be used if using FSDP
     save_optimizer: bool=False # will be used if using FSDP
     use_fast_kernels: bool = False # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
+    flop_counter: bool=True #enable flop counter
+    profiler: bool=True #enable pytorch profiler
+    profile_output_dir: str="profile_output"
     save_metrics: bool = False # saves training metrics to a json file for later plotting

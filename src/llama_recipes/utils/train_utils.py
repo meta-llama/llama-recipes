@@ -7,8 +7,9 @@ import yaml
 from contextlib import nullcontext
 from pathlib import Path
 from pkg_resources import packaging
+import contextlib
+import gc
 from datetime import datetime
-
 
 import torch
 import torch.cuda.nccl as nccl
@@ -23,7 +24,38 @@ import json
 from llama_recipes.model_checkpointing import save_model_checkpoint, save_model_and_optimizer_sharded, save_optimizer_checkpoint
 from llama_recipes.policies import fpSixteen,bfSixteen, get_llama_wrapper
 from llama_recipes.utils.memory_utils import MemoryTrace
+
+from llama_recipes.utils.tflop_counter import FlopCounterMode
+
+@contextlib.contextmanager
+def maybe_run_profiler(cfg, *args, **kwargs):
+    use_profiler: bool = cfg.profiler
+    
+    if use_profiler:
+        print(f"profiling is activated and results will be saved in {cfg.profile_output_dir}")
+        with torch.profiler.profile(
+            activities=[
+                torch.profiler.ProfilerActivity.CPU,
+                torch.profiler.ProfilerActivity.CUDA,
+            ],
+            schedule=torch.profiler.schedule(wait=1, warmup=2, active=3, repeat=1),
+            on_trace_ready=torch.profiler.tensorboard_trace_handler(
+                cfg.profile_output_dir
+            ),
+            profile_memory=True,
+            with_stack=False,
+            record_shapes=True,
+        ) as torch_profiler:
+            yield torch_profiler
+    else:
+        torch_profiler = contextlib.nullcontext()
+        yield None
+            
+def get_total_flops(model):
+    return (sum([v for _, v in model.flop_counts["Global"].items()]))
+
 from accelerate.utils import is_xpu_available, is_ccl_available
+
 
 def set_tokenizer_params(tokenizer: LlamaTokenizer):
     tokenizer.pad_token_id = 0
@@ -86,6 +118,62 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
             total_loss = 0.0
             total_length = len(train_dataloader)//gradient_accumulation_steps
             pbar = tqdm(colour="blue", desc=f"Training Epoch: {epoch+1}", total=total_length, dynamic_ncols=True)
+
+            with maybe_run_profiler(train_config) as torch_profiler:
+                for step, batch in enumerate(train_dataloader):
+                    gc.collect(1)
+                    for key in batch.keys():
+                        if train_config.enable_fsdp:
+                            batch[key] = batch[key].to(local_rank)
+                        else:
+                            batch[key] = batch[key].to('cuda:0') 
+                    flop_check_done = False 
+                    if train_config.flop_counter and  step == 3 and not flop_check_done:
+                        flop_counter = FlopCounterMode(rank=local_rank)
+                        with flop_counter:           
+                            loss = model(**batch).loss
+                            loss = loss / gradient_accumulation_steps
+                            total_loss += loss.detach().float()
+                            if train_config.use_fp16:
+                                # if fp16 is enabled, use gradient scaler to handle gradient update
+                                scaler.scale(loss).backward()
+                                if (step + 1) % gradient_accumulation_steps == 0 or step == len(train_dataloader) - 1:
+                                    scaler.step(optimizer)
+                                    scaler.update()
+                                    optimizer.zero_grad()
+                                    pbar.update(1)
+                            else:
+                                # regular backpropagation when fp16 is not used
+                                loss.backward()
+                                TFlops = get_total_flops(flop_counter) / 1e12
+                                flop_check_done = True
+                                if (step + 1) % gradient_accumulation_steps == 0 or step == len(train_dataloader) - 1:
+                                    optimizer.step()
+                                    optimizer.zero_grad()
+                                    pbar.update(1)
+                        
+                    else:
+                        loss = model(**batch).loss
+                        loss = loss / gradient_accumulation_steps
+                        total_loss += loss.detach().float()
+                        if train_config.use_fp16:
+                            # if fp16 is enabled, use gradient scaler to handle gradient update
+                            scaler.scale(loss).backward()
+                            if (step + 1) % gradient_accumulation_steps == 0 or step == len(train_dataloader) - 1:
+                                scaler.step(optimizer)
+                                scaler.update()
+                                optimizer.zero_grad()
+                                pbar.update(1)
+                        else:
+                            # regular backpropagation when fp16 is not used
+                            loss.backward()
+                            if (step + 1) % gradient_accumulation_steps == 0 or step == len(train_dataloader) - 1:
+                                optimizer.step()
+                                optimizer.zero_grad()
+                                pbar.update(1)
+                    pbar.set_description(f"Training Epoch: {epoch+1}/{train_config.num_epochs}, step {step}/{len(train_dataloader)} completed (loss: {loss.detach().float()})")
+                pbar.close()
+
             for step, batch in enumerate(train_dataloader):
                 for key in batch.keys():
                     if train_config.enable_fsdp:
@@ -138,6 +226,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                 if train_config.save_metrics:
                     save_to_json(metrics_filename, train_step_loss, train_loss, train_step_perplexity, train_prep, val_step_loss, val_loss, val_step_perplexity, val_prep)
             pbar.close()
+
 
         epoch_end_time = time.perf_counter()-epoch_start_time
         epoch_times.append(epoch_end_time)
@@ -266,6 +355,10 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         results['avg_eval_loss'] = avg_eval_loss
     results["avg_epoch_time"] = avg_epoch_time
     results["avg_checkpoint_time"] = avg_checkpoint_time
+
+    if train_config.flop_counter:
+        results["model_flops"]= TFlops
+       
     if train_config.save_metrics:
         results["metrics_filename"] = metrics_filename
 
@@ -296,6 +389,7 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer):
     eval_loss = 0.0  # Initialize evaluation loss
     with MemoryTrace() as memtrace:
         for step, batch in enumerate(tqdm(eval_dataloader,colour="green", desc="evaluating Epoch", dynamic_ncols=True)):
+            gc.collect(1)
             for key in batch.keys():
                 if train_config.enable_fsdp:
                     batch[key] = batch[key].to(local_rank)
