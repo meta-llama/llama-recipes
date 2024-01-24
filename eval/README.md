@@ -142,4 +142,4 @@ python eval.py --model vllm --model_args "pretrained=meta-llama/Llama-2-7b-chat-
 ```
 For a full list of supported vLLM configurations, please to [here](https://github.com/EleutherAI/lm-evaluation-harness/blob/076372ee9ee81e25c4e2061256400570354a8d1a/lm_eval/models/vllm_causallms.py#L44-L62).
 
-**Note from `lm-evaluation-harness`** vLLM occasionally differs in output from Hugging Face. We treat Hugging Face as the reference implementation, and provide a [script](./scripts/model_comparator.py) for checking the validity of vllm results against HF.
+**Note from `lm-evaluation-harness`** vLLM occasionally differs in output from Hugging Face. We treat Hugging Face as the reference implementation, and provide a [script](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/scripts/model_comparator.py) for checking the validity of vllm results against HF.
