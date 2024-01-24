@@ -188,7 +188,7 @@ You can read more about our fine-tuning strategies [here](./docs/LLM_finetuning.
 
 # Evaluation Harness
 
-Here, we make use `lm-evaluation-harness` from `EleutherAI` for evaluation of fine-tuned Llama 2 models. This also can extend to evaluate other optimizations for inference of Llama 2 model such as quantization. Pleas use this get started [doc](./eval/README.md).
+Here, we make use `lm-evaluation-harness` from `EleutherAI` for evaluation of fine-tuned Llama 2 models. This also can extend to evaluate other optimizations for inference of Llama 2 model such as quantization. Please use this get started [doc](./eval/README.md).
 
 # Demo Apps
 This folder contains a series of Llama2-powered apps:

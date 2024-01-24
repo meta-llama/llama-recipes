@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 import lm_eval
 from lm_eval import evaluator, tasks
-from lm_eval.utils import make_table, load_yaml_config
+from lm_eval.utils import make_table
 
 
 def _handle_non_serializable(o):
@@ -47,7 +47,8 @@ def handle_output(args, results, logger):
     if args.show_config:
         logger.info(results_str)
 
-    with open(args.output_path, "w", encoding="utf-8") as f:
+    file_path = os.path.join(args.output_path, "results.json")
+    with open(file_path , "w", encoding="utf-8") as f:
         f.write(results_str)
 
     if args.log_samples:
@@ -103,7 +104,7 @@ def parse_eval_args():
         help="Comma-separated string arguments for model, e.g., `pretrained=EleutherAI/pythia-160m`.",
     )
     parser.add_argument(
-        "--open-llm-leaderboard-tasks",
+        "--open_llm_leaderboard_tasks",
         "-oplm",
         action="store_true",
         default=False,

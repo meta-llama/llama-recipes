@@ -9,7 +9,7 @@ Llama-Recipe make use of `lm-evaluation-harness` for evaluating our fine-tuned L
 - Support for models loaded via transformers (including quantization via AutoGPTQ), GPT-NeoX, and Megatron-DeepSpeed, with a flexible tokenization-agnostic interface.
 - Support for fast and memory-efficient inference with vLLM.
 - Support for commercial APIs including OpenAI, and TextSynth.
-- Support for evaluation on adapters (e.g. LoRA) supported in HuggingFace's PEFT library.
+- Support for evaluation on adapters (e.g. LoRA) supported in Hugging Face's PEFT library.
 - Support for local models and benchmarks.
 
 The Language Model Evaluation Harness is also the backend for 🤗 [Hugging Face's (HF) popular Open LLM Leaderboard](https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard). 
@@ -21,7 +21,6 @@ Before running the evaluation script, ensure you have all the necessary dependen
 ### Dependencies
 
 - Python 3.8+
-- lm-evaluation-harness
 - Your language model's dependencies
 
 ### Installation
@@ -37,7 +36,7 @@ pip install -e .
 
 ### Quick Test
 
-To run evaluation for HuggingFace `Llama2 7B` model  on a single GPU please run the following,
+To run evaluation for Hugging Face `Llama2 7B` model  on a single GPU please run the following,
 
 ```bash
 python eval.py --model hf --model_args pretrained=meta-llama/Llama-2-7b-chat-hf --tasks hellaswag --device cuda:0   --batch_size 8
@@ -57,17 +56,17 @@ python eval.py --model hf --model_args pretrained=meta-llama/Llama-2-7b-hf,dtype
 
 ### Limit the number of examples in benchmarks
 
-There has been an study from [IBM on efficient benchmarking of LLMs](https://arxiv.org/pdf/2308.11696.pdf), with main take a way that to identify if a model is performing poorly, benchmarking on wider range of tasks is more important than the number example in each task. This means you could run the evaluation harness with fewer number of example to have initial decision if the performance got worse from the base line. To limit the number of example here, it can be set using `--limit` flag with actual desired number. 
+There has been an study from [IBM on efficient benchmarking of LLMs](https://arxiv.org/pdf/2308.11696.pdf), with main take a way that to identify if a model is performing poorly, benchmarking on wider range of tasks is more important than the number example in each task. This means you could run the evaluation harness with fewer number of example to have initial decision if the performance got worse from the base line. To limit the number of example here, it can be set using `--limit` flag with actual desired number. But for the full assessment you would need to run the full evaluation. Please read more in the paper linked above.
 
 ```bash
 python eval.py --model hf --model_args pretrained=meta-llama/Llama-2-7b-hf,dtype="float",peft=../peft_output --tasks hellaswag --num_fewshot 10  --device cuda:0 --batch_size 8 --limit 100
 ```
 
-### Reproducing HuggingFace Open-LLM-Leaderboard
+### Reproducing Hugging Face Open-LLM-Leaderboard
 
 Here, we provided a list of tasks from `Open-LLM-Leaderboard` which can be used by passing `--open-llm-leaderboard-tasks` instead of `tasks` to the `eval.py`. 
 
-**NOTE** Make sure to run the bash script below to that will set the include paths in the config files. The script with prompt you to enter the path to the cloned lm-evaluation-harness repo.**You would need this step only for the first time**.
+**NOTE** Make sure to run the bash script below, that will set the `include paths` in the [config files](./open_llm_leaderboard/). The script will prompt you to enter the path to the cloned lm-evaluation-harness repo.**You would need this step only for the first time**.
 
 ```bash
 
@@ -77,7 +76,7 @@ bash open_llm_eval_prep.sh
 Now we can run the eval benchmark:
 
 ```bash
-python eval.py --model hf --model_args pretrained=meta-llama/Llama-2-7b-hf,dtype="float",peft=../peft_output --num_fewshot 10  --device cuda:0 --batch_size 8 --limit 100 --open-llm-leaderboard-tasks
+python eval.py --model hf --model_args pretrained=meta-llama/Llama-2-7b-hf,dtype="float",peft=../peft_output --num_fewshot 10  --device cuda:0 --batch_size 8 --limit 100 --open_llm_leaderboard_tasks
 ```
 
 In the HF leaderboard, the [LLMs are evaluated on 7 benchmarks](https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard) from Language Model Evaluation Harness as described below:
@@ -120,7 +119,7 @@ In case your model is *too large to fit on a single GPU.*
 In this setting, run the library *outside of the `accelerate` launcher*, but passing `parallelize=True` to `--model_args` as follows:
 
 ```bash
-python eval.py --model hf --model_args "pretrained=meta-llama/Llama-2-7b-chat-hf,parallelize=True" --limit 100 --open-llm-leaderboard-tasks --output_path ./results.json --log_samples 
+python eval.py --model hf --model_args "pretrained=meta-llama/Llama-2-7b-chat-hf,parallelize=True" --limit 100 --open_llm_leaderboard_tasks --output_path ./results.json --log_samples 
 ```
 
 
@@ -139,8 +138,8 @@ These two options (`accelerate launch` and `parallelize=True`) are mutually excl
 Also `lm-evaluation-harness` supports vLLM for faster inference on [supported model types](https://docs.vllm.ai/en/latest/models/supported_models.html), especially faster when splitting a model across multiple GPUs. For single-GPU or multi-GPU — tensor parallel, data parallel, or a combination of both — inference, for example:
 
 ```bash
-python eval.py --model vllm --model_args "pretrained=meta-llama/Llama-2-7b-chat-hf,tensor_parallel_size=1,dtype=auto,gpu_memory_utilization=0.8,data_parallel_size=2" --limit 10 --open-llm-leaderboard-tasks --output_path ./results.json --log_samples --batch_size auto
+python eval.py --model vllm --model_args "pretrained=meta-llama/Llama-2-7b-chat-hf,tensor_parallel_size=1,dtype=auto,gpu_memory_utilization=0.8,data_parallel_size=2" --limit 100 --open_llm_leaderboard_tasks --output_path ./results.json --log_samples --batch_size auto
 ```
 For a full list of supported vLLM configurations, please to [here](https://github.com/EleutherAI/lm-evaluation-harness/blob/076372ee9ee81e25c4e2061256400570354a8d1a/lm_eval/models/vllm_causallms.py#L44-L62).
 
-**Note from `lm-evaluation-harness`** vLLM occasionally differs in output from Huggingface. We treat Huggingface as the reference implementation, and provide a [script](./scripts/model_comparator.py) for checking the validity of vllm results against HF.
+**Note from `lm-evaluation-harness`** vLLM occasionally differs in output from Hugging Face. We treat Hugging Face as the reference implementation, and provide a [script](./scripts/model_comparator.py) for checking the validity of vllm results against HF.
