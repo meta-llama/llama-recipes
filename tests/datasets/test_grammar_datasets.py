@@ -7,7 +7,7 @@ from unittest.mock import patch
 from transformers import LlamaTokenizer
 
 
-@pytest.mark.skip_missing_tokenizer()
+@pytest.mark.skip_missing_tokenizer
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.LlamaTokenizer')
 @patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
