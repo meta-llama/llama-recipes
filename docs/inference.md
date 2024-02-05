@@ -79,7 +79,13 @@ To run the code infilling example:
 python examples/code_llama/code_infilling_example.py --model_name MODEL_NAME --prompt_file examples/code_llama/code_infilling_prompt.txt --temperature 0.2 --top_p 0.9
 
 ```
+To run the 70B Instruct model example run the following, it asks for system and user prompt to instruct the model:
 
+```bash
+
+python code_instruct_example.py --model_name codellama/CodeLlama-70b-Instruct-hf
+
+```
 ### Llama Guard
 
 Llama Guard is a new experimental model that provides input and output guardrails for LLM deployments. For more details, please visit the main [repository](https://github.com/facebookresearch/PurpleLlama/tree/main/Llama-Guard).
