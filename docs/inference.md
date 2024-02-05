@@ -86,7 +86,7 @@ To run the 70B Instruct model example run the following, it asks for system and 
 python code_instruct_example.py --model_name codellama/CodeLlama-70b-Instruct-hf
 
 ```
-You can learn more about the chat prompt template [on HF](https://huggingface.co/codellama/CodeLlama-70b-Instruct-hf#chat-prompt) and [original CodeLlama repository](https://github.com/facebookresearch/codellama/blob/main/README.md#fine-tuned-instruction-models). HF tokenizer has already taken care of the chat template as shown in this example. 
+You can learn more about the chat prompt template [on HF](https://huggingface.co/codellama/CodeLlama-70b-Instruct-hf#chat-prompt) and [original Code Llama repository](https://github.com/facebookresearch/codellama/blob/main/README.md#fine-tuned-instruction-models). HF tokenizer has already taken care of the chat template as shown in this example. 
 
 ### Llama Guard
 
