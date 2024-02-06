@@ -1,5 +1,7 @@
 # Llama 2 Fine-tuning / Inference Recipes, Examples, Benchmarks and Demo Apps
 
+**[Update Feb. 5, 2024] We added support for Code Llama 70B instruct in our example [inference script](./examples/code_llama/code_instruct_example.py). For details on formatting the prompt for Code Llama 70B instruct model please refer to [this document](./docs/inference.md)**.
+
 **[Update Dec. 28, 2023] We added support for Llama Guard as a safety checker for our example inference script and also with standalone inference with an example script and prompt formatting. More details [here](./examples/llama_guard/README.md). For details on formatting data for fine tuning Llama Guard, we provide a script and sample usage [here](./src/llama_recipes/data/llama_guard/README.md).**
 
 **[Update Dec 14, 2023] We recently released a series of Llama 2 demo apps [here](./demo_apps). These apps show how to run Llama (locally, in the cloud, or on-prem),  how to use Azure Llama 2 API (Model-as-a-Service), how to ask Llama questions in general or about custom data (PDF, DB, or live), how to integrate Llama with WhatsApp and Messenger, and how to implement an end-to-end chatbot with RAG (Retrieval Augmented Generation).**

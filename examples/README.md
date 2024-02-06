@@ -24,7 +24,7 @@ So far, we have provide the following inference examples:
 
 4. A [chat completion](./chat_completion/chat_completion.py) example highlighting the handling of chat dialogs.
 
-5. [Code Llama](./code_llama/) folder which provides examples for [code completion](./code_llama/code_completion_example.py) and [code infilling](./code_llama/code_infilling_example.py).
+5. [Code Llama](./code_llama/) folder which provides examples for [code completion](./code_llama/code_completion_example.py), [code infilling](./code_llama/code_infilling_example.py) and [Llama2 70B code instruct](./code_llama/code_instruct_example.py).
 
 6. The [Purple Llama Using Anyscale](./Purple_Llama_Anyscale.ipynb) is a notebook that shows how to use Anyscale hosted Llama Guard model to classify user inputs as safe or unsafe.
 
