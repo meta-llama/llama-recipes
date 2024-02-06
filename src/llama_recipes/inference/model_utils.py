@@ -13,7 +13,7 @@ def load_model(model_name, quantization, use_fast_kernels):
         load_in_8bit=quantization,
         device_map="auto",
         low_cpu_mem_usage=True,
-        attn_implementation="eager" if use_fast_kernels else None,
+        attn_implementation="sdpa" if use_fast_kernels else None,
     )
     return model
 
