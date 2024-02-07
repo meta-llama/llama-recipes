@@ -7,6 +7,7 @@ This folder contains a series of Llama 2-powered apps:
 3. Llama on Cloud and ask Llama questions about unstructured data in a PDF
 4. Llama on-prem with vLLM and TGI
 5. Llama chatbot with RAG (Retrieval Augmented Generation)
+6. Azure Llama 2 API (Model-as-a-Service)
 
 * Specialized Llama use cases:
 1. Ask Llama to summarize a video content
@@ -61,7 +62,7 @@ The HelloLlama cloud version uses LangChain with Llama2 hosted in the cloud on [
 To run some of the demo apps here, you'll need to first sign in with Replicate with your github account, then create a free API token [here](https://replicate.com/account/api-tokens) that you can use for a while. After the free trial ends, you'll need to enter billing info to continue to use Llama2 hosted on Replicate - according to Replicate's [Run time and cost](https://replicate.com/meta/llama-2-13b-chat) for the Llama2-13b-chat model used in our demo apps, the model "costs $0.000725 per second. Predictions typically complete within 10 seconds." This means each call to the Llama2-13b-chat model costs less than $0.01 if the call completes within 10 seconds. If you want absolutely no costs, you can refer to the section "Running Llama2 locally on Mac" above or the "Running Llama2 in Google Colab" below.
 
 ### [Running Llama2 in Google Colab](https://colab.research.google.com/drive/1-uBXt4L-6HNS2D8Iny2DwUpVS4Ub7jnk?usp=sharing)
-To run Llama2 in Google Colab using [llama-cpp-python](https://github.com/abetlen/llama-cpp-python), download the quantized Llama2-13b-chat model `ggml-model-q4_0.gguf` [here](https://drive.google.com/file/d/1afPv3HOy73BE2MoYCgYJvBDeQNa9rZbj/view?usp=sharing), or follow the instructions above to build it, before uploading it to your Google drive. Note that on the free Colab T4 GPU, the call to Llama could take more than 20 minutes to return; running the notebook locally on M1 MBP takes about 20 seconds.
+To run Llama2 in Google Colab using [llama-cpp-python](https://github.com/abetlen/llama-cpp-python), download the quantized Llama2-7b-chat model [here](https://huggingface.co/TheBloke/Llama-2-7b-Chat-GGUF/resolve/main/llama-2-7b-chat.Q4_0.gguf), or follow the instructions above to build it, before uploading it to your Google drive. Note that on the free Colab T4 GPU, the call to Llama could take more than 20 minutes to return; running the notebook locally on M1 MBP takes about 20 seconds.
 
 ## [Running Llama2 On-Prem with vLLM and TGI](llama-on-prem.md)
 This tutorial shows how to use Llama 2 with [vLLM](https://github.com/vllm-project/vllm) and Hugging Face [TGI](https://github.com/huggingface/text-generation-inference) to build Llama 2 on-prem apps.
@@ -111,3 +112,6 @@ Then enter your question, click Submit. You'll see in the notebook or a browser 
 
 ### [RAG Chatbot Example](RAG_Chatbot_example/RAG_Chatbot_Example.ipynb)
 A complete example of how to build a Llama 2 chatbot hosted on your browser that can answer questions based on your own data.
+
+### [Azure API Llama 2 Example](Azure_API_example/azure_api_example.ipynb)
+A notebook shows examples of how to use Llama 2 APIs offered by Microsoft Azure Model-as-a-Service in CLI, Python, LangChain and a Gradio chatbot example with memory.

@@ -14,6 +14,7 @@ from transformers import LlamaTokenizer
 from llama_recipes.inference.safety_utils import get_safety_checker, AgentType
 from llama_recipes.inference.model_utils import load_model, load_peft_model
 
+from accelerate.utils import is_xpu_available
 
 def main(
     model_name,
@@ -34,7 +35,6 @@ def main(
     enable_sensitive_topics: bool=False, # Enable check for sensitive topics using AuditNLG APIs
     enable_salesforce_content_safety: bool=True, # Enable safety check with Salesforce safety flan t5
     enable_llamaguard_content_safety: bool=False,
-    llamaguard_model_name: str=None,
     max_padding_length: int=None, # the max padding length to be used with tokenizer padding the prompts.
     use_fast_kernels: bool = False, # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
     **kwargs
@@ -51,42 +51,10 @@ def main(
         print("No user prompt provided. Exiting.")
         sys.exit(1)
 
-    if enable_llamaguard_content_safety:
-        if not llamaguard_model_name:
-            print("if enable_llamaguard_content_safety is used, provide the model path with --llamaguard_model_name")
-            sys.exit(1)
-
-    
-    # Set the seeds for reproducibility
-    torch.cuda.manual_seed(seed)
-    torch.manual_seed(seed)
-    
-    model = load_model(model_name, quantization)
-    if peft_model:
-        model = load_peft_model(model, peft_model)
-
-    model.eval()
-    
-    if use_fast_kernels:
-        """
-        Setting 'use_fast_kernels' will enable
-        using of Flash Attention or Xformer memory-efficient kernels 
-        based on the hardware being used. This would speed up inference when used for batched inputs.
-        """
-        try:
-            from optimum.bettertransformer import BetterTransformer
-            model = BetterTransformer.transform(model)    
-        except ImportError:
-            print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
-
-    tokenizer = LlamaTokenizer.from_pretrained(model_name)
-    tokenizer.pad_token = tokenizer.eos_token
-    
     safety_checker = get_safety_checker(enable_azure_content_safety,
                                         enable_sensitive_topics,
                                         enable_salesforce_content_safety,
-                                        enable_llamaguard_content_safety,
-                                        guard_lama_path=llamaguard_model_name
+                                        enable_llamaguard_content_safety
                                         )
 
     # Safety check of the user prompt
@@ -103,10 +71,30 @@ def main(
                 print(report)
         print("Skipping the inference as the prompt is not safe.")
         sys.exit(1)  # Exit the program with an error status
-        
-    batch = tokenizer(user_prompt, padding='max_length', truncation=True, max_length=max_padding_length, return_tensors="pt")
 
-    batch = {k: v.to("cuda") for k, v in batch.items()}
+    # Set the seeds for reproducibility
+    if is_xpu_available():
+        torch.xpu.manual_seed(seed)
+    else:
+        torch.cuda.manual_seed(seed)
+    torch.manual_seed(seed)
+    
+    model = load_model(model_name, quantization, use_fast_kernels)
+    if peft_model:
+        model = load_peft_model(model, peft_model)
+
+    model.eval()
+    
+
+    tokenizer = LlamaTokenizer.from_pretrained(model_name)
+    tokenizer.pad_token = tokenizer.eos_token
+    
+    batch = tokenizer(user_prompt, padding='max_length', truncation=True, max_length=max_padding_length, return_tensors="pt")
+    if is_xpu_available():
+        batch = {k: v.to("xpu") for k, v in batch.items()}
+    else:
+        batch = {k: v.to("cuda") for k, v in batch.items()}
+
     start = time.perf_counter()
     with torch.no_grad():
         outputs = model.generate(
