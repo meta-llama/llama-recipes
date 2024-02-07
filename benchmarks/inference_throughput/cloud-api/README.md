@@ -1,5 +1,7 @@
 # Llama-Cloud-API-Benchmark
-This folder contains code to run inference benchmark for Llama 2 models on cloud API with popular cloud service providers. The benchmark will focus on overall inference **throughput** for querying the API endpoint for output generation with different level of concurrent requests. Remember that to send queries to the API endpoint, you are required to acquire subscriptions with the cloud service providers and there will be a fee associated with it.  
+This folder contains code to run inference benchmark for Llama 2 models on cloud API with popular cloud service providers. The benchmark will focus on overall inference **throughput** for querying the API endpoint for output generation with different level of concurrent requests. Remember that to send queries to the API endpoint, you are required to acquire subscriptions with the cloud service providers and there will be a fee associated with it.
+
+Disclaimer - The purpose of the code is to provide a configurable setup to measure inference throughput. It is not a representative of the performance of these API services and we do not plan to make comparisons between different API providers.
 
 
 # Azure - Getting Started
@@ -11,14 +13,16 @@ To get started, there are certain steps we need to take to deploy the models:
 * Select Llama models from Model catalog
 * Deploy with "Pay-as-you-go"
 
-Once deployed successfully, you should be assigned for an API endpoint and a security key for inference.  
+Once deployed successfully, you should be assigned for an API endpoint and a security key for inference.
 For more information, you should consult Azure's official documentation [here](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/deploy-models-llama?tabs=azure-studio) for model deployment and inference.
 
-Now, replace the endpoint url and API key in ```azure/parameters.json```. For parameter `MODEL_ENDPOINTS`, with chat models the suffix should be `v1/chat/completions` and with pretrained models the suffix should be `v1/completions`.  
-Note that the API endpoint might implemented a rate limit for token generation in certain amount of time. If you encountered the error, you can try reduce `MAX_NEW_TOKEN` or start with smaller `CONCURRENT_LEVELs`.  
+Now, replace the endpoint url and API key in ```azure/parameters.json```. For parameter `MODEL_ENDPOINTS`, with chat models the suffix should be `v1/chat/completions` and with pretrained models the suffix should be `v1/completions`.
+Note that the API endpoint might implemented a rate limit for token generation in certain amount of time. If you encountered the error, you can try reduce `MAX_NEW_TOKEN` or start with smaller `CONCURRENT_LEVELs`.
 
-Once everything configured, to run chat model benchmark:  
+Once everything configured, to run chat model benchmark:
 ```python chat_azure_api_benchmark.py```
 
 To run pretrained model benchmark:
 ```python pretrained_azure_api_benchmark.py```
+
+Once finished, the result will be written into a CSV file in the same directory, which can be later imported into dashboard of your choice.
