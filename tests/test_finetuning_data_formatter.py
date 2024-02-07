@@ -3,7 +3,7 @@
 
 from enum import Enum
 import unittest
-from typing import Optional
+from typing import Optional, List
 
 from llama_recipes.data.llama_guard.finetuning_data_formatter import (
     AugmentationConfigs,
@@ -72,8 +72,8 @@ Provide your safety assessment for {agent_type_to_check} in the above conversati
 
     def format_examples_and_compare_to_expected(
         self,
-        training_examples: list[TrainingExample],
-        expected_formatted_examples: list[str],
+        training_examples: List[TrainingExample],
+        expected_formatted_examples: List[str],
         agent_type_to_check: AgentType,
         formatter_configs: Optional[FormatterConfigs] = None,
     ) -> None:

@@ -79,6 +79,14 @@ To run the code infilling example:
 python examples/code_llama/code_infilling_example.py --model_name MODEL_NAME --prompt_file examples/code_llama/code_infilling_prompt.txt --temperature 0.2 --top_p 0.9
 
 ```
+To run the 70B Instruct model example run the following (you'll need to enter the system and user prompts to instruct the model):
+
+```bash
+
+python examples/code_llama/code_instruct_example.py --model_name codellama/CodeLlama-70b-Instruct-hf --temperature 0.2 --top_p 0.9
+
+```
+You can learn more about the chat prompt template [on HF](https://huggingface.co/codellama/CodeLlama-70b-Instruct-hf#chat-prompt) and [original Code Llama repository](https://github.com/facebookresearch/codellama/blob/main/README.md#fine-tuned-instruction-models). HF tokenizer has already taken care of the chat template as shown in this example. 
 
 ### Llama Guard
 

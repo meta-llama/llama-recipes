@@ -1,8 +1,6 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
-# from accelerate import init_empty_weights, load_checkpoint_and_dispatch
-
 import fire
 import os
 import sys
@@ -15,16 +13,55 @@ from llama_recipes.inference.safety_utils import get_safety_checker
 from llama_recipes.inference.model_utils import load_model, load_peft_model
 
 
+def handle_safety_check(are_safe_user_prompt, user_prompt, safety_results_user_prompt, are_safe_system_prompt, system_prompt, safety_results_system_prompt):
+    """
+    Handles the output based on the safety check of both user and system prompts.
+
+    Parameters:
+    - are_safe_user_prompt (bool): Indicates whether the user prompt is safe.
+    - user_prompt (str): The user prompt that was checked for safety.
+    - safety_results_user_prompt (list of tuples): A list of tuples for the user prompt containing the method, safety status, and safety report.
+    - are_safe_system_prompt (bool): Indicates whether the system prompt is safe.
+    - system_prompt (str): The system prompt that was checked for safety.
+    - safety_results_system_prompt (list of tuples): A list of tuples for the system prompt containing the method, safety status, and safety report.
+    """
+    def print_safety_results(are_safe_prompt, prompt, safety_results, prompt_type="User"):
+        """
+        Prints the safety results for a prompt.
+
+        Parameters:
+        - are_safe_prompt (bool): Indicates whether the prompt is safe.
+        - prompt (str): The prompt that was checked for safety.
+        - safety_results (list of tuples): A list of tuples containing the method, safety status, and safety report.
+        - prompt_type (str): The type of prompt (User/System).
+        """
+        if are_safe_prompt:
+            print(f"{prompt_type} prompt deemed safe.")
+            print(f"{prompt_type} prompt:\n{prompt}")
+        else:
+            print(f"{prompt_type} prompt deemed unsafe.")
+            for method, is_safe, report in safety_results:
+                if not is_safe:
+                    print(method)
+                    print(report)
+            print(f"Skipping the inference as the {prompt_type.lower()} prompt is not safe.")
+            sys.exit(1)
+
+    # Check user prompt
+    print_safety_results(are_safe_user_prompt, user_prompt, safety_results_user_prompt, "User")
+    
+    # Check system prompt
+    print_safety_results(are_safe_system_prompt, system_prompt, safety_results_system_prompt, "System")
+
 def main(
     model_name,
     peft_model: str=None,
     quantization: bool=False,
     max_new_tokens =100, #The maximum numbers of tokens to generate
-    prompt_file: str=None,
     seed: int=42, #seed value for reproducibility
     do_sample: bool=True, #Whether or not to use sampling ; use greedy decoding otherwise.
     min_length: int=None, #The minimum length of the sequence to be generated, input prompt + min_new_tokens
-    use_cache: bool=True,  #[optional] Whether or not the model should use the past last key/values attentions Whether or not the model should use the past last key/values attentions (if applicable to the model) to speed up decoding.
+    use_cache: bool=False,  #[optional] Whether or not the model should use the past last key/values attentions Whether or not the model should use the past last key/values attentions (if applicable to the model) to speed up decoding.
     top_p: float=0.9, # [optional] If set to float < 1, only the smallest set of most probable tokens with probabilities that add up to top_p or higher are kept for generation.
     temperature: float=0.6, # [optional] The value used to modulate the next token probabilities.
     top_k: int=50, # [optional] The number of highest probability vocabulary tokens to keep for top-k-filtering.
@@ -37,16 +74,12 @@ def main(
     use_fast_kernels: bool = True, # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
     **kwargs
 ):
-    if prompt_file is not None:
-        assert os.path.exists(
-            prompt_file
-        ), f"Provided Prompt file does not exist {prompt_file}"
-        with open(prompt_file, "r") as f:
-            user_prompt = f.read()
-    else:
-        print("No user prompt provided. Exiting.")
-        sys.exit(1)
-    
+    system_prompt = input("Please insert your system prompt: ")
+    user_prompt = input("Please insert your prompt: ")
+    chat = [
+   {"role": "system", "content": system_prompt},
+   {"role": "user", "content": user_prompt},
+    ]       
     # Set the seeds for reproducibility
     torch.cuda.manual_seed(seed)
     torch.manual_seed(seed)
@@ -56,7 +89,7 @@ def main(
         model = load_peft_model(model, peft_model)
 
     model.eval()
-    
+        
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     safety_checker = get_safety_checker(enable_azure_content_safety,
                                         enable_sensitive_topics,
@@ -65,27 +98,18 @@ def main(
                                         )
 
     # Safety check of the user prompt
-    safety_results = [check(user_prompt) for check in safety_checker]
-    are_safe = all([r[1] for r in safety_results])
-    if are_safe:
-        print("User prompt deemed safe.")
-        print(f"User prompt:\n{user_prompt}")
-    else:
-        print("User prompt deemed unsafe.")
-        for method, is_safe, report in safety_results:
-            if not is_safe:
-                print(method)
-                print(report)
-        print("Skipping the inference as the prompt is not safe.")
-        sys.exit(1)  # Exit the program with an error status
+    safety_results_user_prompt = [check(user_prompt) for check in safety_checker]
+    safety_results_system_prompt = [check(system_prompt) for check in safety_checker]
+    are_safe_user_prompt = all([r[1] for r in safety_results_user_prompt])
+    are_safe_system_prompt = all([r[1] for r in safety_results_system_prompt])
+    handle_safety_check(are_safe_user_prompt, user_prompt, safety_results_user_prompt, are_safe_system_prompt, system_prompt, safety_results_system_prompt)
         
-    batch = tokenizer(user_prompt, return_tensors="pt")
+    inputs = tokenizer.apply_chat_template(chat, return_tensors="pt").to("cuda")
 
-    batch = {k: v.to("cuda") for k, v in batch.items()}
     start = time.perf_counter()
     with torch.no_grad():
         outputs = model.generate(
-            **batch,
+            input_ids=inputs,
             max_new_tokens=max_new_tokens,
             do_sample=do_sample,
             top_p=top_p,
