@@ -5,7 +5,7 @@ import pytest
 from unittest.mock import patch
 
 
-@pytest.mark.skip_missing_tokenizer()
+@pytest.mark.skip_missing_tokenizer
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.LlamaTokenizer')
 @patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
@@ -47,7 +47,7 @@ def test_packing(step_lr, optimizer, get_model, tokenizer, train, mocker, setup_
     assert batch["attention_mask"][0].size(0) == 4096
 
 
-@pytest.mark.skip_missing_tokenizer()
+@pytest.mark.skip_missing_tokenizer
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.LlamaTokenizer')
 @patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
