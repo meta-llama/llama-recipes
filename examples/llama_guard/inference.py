@@ -47,12 +47,12 @@ def main():
         print(f"> {results[i]}")
         print("\n==================================\n")
 
-def llm_eval(prompts):
+def llm_eval(prompts, load_in_8bit=True):
 
     model_id = "meta-llama/LlamaGuard-7b"
     
     tokenizer = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModelForCausalLM.from_pretrained(model_id, load_in_8bit=True, device_map="auto")
+    model = AutoModelForCausalLM.from_pretrained(model_id, load_in_8bit=load_in_8bit, device_map="auto")
 
     results: List[str] = []
     for prompt in prompts:
