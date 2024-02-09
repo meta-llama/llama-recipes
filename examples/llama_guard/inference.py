@@ -28,6 +28,7 @@ def main():
     prompts: List[Tuple[List[str], AgentType]] = [
         (["<Sample user prompt>"], AgentType.USER),
 
+
         (["<Sample user prompt>",
         "<Sample agent response>"], AgentType.AGENT),
         
@@ -38,12 +39,22 @@ def main():
 
     ]
 
+    
+    results = llm_eval(prompts)
+    
+    for i, prompt in enumerate(prompts):
+        print(prompt[0])
+        print(f"> {results[i]}")
+        print("\n==================================\n")
+
+def llm_eval(prompts):
+
     model_id = "meta-llama/LlamaGuard-7b"
     
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(model_id, load_in_8bit=True, device_map="auto")
 
-    
+    results: List[str] = []
     for prompt in prompts:
         formatted_prompt = build_prompt(
                 prompt[1], 
@@ -54,12 +65,9 @@ def main():
         input = tokenizer([formatted_prompt], return_tensors="pt").to("cuda")
         prompt_len = input["input_ids"].shape[-1]
         output = model.generate(**input, max_new_tokens=100, pad_token_id=0)
-        results = tokenizer.decode(output[0][prompt_len:], skip_special_tokens=True)
-       
-        
-        print(prompt[0])
-        print(f"> {results}")
-        print("\n==================================\n")
+        results.append(tokenizer.decode(output[0][prompt_len:], skip_special_tokens=True))
+
+    return results
 
 if __name__ == "__main__":
     fire.Fire(main)
