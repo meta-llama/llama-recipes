@@ -1,0 +1,92 @@
+name: "[ARC][GPU] llama-recipes Pytest tests on Self-Hosted GPU k8s Nodes."
+on:
+  pull_request:
+    branches:    
+      - 'main'
+    paths:
+      - 'src/llama-recipes/configs/*.py'
+      - 'src/llama-recipes/utils/*.py'
+      - 'src/llama-recipes/*.py'
+
+  # triggers workflow manually for debugging purposes.      
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: 'GHA Runner Scale Set label to run workflow on.'
+        required: true
+        default: gha-runner-scale-set-nvidia-single-gpu
+
+      debug:
+          description: 'Run debugging steps?'
+          required: false
+          default: "true"
+
+      sleep_time:
+        description: '[DEBUG] sleep time for debugging'
+        required: true
+        default: "60"
+
+env: 
+  PYTORCH_WHEEL_URL: https://download.pytorch.org/whl/test/cu118  
+
+jobs:
+  execute_workflow:
+    name: Execute workload on Self-Hosted GPU k8s runner
+    defaults:
+      run:
+        shell: bash # default shell to run all steps for a given job.
+    runs-on: ${{ github.event.inputs.runner != '' &&  github.event.inputs.runner || 'gha-runner-scale-set-nvidia-single-gpu' }}
+    steps:
+
+      - name: "[DEBUG] Get runner container OS information"
+        id: os_info
+        if: ${{ github.event.inputs.debug == 'true' }}
+        run: |
+            cat /etc/os-release
+
+
+      - name: "[DEBUG][gpu-operator] Nvidia System Management Interface"
+        id: nvidia-smi
+        if: ${{ github.event.inputs.debug == 'true' }}
+        run: |
+          which nvidia-smi
+          nvidia-smi
+
+      - name: "Checkout 'facebookresearch/llama-recipes' repository"
+        id: checkout
+        uses: actions/checkout@v4
+
+
+      - name: "[DEBUG] Content of the repository after checkout"
+        id: content_after_checkout
+        if: ${{ github.event.inputs.debug == 'true' }}
+        run: |
+            ls -la ${GITHUB_WORKSPACE}
+
+
+      - name: "Installing 'llama-recipes' project"
+        id: pip_install
+        run: |
+          echo "Installing 'llama-recipes' project (re: https://github.com/facebookresearch/llama-recipes?tab=readme-ov-file#install-with-optional-dependencies)"
+          pip install --extra-index-url ${PYTORCH_WHEEL_URL} -e '.[tests]' 
+
+
+      - name: "[DEBUG] sleep"
+        id: sleep
+        if: ${{ github.event.inputs.debug == 'true' && github.event.inputs.sleep_time != '' }}
+        run: |
+            sleep ${{ inputs.sleep_time }}
+
+      - name: "Running PyTest tests on Self-Hosted k8s ARC Runner"
+        id: pytest
+        run: |
+          echo "Running PyTest tests at 'GITHUB_WORKSPACE' path: ${GITHUB_WORKSPACE}"
+          cd $GITHUB_WORKSPACE && python3 -m pytest --junitxml="$GITHUB_WORKSPACE/result.xml"
+  
+      - name: Publish Test Summary
+        id: test_summary
+        uses: test-summary/action@v2
+        with:
+          paths: "**/*.xml"
+        if: always()
+          
