@@ -3,6 +3,9 @@ from examples.llama_guard.inference import llm_eval, AgentType
 from typing import List, Tuple
 import fire
 
+from llama_recipes.inference.prompt_format_utils import build_prompt, create_conversation, LLAMA_GUARD_CATEGORY
+from examples.llama_guard import Llama
+
 def validate_agent_type(value):
     try:
         return AgentType(value)
@@ -26,6 +29,41 @@ def is_category_mismatch(categories, result):
 
 def is_label_bad_and_unsafe(label, result):
     return label == "bad" and "unsafe" in result
+
+def standard_llm_eval(prompts):
+    # defaults
+    temperature = 1
+    top_p = 1
+    max_seq_len = 2048
+    max_gen_len = 64
+    max_batch_size = 4
+
+
+    results: List[str] = []
+    for prompt in prompts:
+        formatted_prompt = build_prompt(
+                prompt[1], 
+                LLAMA_GUARD_CATEGORY, 
+                create_conversation(prompt[0]))
+
+    
+        generator = Llama.build(
+            ckpt_dir=self.ckpt_dir,
+            tokenizer_path=self.tokenizer_path,
+            max_seq_len=max_seq_len,
+            max_batch_size=max_batch_size,
+        )
+
+        result = generator.single_prompt_completion(
+            formatted_prompt,
+            max_gen_len=max_gen_len,
+            temperature=temperature,
+            top_p=top_p,
+        )
+
+        results.append(result)
+
+    return result
 
 def parse_results(results, prompts):
 
