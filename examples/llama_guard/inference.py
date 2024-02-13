@@ -1,9 +1,11 @@
 import fire
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-
 from llama_recipes.inference.prompt_format_utils import build_prompt, create_conversation, LLAMA_GUARD_CATEGORY
-from typing import List, Tuple
+from examples.llama_guard.generation import Llama
+from examples.llama_guard.perf_utils import time_decorator
+
+from typing import List, Tuple, Dict
 from enum import Enum
 
 class AgentType(Enum):
@@ -25,18 +27,22 @@ def main():
         max_batch_size (int, optional): The maximum batch size for generating sequences. Defaults to 4.
     """
 
-    prompts: List[Tuple[List[str], AgentType]] = [
-        (["<Sample user prompt>"], AgentType.USER),
-
-
-        (["<Sample user prompt>",
-        "<Sample agent response>"], AgentType.AGENT),
-        
-        (["<Sample user prompt>",
-        "<Sample agent response>",
-        "<Sample user reply>",
-        "<Sample agent response>",], AgentType.AGENT),
-
+    prompts: List[Dict[List[str], AgentType]] = [
+        {
+            "prompt": ["<Sample user prompt>"],
+            "agent_type": AgentType.USER
+        },
+        {
+            "prompt": ["<Sample user prompt>", "<Sample agent response>"],
+            "agent_type": AgentType.AGENT
+        },
+        {
+            "prompt": ["<Sample user prompt>", 
+                       "<Sample agent response>", 
+                       "<Sample user reply>", 
+                       "<Sample agent response>"],
+            "agent_type": AgentType.AGENT
+        }
     ]
 
     
@@ -47,6 +53,7 @@ def main():
         print(f"> {results[i]}")
         print("\n==================================\n")
 
+@time_decorator
 def llm_eval(prompts, load_in_8bit=True):
 
     model_id = "meta-llama/LlamaGuard-7b"
@@ -57,15 +64,53 @@ def llm_eval(prompts, load_in_8bit=True):
     results: List[str] = []
     for prompt in prompts:
         formatted_prompt = build_prompt(
-                prompt[1], 
+                prompt["agent_type"], 
                 LLAMA_GUARD_CATEGORY, 
-                create_conversation(prompt[0]))
+                create_conversation(prompt["prompt"]))
 
 
         input = tokenizer([formatted_prompt], return_tensors="pt").to("cuda")
         prompt_len = input["input_ids"].shape[-1]
         output = model.generate(**input, max_new_tokens=100, pad_token_id=0)
-        results.append(tokenizer.decode(output[0][prompt_len:], skip_special_tokens=True))
+        result = tokenizer.decode(output[0][prompt_len:], skip_special_tokens=True)
+        prompt["result"] = result
+        results.append(result)
+
+    return results
+
+@time_decorator
+def standard_llm_eval(prompts, ckpt_dir):
+    # defaults
+    temperature = 1
+    top_p = 1
+    max_seq_len = 1536
+    max_gen_len = 32
+    max_batch_size = 1
+
+    generator = Llama.build(
+            ckpt_dir=ckpt_dir,
+            tokenizer_path=ckpt_dir + "/tokenizer.model",
+            max_seq_len=max_seq_len,
+            max_batch_size=max_batch_size,
+        )
+
+
+    results: List[str] = []
+    for prompt in prompts:
+        formatted_prompt = build_prompt(
+                prompt["agent_type"], 
+                LLAMA_GUARD_CATEGORY, 
+                create_conversation(prompt["prompt"]))
+
+        result = generator.single_prompt_completion(
+            formatted_prompt,
+            max_gen_len=max_gen_len,
+            temperature=temperature,
+            top_p=top_p,
+        )
+        prompt["result"] = result
+
+        results.append(result)
 
     return results
 
