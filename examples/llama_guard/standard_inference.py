@@ -15,9 +15,16 @@ def standard_llm_eval(prompts, ckpt_dir):
     # defaults
     temperature = 1
     top_p = 1
-    max_seq_len = 1200
+    max_seq_len = 1536
     max_gen_len = 32
     max_batch_size = 1
+
+    generator = Llama.build(
+            ckpt_dir=ckpt_dir,
+            tokenizer_path=ckpt_dir + "/tokenizer.model",
+            max_seq_len=max_seq_len,
+            max_batch_size=max_batch_size,
+        )
 
 
     results: List[str] = []
@@ -26,14 +33,6 @@ def standard_llm_eval(prompts, ckpt_dir):
                 prompt[1], 
                 LLAMA_GUARD_CATEGORY, 
                 create_conversation(prompt[0]))
-
-    
-        generator = Llama.build(
-            ckpt_dir=ckpt_dir,
-            tokenizer_path=ckpt_dir + "/tokenizer.model",
-            max_seq_len=max_seq_len,
-            max_batch_size=max_batch_size,
-        )
 
         result = generator.single_prompt_completion(
             formatted_prompt,
@@ -44,7 +43,7 @@ def standard_llm_eval(prompts, ckpt_dir):
 
         results.append(result)
 
-    return result
+    return results
 
 def main(ckpt_dir):
     """
