@@ -154,31 +154,8 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         train_prep.append(float(train_perplexity))
         train_loss.append(float(train_epoch_loss))
         
-        if train_config.enable_fsdp:
-            if rank==0:
-                if is_xpu_available():
-                    print(f"Max XPU memory allocated was {memtrace.peak} GB")
-                    print(f"Max XPU memory reserved was {memtrace.max_reserved} GB")
-                    print(f"Peak active XPU memory was {memtrace.peak_active_gb} GB")
-                    print(f"Xpu Malloc retires : {memtrace.xpu_malloc_retires}")
-                else:
-                    print(f"Max CUDA memory allocated was {memtrace.peak} GB")
-                    print(f"Max CUDA memory reserved was {memtrace.max_reserved} GB")
-                    print(f"Peak active CUDA memory was {memtrace.peak_active_gb} GB")
-                    print(f"Cuda Malloc retires : {memtrace.cuda_malloc_retires}")
-                print(f"CPU Total Peak Memory consumed during the train (max): {memtrace.cpu_peaked + memtrace.cpu_begin} GB")
-        else:
-            if is_xpu_available():
-                print(f"Max XPU memory allocated was {memtrace.peak} GB")
-                print(f"Max XPU memory reserved was {memtrace.max_reserved} GB")
-                print(f"Peak active XPU memory was {memtrace.peak_active_gb} GB")
-                print(f"Xpu Malloc retires : {memtrace.xpu_malloc_retires}")
-            else:
-                print(f"Max CUDA memory allocated was {memtrace.peak} GB")
-                print(f"Max CUDA memory reserved was {memtrace.max_reserved} GB")
-                print(f"Peak active CUDA memory was {memtrace.peak_active_gb} GB")
-                print(f"Cuda Malloc retires : {memtrace.cuda_malloc_retires}")
-            print(f"CPU Total Peak Memory consumed during the train (max): {memtrace.cpu_peaked + memtrace.cpu_begin} GB")
+        if not train_config.enable_fsdp or rank==0:
+            memtrace.print_stats()
 
         # Update the learning rate as needed
         lr_scheduler.step()
