@@ -50,6 +50,7 @@ To run Llama2 locally on Mac using [llama-cpp-python](https://github.com/abetlen
 ```
 git clone https://github.com/ggerganov/llama.cpp
 cd llama.cpp
+pip3 install setuptools
 python3 -m pip install -r requirements.txt
 python convert.py <path_to_your_downloaded_llama-2-13b_model>
 ./quantize <path_to_your_downloaded_llama-2-13b_model>/ggml-model-f16.gguf <path_to_your_downloaded_llama-2-13b_model>/ggml-model-q4_0.gguf q4_0
