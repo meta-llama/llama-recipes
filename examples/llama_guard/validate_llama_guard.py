@@ -6,6 +6,8 @@ from enum import Enum
 
 from pathlib import Path
 from datetime import datetime
+import numpy as np
+from sklearn.metrics import average_precision_score
 
 class Type(Enum):
     HF = "HF"
@@ -86,7 +88,14 @@ def parse_results(prompts):
         "mismatched_categories_indices": mismatched_categories_indices
     }
 
-def main(jsonl_file_path, agent_type, type: Type, ckpt_dir = None, load_in_8bit = True):
+# def parse_logprobs(result_logprobs):
+def parse_logprobs(prompts):
+    positive_class_probs = [prompt["logprobs"][0][1] for prompt in prompts]
+    binary_labels = [1 if prompt["label"] == "bad" else 0 for prompt in prompts]
+    return average_precision_score(binary_labels, positive_class_probs)
+
+
+def main(jsonl_file_path, agent_type, type: Type, ckpt_dir = None, load_in_8bit = True, logprobs = True):
 
     input_file_path = Path(jsonl_file_path)
 
@@ -101,20 +110,39 @@ def main(jsonl_file_path, agent_type, type: Type, ckpt_dir = None, load_in_8bit 
     # Preparing prompts
     prompts: List[Tuple[List[str], AgentType, str, str, str]] = []
     with open(jsonl_file_path, "r") as f:
+        # temp
+        # index = 0 
         for i, line in enumerate(f):
+            # if index == 10:
+            #     break
+            # index += 1
+
             entry = json.loads(line)
             
             # Call Llama Guard and get its output
             prompt = format_prompt(entry, agent_type)
             prompts.append(prompt)
+            
+            
 
     # Executing evaluation
     if type is Type.HF:
-        llm_eval(prompts, load_in_8bit)
+        results = llm_eval(prompts, load_in_8bit, logprobs)
     else:
         standard_llm_eval(prompts, ckpt_dir)
+        logprobs = False
     
+    # if logprobs:
+    #     for result in results[1]:
+    #         for tuple_result in result:
+    #             # | token | log probability | probability
+    #             print(f"| {tuple_result[0]:5d} | {tuple_result[1]:.9f} | {np.exp(tuple_result[1]):.2%}\n")
+                # pass
+
     parsed_results = parse_results(prompts)
+    if logprobs:
+        average_precision = parse_logprobs(prompts)
+        parsed_results["average_precision"] = average_precision
 
     # Calculate the percentage of matches, print the results and store for file output
     num_matches = parsed_results["num_matches"]
@@ -126,6 +154,7 @@ def main(jsonl_file_path, agent_type, type: Type, ckpt_dir = None, load_in_8bit 
     percentage_matches_categories = ((num_total_unsafe - num_category_mismatches) / (num_total_unsafe)) * 100
     parsed_results["percentage_matches"] = percentage_matches
     parsed_results["percentage_matches_categories"] = percentage_matches_categories
+
 
     print(f"{num_matches} matches out of {num_matches + num_mismatches} ({percentage_matches:.2f}%)")
     print(f"{num_total_unsafe - num_category_mismatches} categorie matches out of {num_total_unsafe} ({percentage_matches_categories:.2f}%)")
@@ -141,6 +170,7 @@ def main(jsonl_file_path, agent_type, type: Type, ckpt_dir = None, load_in_8bit 
     with open(output_file_path, 'w') as file:
         for prompt in prompts:
             # Serialize each dictionary to a JSON formatted string
+            prompt.pop("logprobs", None)
             json_str = json.dumps(prompt, default=lambda o: o.value if isinstance(o, Enum) else o)
             # Write the JSON string to the file followed by a newline
             file.write(json_str + '\n')

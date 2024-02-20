@@ -5,8 +5,10 @@ from llama_recipes.inference.prompt_format_utils import build_prompt, create_con
 from examples.llama_guard.generation import Llama
 from examples.llama_guard.perf_utils import time_decorator
 
-from typing import List, Tuple, Dict
+from typing import List, Optional, Tuple, Dict
 from enum import Enum
+import json
+import numpy as np
 
 class AgentType(Enum):
     AGENT = "Agent"
@@ -54,7 +56,7 @@ def main():
         print("\n==================================\n")
 
 @time_decorator
-def llm_eval(prompts, load_in_8bit=True):
+def llm_eval(prompts, load_in_8bit=True, logprobs = False) -> Tuple[List[str], Optional[List[List[Tuple[int, float]]]]]:
 
     model_id = "meta-llama/LlamaGuard-7b"
     
@@ -62,6 +64,9 @@ def llm_eval(prompts, load_in_8bit=True):
     model = AutoModelForCausalLM.from_pretrained(model_id, load_in_8bit=load_in_8bit, device_map="auto")
 
     results: List[str] = []
+    if logprobs:
+        result_logprobs: List[List[Tuple[int, float]]] = []
+
     for prompt in prompts:
         formatted_prompt = build_prompt(
                 prompt["agent_type"], 
@@ -71,12 +76,29 @@ def llm_eval(prompts, load_in_8bit=True):
 
         input = tokenizer([formatted_prompt], return_tensors="pt").to("cuda")
         prompt_len = input["input_ids"].shape[-1]
-        output = model.generate(**input, max_new_tokens=100, pad_token_id=0)
-        result = tokenizer.decode(output[0][prompt_len:], skip_special_tokens=True)
+        output = model.generate(**input, max_new_tokens=10, pad_token_id=0, return_dict_in_generate=True, output_scores=logprobs)
+        
+        if logprobs:
+            transition_scores = model.compute_transition_scores(
+                output.sequences, output.scores, normalize_logits=True)
+
+        generated_tokens = output.sequences[:, prompt_len:]
+        
+        if logprobs:
+            temp_logprobs: List[Tuple[int, float]] = []
+            for tok, score in zip(generated_tokens[0], transition_scores[0]):
+                temp_logprobs.append((tok.cpu().numpy(), score.cpu().numpy()))
+            
+            result_logprobs.append(temp_logprobs)
+            prompt["logprobs"] = temp_logprobs
+        
+        # result = tokenizer.decode(output[0][prompt_len:], skip_special_tokens=True)
+        result = tokenizer.decode(generated_tokens[0], skip_special_tokens=True)    
+
         prompt["result"] = result
         results.append(result)
 
-    return results
+    return (results, result_logprobs if logprobs else None)  
 
 @time_decorator
 def standard_llm_eval(prompts, ckpt_dir):
