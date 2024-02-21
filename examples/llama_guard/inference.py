@@ -101,7 +101,7 @@ def llm_eval(prompts, load_in_8bit=True, logprobs = False) -> Tuple[List[str], O
     return (results, result_logprobs if logprobs else None)  
 
 @time_decorator
-def standard_llm_eval(prompts, ckpt_dir):
+def standard_llm_eval(prompts: List[Tuple[List[str], AgentType, str, str, str]], ckpt_dir, logprobs: bool = False):
     # defaults
     temperature = 1
     top_p = 1
@@ -124,15 +124,26 @@ def standard_llm_eval(prompts, ckpt_dir):
                 LLAMA_GUARD_CATEGORY, 
                 create_conversation(prompt["prompt"]))
 
-        result = generator.single_prompt_completion(
-            formatted_prompt,
-            max_gen_len=max_gen_len,
-            temperature=temperature,
-            top_p=top_p,
+        # result = generator.single_prompt_completion(
+        #     formatted_prompt,
+        #     max_gen_len=max_gen_len,
+        #     temperature=temperature,
+        #     top_p=top_p,
+        # )
+        result = generator.text_completion(
+            [formatted_prompt],
+            temperature,
+            top_p,
+            max_gen_len,
+            logprobs
         )
-        prompt["result"] = result
+        # getting the first value only, as only a single prompt was sent to the function
+        generation_result = result[0]["generation"]
+        prompt["result"] = generation_result
+        if logprobs:
+            prompt["logprobs"] = result[0]["logprobs"]
 
-        results.append(result)
+        results.append(generation_result)
 
     return results
 

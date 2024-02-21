@@ -90,12 +90,15 @@ def parse_results(prompts):
 
 # def parse_logprobs(result_logprobs):
 def parse_logprobs(prompts):
-    positive_class_probs = [prompt["logprobs"][0][1] for prompt in prompts]
+    if isinstance(prompts[0]["logprobs"][0], float):
+        positive_class_probs = [np.exp(prompt["logprobs"][0]) for prompt in prompts]
+    else:
+        positive_class_probs = [np.exp(prompt["logprobs"][0][1]) for prompt in prompts]
     binary_labels = [1 if prompt["label"] == "bad" else 0 for prompt in prompts]
     return average_precision_score(binary_labels, positive_class_probs)
 
 
-def main(jsonl_file_path, agent_type, type: Type, ckpt_dir = None, load_in_8bit = True, logprobs = True):
+def main(jsonl_file_path, agent_type, type: Type, ckpt_dir = None, load_in_8bit: bool = True, logprobs: bool = True):
 
     input_file_path = Path(jsonl_file_path)
 
@@ -111,11 +114,11 @@ def main(jsonl_file_path, agent_type, type: Type, ckpt_dir = None, load_in_8bit 
     prompts: List[Tuple[List[str], AgentType, str, str, str]] = []
     with open(jsonl_file_path, "r") as f:
         # temp
-        # index = 0 
+        index = 0 
         for i, line in enumerate(f):
-            # if index == 10:
-            #     break
-            # index += 1
+            if index == 10:
+                break
+            index += 1
 
             entry = json.loads(line)
             
@@ -127,10 +130,9 @@ def main(jsonl_file_path, agent_type, type: Type, ckpt_dir = None, load_in_8bit 
 
     # Executing evaluation
     if type is Type.HF:
-        results = llm_eval(prompts, load_in_8bit, logprobs)
+        llm_eval(prompts, load_in_8bit, logprobs)
     else:
-        standard_llm_eval(prompts, ckpt_dir)
-        logprobs = False
+        standard_llm_eval(prompts, ckpt_dir, logprobs)
     
     # if logprobs:
     #     for result in results[1]:
@@ -158,11 +160,12 @@ def main(jsonl_file_path, agent_type, type: Type, ckpt_dir = None, load_in_8bit 
 
     print(f"{num_matches} matches out of {num_matches + num_mismatches} ({percentage_matches:.2f}%)")
     print(f"{num_total_unsafe - num_category_mismatches} categorie matches out of {num_total_unsafe} ({percentage_matches_categories:.2f}%)")
+    print(f"average precision {average_precision:.2%}")
 
     # Output filenames and paths
     current_date = datetime.now().strftime('%Y-%m-%d-%H:%M')
-    output_filename = f"{filename}_output_{current_date}.jsonl"
-    output_stats_filename = f"{filename}_stats_{current_date}.json"
+    output_filename = f"{filename}_{agent_type.value}_{type.value}_{'load_in_8bit' if load_in_8bit else 'noquant'}_output_{current_date}.jsonl"
+    output_stats_filename = f"{filename}_{agent_type.value}_{type.value}_{'load_in_8bit' if load_in_8bit else 'noquant'}_stats_{current_date}.json"
     output_file_path = directory / output_filename
     output_stats_file_path = directory / output_stats_filename
 
