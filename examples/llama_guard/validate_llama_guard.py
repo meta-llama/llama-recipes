@@ -88,13 +88,17 @@ def parse_results(prompts):
         "mismatched_categories_indices": mismatched_categories_indices
     }
 
-# def parse_logprobs(result_logprobs):
 def parse_logprobs(prompts):
-    if isinstance(prompts[0]["logprobs"][0], float):
-        positive_class_probs = [np.exp(prompt["logprobs"][0]) for prompt in prompts]
-    else:
-        positive_class_probs = [np.exp(prompt["logprobs"][0][1]) for prompt in prompts]
+    positive_class_probs = []
+    for prompt in prompts:
+        prob = np.exp(prompt["logprobs"][0]) if isinstance(prompt["logprobs"][0], float) else np.exp(prompt["logprobs"][0][1])
+        if "unsafe" in prompt["result"]:
+            positive_class_probs.append(prob)
+        else:
+            positive_class_probs.append(1 - prob)
+        
     binary_labels = [1 if prompt["label"] == "bad" else 0 for prompt in prompts]
+
     return average_precision_score(binary_labels, positive_class_probs)
 
 
@@ -116,9 +120,9 @@ def main(jsonl_file_path, agent_type, type: Type, ckpt_dir = None, load_in_8bit:
         # temp
         index = 0 
         for i, line in enumerate(f):
-            if index == 10:
-                break
-            index += 1
+            # if index == 100:
+            #     break
+            # index += 1
 
             entry = json.loads(line)
             
@@ -139,7 +143,7 @@ def main(jsonl_file_path, agent_type, type: Type, ckpt_dir = None, load_in_8bit:
     #         for tuple_result in result:
     #             # | token | log probability | probability
     #             print(f"| {tuple_result[0]:5d} | {tuple_result[1]:.9f} | {np.exp(tuple_result[1]):.2%}\n")
-                # pass
+                
 
     parsed_results = parse_results(prompts)
     if logprobs:
