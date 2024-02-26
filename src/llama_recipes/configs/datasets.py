@@ -32,3 +32,10 @@ class custom_dataset:
     file: str = "examples/custom_dataset.py"
     train_split: str = "train"
     test_split: str = "validation"
+
+@dataclass
+class codellama_dataset_json:
+    dataset: str =  "codellama_dataset_json"
+    train_split: str = "train"
+    test_split: str = "test"
+    input_length: int = 512

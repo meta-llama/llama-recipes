@@ -23,6 +23,9 @@ from transformers import (
 )
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
 
+import os
+cwd = os.getcwd()
+print(cwd)
 from llama_recipes.configs import fsdp_config as FSDP_CONFIG
 from llama_recipes.configs import train_config as TRAIN_CONFIG
 from llama_recipes.data.concatenator import ConcatDataset
@@ -95,7 +98,7 @@ def main(**kwargs):
                 load_in_8bit=True if train_config.quantization else None,
                 device_map="auto" if train_config.quantization else None,
                 use_cache=use_cache,
-                attn_implementation="sdpa" if train_config.use_fast_kernels else None,
+                # attn_implementation="sdpa" if train_config.use_fast_kernels else None,
             )
         else:
             llama_config = LlamaConfig.from_pretrained(train_config.model_name)
@@ -109,7 +112,7 @@ def main(**kwargs):
             load_in_8bit=True if train_config.quantization else None,
             device_map="auto" if train_config.quantization else None,
             use_cache=use_cache,
-            attn_implementation="sdpa" if train_config.use_fast_kernels else None,
+            # attn_implementation="sdpa" if train_config.use_fast_kernels else None,
         )
 
     # Load the tokenizer and add special tokens
