@@ -95,6 +95,7 @@ def parse_logprobs(prompts):
         if "unsafe" in prompt["result"]:
             positive_class_probs.append(prob)
         else:
+            # Using heuristic 1 - `safe` probability to avoid getting the probability from the model for a non selected token.
             positive_class_probs.append(1 - prob)
         
     binary_labels = [1 if prompt["label"] == "bad" else 0 for prompt in prompts]
