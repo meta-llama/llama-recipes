@@ -55,7 +55,7 @@ python convert.py <path_to_your_downloaded_llama-2-13b_model>
 ./quantize <path_to_your_downloaded_llama-2-13b_model>/ggml-model-f16.gguf <path_to_your_downloaded_llama-2-13b_model>/ggml-model-q4_0.gguf q4_0
 ```
 
-### Running Llama2 Hosted in the Cloud
+### Running Llama2 Hosted in the Cloud (using [Replicate](HelloLlamaCloud.ipynb) or [OctoAI](OctoAI_API_examples/HelloLlamaCloud.ipynb))
 
 The HelloLlama cloud version uses LangChain with Llama2 hosted in the cloud on [Replicate](HelloLlamaCloud.ipynb) and [OctoAI](OctoAI_API_examples/HelloLlamaCloud.ipynb). The demo shows how to ask Llama general questions and follow up questions, and how to use LangChain to ask Llama2 questions about **unstructured** data stored in a PDF.
 
@@ -114,8 +114,8 @@ Then enter your question, click Submit. You'll see in the notebook or a browser 
 
 ![](llama2-gradio.png)
 
-### RAG Chatbot Example (running [locally](RAG_Chatbot_example/RAG_Chatbot_Example.ipynb) or [OctoAI](OctoAI_API_examples/RAG_Chatbot_example/RAG_Chatbot_Example.ipynb))
-A complete example of how to build a Llama 2 chatbot hosted on your browser that can answer questions based on your own data using retrieval augmented generation (RAG).
+### RAG Chatbot Example (running [locally](RAG_Chatbot_example/RAG_Chatbot_Example.ipynb) or on [OctoAI](OctoAI_API_examples/RAG_Chatbot_example/RAG_Chatbot_Example.ipynb))
+A complete example of how to build a Llama 2 chatbot hosted on your browser that can answer questions based on your own data using retrieval augmented generation (RAG). You can run Llama2 locally if you have a good enough GPU or on OctoAI if you follow the note [above](#octoai_note).
 
 ### [Azure API Llama 2 Example](Azure_API_example/azure_api_example.ipynb)
 A notebook shows examples of how to use Llama 2 APIs offered by Microsoft Azure Model-as-a-Service in CLI, Python, LangChain and a Gradio chatbot example with memory.
