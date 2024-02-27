@@ -2,7 +2,7 @@
 
 ### Step 1 : Prepare related documents
 
-Download all your desired docs in PDF, Text or Markdown format to "data" folder
+Download all your desired docs in PDF, Text or Markdown format to "data" folder.
 
 In this case we have an example of [Llama 2 Getting started guide](https://llama.meta.com/get-started/) and other llama related documents such Llama2, Purple Llama, Code Llama papers along with Llama FAQ. Ideally, we should have searched all Llama documents across the web and follow the procedure below on them but that would be very costly for the purpose of a tutorial, so we will stick to our limited documents here.
 
