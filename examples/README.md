@@ -13,7 +13,7 @@ python examples/finetuning.py <parameters>
 ```
 Please see [README.md](../README.md) for details.
 
-## Inference 
+## Inference
 So far, we have provide the following inference examples:
 
 1. [inference script](./inference.py) script provides support for Hugging Face accelerate, PEFT and FSDP fine tuned models. It also demonstrates safety features to protect the user from toxic or harmful content.
@@ -26,7 +26,7 @@ So far, we have provide the following inference examples:
 
 5. [Code Llama](./code_llama/) folder which provides examples for [code completion](./code_llama/code_completion_example.py), [code infilling](./code_llama/code_infilling_example.py) and [Llama2 70B code instruct](./code_llama/code_instruct_example.py).
 
-6. The [Purple Llama Using Anyscale](./Purple_Llama_Anyscale.ipynb) is a notebook that shows how to use Anyscale hosted Llama Guard model to classify user inputs as safe or unsafe.
+6. The [Purple Llama Using Anyscale](./Purple_Llama_Anyscale.ipynb) and the [Purple Llama Using OctoAI](./Purple_Llama_OctoAI.ipynb) are notebooks that shows how to use Llama Guard model on Anyscale and OctoAI to classify user inputs as safe or unsafe.
 
 7. [Llama Guard](./llama_guard/) inference example and [safety_checker](../src/llama_recipes/inference/safety_utils.py) for the main [inference](./inference.py) script. The standalone scripts allows to test Llama Guard on user input, or user input and agent response pairs. The safety_checker integration providers a way to integrate Llama Guard on all inference executions, both for the user input and model output.
 
