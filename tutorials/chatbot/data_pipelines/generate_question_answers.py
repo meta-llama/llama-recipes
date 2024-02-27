@@ -2,7 +2,7 @@ import argparse
 import asyncio
 import json
 from config import load_config
-from model_handler import generate_questions
+from generator_utils import generate_question_batches
 from itertools import chain
 import logging
 import aiofiles  # Ensure aiofiles is installed for async file operations
@@ -13,18 +13,15 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 async def main(context):
     try:
         logging.info("Starting to generate question/answer pairs.")
-        data = await generate_questions(context)
+        data = await generate_question_batches(context)
         if not data:
             logging.warning("No data generated. Please check the input context or model configuration.")
             return
-
         flattened_list = list(chain.from_iterable(data))
         logging.info(f"Successfully generated {len(flattened_list)} question/answer pairs.")
-
         # Use asynchronous file operation for writing to the file
         async with aiofiles.open("data.json", "w") as output_file:
             await output_file.write(json.dumps(flattened_list, indent=4))
-        
         logging.info("Data successfully written to 'data.json'. Process completed.")
 
     except Exception as e:
@@ -36,9 +33,9 @@ def parse_arguments(context):
         description="Generate question/answer pairs from documentation."
     )
     parser.add_argument(
-        "-n", "--num_data",
+        "-t", "--total_questions",
         type=int,
-        default=context["num_data_default"],
+        default=context["total_questions"],
         help="Specify the number of question/answer pairs to generate."
     )
     parser.add_argument(
@@ -54,8 +51,8 @@ if __name__ == "__main__":
     context = load_config()
     args = parse_arguments(context)
 
-    context["num_data"] = args.num_data
+    context["total_questions"] = args.total_questions
     context["model"] = args.model
 
-    logging.info(f"Configuration loaded. Generating {args.num_data} question/answer pairs using model '{args.model}'.")
+    logging.info(f"Configuration loaded. Generating {args.total_questions} question/answer pairs using model '{args.model}'.")
     asyncio.run(main(context))
