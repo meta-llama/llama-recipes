@@ -11,7 +11,7 @@ class train_config:
     low_cpu_fsdp: bool=False
     run_validation: bool=True
     batch_size_training: int=4
-    batching_strategy: str="packing" #alternative: padding
+    batching_strategy: str="padding" #alternative: padding
     context_length: int=4096
     gradient_accumulation_steps: int=1
     gradient_clipping: bool = False
@@ -27,11 +27,11 @@ class train_config:
     val_batch_size: int=1
     dataset = "codellama_dataset_json"
     peft_method: str = "lora" # None , llama_adapter, prefix
-    use_peft: bool=False
+    use_peft: bool=True
     output_dir: str = "models/codellama-8bit-json-24-02-26-mkt-research"
     freeze_layers: bool = False
     num_freeze_layers: int = 1
-    quantization: bool = False
+    quantization: bool = True
     one_gpu: bool = False
     save_model: bool = True
     dist_checkpoint_root_folder: str="models/fsdp" # will be used if using FSDP

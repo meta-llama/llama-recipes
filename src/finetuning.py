@@ -39,6 +39,8 @@ from llama_recipes.utils.config_utils import (
     get_dataloader_kwargs,
 )
 from llama_recipes.utils.dataset_utils import get_preprocessed_dataset
+from accelerate import Accelerator
+
 
 from llama_recipes.utils.fsdp_utils import hsdp_device_mesh
 from llama_recipes.utils.train_utils import (
@@ -69,7 +71,8 @@ def main(**kwargs):
         local_rank = int(os.environ["LOCAL_RANK"])
         rank = int(os.environ["RANK"])
         world_size = int(os.environ["WORLD_SIZE"])
-
+        
+    rank = int(os.environ["RANK"])
     if torch.distributed.is_initialized():
         if is_xpu_available():
             torch.xpu.set_device(local_rank)
@@ -96,7 +99,7 @@ def main(**kwargs):
             model = LlamaForCausalLM.from_pretrained(
                 train_config.model_name,
                 load_in_8bit=True if train_config.quantization else None,
-                device_map="auto" if train_config.quantization else None,
+                device_map=rank if train_config.quantization else None,
                 use_cache=use_cache,
                 # attn_implementation="sdpa" if train_config.use_fast_kernels else None,
             )
@@ -110,7 +113,7 @@ def main(**kwargs):
         model = LlamaForCausalLM.from_pretrained(
             train_config.model_name,
             load_in_8bit=True if train_config.quantization else None,
-            device_map="auto" if train_config.quantization else None,
+            device_map=rank if train_config.quantization else None,
             use_cache=use_cache,
             # attn_implementation="sdpa" if train_config.use_fast_kernels else None,
         )
@@ -190,7 +193,7 @@ def main(**kwargs):
     dataset_val = get_preprocessed_dataset(
         tokenizer,
         dataset_config,
-        split="test",
+        split="validation",
     )
     if not train_config.enable_fsdp or rank == 0:
             print(f"--> Validation Set Length = {len(dataset_val)}")
@@ -200,6 +203,7 @@ def main(**kwargs):
 
     train_dl_kwargs = get_dataloader_kwargs(train_config, dataset_train, tokenizer, "train")
 
+    accelerator = Accelerator()
     # Create DataLoaders for the training and validation dataset
     train_dataloader = torch.utils.data.DataLoader(
         dataset_train,
@@ -240,6 +244,9 @@ def main(**kwargs):
         )
     scheduler = StepLR(optimizer, step_size=1, gamma=train_config.gamma)
 
+    train_dataloader, _, model, optimizer = accelerator.prepare(
+        train_dataloader, eval_dataloader, model, optimizer
+    )
     # Start the training process
     results = train(
         model,
@@ -253,6 +260,7 @@ def main(**kwargs):
         fsdp_config if train_config.enable_fsdp else None,
         local_rank if train_config.enable_fsdp else None,
         rank if train_config.enable_fsdp else None,
+        accelerator=accelerator,
     )
     if not train_config.enable_fsdp or rank==0:
         [print(f'Key: {k}, Value: {v}') for k, v in results.items()]
