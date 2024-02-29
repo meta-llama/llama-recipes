@@ -16,7 +16,7 @@ The idea here is to use OpenAI "gpt-3.5-turbo-16k" to create question and answer
 
 ```bash
 export OPENAI_API_KEY="OPENAI_API_KEY"
-python scrape_resources.py --url=https://llama.meta.com/get-started/
+python generate_question_answers.py --url=https://llama.meta.com/get-started/
 ```
 
 **NOTE** You need to be aware of your  RPM (requests per minute), TPM (tokens per minute) and TPD (tokens per day), limit on your OpenAI account. In our case we had to process each document at a time. Then merge all the Q&A `json` files to make our dataset. We aimed for a specific number of Q&A pairs per document anywhere between 50-100. This is experimental and totally depends on your documents, wealth of information in them and how you prefer to handle question, short or longer answers etc.
@@ -29,5 +29,5 @@ Here, as we want to fine-tune a chatbot model so its preferred to start with Lla
 ### Step 3: Run the training
 
 ```bash
-torchrun --nnodes 1 --nproc_per_node 1  examples/finetuning.py  --use_peft --peft_method lora --quantization --model_name meta-llama/Llama-2-7b-chat-hf --output_dir ./peft-7b-quantized  --num_epochs 1 --batch_size 1 --dataset "custom_dataset" --custom_dataset.file "examples/llama_dataset.py"  --run_validation False  --custom_dataset.data_path '/data/home/hamidnazeri/llama-package/llama-recipes/tutorials/chatbot/data_pipelines/dataset.json'
+torchrun --nnodes 1 --nproc_per_node 1  examples/finetuning.py  --use_peft --peft_method lora --quantization --model_name meta-llama/Llama-2-7b-chat-hf --output_dir ./peft-7b-quantized  --num_epochs 1 --batch_size 1 --dataset "custom_dataset" --custom_dataset.file "examples/llama_dataset.py"  --run_validation False  --custom_dataset.data_path './dataset.json'
 ```
