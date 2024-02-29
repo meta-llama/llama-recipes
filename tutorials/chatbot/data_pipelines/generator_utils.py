@@ -8,15 +8,14 @@ import magic
 from PyPDF2 import PdfReader
 from functools import partial
 import json
-from token_processor import split_text_into_tokenized_chunks
-# from file_handler import read_file_content
+from doc_processor import split_text_into_chunks
 import logging
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Manage rate limits with throttling
-rate_limit_threshold = 100
+rate_limit_threshold = 2000
 allowed_concurrent_requests = int(rate_limit_threshold * 0.75)
 request_limiter = asyncio.Semaphore(allowed_concurrent_requests)
 
@@ -87,25 +86,26 @@ async def prepare_and_send_request(api_context: dict, document_content: str, tot
     return json.loads(await execute_chat_request_async(api_context, chat_request_payload))
 
 async def generate_question_batches(api_context: dict):
-    
     document_text = read_file_content(api_context)
-    print("completed step 1")
-    document_batches = split_text_into_tokenized_chunks(api_context, document_text)
-    print("completed step 2")
+    document_batches = split_text_into_chunks(api_context, document_text)
+    
+    total_questions = api_context["total_questions"]
+    batches_count = len(document_batches)
+    base_questions_per_batch = total_questions // batches_count
+    extra_questions = total_questions % batches_count
 
-    questions_per_batch = api_context["total_questions"] // len(document_batches)
-    print("completed step 3")
-
+    print(f"Questions per batch: {base_questions_per_batch} (+1 for the first {extra_questions} batches), Total questions: {total_questions}, Batches: {batches_count}")
+    
     generation_tasks = []
     for batch_index, batch_content in enumerate(document_batches):
-        questions_in_current_batch = questions_per_batch + 1 if batch_index == len(document_batches) - 1 and len(document_batches) * questions_per_batch < api_context["total_questions"] else questions_per_batch
+        # Distribute extra questions across the first few batches
+        questions_in_current_batch = base_questions_per_batch + (1 if batch_index < extra_questions else 0)
+        print(f"Batch {batch_index + 1} - {questions_in_current_batch} questions ********")
         generation_tasks.append(prepare_and_send_request(api_context, batch_content, questions_in_current_batch))
-    print("completed step 4")
-
 
     question_generation_results = await asyncio.gather(*generation_tasks)
-    print("completed step 5")
 
     return question_generation_results
+
 
 
