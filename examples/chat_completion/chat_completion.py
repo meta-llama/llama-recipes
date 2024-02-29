@@ -13,7 +13,7 @@ from transformers import LlamaTokenizer
 from llama_recipes.inference.chat_utils import read_dialogs_from_file, format_tokens
 from llama_recipes.inference.model_utils import load_model, load_peft_model
 from llama_recipes.inference.safety_utils import get_safety_checker
-
+from accelerate.utils import is_xpu_available
 
 def main(
     model_name,
@@ -35,6 +35,7 @@ def main(
     enable_sensitive_topics: bool=False, # Enable check for sensitive topics using AuditNLG APIs
     enable_saleforce_content_safety: bool=True, # Enable safety check woth Saleforce safety flan t5
     use_fast_kernels: bool = False, # Enable using SDPA from PyTorch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
+    enable_llamaguard_content_safety: bool = False,
     **kwargs
 ):
     if prompt_file is not None:
@@ -55,9 +56,12 @@ def main(
 
 
     # Set the seeds for reproducibility
-    torch.cuda.manual_seed(seed)
+    if is_xpu_available():
+        torch.xpu.manual_seed(seed)
+    else:
+        torch.cuda.manual_seed(seed)
     torch.manual_seed(seed)
-    model = load_model(model_name, quantization)
+    model = load_model(model_name, quantization, use_fast_kernels)
     if peft_model:
         model = load_peft_model(model, peft_model)
     if use_fast_kernels:
@@ -87,6 +91,7 @@ def main(
             safety_checker = get_safety_checker(enable_azure_content_safety,
                                         enable_sensitive_topics,
                                         enable_saleforce_content_safety,
+                                        enable_llamaguard_content_safety,
                                         )
             # Safety check of the user prompt
             safety_results = [check(dialogs[idx][0]["content"]) for check in safety_checker]
@@ -105,7 +110,10 @@ def main(
                 sys.exit(1)  # Exit the program with an error status
             tokens= torch.tensor(chat).long()
             tokens= tokens.unsqueeze(0)
-            tokens= tokens.to("cuda:0")
+            if is_xpu_available():
+                tokens= tokens.to("xpu:0")
+            else:
+                tokens= tokens.to("cuda:0")
             outputs = model.generate(
                 input_ids=tokens,
                 max_new_tokens=max_new_tokens,

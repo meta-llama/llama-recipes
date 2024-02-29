@@ -1,6 +1,12 @@
-# Llama 2 Fine-tuning / Inference Recipes, Examples and Demo Apps
+# Llama 2 Fine-tuning / Inference Recipes, Examples, Benchmarks and Demo Apps
 
-**[Update Nov. 14, 2023] We recently released a series of Llama 2 demo apps [here](./demo_apps). These apps show how to run Llama 2 locally, in the cloud, on-prem or with WhatsApp, and how to ask Llama 2 questions in general and about custom data (PDF, DB, or live).**
+**[Update Feb. 26, 2024] We added examples to showcase OctoAI's cloud APIs for Llama2, CodeLlama, and LlamaGuard: including [PurpleLlama overview](./examples/Purple_Llama_OctoAI.ipynb), [hello Llama2 cloud](./demo_apps/OctoAI_API_examples/HelloLlamaCloud.ipynb), [getting to know Llama2](./demo_apps/OctoAI_API_examples/Getting_to_know_Llama.ipynb), [live search example](./demo_apps/OctoAI_API_examples/LiveData.ipynb), [Llama2 Gradio demo](./demo_apps/OctoAI_API_examples/Llama2_Gradio.ipynb), [Youtube video summarization](./demo_apps/OctoAI_API_examples/VideoSummary.ipynb), and [retrieval augmented generation overview](./demo_apps/OctoAI_API_examples/RAG_Chatbot_example/RAG_Chatbot_Example.ipynb)**.
+
+**[Update Feb. 5, 2024] We added support for Code Llama 70B instruct in our example [inference script](./examples/code_llama/code_instruct_example.py). For details on formatting the prompt for Code Llama 70B instruct model please refer to [this document](./docs/inference.md)**.
+
+**[Update Dec. 28, 2023] We added support for Llama Guard as a safety checker for our example inference script and also with standalone inference with an example script and prompt formatting. More details [here](./examples/llama_guard/README.md). For details on formatting data for fine tuning Llama Guard, we provide a script and sample usage [here](./src/llama_recipes/data/llama_guard/README.md).**
+
+**[Update Dec 14, 2023] We recently released a series of Llama 2 demo apps [here](./demo_apps). These apps show how to run Llama (locally, in the cloud, or on-prem),  how to use Azure Llama 2 API (Model-as-a-Service), how to ask Llama questions in general or about custom data (PDF, DB, or live), how to integrate Llama with WhatsApp and Messenger, and how to implement an end-to-end chatbot with RAG (Retrieval Augmented Generation).**
 
 The 'llama-recipes' repository is a companion to the [Llama 2 model](https://github.com/facebookresearch/llama). The goal of this repository is to provide examples to quickly get started with fine-tuning for domain adaptation and how to run inference for the fine-tuned models. For ease of use, the examples use Hugging Face converted versions of the models. See steps for conversion of the model [here](#model-conversion-to-hugging-face).
 
@@ -32,17 +38,7 @@ Llama-recipes provides a pip distribution for easy install and usage in other pr
 ```
 pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes
 ```
-## Install from source
-To install from source e.g. for development use this command. We're using hatchling as our build backend which requires an up-to-date pip as well as setuptools package.
-```
-pip install -U pip setuptools
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .
-```
-For development and contributing to llama-recipes please install all optional dependencies:
-```
-pip install -U pip setuptools
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .[tests,auditnlg,vllm]
-```
+
 ## Install with optional dependencies
 Llama-recipes offers the installation of optional packages. There are three optional dependency groups.
 To run the unit tests we can install the required dependencies with:
@@ -59,11 +55,25 @@ pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-
 ```
 Optional dependencies can also be combines with [option1,option2].
 
+## Install from source
+To install from source e.g. for development use these commands. We're using hatchling as our build backend which requires an up-to-date pip as well as setuptools package.
+```
+git clone git@github.com:facebookresearch/llama-recipes.git
+cd llama-recipes
+pip install -U pip setuptools
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .
+```
+For development and contributing to llama-recipes please install all optional dependencies:
+```
+git clone git@github.com:facebookresearch/llama-recipes.git
+cd llama-recipes
+pip install -U pip setuptools
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .[tests,auditnlg,vllm]
+```
+
 ⚠️ **Note** ⚠️  Some features (especially fine-tuning with FSDP + PEFT) currently require PyTorch nightlies to be installed. Please make sure to install the nightlies if you're using these features following [this guide](https://pytorch.org/get-started/locally/).
 
 **Note** All the setting defined in [config files](src/llama_recipes/configs/) can be passed as args through CLI when running the script, there is no need to change from config files directly.
-
-**Note** In case need to run PEFT model with FSDP, please make sure to use the PyTorch Nightlies.
 
 **For more in depth information checkout the following:**
 
@@ -72,11 +82,12 @@ Optional dependencies can also be combines with [option1,option2].
 * [LLM Fine-tuning](./docs/LLM_finetuning.md)
 * [Adding custom datasets](./docs/Dataset.md)
 * [Inference](./docs/inference.md)
+* [Evaluation Harness](./eval/README.md)
 * [FAQs](./docs/FAQ.md)
 
 # Where to find the models?
 
-You can find llama v2 models on HuggingFace hub [here](https://huggingface.co/meta-llama), where models with `hf` in the name are already converted to HuggingFace checkpoints so no further conversion is needed. The conversion step below is only for original model weights from Meta that are hosted on HuggingFace model hub as well.
+You can find Llama 2 models on Hugging Face hub [here](https://huggingface.co/meta-llama), where models with `hf` in the name are already converted to Hugging Face checkpoints so no further conversion is needed. The conversion step below is only for original model weights from Meta that are hosted on Hugging Face model hub as well.
 
 # Model conversion to Hugging Face
 The recipes and notebooks in this folder are using the Llama 2 model definition provided by Hugging Face's transformers library.
@@ -84,7 +95,7 @@ The recipes and notebooks in this folder are using the Llama 2 model definition 
 Given that the original checkpoint resides under models/7B you can install all requirements and convert the checkpoint with:
 
 ```bash
-## Install HuggingFace Transformers from source
+## Install Hugging Face Transformers from source
 pip freeze | grep transformers ## verify it is version 4.31.0 or higher
 
 git clone git@github.com:huggingface/transformers.git
@@ -110,13 +121,15 @@ All the parameters in the examples and recipes below need to be further tuned to
 
 * Make sure to set the right path to the model in the [training config](src/llama_recipes/configs/training.py).
 
+* To save the loss and perplexity metrics for evaluation, enable this by passing `--save_metrics` to the finetuning script. The file can be plotted using the [plot_metrics.py](./examples/plot_metrics.py) script, `python examples/plot_metrics.py --file_path path/to/metrics.json`
+
 ### Single GPU:
 
 ```bash
 #if running on multi-gpu machine
 export CUDA_VISIBLE_DEVICES=0
 
-python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization --model_name /path_of_model_folder/7B --output_dir path/to/save/PEFT/model
 
 ```
 
@@ -133,7 +146,7 @@ Here we make use of Parameter Efficient Methods (PEFT) as described in the next 
 
 ```bash
 
-torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp --use_peft --peft_method lora --model_name /patht_of_model_folder/7B --fsdp_config.pure_bf16 --output_dir Path/to/save/PEFT/model
+torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp --use_peft --peft_method lora --model_name /path_of_model_folder/7B --fsdp_config.pure_bf16 --output_dir path/to/save/PEFT/model
 
 ```
 
@@ -141,10 +154,10 @@ Here we use FSDP as discussed in the next section which can be used along with P
 
 ## Flash Attention and Xformer Memory Efficient Kernels
 
-Setting `use_fast_kernels` will enable using of Flash Attention or Xformer memory-efficient kernels based on the hardware being used. This would speed up the fine-tuning job. This has been enabled in `optimum` library from HuggingFace as a one-liner API, please read more [here](https://pytorch.org/blog/out-of-the-box-acceleration/).
+Setting `use_fast_kernels` will enable using of Flash Attention or Xformer memory-efficient kernels based on the hardware being used. This would speed up the fine-tuning job. This has been enabled in `optimum` library from Hugging Face as a one-liner API, please read more [here](https://pytorch.org/blog/out-of-the-box-acceleration/).
 
 ```bash
-torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp --use_peft --peft_method lora --model_name /patht_of_model_folder/7B --fsdp_config.pure_bf16 --output_dir Path/to/save/PEFT/model --use_fast_kernels
+torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp --use_peft --peft_method lora --model_name /path_of_model_folder/7B --fsdp_config.pure_bf16 --output_dir path/to/save/PEFT/model --use_fast_kernels
 ```
 
 ### Fine-tuning using FSDP Only
@@ -153,7 +166,7 @@ If you are interested in running full parameter fine-tuning without making use o
 
 ```bash
 
-torchrun --nnodes 1 --nproc_per_node 8  examples/finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --use_fast_kernels
+torchrun --nnodes 1 --nproc_per_node 8  examples/finetuning.py --enable_fsdp --model_name /path_of_model_folder/7B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --use_fast_kernels
 
 ```
 
@@ -164,6 +177,19 @@ If you are interested in running full parameter fine-tuning on the 70B model, yo
 ```bash
 
 torchrun --nnodes 1 --nproc_per_node 8 examples/finetuning.py --enable_fsdp --low_cpu_fsdp --fsdp_config.pure_bf16 --model_name /patht_of_model_folder/70B --batch_size_training 1 --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned
+
+```
+
+In case you are dealing with slower interconnect network between nodes, to reduce the communication overhead you can make use of `--hsdp` flag. 
+
+HSDP (Hybrid sharding Data Parallel) helps to define a hybrid sharding strategy where you can have FSDP within `sharding_group_size` which can be the minimum number of GPUs you can fit your model and DDP between the replicas of the model specified by `replica_group_size`.
+
+This will require to set the Sharding strategy in [fsdp config](./src/llama_recipes/configs/fsdp.py) to `ShardingStrategy.HYBRID_SHARD` and specify two additional settings, `sharding_group_size` and `replica_group_size` where former specifies the sharding group size, number of GPUs that you model can fit into to form a replica of a model and latter specifies the replica group size, which is world_size/sharding_group_size.
+
+
+```bash
+
+torchrun --nnodes 4 --nproc_per_node 8 examples/finetuning.py --enable_fsdp --low_cpu_fsdp --fsdp_config.pure_bf16 --model_name /patht_of_model_folder/70B --batch_size_training 1 --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --hsdp --sharding_group_size n --replica_group_size world_size/n
 
 ```
 
@@ -189,6 +215,9 @@ You'll be able to access a dedicated project or run link on [wandb.ai](https://w
     <img src="./docs/images/wandb_screenshot.png" alt="wandb screenshot" width="500" />
 </div>
  
+# Evaluation Harness
+
+Here, we make use `lm-evaluation-harness` from `EleutherAI` for evaluation of fine-tuned Llama 2 models. This also can extend to evaluate other optimizations for inference of Llama 2 model such as quantization. Please use this get started [doc](./eval/README.md).
 
 # Demo Apps
 This folder contains a series of Llama2-powered apps:
@@ -197,6 +226,8 @@ This folder contains a series of Llama2-powered apps:
 2. Llama on Google Colab
 3. Llama on Cloud and ask Llama questions about unstructured data in a PDF
 4. Llama on-prem with vLLM and TGI
+5. Llama chatbot with RAG (Retrieval Augmented Generation)
+6. Azure Llama 2 API (Model-as-a-Service)
 
 * Specialized Llama use cases:
 1. Ask Llama to summarize a video content
@@ -204,8 +235,16 @@ This folder contains a series of Llama2-powered apps:
 3. Ask Llama questions about live data on the web
 4. Build a Llama-enabled WhatsApp chatbot
 
+# Benchmarks
+This folder contains a series of benchmark scripts for Llama 2 models inference on various backends:
+1. On-prem - Popular serving frameworks and containers (i.e. vLLM)
+2. (WIP) Cloud API - Popular API services (i.e. Azure Model-as-a-Service)
+3. (WIP) On-device - Popular on-device inference solutions on Android and iOS (i.e. mlc-llm, QNN)
+4. (WIP) Optimization - Popular optimization solutions for faster inference and quantization (i.e. AutoAWQ)
+
 # Repository Organization
 This repository is organized in the following way:
+[benchmarks](./benchmarks): Contains a series of benchmark scripts for Llama 2 models inference on various backends.
 
 [configs](src/llama_recipes/configs/): Contains the configuration files for PEFT methods, FSDP, Datasets, Weights & Biases experiment tracking.
 
@@ -213,7 +252,7 @@ This repository is organized in the following way:
 
 [datasets](src/llama_recipes/datasets/): Contains individual scripts for each dataset to download and process. Note: Use of any of the datasets should be in compliance with the dataset's underlying licenses (including but not limited to non-commercial uses)
 
-[demo_apps](./demo_apps) contains a series of Llama2-powered apps, from quickstart deployments to how to ask Llama questions about unstructured data, structured data, live data, and video summary.
+[demo_apps](./demo_apps): Contains a series of Llama2-powered apps, from quickstart deployments to how to ask Llama questions about unstructured data, structured data, live data, and video summary.
 
 [examples](./examples/): Contains examples script for finetuning and inference of the Llama 2 model as well as how to use them safely.
 

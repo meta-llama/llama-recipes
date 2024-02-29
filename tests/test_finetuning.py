@@ -5,7 +5,7 @@ import pytest
 from pytest import approx
 from unittest.mock import patch
 
-from torch.nn import Linear
+import torch
 from torch.optim import AdamW
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.sampler import BatchSampler
@@ -44,7 +44,11 @@ def test_finetuning_no_validation(step_lr, optimizer, get_dataset, tokenizer, ge
     assert isinstance(train_dataloader, DataLoader)
     assert eval_dataloader is None
 
-    assert get_model.return_value.to.call_args.args[0] == "cuda"
+    if torch.cuda.is_available():
+        assert get_model.return_value.to.call_count == 1
+        assert get_model.return_value.to.call_args.args[0] == "cuda"
+    else:
+        assert get_model.return_value.to.call_count == 0
 
 
 @patch('llama_recipes.finetuning.train')
@@ -68,7 +72,11 @@ def test_finetuning_with_validation(step_lr, optimizer, get_dataset, tokenizer, 
     assert isinstance(train_dataloader, DataLoader)
     assert isinstance(eval_dataloader, DataLoader)
 
-    assert get_model.return_value.to.call_args.args[0] == "cuda"
+    if torch.cuda.is_available():
+        assert get_model.return_value.to.call_count == 1
+        assert get_model.return_value.to.call_args.args[0] == "cuda"
+    else:
+        assert get_model.return_value.to.call_count == 0
 
 
 @patch('llama_recipes.finetuning.train')
@@ -86,7 +94,12 @@ def test_finetuning_peft(step_lr, optimizer, get_peft_model, gen_peft_config, ge
 
     main(**kwargs)
 
-    assert get_peft_model.return_value.to.call_args.args[0] == "cuda"
+    if torch.cuda.is_available():
+        assert get_model.return_value.to.call_count == 1
+        assert get_model.return_value.to.call_args.args[0] == "cuda"
+    else:
+        assert get_model.return_value.to.call_count == 0
+    
     assert get_peft_model.return_value.print_trainable_parameters.call_count == 1
 
 
@@ -100,8 +113,11 @@ def test_finetuning_weight_decay(step_lr, get_peft_model, get_dataset, tokenizer
     kwargs = {"weight_decay": 0.01}
 
     get_dataset.return_value = get_fake_dataset()
+    
+    model = mocker.MagicMock(name="Model")
+    model.parameters.return_value = [torch.ones(1,1)]
 
-    get_model.return_value = Linear(1,1)
+    get_model.return_value = model 
 
     main(**kwargs)
 

@@ -1,0 +1,6 @@
+include: {$EVAL_PATH}/lm_eval/tasks/winogrande/default.yaml
+task: winogrande_5_shot
+task_alias: winogrande 5 shot
+num_fewshot: 5
+metric_list:
+  - metric: acc

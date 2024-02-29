@@ -33,6 +33,7 @@ def main(
     enable_azure_content_safety: bool=False, # Enable safety check with Azure content safety api
     enable_sensitive_topics: bool=False, # Enable check for sensitive topics using AuditNLG APIs
     enable_salesforce_content_safety: bool=True, # Enable safety check with Salesforce safety flan t5
+    enable_llamaguard_content_safety: bool=False, # Enable safety check with Llama-Guard
     use_fast_kernels: bool = True, # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
     **kwargs
 ):
@@ -50,28 +51,17 @@ def main(
     torch.cuda.manual_seed(seed)
     torch.manual_seed(seed)
     
-    model = load_model(model_name, quantization)
+    model = load_model(model_name, quantization, use_fast_kernels)
     if peft_model:
         model = load_peft_model(model, peft_model)
 
     model.eval()
     
-    if use_fast_kernels:
-        """
-        Setting 'use_fast_kernels' will enable
-        using of Flash Attention or Xformer memory-efficient kernels 
-        based on the hardware being used. This would speed up inference when used for batched inputs.
-        """
-        try:
-            from optimum.bettertransformer import BetterTransformer
-            model = BetterTransformer.transform(model)    
-        except ImportError:
-            print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
-
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     safety_checker = get_safety_checker(enable_azure_content_safety,
                                         enable_sensitive_topics,
                                         enable_salesforce_content_safety,
+                                        enable_llamaguard_content_safety,
                                         )
 
     # Safety check of the user prompt
