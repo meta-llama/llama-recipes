@@ -14,3 +14,4 @@ py7zr
 scipy
 optimum
 matplotlib
+gradio
