@@ -1,5 +1,7 @@
 # Llama 2 Fine-tuning / Inference Recipes, Examples, Benchmarks and Demo Apps
 
+**[Update Feb. 26, 2024] We added examples to showcase OctoAI's cloud APIs for Llama2, CodeLlama, and LlamaGuard: including [PurpleLlama overview](./examples/Purple_Llama_OctoAI.ipynb), [hello Llama2 cloud](./demo_apps/OctoAI_API_examples/HelloLlamaCloud.ipynb), [getting to know Llama2](./demo_apps/OctoAI_API_examples/Getting_to_know_Llama.ipynb), [live search example](./demo_apps/OctoAI_API_examples/LiveData.ipynb), [Llama2 Gradio demo](./demo_apps/OctoAI_API_examples/Llama2_Gradio.ipynb), [Youtube video summarization](./demo_apps/OctoAI_API_examples/VideoSummary.ipynb), and [retrieval augmented generation overview](./demo_apps/OctoAI_API_examples/RAG_Chatbot_example/RAG_Chatbot_Example.ipynb)**.
+
 **[Update Feb. 5, 2024] We added support for Code Llama 70B instruct in our example [inference script](./examples/code_llama/code_instruct_example.py). For details on formatting the prompt for Code Llama 70B instruct model please refer to [this document](./docs/inference.md)**.
 
 **[Update Dec. 28, 2023] We added support for Llama Guard as a safety checker for our example inference script and also with standalone inference with an example script and prompt formatting. More details [here](./examples/llama_guard/README.md). For details on formatting data for fine tuning Llama Guard, we provide a script and sample usage [here](./src/llama_recipes/data/llama_guard/README.md).**
@@ -201,6 +203,18 @@ sbatch multi_node.slurm
 ```
 You can read more about our fine-tuning strategies [here](./docs/LLM_finetuning.md).
 
+## Weights & Biases Experiment Tracking
+
+You can enable [W&B](https://wandb.ai/) experiment tracking by using `use_wandb` flag as below. You can change the project name, entity and other `wandb.init` arguments in `wandb_config`.
+
+```bash
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model --use_wandb
+```
+You'll be able to access a dedicated project or run link on [wandb.ai](https://wandb.ai) and see your dashboard like the one below. 
+<div style="display: flex;">
+    <img src="./docs/images/wandb_screenshot.png" alt="wandb screenshot" width="500" />
+</div>
+ 
 # Evaluation Harness
 
 Here, we make use `lm-evaluation-harness` from `EleutherAI` for evaluation of fine-tuned Llama 2 models. This also can extend to evaluate other optimizations for inference of Llama 2 model such as quantization. Please use this get started [doc](./eval/README.md).
@@ -232,7 +246,7 @@ This folder contains a series of benchmark scripts for Llama 2 models inference 
 This repository is organized in the following way:
 [benchmarks](./benchmarks): Contains a series of benchmark scripts for Llama 2 models inference on various backends.
 
-[configs](src/llama_recipes/configs/): Contains the configuration files for PEFT methods, FSDP, Datasets.
+[configs](src/llama_recipes/configs/): Contains the configuration files for PEFT methods, FSDP, Datasets, Weights & Biases experiment tracking.
 
 [docs](docs/): Example recipes for single and multi-gpu fine-tuning recipes.
 

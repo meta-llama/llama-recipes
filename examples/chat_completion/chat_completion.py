@@ -61,7 +61,7 @@ def main(
     else:
         torch.cuda.manual_seed(seed)
     torch.manual_seed(seed)
-    model = load_model(model_name, quantization)
+    model = load_model(model_name, quantization, use_fast_kernels)
     if peft_model:
         model = load_peft_model(model, peft_model)
     if use_fast_kernels:
