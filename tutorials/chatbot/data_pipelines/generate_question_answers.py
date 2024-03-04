@@ -43,8 +43,8 @@ def parse_arguments(context):
     )
     parser.add_argument(
         "-m", "--model",
-        choices=["gpt-3.5-turbo-16k", "gpt-3.5-turbo-0125"],
-        default="gpt-3.5-turbo-16k",
+        choices=["llama-2-70b-chat-fp16", "llama-2-13b-chat-fp16"],
+        default="llama-2-70b-chat-fp16",
         help="Select the model to use for generation."
     )
     return parser.parse_args()
@@ -58,4 +58,4 @@ if __name__ == "__main__":
     context["model"] = args.model
 
     logging.info(f"Configuration loaded. Generating {args.total_questions} question/answer pairs using model '{args.model}'.")
-    asyncio.run(main(context))
+    asyncio.run(main(co
