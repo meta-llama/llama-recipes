@@ -58,4 +58,4 @@ if __name__ == "__main__":
     context["model"] = args.model
 
     logging.info(f"Configuration loaded. Generating {args.total_questions} question/answer pairs using model '{args.model}'.")
-    asyncio.run(main(co
+    asyncio.run(main(context))
