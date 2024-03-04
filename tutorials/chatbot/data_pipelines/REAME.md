@@ -8,14 +8,13 @@ In this case we have an example of [Llama 2 Getting started guide](https://llama
 
 ### Step 2 : Prepare data (Q&A pairs)
 
-The idea here is to use OpenAI "gpt-3.5-turbo-16k" to create question and answer (Q&A) pair datasets from these documents. Here we will use the prompt in the [./config.yaml] to instruct the model on the expected format and rules for generating the Q&A pairs. This is only one way to handle this which is a popular method but beyond this any other preprocessing routine that help us making the Q&A pairs works. 
+The idea here is to use Llama 70B using OctoAI APIs, to create question and answer (Q&A) pair datasets from these documents, this APIs could be replaced by any other API from other providers or alternatively using your on prem solutions such as the [TGI](../../../examples/hf_text_generation_inference/) or [VLLM](../../../examples/vllm/). Here we will use the prompt in the [./config.yaml] to instruct the model on the expected format and rules for generating the Q&A pairs. This is only one way to handle this which is a popular method but beyond this any other preprocessing routine that help us making the Q&A pairs works. 
 
-**Observation** during the dataset generation, we realized that "gpt-3.5-turbo-16k" tends to come up with abbreviations such as L-C stands for Llama fine-tuned for chat, that we had to literally ask not to include any abbreviations which still resulted in changing `L-C` to `Llama-C`. Adding "Never use any abbreviation." and "Do refer to Llama fine tuned chat model as Llama chat." still we got `Llama2-C` in the Q&A pairs. So instead of keep changing the prompts to see the impact ( its costly each time your generate new Q&A pairs) it was more cost effective to do some preprocessing and just to replace `Llama2-C` with `Llama chat` in the dataset.
 
-**NOTE** The generated data by OpenAI model needs to be vetted to make sure about the quality.
+**NOTE** The generated data by these APIs/ the model needs to be vetted to make sure about the quality.
 
 ```bash
-export OPENAI_API_KEY="OPENAI_API_KEY"
+export OCTOAI_API_TOKEN="OCTOAI_API_TOKEN"
 python generate_question_answers.py --url=https://llama.meta.com/get-started/
 ```
 
