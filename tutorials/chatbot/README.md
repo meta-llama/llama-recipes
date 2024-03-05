@@ -1,15 +1,20 @@
-#### Introduction
+## Introduction
 
 Large language models (LLMs) have emerged as groundbreaking tools, capable of understanding and generating human-like text. These models power many of today's advanced chatbots, providing more natural and engaging user experiences. But how do we create these intelligent systems? 
 
 Here, we aim to make an FAQ model for Llama that be able to answer questions about Llama by fine-tune Llama2 7B chat using existing official Llama documents.
 
 
-#### Fine-tuning Process
+### Fine-tuning Process
 
-Fine-tuning LLMs here LLama 2 involves several key steps:
+Fine-tuning LLMs here LLama 2 involves several key steps: Data Collection, preprocessing, fine-tuning, evaluation.
 
-1. **Data Collection:** Gathering a diverse and comprehensive dataset is crucial. This dataset should include a wide range of topics and conversational styles to ensure the model can handle various subjects. A recent [research](https://arxiv.org/pdf/2305.11206.pdf) shows that quality of data has far more importance than quantity. Here are some high level thoughts on data collection:
+Lets take a look at one of the most important steps first which is data collection and preprocessing.
+
+
+### **Data Collection:** 
+
+Gathering a diverse and comprehensive dataset is crucial. This dataset should include a wide range of topics and conversational styles to ensure the model can handle various subjects. A recent [research](https://arxiv.org/pdf/2305.11206.pdf) shows that quality of data has far more importance than quantity. Here are some high level thoughts on data collection:
 
 - Source Identification: Identify the sources where your FAQs are coming from. This could include websites, customer service transcripts, emails, forums, and product manuals. Prioritize sources that reflect the real questions your users are asking.
 
@@ -18,6 +23,86 @@ Fine-tuning LLMs here LLama 2 involves several key steps:
 - Volume: The amount of data needed depends on the complexity of the task and the variability of the language in your domain. Generally, more data leads to a better-performing model, but aim for high-quality, relevant data.
 
 Here, we are going to use [self-instruct](https://arxiv.org/abs/2212.10560) idea and use Llama model to build our dataset, for details please check this [doc](./data_pipelines/REAME.md).
+
+
+**Things to keep in mind**
+
+- **Pretraining Data as the Foundation**: Pretraining data is crucial for developing foundational models, influencing both their strengths and potential weaknesses. Fine-tuning data refines specific model capabilities and, through instruction fine-tuning or alignment training, enhances general usability and safety.
+
+- **Quality Over Quantity**: More data doesn't necessarily mean better results. It's vital to select data carefully and perform manual inspections to ensure it aligns with your project's aims.
+
+- **Considerations for Dataset Selection**: Selecting a dataset requires considering various factors, including language and dialect coverage, topics, tasks, diversity, quality, and representation.
+
+- **Impact of Implicit Dataset Modifications**: Most datasets undergo implicit changes during selection, filtering, and formatting. These preprocessing steps can significantly affect model performance, so they should not be overlooked.
+
+- **Finetuning Data's Dual-Edged Sword**: Finetuning can improve or impair model capabilities. Make sure you know the nature of your data to make an informed selections.
+
+- **Navigating Dataset Limitations**: The perfect dataset for a specific task may not exist. Be mindful of the limitations when choosing from available resources, and understand the potential impact on your project.
+
+#### **Best Practices for FineTuning Data Preparation** 
+
+- **Enhancing Understanding with Analysis Tools**: Utilizing tools for searching and analyzing data is crucial for developers to gain a deeper insight into their datasets. This understanding is key to predicting model behavior, a critical yet often overlooked phase in model development.
+
+- **The Impact of Data Cleaning and Filtering**: Data cleaning and filtering significantly influence model characteristics, yet there's no universal solution that fits every scenario. Our guidance includes filtering recommendations tailored to the specific applications and communities your model aims to serve.
+
+- **Data Mixing from Multiple Sources**: When training models with data from various sources or domains, the proportion of data from each domain (data mixing) can greatly affect downstream performance. It's a common strategy to prioritize "high-quality" data domains—those with content written by humans and subjected to an editing process, like Wikipedia and books. However, data mixing is an evolving field of research, with best practices still under development.
+
+- **Benefits of Removing Duplicate Data**: Eliminating duplicated data from your dataset can lessen unwanted memorization and enhance training efficiency.
+
+- **The Importance of Dataset Decontamination**: It's crucial to meticulously decontaminate training datasets by excluding data from evaluation benchmarks. This ensures the model's capabilities are accurately assessed.
+
+
+**Data Exploration and Analysis**
+
+- Gaining Insights through Dataset Exploration: Leveraging search and analysis tools to explore training datasets enables us to cultivate a refined understanding of the data's contents, which in turn influences the models. Direct interaction with the data often reveals complexities that are challenging to convey or so might not be present in the documents.
+
+- Understanding Data Complexity: Data, especially text, encompasses a wide array of characteristics such as length distribution, topics, tones, formats, licensing, and diction. These elements are crucial for understanding the dataset but are not easily summarized without thorough examination.
+
+- Utilizing Available Tools: We encourage to take advantage of the numerous tools at their disposal for searching and analyzing their training datasets, facilitating a deeper comprehension and more informed model development.
+
+**Tools** 
+
+- [wimbd](https://github.com/allenai/wimbd) for data analysis.
+- TBD
+
+
+
+**Data Cleaning**
+
+Purpose of Filtering and Cleaning: The process of filtering and cleaning is essential for eliminating unnecessary data from your dataset. This not only boosts the efficiency of model training but also ensures the data exhibits preferred characteristics such as high informational value, coverage of target languages, low levels of toxicity, and minimal presence of personally identifiable information.
+
+Considering Trade-offs: We advise practitioners to carefully weigh the potential trade-offs associated with using certain filters, it may impact the diversity of your data, [removing minority individuals](https://arxiv.org/abs/2104.08758). 
+
+**Tools**
+- [FUN-Langid](https://github.com/google-research/url-nlp/tree/main/fun-langid), simple, character 4-gram LangID classifier recognizing up to 1633 languages.
+- TBD
+
+
+**Data Deduplication**
+
+- **Data Deduplication importance**: Data deduplication is a important preprocessing step to eliminate duplicate documents or segments within a document from the dataset. This process helps in minimizing the model's chance of memorizing unwanted information, including generic text, copyrighted content, and personally identifiable details.
+
+- **Benefits of Removing Duplicates**: Aside from mitigating the risk of undesirable memorization, deduplication enhances training efficiency by decreasing the overall size of the dataset. This streamlined dataset contributes to a more effective and resource-efficient model training process.
+
+- **Assessing the Impact of Duplicates**: You need to carefully evaluate the influence of duplicated data on their specific model use case. Memorization may be beneficial for models designed for closed-book question answering, or similarly chatbots.
+**Tools**
+- TBD
+
+**Data Decontamination**
+
+The process involves eliminating evaluation data from the training dataset. This crucial preprocessing step maintains the accuracy of model evaluation, guaranteeing that performance metrics are trustworthy and not skewed. 
+
+**Tools**
+- TBD
+
+
+
+
+### **LLama FAQ Use-Case**
+
+
+1. **Data Collection** 
+Here, we are going to use self-instruct idea and use Llama model to build our dataset, for details please check this [doc](./data_pipelines/REAME.md).
 
 2. **Data Formatting** 
 
