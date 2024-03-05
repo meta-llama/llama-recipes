@@ -1,3 +1,12 @@
+# TODO REFACTOR: 
+* Move parts of this doc to the most appropriate README within the folders (eg: finetuning)
+* Reduce the size of this document. A simple template to refer: https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
+* Ensure the following questions are succinctly answered in the README:
+  * What is this repo about, why is it an important resource for llama developers
+  * How is this repo organized (Links to all the theme folders)
+  * How to get started 
+  * How to contribute
+
 # Llama 2 Fine-tuning / Inference Recipes, Examples, Benchmarks and Demo Apps
 
 **[Update Feb. 26, 2024] We added examples to showcase OctoAI's cloud APIs for Llama2, CodeLlama, and LlamaGuard: including [PurpleLlama overview](./examples/Purple_Llama_OctoAI.ipynb), [hello Llama2 cloud](./demo_apps/OctoAI_API_examples/HelloLlamaCloud.ipynb), [getting to know Llama2](./demo_apps/OctoAI_API_examples/Getting_to_know_Llama.ipynb), [live search example](./demo_apps/OctoAI_API_examples/LiveData.ipynb), [Llama2 Gradio demo](./demo_apps/OctoAI_API_examples/Llama2_Gradio.ipynb), [Youtube video summarization](./demo_apps/OctoAI_API_examples/VideoSummary.ipynb), and [retrieval augmented generation overview](./demo_apps/OctoAI_API_examples/RAG_Chatbot_example/RAG_Chatbot_Example.ipynb)**.
