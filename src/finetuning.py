@@ -20,12 +20,10 @@ from transformers import (
     LlamaForCausalLM,
     LlamaTokenizer,
     LlamaConfig,
+    AutoTokenizer,
 )
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
 
-import os
-cwd = os.getcwd()
-print(cwd)
 from llama_recipes.configs import fsdp_config as FSDP_CONFIG
 from llama_recipes.configs import train_config as TRAIN_CONFIG
 from llama_recipes.data.concatenator import ConcatDataset
@@ -119,8 +117,14 @@ def main(**kwargs):
         )
 
     # Load the tokenizer and add special tokens
-    tokenizer = LlamaTokenizer.from_pretrained(train_config.model_name)
-    tokenizer.pad_token_id = tokenizer.eos_token_id
+    tokenizer = AutoTokenizer.from_pretrained(train_config.model_name)
+    tokenizer.add_special_tokens(
+            {
+
+                "pad_token": "<PAD>",
+            }
+        )
+    model.resize_token_embeddings(model.config.vocab_size + len(tokenizer.additional_special_tokens))
 
     print_model_size(model, train_config, rank if train_config.enable_fsdp else 0)
 
@@ -186,14 +190,17 @@ def main(**kwargs):
         dataset_config,
         split="train",
     )
-
+    
+    # # Use only 10 samples for training
+    # dataset_train = dataset_train.select(range(10))
+    
     if not train_config.enable_fsdp or rank == 0:
         print(f"--> Training Set Length = {len(dataset_train)}")
 
     dataset_val = get_preprocessed_dataset(
         tokenizer,
         dataset_config,
-        split="validation",
+        split="train" if not train_config.run_validation else "validation",
     )
     if not train_config.enable_fsdp or rank == 0:
             print(f"--> Validation Set Length = {len(dataset_val)}")
@@ -247,6 +254,11 @@ def main(**kwargs):
     train_dataloader, _, model, optimizer = accelerator.prepare(
         train_dataloader, eval_dataloader, model, optimizer
     )
+    
+    print("=" * 100)
+    print("Training Configuration:")
+    print(train_config)
+    print("=" * 100)
     # Start the training process
     results = train(
         model,

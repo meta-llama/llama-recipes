@@ -8,7 +8,7 @@ from pathlib import Path
 import torch
 
 from llama_recipes.datasets import (
-    get_code_llama_dataset_json
+    get_code_llama_dataset_json, get_hl_custom_dataset
 )
 
 
@@ -49,6 +49,7 @@ def get_custom_dataset(dataset_config, tokenizer, split: str):
 
 DATASET_PREPROC = {
     "codellama_dataset_json": get_code_llama_dataset_json,
+    "hl_mr_dataset": get_hl_custom_dataset,
 
 }
 

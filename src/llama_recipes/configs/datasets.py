@@ -39,3 +39,11 @@ class codellama_dataset_json:
     train_split: str = "train"
     test_split: str = "test"
     input_length: int = 512
+    
+@dataclass
+class hl_mr_dataset:
+    dataset: str =  "hl_mr_dataset"
+    file: str = "src/llama_recipes/datasets/hl_mr_dataset.py"
+    train_split: str = "train"
+    test_split: str = "test"
+    
