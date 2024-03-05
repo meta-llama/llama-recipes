@@ -17,7 +17,7 @@ Fine-tuning LLMs here LLama 2 involves several key steps:
 
 - Volume: The amount of data needed depends on the complexity of the task and the variability of the language in your domain. Generally, more data leads to a better-performing model, but aim for high-quality, relevant data.
 
-Here, we are going to use [self-instruct](https://arxiv.org/abs/2212.10560) idea and use OpenAI GPT3 model to build our dataset, for details please check this [doc](./data_pipelines/REAME.md).
+Here, we are going to use [self-instruct](https://arxiv.org/abs/2212.10560) idea and use Llama model to build our dataset, for details please check this [doc](./data_pipelines/REAME.md).
 
 2. **Data Formatting** 
 

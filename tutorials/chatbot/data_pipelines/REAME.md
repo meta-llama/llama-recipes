@@ -15,7 +15,7 @@ The idea here is to use Llama 70B using OctoAI APIs, to create question and answ
 
 ```bash
 export OCTOAI_API_TOKEN="OCTOAI_API_TOKEN"
-python generate_question_answers.py --url=https://llama.meta.com/get-started/
+python generate_question_answers.py 
 ```
 
 **NOTE** You need to be aware of your  RPM (requests per minute), TPM (tokens per minute) and TPD (tokens per day), limit on your OpenAI account. In our case we had to process each document at a time. Then merge all the Q&A `json` files to make our dataset. We aimed for a specific number of Q&A pairs per document anywhere between 50-100. This is experimental and totally depends on your documents, wealth of information in them and how you prefer to handle question, short or longer answers etc.
