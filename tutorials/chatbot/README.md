@@ -1,6 +1,6 @@
 ## Introduction
 
-Large language models (LLMs) have emerged as groundbreaking tools, capable of understanding and generating human-like text. These models power many of today's advanced chatbots, providing more natural and engaging user experiences. But how do we create these intelligent systems? 
+Large language models (LLMs) have emerged as groundbreaking tools, capable of understanding and generating human-like text. These models power many of today's advanced chatbots, providing more natural and engaging user experiences. But how do we create these intelligent systems?
 
 Here, we aim to make an FAQ model for Llama that be able to answer questions about Llama by fine-tune Llama2 7B chat using existing official Llama documents.
 
@@ -12,7 +12,7 @@ Fine-tuning LLMs here LLama 2 involves several key steps: Data Collection, prepr
 Lets take a look at one of the most important steps first which is data collection and preprocessing.
 
 
-### **Data Collection:** 
+### **Data Collection:**
 
 Gathering a diverse and comprehensive dataset is crucial. This dataset should include a wide range of topics and conversational styles to ensure the model can handle various subjects. A recent [research](https://arxiv.org/pdf/2305.11206.pdf) shows that quality of data has far more importance than quantity. Here are some high level thoughts on data collection:
 
@@ -39,7 +39,7 @@ Here, we are going to use [self-instruct](https://arxiv.org/abs/2212.10560) idea
 
 - **Navigating Dataset Limitations**: The perfect dataset for a specific task may not exist. Be mindful of the limitations when choosing from available resources, and understand the potential impact on your project.
 
-#### **Best Practices for FineTuning Data Preparation** 
+#### **Best Practices for FineTuning Data Preparation**
 
 - **Enhancing Understanding with Analysis Tools**: Utilizing tools for searching and analyzing data is crucial for developers to gain a deeper insight into their datasets. This understanding is key to predicting model behavior, a critical yet often overlooked phase in model development.
 
@@ -60,7 +60,7 @@ Here, we are going to use [self-instruct](https://arxiv.org/abs/2212.10560) idea
 
 - Utilizing Available Tools: We encourage to take advantage of the numerous tools at their disposal for searching and analyzing their training datasets, facilitating a deeper comprehension and more informed model development.
 
-**Tools** 
+**Tools**
 
 - [wimbd](https://github.com/allenai/wimbd) for data analysis.
 - TBD
@@ -71,11 +71,16 @@ Here, we are going to use [self-instruct](https://arxiv.org/abs/2212.10560) idea
 
 Purpose of Filtering and Cleaning: The process of filtering and cleaning is essential for eliminating unnecessary data from your dataset. This not only boosts the efficiency of model training but also ensures the data exhibits preferred characteristics such as high informational value, coverage of target languages, low levels of toxicity, and minimal presence of personally identifiable information.
 
-Considering Trade-offs: We advise practitioners to carefully weigh the potential trade-offs associated with using certain filters, it may impact the diversity of your data, [removing minority individuals](https://arxiv.org/abs/2104.08758). 
+Considering Trade-offs: We advise practitioners to carefully weigh the potential trade-offs associated with using certain filters, it may impact the diversity of your data, [removing minority individuals](https://arxiv.org/abs/2104.08758).
 
 **Tools**
+- [OpenRefine](https://github.com/OpenRefine/OpenRefine?tab=readme-ov-file),(formerly Google Refine): A standalone open-source desktop application for data cleanup and transformation to other formats. It's particularly good for working with messy data, including data format transformations and cleaning.
+
 - [FUN-Langid](https://github.com/google-research/url-nlp/tree/main/fun-langid), simple, character 4-gram LangID classifier recognizing up to 1633 languages.
-- TBD
+
+- Dask: Similar to Pandas, Dask is designed for parallel computing and works efficiently with large datasets. It can be used for data cleaning, transformations, and more, leveraging multiple CPUs or distributed systems.
+
+
 
 
 **Data Deduplication**
@@ -85,12 +90,15 @@ Considering Trade-offs: We advise practitioners to carefully weigh the potential
 - **Benefits of Removing Duplicates**: Aside from mitigating the risk of undesirable memorization, deduplication enhances training efficiency by decreasing the overall size of the dataset. This streamlined dataset contributes to a more effective and resource-efficient model training process.
 
 - **Assessing the Impact of Duplicates**: You need to carefully evaluate the influence of duplicated data on their specific model use case. Memorization may be beneficial for models designed for closed-book question answering, or similarly chatbots.
+
 **Tools**
-- TBD
+
+- [thefuz](https://github.com/seatgeek/thefuzz): It uses Levenshtein Distance to calculate the differences between sequences in a simple-to-use package.
+- [recordlinkage](https://github.com/J535D165/recordlinkage): It is modular record linkage toolkit to link records in or between data sources.
 
 **Data Decontamination**
 
-The process involves eliminating evaluation data from the training dataset. This crucial preprocessing step maintains the accuracy of model evaluation, guaranteeing that performance metrics are trustworthy and not skewed. 
+The process involves eliminating evaluation data from the training dataset. This crucial preprocessing step maintains the accuracy of model evaluation, guaranteeing that performance metrics are trustworthy and not skewed.
 
 **Tools**
 - TBD
@@ -101,16 +109,16 @@ The process involves eliminating evaluation data from the training dataset. This
 ### **LLama FAQ Use-Case**
 
 
-1. **Data Collection** 
+1. **Data Collection**
 Here, we are going to use self-instruct idea and use Llama model to build our dataset, for details please check this [doc](./data_pipelines/REAME.md).
 
-2. **Data Formatting** 
+2. **Data Formatting**
 
 For a FAQ model, you need to format your data in a way that's conducive to learning question-answer relationships. A common format is the question-answer (QA) pair:
 
 Question-Answer Pairing: Organize your data into pairs where each question is directly followed by its answer. This simple structure is highly effective for training models to understand and generate responses. For example:
 
-```python 
+```python
 "question": "What is Llama 2?",
 "answer": "Llama 2 is a collection of pretrained and fine-tuned large language models ranging from 7 billion to 70 billion parameters, optimized for dialogue use cases."
 ```
@@ -120,4 +128,3 @@ Question-Answer Pairing: Organize your data into pairs where each question is di
 
 
 4. **Fine-Tuning:** Given that we have a selected pretrained model, in this case we use LLama 2 chat 7B, fine-tunning with more specific data can improve its performance on particular tasks, such as answering questions about Llama in this case.
-
