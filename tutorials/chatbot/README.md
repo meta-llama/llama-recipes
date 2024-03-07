@@ -9,12 +9,22 @@ Here, we aim to make an FAQ model for Llama that be able to answer questions abo
 
 Fine-tuning LLMs here LLama 2 involves several key steps: Data Collection, preprocessing, fine-tuning, evaluation.
 
-Lets take a look at one of the most important steps first which is data collection and preprocessing.
+
+### LLM Generated datasets
+
+As Chatbots are usually domain specifics and based on public or proprietary data, one common way inspired by [self-instruct paper](https://arxiv.org/abs/2212.10560) is to use LLMs to assist building the dataset from our data. For example to build an FAQ model, we can use Llama model to process our documents and help us build question and answer pair (We will showcase this here). Just keep it in mind that usually most of the proprietary LLMs has this clause in their license that you are not allowed to use the output generated from the model to train another LLM. In this case we will use Llama to fine-tune another Llama model.
 
 
-### **Data Collection:**
+Similarly, we will use the same LLM to evaluate the quality of generated datasets and finally evaluate the outputs from the model.
 
-Gathering a diverse and comprehensive dataset is crucial. This dataset should include a wide range of topics and conversational styles to ensure the model can handle various subjects. A recent [research](https://arxiv.org/pdf/2305.11206.pdf) shows that quality of data has far more importance than quantity. Here are some high level thoughts on data collection:
+
+Given this context, here we want to highlight some of best practices that need to be in place for data collection and pre-processing in general.
+
+### **Data Collection & Preprocessing:**
+
+Gathering a diverse and comprehensive dataset is crucial. This dataset should include a wide range of topics and conversational styles to ensure the model can handle various subjects. A recent [research](https://arxiv.org/pdf/2305.11206.pdf) shows that quality of data has far more importance than quantity. Here are some high level thoughts on data collection and preprocessing along with best practices:
+
+**NOTE** data collection and processing is very use-case specific and here we can only share best practices but it would be very nuanced for each use-case.
 
 - Source Identification: Identify the sources where your FAQs are coming from. This could include websites, customer service transcripts, emails, forums, and product manuals. Prioritize sources that reflect the real questions your users are asking.
 
