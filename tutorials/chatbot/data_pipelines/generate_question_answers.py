@@ -5,18 +5,55 @@ import argparse
 import asyncio
 import json
 from config import load_config
-from generator_utils import generate_question_batches
+from generator_utils import generate_question_batches, parse_qa_to_json
 from itertools import chain
 import logging
 import aiofiles  # Ensure aiofiles is installed for async file operations
+from abc import ABC, abstractmethod
+from octoai.client import Client
+from functools import partial
 
 # Configure logging to include the timestamp, log level, and message
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+# Manage rate limits with throttling
+rate_limit_threshold = 2000
+allowed_concurrent_requests = int(rate_limit_threshold * 0.75)
+request_limiter = asyncio.Semaphore(allowed_concurrent_requests)
+
+class ChatService(ABC):
+    @abstractmethod
+    async def execute_chat_request_async(self, api_context: dict, chat_request):
+        pass
+
+# Please implement your own chat service class here.
+# The class should inherit from the ChatService class and implement the execute_chat_request_async method.
+class OctoAIChatService(ChatService):
+    async def execute_chat_request_async(self, api_context: dict, chat_request):
+        async with request_limiter:
+            try:
+                event_loop = asyncio.get_running_loop()
+                client = Client(api_context['api_key'])
+                api_chat_call = partial(
+                    client.chat.completions.create,
+                    model=api_context['model'],
+                    messages=chat_request,
+                    temperature=0.0
+                )
+                response = await event_loop.run_in_executor(None, api_chat_call)
+                assistant_response = next((choice.message.content for choice in response.choices if choice.message.role == 'assistant'), "")
+                assistant_response_json = parse_qa_to_json(assistant_response)
+                      
+                return assistant_response_json
+            except Exception as error:
+                print(f"Error during chat request execution: {error}")
+                return ""
+            
 async def main(context):
+    chat_service = OctoAIChatService()
     try:
         logging.info("Starting to generate question/answer pairs.")
-        data = await generate_question_batches(context)
+        data = await generate_question_batches(chat_service, context)
         if not data:
             logging.warning("No data generated. Please check the input context or model configuration.")
             return
