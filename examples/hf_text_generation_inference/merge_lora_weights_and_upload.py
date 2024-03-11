@@ -9,11 +9,10 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 def main(push_to_hub: bool = True):
     base_model = "codellama/CodeLlama-13b-Instruct-hf"
-    peft_model = "/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/models/codellama-8bit-json-mkt-research-24-03-04-merged_epoch_8"
-    tokenizer_path = "/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/models/codellama-8bit-json-mkt-research-24-03-04-merged_tokenizer"
-    output_dir = "HelixAI/codellama-8bit-json-mkt-research-24-03-04-merged"
+    peft_model = "/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/models/codellama-8bit-json-mkt-research-24-03-07_epoch_8"
+    tokenizer_path = "/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/models/codellama-8bit-json-mkt-research-24-03-07_tokenizer"
+    output_dir = "HelixAI/codellama-8bit-json-mkt-research-24-03-07"
     
-        
     model = AutoModelForCausalLM.from_pretrained(
         base_model,
         load_in_8bit=False,

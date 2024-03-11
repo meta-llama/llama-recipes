@@ -20,9 +20,9 @@ base_model = AutoModelForCausalLM.from_pretrained(
         **device_arg
     )
 
-model = PeftModel.from_pretrained(base_model, "/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/models/codellama-8bit-json-mkt-research-24-03-04-merged_epoch_8", **device_arg)
+model = PeftModel.from_pretrained(base_model, "/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/models/codellama-8bit-json-mkt-research-24-03-07_epoch_8", **device_arg)
 
-tokenizer = AutoTokenizer.from_pretrained("/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/models/codellama-8bit-json-mkt-research-24-03-04-merged_tokenizer")
+tokenizer = AutoTokenizer.from_pretrained("/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/models/codellama-8bit-json-mkt-research-24-03-07_tokenizer")
 
 # tokenizer.pad_token = tokenizer.eos_token
 def load_prompt_template(prompt_template_filename, user_text):
@@ -31,9 +31,9 @@ def load_prompt_template(prompt_template_filename, user_text):
     prompt = yaml_data['prompt']
     return prompt.format(user_text=user_text)
 
-dataset = load_dataset("HelixAI/hl-text-standard-json-single-turn-2024-03-04")
+dataset = load_dataset("HelixAI/hl-text-standard-json-single-turn-2024-03-06")
 df_train = pd.DataFrame(dataset['train'])
-df_sub = df_train.sample(n=20)
+df_sub = df_train.sample(n=100)
 
 start = time.time()
 prompt_template_filename = "/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/datasets/training_prompt_templates/hl_mr_prompt.yaml"

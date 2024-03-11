@@ -29,9 +29,9 @@ base_model = AutoModelForCausalLM.from_pretrained(
         **device_arg
     )
 
-model = PeftModel.from_pretrained(base_model, "/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/models/codellama-8bit-json-mkt-research-24-03-04-merged_epoch_8", **device_arg)
+model = PeftModel.from_pretrained(base_model, "/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/models/codellama-8bit-json-mkt-research-24-03-07_epoch_8", **device_arg)
 
-tokenizer = AutoTokenizer.from_pretrained("/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/models/codellama-8bit-json-mkt-research-24-03-04-merged_tokenizer")
+tokenizer = AutoTokenizer.from_pretrained("/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/models/codellama-8bit-json-mkt-research-24-03-07_tokenizer")
 # okenizer = AutoTokenizer.from_pretrained("codellama/CodeLlama-13b-Instruct-hf")
 
 # tokenizer.add_special_tokens(
@@ -61,111 +61,156 @@ def load_prompt_template(prompt_template_filename, user_text):
 start = time.time()
 query = "What Is The performance For Buyout since Sept 30 2023"
 prompt_template_filename = "/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/datasets/training_prompt_templates/hl_mr_prompt.yaml"
-query_list = """Can you display funds in infrastructure that have upcoming deadlines
-show me top asset managers in Secondaries by size in 2022
-show me the biggest asset managers that invest in north american Buyout
-which asset class had the most dry powder in 2020
-What is the rate of contributions for Buyout funds?
-provide me with a list of the top five asset managers in Real Estate
-show me the biggest asset managers focused on Buyout in MENA
-what are the various areas of strategy within private assets
-What's doing better? buyout or vc?
-what was the top performing focus in 2020(
-What was the worst performing year for buyout in Europe - Western?
-show me buyout funds trading in EUR
-what was the top performing strategy in 2020
-what are the top vintages for Venture Capital
-show me the biggest asset managers that invest in emerging markets Co-Investment
-what are best performing funds in Infrastructure?
-Show me Secondaries funds that are fundraising with high management fees?
-show me top Infrastructure funds
-What Is The Median Performance On Clearlake Funds?
-give funds with net_irr greater than 20 and netrvpi less than 1
-show me top 5 vintages in Real Estate
-show me top performing managers in Fund of Funds
-What was the low performing asset class in 2008
-show me top performing asset managers in Co-Investment
-Which Mezzanine funds have the largest GP commitment?
-what was the top performing sub asset class in 2020
-what are returns of real estate sub asset class areas
-show me low performing asset managers in Natural Resources
-Show me all credit funds managed by Lightbay Capital
-display the top 5 performing funds in the Secondaries category
-Can you display the top five real estate funds for me
-What is the typical performance of funds grouped by the decade in which they were established?
-show me the biggest asset managers that invest in north american lending
-provide me with a list of the top five asset managers in Natural Resources
-show me top asset managers in lending by size in 2020
-Show me the hamilton Lane worry index
-who are the major players in debt in latin america
-what was the average net dpi for infrastructure in 2022
-what was the low performing asset class in 2019
-who are the largest managers in asian Fund of Funds
-How much money was raised for Infrastructure Funds last year?
-which asset class had the most dry powder in 2010
-What was the worst performing year for Real Estate in Latin America?
-What are the largest Small Cap venture capital funds?
-show me top 5 vintages in debt
-what are the top 5 performing funds in Co-Investment
-Can you display the top 5 funds with the best performance
-what are typical returns of real estate sub asset class areas
-show me the biggest asset managers focused on Buyout in Asia
-who are the top Infrastructure managers
-show me top asset managers in Credit by size in 2002
-what are the different sub asset class areas within private assets
-what is the best performing strategy in the private markets
-Is distressed debt or origination raising more money?
-show me top performing asset managers in Fund of Funds
-Among these focus areas within Secondaries, which one is the largest?
-show me the funds with the highest performance that strategy on technology investments
-what investment styles exist in private equity underlying deals
-who are the top Growth Equity managers
-show me all funds trading in USD
-In 2015, which asset class had the highest number of distributions
-who are the major players in debt in asia?
-Show me Venture Capital funds that are fundraising with low management fees?
-show me top Growth Equity funds
-What was the top performing asset class in 2022
-Can you display the performance of venture capital investments from the 2010 vintage
-what are best performing funds in Venture Capital
-Median Irr Of hamilton Lane Funds
-show me the biggest asset managers focused on Credit in MENA
-What are the real estate funds currently in the process of raising funds
-show me top 5 performing funds in buyout
-Show historical contributions for private credit
-Which funds are among the top 10 performers
-What was the worst performing year for Infrastructure in North America?
-which of these sub asset class areas within secondaries is the largest
-show me manager with largest AUM focusing on Real Estate
-What were distributions last year for private credit?
-can you display private lending funds available for subscription
-display the top 5 funds in debt with the best performance
-managers with most AUM in Buyout in 2002?
-what are the top 5 performing funds in Secondaries
-show me top Co-Investment funds
-show me the biggest asset managers focused on Infrastructure in Emerging Markets
-show me top 5 asset managers in Secondaries
-what are the top vintages for Real Estate
-what investment styles exist within private equity
-show me the venture capital fund with the highest return
-Can you provide additional information about Novel coworking III-I, LP?
-what are typical returns of real estate funds
+query_list = """What is the typical performance of real estate focus area
+What was the average DPI for infrastructure in 2022?
+Show me top performing asset managers and include any funds that are fundraising.
+Show the top performing focus last year?
+show me performance of 2010 vintage venture capita?
+Show me top ESG funds that are fund raising with top performing manager that are fundraising.
+Show me details of previous vintages for Blackstone Real Estate
+Show me the biggest asset class in 2015?
+Which of these focus areas within Secondaries is the largest?
+Show the top performing style in North America over the last 15 years?
+Show me best performing asset class in 2020?
+I'm looking to invest in buyout, who are top managers currently fundraising?
+What are the different focus areas within Secondaries?
+Show me real estate funds from Blackstone
+Show me real estate funds that are fundraising and include their asset manager performance.
+How big is venture capital?
+what are top performing focus areas in secondaries?
+Show the median IRR for each venture capital fund manager that is currently fundraising
+List 'Venture Capital' funds that are fund raising?
+Who are the top 5 managers for credit?
+Who were the top buyout asset managers in the last 10 years?
+List 'Venture Capital' funds that are fund raising managed by top performing managers?
+Show me real estate funds that are fundraising and include their family performance.
+show me funds from Oceansound Partners currently fundraising?
+Show me real estate funds focused on North America that are currently fundraising.
+Which are the biggest asset managers in buyout?
+And the best performing asset managers in this category?
 Show me funds that are available for subscription right now?
-show me the biggest asset managers that invest in global Real Estate
-Which asset managers excel in the Buyout industry
-show me top Buyout funds
-who are the largest managers in asian Credit?
-Display the best-performing funds that have exposure to North America
-show me worst performing managers in Growth Equity
-what are the top 10 best performing funds in Co-Investment
+What was the top performing asset manager in 2010?
+Show me all funds managed by Acon Investments
+Show me all buyout funds managed by Active Investment Partners
+What are the largest seed stage venture capital funds?
+What are the largest seed stage venture capital funds with a global focus?
+What are the largest secondaries funds by size?
+Show me the top performing credit funds with a focus on special situations
+Show me a list of Allianz infrastructure funds
+Which buyout fund managers are also fundraising?
+What are the biggest energy funds by target size?
+What were the best performing Agriculture funds in 2022
+Which Mezzanine funds have the largest GP commitment?
+What was the best year for buyout fund performance?
+Show me the top performing funds with emerging markets exposure
+Which buyout funds have the lowest fees?
+Show me small cap funds with fees less than 2%
+Which style consistently has the best performance?
+Which region consistently has the best performance?
+Which sector consistently has the best performance?
+What is the range in performance for Buyouts?
+What was the bestperforming year for Secondaries in North America?
+Show me VC funds that are fundraising with low management fees?
+Show me VC funds that are fundraising with low performance/carried interest fees?
+Show me top performing Buyout managers that have open funds with low fees?
+Show me Infrastructure funds that are fundraising with terms less than 10 years?
+What was the top performing Buyout fund in 2015 with a management fess less than 2%?
+What is the typical performance of Real Estate funds less than $1 billion?
+What is the average management fee for Secondary funds that are more than $3 billion in size?
+What Strategy Had The Best Returns For 2019 Vintage Year Funds?
+Blackstone Unrealized Values?
+What Funds Have The Largest Fund Sizes?
+What Was The Median Buyout Return For Funds With A 2015 Vintage?
+What Were The Median Buyout Returns For Each Of The Vintage Years From 2015-2019?
+What Were The Median Buyout Returns From 2015-2019?
+Which Year Saw The Highest Distribution Volume In History
+Worst Performing Managers In 2022?
+What Is The Median Performance On Clearlake Funds?
+How Much Dry Powder Was There For Buyout As Of Mar 31, 2021?
+Which Quarter Saw The Highest Contribution Volume In History
+What Is The Pooled Return For All Buyout Funds From Sept 30 2021 To Sept 30 2023?
+Pooled Return For All Buyout Funds From Sept 30 2021 To Sept 30 2023
+What Is The Dry Powder For Buyout As Of Sept 30 2023
+What Was The Best Performing Buyout VY?
+Quarter With Smallest Contribution Volume
+How Much Dry Powder Was There In 9/30/2020
+Median Irr Of Hl Funds
+What Are The Largest Pm Funds
+What Is The Median IRR Of North America Buyout In 2015
+What Is The Difference Between Different PME Methods?
+Which Quarter Had The Highest Distribution Activity In History?
+What Is The Largest Buyout Fund Ever Raised?
+What Are The Largest Funds That Were Raised In 2023?
+What Are The Best Performing Managers Of 2021
+A List Of Blackstone Fund Net Performance?
+What Are The MOICs For Ardian Funds?
+What is the status of Private Markets Fundraising?
+Which asset class has the most fundraising in 2023?
+Which asset class did the most fundraising in 2021?
+Which Asset classes are outperforming?
+which asset classes are outperforming public benchmarks?
+Which asset classes have the highest returns?
+Which asset classes have the lowest returns?
+Show contribution activity in Private Markets
+Show me current contribution data
+What are the current rates of contribution in private markets
+How much capital is being deployed in 2023
+What is the rate of distributions right now?
+Which strategies have the most money?
+Are NAVs getting higher?
+Is Venture Capital Outperforming public markets?
+Which vintage years did venture capital outperform the PME?
+Are growth funds doing better than ETFs?
+Which vintage years did growth funds outperform the PME?
+What is the status of PE fundraising?
+Which PE strategies are doing the most fundraising?
+How much did Private Equity fundraise in 2010?
+What are YTD returns for Private Equity
+What are YTD returns for Venture Capital
+What are YTD returns for Buyout Funds
+Is Buyout outperforming public markets?
+In what vintage years have buyout funds outperformed PME?
+Is VC outperforming public markets?
+In what vintage years have venture capital funds outperformed PME?
+Is Growth outperforming public markets?
 In what vintage years have growth funds outperformed PME?
-show me top 5 vintages in Infrastructure
-Show me Credit funds that are fundraising with terms less than 5 years?"""
+How have growth funds performed versus public?
+Which Private Equity strategy has the highest returns?
+What is the rate of contributions for Buyout funds?
+What was the rate of contribution for Growth funds in 2014?
+What is the rate of distributions for Buyout funds?
+Did growth funds make a lot of distributions last year?
+How much fundraising is happening in Private Credit
+Is distressed debt or origination raising more money?
+Are REITs doing better than private real estate?
+Is Private Credit outperforming public markets?
+In what years has private credit outperformed PME?
+What are private credit returns?
+What is the rate of contributions for Private Credit funds?
+Did private credit funds raise a lot last year?
+What was the rate of contribution for Distressed debt in 2014?
+What is the rate of distributions for credit funds?
+Are infrastructure funds fundraising a lot right now?
+What is current sentiment on Real Estate?
+What year was fundraising for Real Assets highest?
+How much money was raised for Infrastructure Funds last year?
+How much money has been raised in distressed debt so far this year?
+What were total contributions for Distressed debt last year?
+Show historical contributions for private credit
+What were distributions last year for private credit?
+What is the average distribution rate for private credit?
+Should I invest in Private Credit or Private Equity?
+What's doing better? buyout or vc?
+What are the best performing strategies in Private Markets?
+How big is Private Credit?
+How much money is in Natural Resources?
+Sharpe ratio for private real estate
+Is infrastructure doing better or worse than public?
+Show me the hamilton Lane worry index"""
 
 query_list = query_list.split("\n")
 # query_list = [
-#     "Show me real estate funds that are fundraising and include their asset manager performance.",
-#     "What is the status of Private Markets Fundraising?"
+#     "Worst Performing Managers In 2022?"
 # ]
 for query in query_list:
     base_prompt_template = load_prompt_template(prompt_template_filename, query)

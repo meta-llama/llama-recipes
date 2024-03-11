@@ -1,0 +1,79 @@
+[tool.poetry]
+name = "ai-chatbot"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = []
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+fastapi = "*"
+uvicorn = "*"
+sqlalchemy = "*"
+python-multipart = "*"
+passlib = "*"
+bcrypt = "*"
+pyjwt = "*"
+alembic = "*"
+sentry-sdk = {extras = ["fastapi"], version = "*"}
+pandas = "*"
+tqdm = "*"
+spacy = "*"
+numpy = "*"
+openai = "0.28.1"
+pandasql = "*"
+openpyxl = "*"
+python-decouple = "^3.8"
+boto3 = "^1.26.153"
+redis = {extras = ["hiredis"], version = "^4.5.5"}
+grpcio-tools = "^1.56.0"
+pytest = "^7.4.0"
+langchain = "^0.0.312"
+prompt-toolkit = "^3.0.39"
+pinecone-client = "^2.2.4"
+httpx = "^0.25.0"
+pytest-html = "^4.0.2"
+fakeredis = "^2.20.0"
+py = "^1.11.0"
+tiktoken = "^0.5.1"
+datasets = "*"
+sentence-transformers = "2.3.1"
+accelerate = "*"
+scikit-learn="1.2.2"
+pydantic = {extras = ["dotenv"], version = "1.10.13"}
+rapidfuzz = "^3.4.0"
+scipy = "1.10.0"
+torch = "2.0.0"
+pypdf = "^3.17.0"
+motor = "^3.3.2"
+cohere = "^4.47"
+sentencepiece = "^0.1.97"
+tokenizers = "^0.15.0"
+huggingface-hub = "^0.19.3"
+transformers = "^4.37.1"
+ctranslate2 = "*"
+flask = "*"
+gunicorn = "*"
+
+[tool.poetry.group.quality.dependencies]
+black = "23.7.0"
+isort = "5.12.0"
+mypy = "1.5.1"
+ruff = "0.0.285"
+
+[tool.ruff]
+# Allow lines to be as long as 120 characters.
+line-length = 120
+
+[tool.ruff.extend-per-file-ignores]
+"chatbot/chat/chat_models/chain_templates/*" = ["E501"]
+"chatbot/chat/chat_models/chains/*" = ["E501"]
+"chatbot/chat/chat_models/llm/*.yaml" = ["E501"]
+"chatbot/chat/intents/classifier/classifier_base_prompt.py" = ["E501"]
+"chatbot/chat/intents/descriptive/utils.py" = ["E501"]
+"chatbot/chat/intents/quantitative/tests/*" = ["E501"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -29,7 +29,7 @@ class train_config:
     n_gpu = 4
     peft_method: str = "lora" # None , llama_adapter, prefix
     use_peft: bool=True
-    output_dir: str = "/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/models/testing"
+    output_dir: str = "/home/ubuntu/llama-recipes-fork/llama-recipes/src/llama_recipes/models/codellama-8bit-json-mkt-research-24-03-07"
     freeze_layers: bool = False
     num_freeze_layers: int = 1
     quantization: bool = True
@@ -40,4 +40,4 @@ class train_config:
     save_optimizer: bool=False # will be used if using FSDP
     use_fast_kernels: bool = False # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
     save_metrics: bool = False # saves training metrics to a json file for later plotting
-    dataset_path: str = "HelixAI/hl-text-standard-json-single-turn-2024-03-04"
+    dataset_path: str = "HelixAI/hl-market_research-json-single-turn-full-dataset"
