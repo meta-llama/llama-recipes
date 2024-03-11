@@ -138,3 +138,31 @@ Question-Answer Pairing: Organize your data into pairs where each question is di
 
 
 4. **Fine-Tuning:** Given that we have a selected pretrained model, in this case we use LLama 2 chat 7B, fine-tunning with more specific data can improve its performance on particular tasks, such as answering questions about Llama in this case.
+
+#### Data Insights
+
+We generated a dataset of almost 650 Q&A pairs from some of the open source documents about Llama 2, including getting started guide from Llama website, its FAQ, Llama 2, Purple Llama, Code Llama papers and Llama-Recipes documentations. 
+
+We have run some fine-tuning experiments with single GPU using quantization with different LORA configs (all linear layer versus query and key projections only) and different number of epochs. Although train and eval loss shows decrease specially with using all linear layers in LORA configs and training with 6 epochs, still the result is far from acceptable in real tests.
+
+
+Here is how losses between three runs looks like.
+
+<p align="center">
+  <img src=./eval-loss-3runs.png alt="Eval Loss" width="48%" style="margin-right: 2%;"/>
+  <img src=./train-loss-3runs.png alt="Train Loss" width="48%"/>
+</p>
+
+##### Low Quality Dataset
+
+Examples of real test on the fine-tuned model with very poor results. It seems fine-tuned model does not show any promising results with this dataset. Looking at the dataset, we could observe that the amount of data (Q&A pair) for each concept such as PyTorch FSDP and Llama-Recipe is very limited and almost one pair per concept. This shows lack of relevant training data. The recent research showed that from each taxonomy having 2-3 examples can yield promising results.
+
+<p align="center">
+  <img src=./poor-test-1.png alt="Poor Test Results example 1" width="48%" style="margin-right: 2%;"/>
+  <img src=./poor-test-2.png alt="Poor Test Results example 1" width="48%"/>
+</p>
+
+
+Next, we are looking into augmenting our datasets. One way to do so, is to use our Llama 70B model to read our question answer pairs and come up with two paraphrase versions of each pair to augment our data. 
+
+
