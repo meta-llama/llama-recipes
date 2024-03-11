@@ -138,6 +138,49 @@ Question-Answer Pairing: Organize your data into pairs where each question is di
 
 
 4. **Fine-Tuning:** Given that we have a selected pretrained model, in this case we use LLama 2 chat 7B, fine-tunning with more specific data can improve its performance on particular tasks, such as answering questions about Llama in this case.
+#### Building Dataset 
+
+During the self-instruct process of generation Q&A pairs from documents, we realized that with out system prompt being
+```python
+You are a quiz expert, you will be provided with a document,
+  read it and generate question and answer pairs
+  that are most likely be asked by a use of llama that just want to start, 
+  please make sure you follow those rules,
+  1. Generate only {total_questions} question answer pairs.
+  2. Generate in {language}.
+  3. The questions can be answered based *solely* on the given passage. 
+  4. Avoid asking questions with similar meaning.
+  5. Make the answer as concise as possible, it should be at most 60 words.
+  6. Provide relevant links from the document to support the answer.
+  7. Never use any abbreviation.
+  8. Return the result in json format with the template: 
+    [
+      {{
+        "question": "your question A.",
+        "answer": "your answer to question A."
+      }},
+      {{
+        "question": "your question B.",
+        "answer": "your answer to question B."
+      }}
+    ]
+
+```
+
+Model tends to ignore providing the bigger picture in the questions, for example below is the result of Q&A pair from reading Code Llama paper. Partially, its because due to context window size of the model we have to divide the document into smaller chunks, so model use `described in the passage` or `according to the passage?` in the question instead of linking it back to Code Llama.
+
+
+```python
+{
+        "question": "What is the purpose of the transformation described in the passage?",
+        "answer": "The transformation is used to create documents with a prefix, middle part, and suffix for infilling training."
+    },
+{
+    "question": "What is the focus of research in transformer-based language modeling, according to the passage?",
+    "answer": "The focus of research is on effective handling of long sequences, specifically extrapolation and reducing the quadratic complexity of attention passes."
+},
+```
+
 
 #### Data Insights
 
