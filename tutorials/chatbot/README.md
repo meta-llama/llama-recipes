@@ -155,7 +155,7 @@ Here is how losses between three runs looks like.
 
 ##### Low Quality Dataset
 
-Examples of real test on the fine-tuned model with very poor results. It seems fine-tuned model does not show any promising results with this dataset. Looking at the dataset, we could observe that the amount of data (Q&A pair) for each concept such as PyTorch FSDP and Llama-Recipe is very limited and almost one pair per concept. This shows lack of relevant training data. The recent research showed that from each taxonomy having 2-3 examples can yield promising results.
+Below are some examples of real test on the fine-tuned model with very poor results. It seems fine-tuned model does not show any promising results with this dataset. Looking at the dataset, we could observe that the amount of data (Q&A pair) for each concept such as PyTorch FSDP and Llama-Recipe is very limited and almost one pair per concept. This shows lack of relevant training data. The recent research showed that from each taxonomy having 2-3 examples can yield promising results.
 
 <p align="center">
   <img src=./poor-test-1.png alt="Poor Test Results example 1" width="48%" style="margin-right: 2%;"/>
