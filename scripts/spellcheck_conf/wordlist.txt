@@ -1261,3 +1261,4 @@ PurpleLlama
 Youtube
 wandb
 multigpu
+sql
