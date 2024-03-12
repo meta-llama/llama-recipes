@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from transformers import AutoTokenizer
 from urllib.parse import unquote
-
+import yaml
 
 CUDA_VISIBLE_DEVICES = [0]
 MAX_BATCH_SIZE = 30
@@ -40,7 +40,7 @@ async def health_check():
 async def invoke(query: str):
 
     query = unquote(query)
-    with open(os.path.dirname(__file__) + "hl_mr_prompt.yaml", "r") as file:
+    with open(os.path.dirname(__file__) + "/hl_mr_prompt.yaml", "r") as file:
             yaml_data = yaml.safe_load(file)
     prompt_template = yaml_data["prompt"].strip()
     # self.sys_prompt = yaml_data["prompt"].strip()
