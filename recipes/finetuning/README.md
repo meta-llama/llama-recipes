@@ -4,7 +4,7 @@ Here we discuss fine-tuning Llama 2 with a couple of different recipes. We will 
 
 
 ## 1. **Parameter Efficient Model Fine-Tuning**
- This helps make the fine-tuning process more affordable even on 1 consumer grade GPU. These methods enable us to keep the whole model frozen and to just add tiny learnable parameters/ layers into the model. In this way, we just train a very tiny portion of the parameters. The most famous method in this category is [LORA](https://arxiv.org/pdf/2106.09685.pdf), LLaMA Adapter and Prefix-tuning.
+ This helps make the fine-tuning process more affordable even on 1 consumer grade GPU. These methods enable us to keep the whole model frozen and to just add tiny learnable parameters/ layers into the model. In this way, we just train a very tiny portion of the parameters. The most famous method in this category is [LORA](https://arxiv.org/pdf/2106.09685.pdf), Llama Adapter and Prefix-tuning.
 
 
 These methods will address three aspects:
@@ -14,7 +14,7 @@ These methods will address three aspects:
 
 - **Cost of deployment** – for each fine-tuned downstream model we need to deploy a separate model; however, when using these methods, only a small set of parameters (few MB instead of several GBs) of the pretrained model can do the job. In this case, for each task we only add these extra parameters on top of the pretrained model so pretrained models can be assumed as backbone and these parameters as heads for the model on different tasks.
 
-- **Catastrophic forgetting** — these methods also help with forgetting the first task that can happen in fine-tunings.
+- **Catastrophic forgetting** — these methods also help with forgetting the first task that can happen in finetuning.
 
 HF [PEFT](https://github.com/huggingface/peft) library provides an easy way of using these methods which we make use of here. Please read more [here](https://huggingface.co/blog/peft).
 
