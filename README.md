@@ -18,7 +18,6 @@ The 'llama-recipes' repository is a companion to the [Llama 2 model](https://git
   - [Repository Organization](#repository-organization)
     - [`recipes/`](#recipes)
     - [`src/`](#src)
-  - [News](#news)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -123,19 +122,10 @@ Contains modules which support the example recipes:
 | [policies](src/llama_recipes/policies/) | Contains FSDP scripts to provide different policies, such as mixed precision, transformer wrapping policy and activation checkpointing along with any precision optimizer (used for running FSDP with pure bf16 mode). |
 | [utils](src/llama_recipes/utils/) | Utility files for:<br/> - `train_utils.py` provides training/eval loop and more train utils.<br/> - `dataset_utils.py` to get preprocessed datasets.<br/> - `config_utils.py` to override the configs received from CLI.<br/> - `fsdp_utils.py` provides FSDP  wrapping policy for PEFT methods.<br/> - `memory_utils.py` context manager to track different memory stats in train loop. |
 
-## News
-**[Update Feb. 26, 2024] We added examples to showcase OctoAI's cloud APIs for Llama2, CodeLlama, and LlamaGuard: including [PurpleLlama overview](./examples/Purple_Llama_OctoAI.ipynb), [hello Llama2 cloud](./demo_apps/OctoAI_API_examples/HelloLlamaCloud.ipynb), [getting to know Llama2](./demo_apps/OctoAI_API_examples/Getting_to_know_Llama.ipynb), [live search example](./demo_apps/OctoAI_API_examples/LiveData.ipynb), [Llama2 Gradio demo](./demo_apps/OctoAI_API_examples/Llama2_Gradio.ipynb), [Youtube video summarization](./demo_apps/OctoAI_API_examples/VideoSummary.ipynb), and [retrieval augmented generation overview](./demo_apps/OctoAI_API_examples/RAG_Chatbot_example/RAG_Chatbot_Example.ipynb)**.
-
-**[Update Feb. 5, 2024] We added support for Code Llama 70B instruct in our example [inference script](./examples/code_llama/code_instruct_example.py). For details on formatting the prompt for Code Llama 70B instruct model please refer to [this document](./docs/inference.md)**.
-
-**[Update Dec. 28, 2023] We added support for Llama Guard as a safety checker for our example inference script and also with standalone inference with an example script and prompt formatting. More details [here](./examples/llama_guard/README.md). For details on formatting data for fine tuning Llama Guard, we provide a script and sample usage [here](./src/llama_recipes/data/llama_guard/README.md).**
-
-**[Update Dec 14, 2023] We recently released a series of Llama 2 demo apps [here](./demo_apps). These apps show how to run Llama (locally, in the cloud, or on-prem),  how to use Azure Llama 2 API (Model-as-a-Service), how to ask Llama questions in general or about custom data (PDF, DB, or live), how to integrate Llama with WhatsApp and Messenger, and how to implement an end-to-end chatbot with RAG (Retrieval Augmented Generation).**
-
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## License
 See the License file [here](LICENSE) and Acceptable Use Policy [here](USE_POLICY.md)
