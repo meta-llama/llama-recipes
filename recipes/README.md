@@ -2,15 +2,15 @@ This folder contains examples organized by topic:
 
 | Subfolder | Description |
 |---|---|
-[quickstart](./recipes/quickstart) | The "Hello World" of using Llama2, start here if you are new to using Llama2.
-[finetuning](./recipes/finetuning)|Scripts to finetune Llama2 on single-GPU and multi-GPU setups
-[inference](./recipes/inference)|Scripts to deploy Llama2 for inference locally and using model servers
-[use_cases](./recipes/use_cases)|Scripts showing common applications of Llama2
-[responsible_ai](./recipes/responsible_ai)|Scripts to use PurpleLlama for safeguarding model outputs
-[llama_api_providers](./recipes/llama_api_providers)|Scripts to run inference on Llama via hosted endpoints
-[benchmarks](./recipes/benchmarks)|Scripts to benchmark Llama 2 models inference on various backends
-[code_llama](./recipes/code_llama)|Scripts to run inference with the Code Llama models
-[evaluation](./recipes/evaluation)|Scripts to evaluate fine-tuned Llama2 models using `lm-evaluation-harness` from `EleutherAI`
+[quickstart](./quickstart) | The "Hello World" of using Llama2, start here if you are new to using Llama2.
+[finetuning](./finetuning)|Scripts to finetune Llama2 on single-GPU and multi-GPU setups
+[inference](./inference)|Scripts to deploy Llama2 for inference locally and using model servers
+[use_cases](./use_cases)|Scripts showing common applications of Llama2
+[responsible_ai](./responsible_ai)|Scripts to use PurpleLlama for safeguarding model outputs
+[llama_api_providers](./llama_api_providers)|Scripts to run inference on Llama via hosted endpoints
+[benchmarks](./benchmarks)|Scripts to benchmark Llama 2 models inference on various backends
+[code_llama](./code_llama)|Scripts to run inference with the Code Llama models
+[evaluation](./evaluation)|Scripts to evaluate fine-tuned Llama2 models using `lm-evaluation-harness` from `EleutherAI`
 
 
 **<a id="replicate_note">Note on using Replicate</a>**
