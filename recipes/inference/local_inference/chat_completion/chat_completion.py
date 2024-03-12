@@ -64,17 +64,6 @@ def main(
     model = load_model(model_name, quantization, use_fast_kernels)
     if peft_model:
         model = load_peft_model(model, peft_model)
-    if use_fast_kernels:
-        """
-        Setting 'use_fast_kernels' will enable
-        using of Flash Attention or Xformer memory-efficient kernels 
-        based on the hardware being used. This would speed up inference when used for batched inputs.
-        """
-        try:
-            from optimum.bettertransformer import BetterTransformer
-            model = BetterTransformer.transform(model)   
-        except ImportError:
-            print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
 
     tokenizer = LlamaTokenizer.from_pretrained(model_name)
     tokenizer.add_special_tokens(
