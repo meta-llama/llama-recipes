@@ -1,6 +1,6 @@
 # Llama Recipes: Examples to get started using the Llama models from Meta
 
-The 'llama-recipes' repository is a companion to the [Llama 2 model](https://github.com/facebookresearch/llama). The goal of this repository is to provide example scripts and notebooks to quickly get started with using the Llama models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Llama 2 and other tools in the LLM ecosystem. The examples here showcase how to run Llama 2 locally, in the cloud, and on-prem.
+The 'llama-recipes' repository is a companion to the [Llama 2 model](https://github.com/facebookresearch/llama). The goal of this repository is to provide a scalable library for fine-tuning Llama 2, along with some example scripts and notebooks to quickly get started with using the Llama 2 models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Llama 2 and other tools in the LLM ecosystem. The examples here showcase how to run Llama 2 locally, in the cloud, and on-prem.
 
 ## Table of Contents
 
@@ -101,14 +101,14 @@ Contains examples are organized in folders by topic:
 | Subfolder | Description |
 |---|---|
 [quickstart](./recipes/quickstart) | The "Hello World" of using Llama2, start here if you are new to using Llama2.
+[finetuning](./recipes/finetuning)|Scripts to finetune Llama2 on single-GPU and multi-GPU setups
+[inference](./recipes/inference)|Scripts to deploy Llama2 for inference locally and using model servers
+[use_cases](./recipes/use_cases)|Scripts showing common applications of Llama2
+[responsible_ai](./recipes/responsible_ai)|Scripts to use PurpleLlama for safeguarding model outputs
+[llama_api_providers](./recipes/llama_api_providers)|Scripts to run inference on Llama via hosted endpoints
 [benchmarks](./recipes/benchmarks)|Scripts to benchmark Llama 2 models inference on various backends
 [code_llama](./recipes/code_llama)|Scripts to run inference with the Code Llama models
 [evaluation](./recipes/evaluation)|Scripts to evaluate fine-tuned Llama2 models using `lm-evaluation-harness` from `EleutherAI`
-[finetuning](./recipes/finetuning)|Scripts to finetune Llama2 on single-GPU and multi-GPU setups
-[inference](./recipes/inference)|Scripts to deploy Llama2 for inference locally and using model servers
-[llama_api_providers](./recipes/llama_api_providers)|Scripts to run inference on Llama via hosted endpoints
-[responsible_ai](./recipes/responsible_ai)|Scripts to use PurpleLlama for safeguarding model outputs
-[use_cases](./recipes/use_cases)|Scripts showing common applications of Llama2
 
 ### `src/`
 
