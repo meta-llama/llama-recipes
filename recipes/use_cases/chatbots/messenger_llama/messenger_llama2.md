@@ -2,7 +2,7 @@
 
 This step-by-step tutorial shows the complete process of building a Llama-enabled Messenger chatbot. A demo video of using the iOS Messenger app to send a question to a Facebook business page and receive the Llama 2 generated answer is [here](https://drive.google.com/file/d/1B4ijFH4X3jEHZfkGdTPmdsgpUes_RNud/view).
 
-If you're interested in a Llama-enabled WhatsApp chatbot, see [here](whatsapp_llama2.md) for a tutorial.
+If you're interested in a Llama-enabled WhatsApp chatbot, see [here](../whatsapp_llama/whatsapp_llama2.md) for a tutorial.
 
 ## Overview
 
