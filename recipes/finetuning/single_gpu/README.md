@@ -3,8 +3,10 @@
 This recipe steps you through how to finetune a Llama 2 model on the text summarization task using the [samsum](https://huggingface.co/datasets/samsum). The notebook uses parameter efficient finetuning (PEFT) and int8 quantization to finetune a 7B on a single GPU like an A10 with 24GB gpu memory.
 
 There are two ways to do finetuning with a single GPU:
-1. From the python notebook [](./peft_finetuning.ipynb)
-2. From the python script [](../finetuning.py); the same script can be used for [multi GPU finetuning](../multigpu/) as well.
+1. Using `llama-recipes` trainer in the python script [](../finetuning.py); the same script can be used for [multi GPU finetuning](../multigpu/) as well.
+2. Using HuggingFace Trainer in the the python notebook [](./peft_finetuning_hf_trainer.ipynb)
+
+The rest of this README provides details on using the `llama-recipes` trainer for finetuning Llama 2 on a single GPU.
    
 ## Requirements
 
@@ -20,9 +22,7 @@ To run fine-tuning on a single GPU, we will make use of two packages:
 
 ## How to run it?
 
-### Notebook
-Execute each cell in a GPU-enabled environment.
-### Script
+
 ```bash
 
 python -m ../finetuning.py  --use_peft --peft_method lora --quantization --use_fp16 --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
