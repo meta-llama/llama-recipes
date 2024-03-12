@@ -1,23 +1,28 @@
 # Fine-tuning with Single GPU
 
-To run fine-tuning on a single GPU, we will  make use of two packages
+This recipe steps you through how to finetune a Llama 2 model on the text summarization task using the [samsum](https://huggingface.co/datasets/samsum). The notebook uses parameter efficient finetuning (PEFT) and int8 quantization to finetune a 7B on a single GPU like an A10 with 24GB gpu memory.
 
-1- [PEFT](https://huggingface.co/blog/peft) methods and in specific using HuggingFace [PEFT](https://github.com/huggingface/peft)library.
+There are two ways to do finetuning with a single GPU:
+1. From the python notebook [](./peft_finetuning.ipynb)
+2. From the python script [](../finetuning.py); the same script can be used for [multi GPU finetuning](../multigpu/) as well.
+   
+## Requirements
 
-2- [bitsandbytes](https://github.com/TimDettmers/bitsandbytes) int8 quantization.
+Ensure that you have installed the llama-recipes package ([details](../../../README.md#installing)).
 
-Given combination of PEFT and Int8 quantization, we would be able to fine_tune a Llama 2 7B model on one consumer grade GPU such as A10.
+> [!NOTE]  
+> The llama-recipes package will install PyTorch 2.0.1 version. In case you want to use FSDP with PEFT for multi GPU finetuning, please install the PyTorch nightlies ([details](../../../README.md#pytorch-nightlies))
 
-## Requirements 
-To run the examples, make sure to install the llama-recipes package (See [README.md](../README.md) for details).
+To run fine-tuning on a single GPU, we will make use of two packages:
+1. [PEFT](https://github.com/huggingface/peft) to use parameter-efficient finetuning.
+2. [bitsandbytes](https://github.com/TimDettmers/bitsandbytes) for int8 quantization.
 
-**Please note that the llama-recipes package will install PyTorch 2.0.1 version, in case you want to run FSDP + PEFT, please make sure to install PyTorch nightlies.**
 
 ## How to run it?
 
-Get access to a machine with one GPU or if using a multi-GPU machine please make sure to only make one of them visible using `export CUDA_VISIBLE_DEVICES=GPU:id` and run the following. It runs by default with `samsum_dataset` for summarization application.
-
-
+### Notebook
+Execute each cell in a GPU-enabled environment.
+### Script
 ```bash
 
 python -m ../finetuning.py  --use_peft --peft_method lora --quantization --use_fp16 --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
@@ -31,10 +36,14 @@ The args used in the command above are:
 
 * `--quantization` boolean flag to enable int8 quantization
 
+> [!NOTE]  
+> In case you are using a multi-GPU machine please make sure to only make one of them visible using `export CUDA_VISIBLE_DEVICES=GPU:id`.
+>
+> All the setting defined in [config files](src/llama_recipes/configs/) can be passed as args through CLI when running the script, there is no need to change from config files directly.
 
-## How to run with different datasets?
+### How to run with different datasets?
 
-Currently 4 datasets are supported that can be found in [Datasets config file](../src/llama_recipes/configs/datasets.py).
+Currently 4 datasets are supported that can be found in [Datasets config file](../../../src/llama_recipes/configs/datasets.py).
 
 * `grammar_dataset` : use this [notebook](../src/llama_recipes/datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process theJfleg and C4 200M datasets for grammar checking.
 
@@ -103,3 +112,15 @@ save_optimizer: bool=False
 * [Datasets config file](../src/llama_recipes/configs/datasets.py) provides the available options for datasets.
 
 * [peft config file](../src/llama_recipes/configs/peft.py) provides the supported PEFT methods and respective settings that can be modified.
+
+## Weights & Biases Experiment Tracking
+
+You can enable [W&B](https://wandb.ai/) experiment tracking by using `use_wandb` flag as below. You can change the project name, entity and other `wandb.init` arguments in `wandb_config`.
+
+```bash
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model --use_wandb
+```
+You'll be able to access a dedicated project or run link on [wandb.ai](https://wandb.ai) and see your dashboard like the one below. 
+<div style="display: flex;">
+    <img src="../../../docs/images/wandb_screenshot.png" alt="wandb screenshot" width="500" />
+</div>

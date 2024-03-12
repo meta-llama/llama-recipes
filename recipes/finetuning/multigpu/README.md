@@ -1,26 +1,29 @@
 # Fine-tuning with Multi GPU
 
-To run fine-tuning on multi-GPUs, we will  make use of two packages:
+This recipe steps you through how to finetune a Llama 2 model on the text summarization task using the [samsum](https://huggingface.co/datasets/samsum) on multiple GPUs in a single or across multiple nodes.
 
-1. [PEFT](https://huggingface.co/blog/peft) methods and in particular using the Hugging Face [PEFT](https://github.com/huggingface/peft)library.
+We will use the [](../finetuning.py) script.
 
+## Requirements
+
+Ensure that you have installed the llama-recipes package ([details](../../../README.md#installing)).
+
+> [!NOTE]  
+> The llama-recipes package will install PyTorch 2.0.1 version. In case you want to use FSDP with PEFT for multi GPU finetuning, please install the PyTorch nightlies ([details](../../../README.md#pytorch-nightlies))
+
+To run fine-tuning on a single GPU, we will make use of two packages:
+1. [PEFT](https://github.com/huggingface/peft) to use parameter-efficient finetuning.
 2. [FSDP](https://pytorch.org/tutorials/intermediate/FSDP_adavnced_tutorial.html) which helps us parallelize the training over multiple GPUs. [More details](LLM_finetuning.md/#2-full-partial-parameter-finetuning).
 
-Given the combination of PEFT and FSDP, we would be able to fine tune a Llama 2 model on multiple GPUs in one node or multi-node.
-
-## Requirements 
-To run the examples, make sure to install the llama-recipes package and clone the github repository in order to use the provided [`../finetuning.py`](../finetuning.py) script with torchrun.
-
-**Please note that the llama_recipes package will install PyTorch 2.0.1 version, in case you want to run FSDP + PEFT, please make sure to install PyTorch nightlies.**
 
 ## How to run it
 
-Get access to a machine with multiple GPUs ( in this case we tested with 4 A100 and A10s).
+Get access to a machine with multiple GPUs (in this case we tested with 4 A100 and A10s).
 This runs with the `samsum_dataset` for summarization application by default.
 
 **Multiple GPUs one node**:
 
-**NOTE** please make sure to use PyTorch Nightlies for using PEFT+FSDP. Also, note that int8 quantization from bit&bytes currently is not supported in FSDP.
+**NOTE** please make sure to use PyTorch Nightlies for using PEFT+FSDP. Also, note that int8 quantization from bits&bytes currently is not supported in FSDP.
 
 ```bash
 
@@ -63,6 +66,18 @@ If you are interested in running full parameter fine-tuning on the 70B model, yo
 ```bash
 
 torchrun --nnodes 1 --nproc_per_node 8 ../finetuning.py --enable_fsdp --low_cpu_fsdp --pure_bf16 --model_name /patht_of_model_folder/70B --batch_size_training 1 --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned
+```
+
+#### Slower interconnect network?
+In case you are dealing with slower interconnect network between nodes, to reduce the communication overhead you can make use of `--hsdp` flag. 
+
+HSDP (Hybrid sharding Data Parallel) helps to define a hybrid sharding strategy where you can have FSDP within `sharding_group_size` which can be the minimum number of GPUs you can fit your model and DDP between the replicas of the model specified by `replica_group_size`.
+
+This will require to set the Sharding strategy in [fsdp config](./src/llama_recipes/configs/fsdp.py) to `ShardingStrategy.HYBRID_SHARD` and specify two additional settings, `sharding_group_size` and `replica_group_size` where former specifies the sharding group size, number of GPUs that you model can fit into to form a replica of a model and latter specifies the replica group size, which is world_size/sharding_group_size.
+
+```bash
+
+torchrun --nnodes 4 --nproc_per_node 8 examples/finetuning.py --enable_fsdp --low_cpu_fsdp --fsdp_config.pure_bf16 --model_name /patht_of_model_folder/70B --batch_size_training 1 --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --hsdp --sharding_group_size n --replica_group_size world_size/n
 
 ```
 
@@ -143,11 +158,11 @@ save_optimizer: bool=False
 
 ```
 
-* [Datasets config file](../src/llama_recipes/configs/datasets.py) provides the available options for datasets.
+* [Datasets config file](../../../src/llama_recipes/configs/datasets.py) provides the available options for datasets.
 
-* [peft config file](../src/llama_recipes/configs/peft.py) provides the supported PEFT methods and respective settings that can be modified.
+* [peft config file](../../../src/llama_recipes/configs/peft.py) provides the supported PEFT methods and respective settings that can be modified.
 
-* [FSDP config file](../src/llama_recipes/configs/fsdp.py) provides FSDP settings such as:
+* [FSDP config file](../../../src/llama_recipes/configs/fsdp.py) provides FSDP settings such as:
 
     * `mixed_precision` boolean flag to specify using mixed precision, defatults to true.
 
@@ -167,3 +182,15 @@ save_optimizer: bool=False
 * `fsdp_activation_checkpointing` enables activation checkpoining for FSDP, this saves significant amount of memory with the trade off of recomputing itermediate activations during the backward pass. The saved memory can be re-invested in higher batch sizes to increase the throughput. We recommond you use this option.
 
 * `pure_bf16` it moves the  model to `BFloat16` and if `optimizer` is set to `anyprecision` then optimizer states will be kept in `BFloat16` as well. You can use this option if necessary.
+
+## Weights & Biases Experiment Tracking
+
+You can enable [W&B](https://wandb.ai/) experiment tracking by using `use_wandb` flag as below. You can change the project name, entity and other `wandb.init` arguments in `wandb_config`.
+
+```bash
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model --use_wandb
+```
+You'll be able to access a dedicated project or run link on [wandb.ai](https://wandb.ai) and see your dashboard like the one below. 
+<div style="display: flex;">
+    <img src="../../../docs/images/wandb_screenshot.png" alt="wandb screenshot" width="500" />
+</div>
