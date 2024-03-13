@@ -22,18 +22,18 @@ Get access to a machine with multiple GPUs (in this case we tested with 4 A100 a
 
 <details open>
 <summary>Single-node Multi-GPU</summary>
-```bash
-torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model
-```
+
+    torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model
+
 </details>
 
 <details>
 <summary>Multi-node Multi-GPU</summary>
 Here we use a slurm script to schedule a job with slurm over multiple nodes.
-```bash
-# Change the num nodes and GPU per nodes in the script before running.
-sbatch ./multi_node.slurm
-```
+    
+    # Change the num nodes and GPU per nodes in the script before running.
+    sbatch ./multi_node.slurm
+
 </details>
 
 
