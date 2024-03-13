@@ -2,7 +2,7 @@
 
 This folder contains instructions to fine-tune Llama 2 on a 
 * [single-GPU setup](./singlegpu_finetuning.md)
-* [multi-GPU setup](./multigpu_finetuning_.md) 
+* [multi-GPU setup](./multigpu_finetuning.md) 
 
 using the canonical [finetuning script](../../src/llama_recipes/finetuning.py) in the llama-recipes package.
 
