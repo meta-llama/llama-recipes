@@ -1228,6 +1228,7 @@ hyperparameters
 jsonl
 VRAM
 HuggingFace
+huggingface
 llamaguard
 LEVELs
 AugmentationConfigs
@@ -1254,7 +1255,11 @@ EleutherAI
 CodeLlama
 LlamaGuard
 OctoAI
+octoai
 OctoAI's
 PurpleLlama
 Youtube
 wandb
+multigpu
+sql
+scalable

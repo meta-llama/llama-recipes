@@ -2,7 +2,7 @@
 
 This step-by-step tutorial shows the complete process of building a Llama-enabled WhatsApp chatbot. A demo video of using the iOS WhatsApp to send a question to a test phone number and receive the Llama 2 generated answer is [here](https://drive.google.com/file/d/1fZDaOsvyE1yrNGETV-e0SvL14BYeAI6R/view).
 
-If you're interested in a Llama-enabled Messenger chatbot, see [here](messenger_llama2.md) for a tutorial.
+If you're interested in a Llama-enabled Messenger chatbot, see [here](../messenger_llama/messenger_llama2.md) for a tutorial.
 
 ## Overview
 
@@ -10,7 +10,7 @@ Businesses of all sizes can use the [WhatsApp Business API](https://developers.f
 
 The diagram below shows the components and overall data flow of the Llama 2 enabled WhatsApp chatbot demo we built, using Amazon EC2 instance as an example for running the web server.
 
-![](whatsapp_llama_arch.jpg)
+![](../../../../docs/images/whatsapp_llama_arch.jpg)
 
 ## Getting Started with WhatsApp Business Cloud API
 
@@ -25,7 +25,7 @@ For the last step, you need to further follow the [Sample Callback URL for Webho
 
 Now open the [Meta for Develops Apps](https://developers.facebook.com/apps/) page and select the WhatsApp business app and you should be able to copy the curl command (as shown in the App Dashboard - WhatsApp - API Setup - Step 2 below) and run the command on a Terminal to send a test message to your WhatsApp. 
 
-![](whatsapp_dashboard.jpg)
+![](../../../../docs/images/whatsapp_dashboard.jpg)
 
 Note down the "Temporary access token", "Phone number ID", and "a recipient phone number" in the API Setup page above, which will be used later.
 
