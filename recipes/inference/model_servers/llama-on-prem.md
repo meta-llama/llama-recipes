@@ -182,5 +182,5 @@ llm = HuggingFaceTextGenInference(
 llm("What wrote the book godfather?")
 ```
 
-With the Llama 2 instance `llm` created this way, you can integrate seamlessly with LangChain and LlamaIndex to build powerful on-prem Llama 2 apps such as the [Llama demo apps](https://github.com/facebookresearch/llama-recipes/tree/main/demo_apps).
+With the Llama 2 instance `llm` created this way, you can integrate seamlessly with LangChain and LlamaIndex to build powerful on-prem Llama 2 apps such as the [Llama demo apps](https://github.com/meta-llama/llama-recipes/tree/main/recipes).
 
