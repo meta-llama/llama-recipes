@@ -1,6 +1,6 @@
 # Llama Guard demo
 <!-- markdown-link-check-disable -->
-Llama Guard is a new experimental model that provides input and output guardrails for LLM deployments. For more details, please visit the main [repository](https://github.com/facebookresearch/PurpleLlama/tree/main/Llama-Guard).
+Llama Guard is a language model that provides input and output guardrails for LLM deployments. For more details, please visit the main [repository](https://github.com/facebookresearch/PurpleLlama/tree/main/Llama-Guard).
 
 This folder contains an example file to run Llama Guard inference directly. 
 

@@ -2,7 +2,7 @@
 
 This step-by-step tutorial shows the complete process of building a Llama-enabled Messenger chatbot. A demo video of using the iOS Messenger app to send a question to a Facebook business page and receive the Llama 2 generated answer is [here](https://drive.google.com/file/d/1B4ijFH4X3jEHZfkGdTPmdsgpUes_RNud/view).
 
-If you're interested in a Llama-enabled WhatsApp chatbot, see [here](whatsapp_llama2.md) for a tutorial.
+If you're interested in a Llama-enabled WhatsApp chatbot, see [here](../whatsapp_llama/whatsapp_llama2.md) for a tutorial.
 
 ## Overview
 
@@ -10,13 +10,13 @@ Messenger from Meta is a messaging service that allows a Facebook business page 
 
 The diagram below shows the components and overall data flow of the Llama 2 enabled Messenger chatbot demo we built, using an Amazon EC2 instance as an example for running the web server.
 
-![](messenger_llama_arch.jpg)
+![](../../../../docs/images/messenger_llama_arch.jpg)
 
 ## Getting Started with Messenger Platform
 
 1. A Facebook Page is required to send and receive messages using the Messenger Platform - see [here](https://www.facebook.com/business/help/461775097570076?id=939256796236247) for details about Facebook Pages and how to create a new page. 
 
-2. If you have followed the [Llama WhatsApp chatbot tutorial](whatsapp_llama2.md), or if you already have a Meta developer account and a business app, then you can skip this step. Otherwise, you need to first [create a Meta developer account](https://developers.facebook.com/) and then [create a business app](https://developers.facebook.com/docs/development/create-an-app/).
+2. If you have followed the [Llama WhatsApp chatbot tutorial](../whatsapp_llama/whatsapp_llama2.md), or if you already have a Meta developer account and a business app, then you can skip this step. Otherwise, you need to first [create a Meta developer account](https://developers.facebook.com/) and then [create a business app](https://developers.facebook.com/docs/development/create-an-app/).
 
 3. Add the Messenger product to your business app by going to your business app's Dashboard, click "Add Product" and then select "Messenger".
 
@@ -24,7 +24,7 @@ The diagram below shows the components and overall data flow of the Llama 2 enab
 
 5. Open Messenger's API Settings, as shown in the screenshot below, then in "1. Configure webhooks", set the Callback URL and Verify Token set up in the previous step, and subscribe all message related fields for "Webhook Fields". Finally, in "2. Generate access tokens", connect your Facebook page (see step 1) and copy your page access token for later use.
 
-![](messenger_api_settings.png)
+![](../../../../docs/images/messenger_api_settings.png)
 
 ## Writing Llama 2 Enabled Web App
 
