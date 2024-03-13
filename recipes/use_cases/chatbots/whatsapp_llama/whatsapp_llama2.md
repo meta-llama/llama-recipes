@@ -6,7 +6,7 @@ If you're interested in a Llama-enabled Messenger chatbot, see [here](../messeng
 
 ## Overview
 
-Businesses of all sizes can use the [WhatsApp Business API](https://developers.facebook.com/docs/whatsapp/cloud-api/overview) to connect their customers with human agents or Llama 2 powered chatbots. The benefits of an intelligent and knowledgable chatbot are obvious, including cost saving and better customer experience such as 24x7 availability. In this blog, we'll cover the details of integrating Llama 2 with the WhatsApp Business API to build a basic Llama 2 enabled chatbot - see [Llama 2 demo apps](https://github.com/facebookresearch/llama-recipes/tree/main/demo_apps) for more Llama 2 application development and deployment demos such as how to integrate your own data with Llama 2.
+Businesses of all sizes can use the [WhatsApp Business API](https://developers.facebook.com/docs/whatsapp/cloud-api/overview) to connect their customers with human agents or Llama 2 powered chatbots. The benefits of an intelligent and knowledgable chatbot are obvious, including cost saving and better customer experience such as 24x7 availability. In this blog, we'll cover the details of integrating Llama 2 with the WhatsApp Business API to build a basic Llama 2 enabled chatbot - see [Llama 2 demo apps](https://github.com/meta-llama/llama-recipes/tree/main/recipes) for more Llama 2 application development and deployment demos such as how to integrate your own data with Llama 2.
 
 The diagram below shows the components and overall data flow of the Llama 2 enabled WhatsApp chatbot demo we built, using Amazon EC2 instance as an example for running the web server.
 
