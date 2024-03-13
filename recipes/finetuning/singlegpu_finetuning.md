@@ -6,7 +6,7 @@ These are the instructions for using the canonical [finetuning script](../../src
 
 ## Requirements
 
-Ensure that you have installed the llama-recipes package ([details](../../../README.md#installing)).
+Ensure that you have installed the llama-recipes package ([details](../../README.md#installing)).
 
 To run fine-tuning on a single GPU, we will make use of two packages:
 1. [PEFT](https://github.com/huggingface/peft) to use parameter-efficient finetuning.

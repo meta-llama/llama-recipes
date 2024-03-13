@@ -1263,3 +1263,9 @@ wandb
 multigpu
 sql
 scalable
+Huggingface's
+singlegpu
+Jfleg
+nnodes
+patht
+sbatch
