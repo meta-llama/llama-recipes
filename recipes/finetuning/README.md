@@ -1,66 +1,90 @@
-## LLM Fine-Tuning
+# Finetuning Llama
 
-Here we discuss fine-tuning Llama 2 with a couple of different recipes. We will cover two scenarios here:
+This folder contains instructions to fine-tune Llama 2 on a 
+* [single-GPU setup](./singlegpu_finetuning.md)
+* [multi-GPU setup](./multigpu_finetuning.md) 
 
+using the canonical [finetuning script](../../src/llama_recipes/finetuning.py) in the llama-recipes package.
 
-## 1. **Parameter Efficient Model Fine-Tuning**
- This helps make the fine-tuning process more affordable even on 1 consumer grade GPU. These methods enable us to keep the whole model frozen and to just add tiny learnable parameters/ layers into the model. In this way, we just train a very tiny portion of the parameters. The most famous method in this category is [LORA](https://arxiv.org/pdf/2106.09685.pdf), Llama Adapter and Prefix-tuning.
+If you are new to fine-tuning techniques, check out an overview: [](./LLM_finetuning_overview.md)
 
-
-These methods will address three aspects:
-
-
-- **Cost of full fine-tuning** – these methods only train a small set of extra parameters instead of the full model, this makes it possible to run these on consumer GPUs.
-
-- **Cost of deployment** – for each fine-tuned downstream model we need to deploy a separate model; however, when using these methods, only a small set of parameters (few MB instead of several GBs) of the pretrained model can do the job. In this case, for each task we only add these extra parameters on top of the pretrained model so pretrained models can be assumed as backbone and these parameters as heads for the model on different tasks.
-
-- **Catastrophic forgetting** — these methods also help with forgetting the first task that can happen in finetuning.
-
-HF [PEFT](https://github.com/huggingface/peft) library provides an easy way of using these methods which we make use of here. Please read more [here](https://huggingface.co/blog/peft).
+> [!TIP]
+> If you want to try finetuning Llama 2 with Huggingface's trainer, here is a Jupyter notebook with an [example](./huggingface_trainer/peft_finetuning.ipynb)
 
 
+## How to configure finetuning settings?
 
-## 2. **Full/ Partial Parameter Fine-Tuning**
-
-Full parameter fine-tuning has its own advantages, in this method there are multiple strategies that can help:
-
--  Keep the pretrained model frozen and only fine-tune the task head for example, the classifier model.
+> [!TIP]
+> All the setting defined in [config files](../../src/llama_recipes/configs/) can be passed as args through CLI when running the script, there is no need to change from config files directly.
 
 
--  Keep the pretrained model frozen and add a few fully connected layers on the top.
+* [Training config file](../../src/llama_recipes/configs/training.py) is the main config file that helps to specify the settings for our run and can be found in [configs folder](../../src/llama_recipes/configs/)
+
+It lets us specify the training settings for everything from `model_name` to `dataset_name`, `batch_size` and so on. Below is the list of supported settings:
+
+```python
+
+model_name: str="PATH/to/LLAMA 2/7B"
+enable_fsdp: bool= False
+run_validation: bool=True
+batch_size_training: int=4
+gradient_accumulation_steps: int=1
+num_epochs: int=3
+num_workers_dataloader: int=2
+lr: float=2e-4
+weight_decay: float=0.0
+gamma: float= 0.85
+use_fp16: bool=False
+mixed_precision: bool=True
+val_batch_size: int=4
+dataset = "samsum_dataset" # alpaca_dataset, grammar_dataset
+peft_method: str = "lora" # None , llama_adapter, prefix
+use_peft: bool=False
+output_dir: str = "./ft-output"
+freeze_layers: bool = False
+num_freeze_layers: int = 1
+quantization: bool = False
+save_model: bool = False
+dist_checkpoint_root_folder: str="model_checkpoints"
+dist_checkpoint_folder: str="fine-tuned"
+save_optimizer: bool=False
+
+```
+
+* [Datasets config file](../../src/llama_recipes/configs/datasets.py) provides the available options for datasets.
+
+* [peft config file](../../src/llama_recipes/configs/peft.py) provides the supported PEFT methods and respective settings that can be modified.
+
+* [FSDP config file](../../src/llama_recipes/configs/fsdp.py) provides FSDP settings such as:
+
+    * `mixed_precision` boolean flag to specify using mixed precision, defatults to true.
+
+    * `use_fp16` boolean flag to specify using FP16 for mixed precision, defatults to False. We recommond not setting this flag, and only set `mixed_precision` that will use `BF16`, this will help with speed and memory savings while avoiding challenges of scaler accuracies with `FP16`.
+
+    *  `sharding_strategy` this specifies the sharding strategy for FSDP, it can be:
+        * `FULL_SHARD` that shards model parameters, gradients and optimizer states, results in the most memory savings.
+
+        * `SHARD_GRAD_OP` that shards gradinets and optimizer states and keeps the parameters after the first `all_gather`. This reduces communication overhead specially if you are using slower networks more specifically beneficial on multi-node cases. This comes with the trade off of higher memory consumption.
+
+        * `NO_SHARD` this is equivalent to DDP, does not shard model parameters, gradinets or optimizer states. It keeps the full parameter after the first `all_gather`.
+
+        * `HYBRID_SHARD` available on PyTorch Nightlies. It does FSDP within a node and DDP between nodes. It's for multi-node cases and helpful for slower networks, given your model will fit into one node.
+
+* `checkpoint_type` specifies the state dict checkpoint type for saving the model. `FULL_STATE_DICT` streams state_dict of each model shard from a rank to CPU and assembels the full state_dict on CPU. `SHARDED_STATE_DICT` saves one checkpoint per rank, and enables the re-loading the model in a different world size.
+
+* `fsdp_activation_checkpointing` enables activation checkpoining for FSDP, this saves significant amount of memory with the trade off of recomputing itermediate activations during the backward pass. The saved memory can be re-invested in higher batch sizes to increase the throughput. We recommond you use this option.
+
+* `pure_bf16` it moves the  model to `BFloat16` and if `optimizer` is set to `anyprecision` then optimizer states will be kept in `BFloat16` as well. You can use this option if necessary.
 
 
--  Fine-tuning on all the layers.
+## Weights & Biases Experiment Tracking
 
-You can also keep most of the layers frozen and only fine-tune a few layers. There are many different techniques to choose from to freeze/unfreeze layers based on different criteria.
+You can enable [W&B](https://wandb.ai/) experiment tracking by using `use_wandb` flag as below. You can change the project name, entity and other `wandb.init` arguments in `wandb_config`.
 
+```bash
+python -m llama_recipes.finetuning --use_peft --peft_method lora --quantization --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model --use_wandb
+```
+You'll be able to access a dedicated project or run link on [wandb.ai](https://wandb.ai) and see your dashboard like the one below. 
 <div style="display: flex;">
-    <img src="../../docs/images/feature-based_FN.png" alt="Image 1" width="250" />
-    <img src="../../docs/images/feature-based_FN_2.png" alt="Image 2" width="250" />
-    <img src="../../docs/images/full-param-FN.png" alt="Image 3" width="250" />
+    <img src="../../docs/images/wandb_screenshot.png" alt="wandb screenshot" width="500" />
 </div>
-
-
-
-In this scenario depending on the model size, you might need to go beyond one GPU, especially if your model does not fit into one GPU for training. In this case Llama 2 7B parameter won't fit into one gpu.
-The way you want to think about it is, you would need enough GPU memory to keep model parameters, gradients and optimizer states. Where each of these, depending on the precision you are training, can take up multiple times of your parameter count x precision( depending on if its fp32/ 4 bytes, fp16/2 bytes/ bf16/2 bytes).
-For example AdamW optimizer keeps 2 parameters for each of your parameters and in many cases these are kept in fp32. This implies that depending on how many layers you are training/ unfreezing your GPU memory can grow beyond one GPU.
-
-**FSDP (Fully Sharded Data Parallel)**
-
-
-Pytorch has the FSDP package for training models that do not fit into one GPU. FSDP lets you train a much larger model with the same amount of resources. Prior to FSDP was DDP (Distributed Data Parallel) where each GPU was holding a full replica of the model and would only shard the data. At the end of backward pass it would sync up the gradients.
-
-FSDP extends this idea, not only sharding the data but also model parameters, gradients and optimizer states. This means each GPU will only keep one shard of the model. This will result in huge memory savings that enable us to fit a much larger model into the same number of GPU. As an example in DDP the most you could fit into a GPU with 16GB memory is a model around 700M parameters. So, suppose you had 4 GPUs, in this case even though you access 4 GPUs, you still can't scale beyond the model size that can fit into one GPU. However with FSDP you can fit a 3B model into 4 GPUs, > 4x larger model.
-
-
-Please read more on FSDP [here](https://pytorch.org/blog/introducing-pytorch-fully-sharded-data-parallel-api/) & get started with FSDP [here](https://pytorch.org/tutorials/intermediate/FSDP_tutorial.html).
-
-
-To boost the performance of fine-tuning with FSDP, we can make use a number of features such as:
-
-- **Mixed Precision** which in FSDP is much more flexible compared to Autocast. It gives user control over setting precision for model parameters, buffers and gradients.
-
-- **Activation Checkpointing**  which is a technique to save memory by discarding the intermediate activation in forward pass instead of keeping it in the memory with the cost recomputing them in the backward pass. FSDP Activation checkpointing is shard aware meaning we need to apply it after wrapping the model with FSDP. In our script we are making use of that.
-
-- **auto_wrap_policy** Which is the way to specify how FSDP would partition the model, there is default support for transformer wrapping policy. This allows FSDP to form each FSDP unit ( partition of the  model ) based on the transformer class in the model. To identify this layer in the model, you need to look at the layer that wraps both the attention layer and  MLP. This helps FSDP have more fine-grained units for communication that help with optimizing the communication cost.
