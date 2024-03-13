@@ -6,6 +6,7 @@ import os
 from transformers import AutoTokenizer
 from urllib.parse import unquote
 import yaml
+from pydantic import BaseModel
 
 CUDA_VISIBLE_DEVICES = [0]
 MAX_BATCH_SIZE = 30
@@ -36,10 +37,15 @@ model_raw_outputs = []
 async def health_check():
     return {"message": "Ok", "status": "Green"}
 
-@app.get("/invoke")
-async def invoke(query: str):
+class UserData(BaseModel):
+    inputs: str
+    parameters: dict
 
-    query = unquote(query)
+@app.post("/generate")
+async def generate(user_data: UserData):
+    query = user_data.inputs
+    parameters = user_data.parameters
+
     with open(os.path.dirname(__file__) + "/hl_mr_prompt.yaml", "r") as file:
             yaml_data = yaml.safe_load(file)
     prompt_template = yaml_data["prompt"].strip()
@@ -55,10 +61,10 @@ async def invoke(query: str):
     gen_results = generator.generate_batch(
         prompt_tokens,
         max_batch_size=MAX_BATCH_SIZE,
-        sampling_temperature=0.01,
-        sampling_topk=1,
-        sampling_topp=0.5,
-        max_length=max_tokens,
+        sampling_temperature=parameters['temperature'],
+        # sampling_topk=1,
+        # sampling_topp=0.5,
+        max_length=parameters['max_new_tokens'],
         include_prompt_in_result=False
     )
     for gen_result in gen_results:
