@@ -1,6 +1,6 @@
 # Llama 2 On-Prem Inference Using vLLM and TGI
 
-Enterprise customers may prefer to deploy Llama 2 on-prem and run Llama in their own servers. This tutorial shows how to use Llama 2 with [vLLM](https://github.com/vllm-project/vllm) and Hugging Face [TGI](https://github.com/huggingface/text-generation-inference), two leading open-source tools to deploy and serve LLMs, and how to create vLLM and TGI hosted Llama 2 instances with [LangChain](https://www.langchain.com/), an open-source LLM app development framework which we used for our earlier demo apps with Llama 2 running on [local Mac](https://github.com/facebookresearch/llama-recipes/blob/main/demo_apps/HelloLlamaLocal.ipynb) or [Replicate cloud](https://github.com/facebookresearch/llama-recipes/blob/main/demo_apps/HelloLlamaCloud.ipynb). See [here](https://medium.com/@rohit.k/tgi-vs-vllm-making-informed-choices-for-llm-deployment-37c56d7ff705) for a detailed comparison of vLLM and TGI.
+Enterprise customers may prefer to deploy Llama 2 on-prem and run Llama in their own servers. This tutorial shows how to use Llama 2 with [vLLM](https://github.com/vllm-project/vllm) and Hugging Face [TGI](https://github.com/huggingface/text-generation-inference), two leading open-source tools to deploy and serve LLMs, and how to create vLLM and TGI hosted Llama 2 instances with [LangChain](https://www.langchain.com/), an open-source LLM app development framework which we used for our earlier demo apps with Llama 2 running on [local Mac](../../use_cases/RAG/HelloLlamaLocal.ipynb) or [Replicate cloud](../../use_cases/RAG/HelloLlamaCloud.ipynb). See [here](https://medium.com/@rohit.k/tgi-vs-vllm-making-informed-choices-for-llm-deployment-37c56d7ff705) for a detailed comparison of vLLM and TGI.
 
 We'll use the Amazon EC2 instance running Ubuntu with an A10G 24GB GPU as an example of running vLLM and TGI with Llama 2, and you can replace this with your own server to implement on-prem Llama 2 deployment.
 
@@ -125,7 +125,7 @@ You'll see an answer like:
 
 > The book "The Godfather" was written by Mario Puzo. It was first published in 1969 and has since become a classic of American literature. The book was later adapted into a successful film directed by Francis Ford Coppola, which was released in 1972.
 
-You can now use the Llama 2 instance `llm` created this way in any of the [Llama demo apps](https://github.com/facebookresearch/llama-recipes/tree/main/demo_apps) or your own Llama apps to integrate seamlessly with LangChain and LlamaIndex to build powerful on-prem Llama apps.
+You can now use the Llama 2 instance `llm` created this way in any of the recipes or your own Llama apps to integrate seamlessly with LangChain and LlamaIndex to build powerful on-prem Llama apps.
 
 ## Setting Up TGI with Llama 2
 
@@ -182,5 +182,5 @@ llm = HuggingFaceTextGenInference(
 llm("What wrote the book godfather?")
 ```
 
-With the Llama 2 instance `llm` created this way, you can integrate seamlessly with LangChain and LlamaIndex to build powerful on-prem Llama 2 apps such as the [Llama demo apps](https://github.com/facebookresearch/llama-recipes/tree/main/demo_apps).
+With the Llama 2 instance `llm` created this way, you can integrate seamlessly with LangChain and LlamaIndex to build powerful on-prem Llama 2 apps.
 
