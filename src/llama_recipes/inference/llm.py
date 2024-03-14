@@ -14,7 +14,7 @@ from abc import ABC, abstractmethod
 from typing import Callable
 
 import openai
-from langchain.llms import Together
+from langchain_together import Together
 
 from typing_extensions import override
 
