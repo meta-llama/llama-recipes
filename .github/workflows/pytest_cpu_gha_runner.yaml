@@ -1,0 +1,81 @@
+name: "[GHA][CPU] llama-recipes Pytest tests on CPU GitHub hosted runner."
+on:
+  pull_request:
+    branches:    
+      - 'main'
+    paths:
+      - 'src/llama-recipes/configs/*.py'
+      - 'src/llama-recipes/utils/*.py'
+      - 'src/llama-recipes/datasets/*.py'
+      - 'src/llama-recipes/data/*.py'
+      - 'src/llama-recipes/*.py'
+
+  # triggers workflow manually for debugging purposes.      
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: 'GHA Runner Scale Set label to run workflow on.'
+        required: true
+        default: ubuntu-20.04
+
+      debug:
+          description: 'Run debugging steps?'
+          required: false
+          default: "true"
+
+env: 
+  PYTORCH_WHEEL_URL: https://download.pytorch.org/whl/test/cu118  
+
+jobs:
+  execute_workflow:
+    name: Execute workload on GHA CPU Runner
+    defaults:
+      run:
+        shell: bash # default shell to run all steps for a given job.
+    runs-on: ${{ github.event.inputs.runner != '' &&  github.event.inputs.runner || 'ubuntu-20.04' }}
+    steps:
+
+      - name: "[DEBUG] Get runner container OS information"
+        id: os_info
+        if: ${{ github.event.inputs.debug == 'true' }}
+        run: |
+            cat /etc/os-release
+
+      - name: "Checkout 'facebookresearch/llama-recipes' repository"
+        id: checkout
+        uses: actions/checkout@v4
+
+
+      - name: "[DEBUG] Content of the repository after checkout"
+        id: content_after_checkout
+        if: ${{ github.event.inputs.debug == 'true' }}
+        run: |
+            ls -la ${GITHUB_WORKSPACE}
+
+      - name: "Installing Python dependencies"
+        id: python_dependencies
+        run: |
+          pip3 install --upgrade pip
+          pip3 install setuptools
+
+
+      - name: "Installing 'llama-recipes' project"
+        id: install_llama_recipes_package
+        run: |
+          echo "Installing 'llama-recipes' project (re: https://github.com/facebookresearch/llama-recipes?tab=readme-ov-file#install-with-optional-dependencies)"
+          pip install --extra-index-url ${PYTORCH_WHEEL_URL} -e '.[tests]' 
+
+
+      - name: "Running PyTest tests on GHA CPU Runner"
+        id: pytest
+        run: |
+          echo "Running PyTest tests at 'GITHUB_WORKSPACE' path: ${GITHUB_WORKSPACE}"
+          cd $GITHUB_WORKSPACE && python3 -m pytest --junitxml="$GITHUB_WORKSPACE/result.xml"
+  
+      - name: Publish Test Summary
+        id: test_summary
+        uses: test-summary/action@v2
+        with:
+          paths: "**/*.xml"
+        if: always()
+          
