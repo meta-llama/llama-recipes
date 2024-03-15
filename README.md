@@ -62,14 +62,14 @@ Optional dependencies can also be combines with [option1,option2].
 #### Install from source
 To install from source e.g. for development use these commands. We're using hatchling as our build backend which requires an up-to-date pip as well as setuptools package.
 ```
-git clone git@github.com:facebookresearch/llama-recipes.git
+git clone git@github.com:meta-llama/llama-recipes.git
 cd llama-recipes
 pip install -U pip setuptools
 pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .
 ```
 For development and contributing to llama-recipes please install all optional dependencies:
 ```
-git clone git@github.com:facebookresearch/llama-recipes.git
+git clone git@github.com:meta-llama/llama-recipes.git
 cd llama-recipes
 pip install -U pip setuptools
 pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .[tests,auditnlg,vllm]

@@ -6,7 +6,7 @@ We support benchmark on these serving framework:
 
 
 # vLLM - Getting Started
-To get started, we first need to deploy containers on-prem as a API host. Follow the guidance [here](https://github.com/facebookresearch/llama-recipes/blob/main/demo_apps/llama-on-prem.md#setting-up-vllm-with-llama-2) to deploy vLLM on-prem.
+To get started, we first need to deploy containers on-prem as a API host. Follow the guidance [here](https://github.com/meta-llama/llama-recipes/blob/main/recipes/inference/model_servers/llama-on-prem.md#setting-up-vllm-with-llama-2) to deploy vLLM on-prem.
 Note that in common scenario which overall throughput is important, we suggest you prioritize deploying as many model replicas as possible to reach higher overall throughput and request-per-second (RPS), comparing to deploy one model container among multiple GPUs for model parallelism. Additionally, as deploying multiple model replicas, there is a need for a higher level wrapper to handle the load balancing which here has been simulated in the benchmark scripts.  
 For example, we have an instance from Azure that has 8xA100 80G GPUs, and we want to deploy the Llama 2 70B chat model, which is around 140GB with FP16. So for deployment we can do:
 * 1x70B model parallel on 8 GPUs, each GPU RAM takes around 17.5GB for loading model weights.
