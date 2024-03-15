@@ -98,37 +98,6 @@ class LLM(ABC):
         return []
 
 
-SPECIFICATION_FORMAT: str = "<PROVIDER>::<MODEL>(::<API KEY>)?"
-EXAMPLE_SPECIFICATION: str = "OPENAI::gpt-3.5-turbo::<YOUR API KEY>"
-
-
-def create(identifier: str) -> LLM:
-    """
-    Takes a string of the format <SPECIFICATION_FORMAT> and generates LLM instance.
-    See <EXAMPLE_SPECIFICATION> for example.
-    """
-    api_key: str | None = None
-    split = identifier.split("::")
-    if len(split) == 2:
-        provider, name = split
-    elif len(split) == 3:
-        provider, name, api_key = split
-    else:
-        raise ValueError(f"Invalid identifier: {identifier}")
-
-    if api_key is None:
-        raise ValueError(f"No API key provided for {provider}: {name}")
-
-    if provider == "OPENAI":
-        return OPENAI(name, api_key)
-    if provider == "ANYSCALE":
-        return ANYSCALE(name, api_key)
-    if provider == "TOGETHER":
-        return TOGETHER(name, api_key)
-
-    raise ValueError(f"Unknown provider: {provider}")
-
-
 class OPENAI(LLM):
     """Accessing OPENAI"""
 
