@@ -34,7 +34,7 @@ To run the samples, execute the [Inference notebook](Inference.ipynb).
 
 ## Llama Guard validation notebook
 
-For more details on how to evaluate the performance of the model agains a custom dataset, refere to the [Validation](Validation.ipynb) notebook.
+For more details on how to evaluate the performance of the model against a custom dataset, refer to the [Validation](Validation.ipynb) notebook.
 
 ## Inference Safety Checker
 When running the regular inference script with prompts, Llama Guard will be used as a safety checker on the user prompt and the model output. If both are safe, the result will be shown, else a message with the error will be shown, with the word unsafe and a comma separated list of categories infringed. Llama Guard is always loaded quantized using Hugging Face Transformers library.
