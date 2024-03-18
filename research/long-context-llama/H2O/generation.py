@@ -13,7 +13,6 @@ from rouge import Rouge
 
 import dataclasses
 from xopen import xopen
-import matplotlib.pyplot as plt 
 
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from utils_llama import H2OLlamaForCausalLM
