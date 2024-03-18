@@ -6,7 +6,7 @@ If you're interested in a Llama-enabled WhatsApp chatbot, see [here](../whatsapp
 
 ## Overview
 
-Messenger from Meta is a messaging service that allows a Facebook business page to respond to people who are interested in their business using [Messenger Platform](https://developers.facebook.com/docs/messenger-platform/overview). The benefits of an intelligent and knowledgable Llama 2 powered chatbot are obvious, including cost saving and better customer experience such as 24x7 availability. In this tutorial, we'll cover the details of integrating Llama 2 with the Messenger Platform to build a basic Llama 2 enabled chatbot - for more Llama 2 application development and deployment demos such as how to integrate your own data with Llama 2, see [Llama 2 demo apps](https://github.com/meta-llama/llama-recipes/tree/main/recipes).
+Messenger from Meta is a messaging service that allows a Facebook business page to respond to people who are interested in their business using [Messenger Platform](https://developers.facebook.com/docs/messenger-platform/overview). The benefits of an intelligent and knowledgable Llama 2 powered chatbot are obvious, including cost saving and better customer experience such as 24x7 availability. In this tutorial, we'll cover the details of integrating Llama 2 with the Messenger Platform to build a basic Llama 2 enabled chatbot - for more Llama 2 application development and deployment demos such as how to integrate your own data with Llama 2, see the recipes.
 
 The diagram below shows the components and overall data flow of the Llama 2 enabled Messenger chatbot demo we built, using an Amazon EC2 instance as an example for running the web server.
 
@@ -28,7 +28,7 @@ The diagram below shows the components and overall data flow of the Llama 2 enab
 
 ## Writing Llama 2 Enabled Web App
 
-The Python-based web app we developed uses [LangChain](https://www.langchain.com/), an open source LLM development framework, and [Replicate](https://replicate.com/), a service provider hosting LLM models in the cloud, to receive the user query sent by the webhook, which will be covered in the next section, pass the query to Llama 2, and send the Llama 2 answer back to the webhook. For more information on how to use LangChain or LlamaIndex, another LLM app building framework, and other Llama cloud providers or on-premise deployment options to develop Llama 2 apps, see the [Llama 2 demo apps](https://github.com/meta-llama/llama-recipes/tree/main/recipes).
+The Python-based web app we developed uses [LangChain](https://www.langchain.com/), an open source LLM development framework, and [Replicate](https://replicate.com/), a service provider hosting LLM models in the cloud, to receive the user query sent by the webhook, which will be covered in the next section, pass the query to Llama 2, and send the Llama 2 answer back to the webhook. For more information on how to use LangChain or LlamaIndex, another LLM app building framework, and other Llama cloud providers or on-premise deployment options to develop Llama 2 apps, see the recipes.
 
 First, let's create a new conda (or you can use venv if you like) environment and install all the required packages:
 

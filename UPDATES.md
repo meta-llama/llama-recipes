@@ -16,4 +16,4 @@ As noted in the documentation, these strings are required to use the fine-tuned 
 ### Updated approach
 We recommend sanitizing [these strings](https://github.com/meta-llama/llama?tab=readme-ov-file#fine-tuned-chat-models) from any user provided prompts. Sanitization of user prompts mitigates malicious or accidental abuse of these strings. The provided scripts have been updated to do this. 
 
-Note: even with this update safety classifiers should still be applied to catch unsafe behaviors or content produced by the model. An [example](https://github.com/meta-llama/llama-recipes/blob/main/recipes/inference/local_inference/inference.py) of how to deploy such a classifier can be found in the llama-recipes repository.
+Note: even with this update safety classifiers should still be applied to catch unsafe behaviors or content produced by the model. An [example](./recipes/inference/local_inference/inference.py) of how to deploy such a classifier can be found in the llama-recipes repository.
