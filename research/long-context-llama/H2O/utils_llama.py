@@ -57,8 +57,6 @@ class H2OKVCache_LayerWise:
         self.cache_size = hh_size + recent_size
         self.k_seq_dim = k_seq_dim
         self.v_seq_dim = v_seq_dim
-        self.k_slice = DIM_TO_SLICE[k_seq_dim]
-        self.v_slice = DIM_TO_SLICE[v_seq_dim]
         self.hh_score = None
 
     def __call__(self, past_key_values, attn_score_cache):
