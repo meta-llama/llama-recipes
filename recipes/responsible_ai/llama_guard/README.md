@@ -7,7 +7,7 @@ This folder contains example notebooks on running Llama Guard stand alone and va
 ## Requirements
 1. Access to Llama guard model weights on Hugging Face. To get access, follow the steps described [here](https://github.com/facebookresearch/PurpleLlama/tree/main/Llama-Guard#download)
 2. Llama recipes package and it's dependencies [installed](https://github.com/albertodepaola/llama-recipes/blob/llama-guard-data-formatter-example/README.md#installation)
-3. A big enough GPU to load the models
+3. A GPU with 8GB or available memory or more. 
 
 ## Llama Guard inference notebook
 For testing, you can add User or User/Agent interactions into the prompts list and the run the script to verify the results. When the conversation has one or more Agent responses, it's considered of type agent. 
