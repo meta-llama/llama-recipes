@@ -68,7 +68,7 @@ Here, we are going to use [self-instruct](https://arxiv.org/abs/2212.10560) idea
 
 - Understanding Data Complexity: Data, especially text, encompasses a wide array of characteristics such as length distribution, topics, tones, formats, licensing, and diction. These elements are crucial for understanding the dataset but are not easily summarized without thorough examination.
 
-- Utilizing Available Tools: We encourage to take advantage of the numerous tools at their disposal for searching and analyzing their training datasets, facilitating a deeper comprehension and more informed model development.
+- Utilizing Available Tools: We encourage to take advantage of the numerous tools at your disposal for searching and analyzing your training datasets, facilitating a deeper comprehension and more informed model development.
 
 **Tools**
 
@@ -81,7 +81,7 @@ Here, we are going to use [self-instruct](https://arxiv.org/abs/2212.10560) idea
 
 Purpose of Filtering and Cleaning: The process of filtering and cleaning is essential for eliminating unnecessary data from your dataset. This not only boosts the efficiency of model training but also ensures the data exhibits preferred characteristics such as high informational value, coverage of target languages, low levels of toxicity, and minimal presence of personally identifiable information.
 
-Considering Trade-offs: We advise practitioners to carefully weigh the potential trade-offs associated with using certain filters, it may impact the diversity of your data, [removing minority individuals](https://arxiv.org/abs/2104.08758).
+Considering Trade-offs: We recommend to carefully weigh the potential trade-offs associated with using certain filters, it may impact the diversity of your data, [removing minority individuals](https://arxiv.org/abs/2104.08758).
 
 **Tools**
 - [OpenRefine](https://github.com/OpenRefine/OpenRefine?tab=readme-ov-file),(formerly Google Refine): A standalone open-source desktop application for data cleanup and transformation to other formats. It's particularly good for working with messy data, including data format transformations and cleaning.
@@ -142,28 +142,29 @@ Question-Answer Pairing: Organize your data into pairs where each question is di
 
 During the self-instruct process of generation Q&A pairs from documents, we realized that with out system prompt being
 ```python
-You are a quiz expert, you will be provided with a document,
-  read it and generate question and answer pairs
-  that are most likely be asked by a use of llama that just want to start, 
-  please make sure you follow those rules,
-  1. Generate only {total_questions} question answer pairs.
-  2. Generate in {language}.
-  3. The questions can be answered based *solely* on the given passage. 
-  4. Avoid asking questions with similar meaning.
-  5. Make the answer as concise as possible, it should be at most 60 words.
-  6. Provide relevant links from the document to support the answer.
-  7. Never use any abbreviation.
-  8. Return the result in json format with the template: 
-    [
-      {{
-        "question": "your question A.",
-        "answer": "your answer to question A."
-      }},
-      {{
-        "question": "your question B.",
-        "answer": "your answer to question B."
-      }}
-    ]
+You are a language model skilled in creating quiz questions.
+You will be provided with a document,
+read it and generate question and answer pairs
+that are most likely be asked by a use of llama that just want to start, 
+please make sure you follow those rules,
+1. Generate only {total_questions} question answer pairs.
+2. Generate in {language}.
+3. The questions can be answered based *solely* on the given passage. 
+4. Avoid asking questions with similar meaning.
+5. Make the answer as concise as possible, it should be at most 60 words.
+6. Provide relevant links from the document to support the answer.
+7. Never use any abbreviation.
+8. Return the result in json format with the template: 
+  [
+    {{
+      "question": "your question A.",
+      "answer": "your answer to question A."
+    }},
+    {{
+      "question": "your question B.",
+      "answer": "your answer to question B."
+    }}
+  ]
 
 ```
 
