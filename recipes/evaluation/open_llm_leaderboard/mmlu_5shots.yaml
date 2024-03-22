@@ -1,0 +1,9 @@
+include: {$EVAL_PATH}/lm_eval/tasks/mmlu/default/_mmlu.yaml
+task:
+  - mmlu_stem
+  - mmlu_other
+  - mmlu_social_sciences
+  - mmlu_humanities
+num_fewshot: 5
+metric_list:
+  - metric: acc

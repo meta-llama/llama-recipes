@@ -4,14 +4,17 @@
 import os
 from pkg_resources import packaging
 
+import dataclasses
 import fire
 import random
 import torch
 import torch.optim as optim
-from peft import get_peft_model, prepare_model_for_int8_training
+from peft import get_peft_model, prepare_model_for_kbit_training
 from torch.distributed.fsdp import (
     FullyShardedDataParallel as FSDP,
+    ShardingStrategy
 )
+
 from torch.distributed.fsdp.fully_sharded_data_parallel import CPUOffload
 from torch.optim.lr_scheduler import StepLR
 from transformers import (
@@ -35,6 +38,7 @@ from llama_recipes.utils.config_utils import (
 )
 from llama_recipes.utils.dataset_utils import get_preprocessed_dataset
 
+from llama_recipes.utils.fsdp_utils import hsdp_device_mesh
 from llama_recipes.utils.train_utils import (
     train,
     freeze_transformer_layers,
@@ -42,17 +46,35 @@ from llama_recipes.utils.train_utils import (
     setup_environ_flags,
     clear_gpu_cache,
     print_model_size,
-    get_policies
+    get_policies,
 )
+from accelerate.utils import is_xpu_available
+
+def setup_wandb(train_config, fsdp_config, **kwargs):
+    try: 
+        import wandb
+    except ImportError:
+        raise ImportError(
+            "You are trying to use wandb which is not currently installed. "
+            "Please install it using pip install wandb"
+        )
+    from llama_recipes.configs import wandb_config as WANDB_CONFIG
+    wandb_config = WANDB_CONFIG()
+    update_config(wandb_config, **kwargs)
+    init_dict = dataclasses.asdict(wandb_config)
+    run = wandb.init(**init_dict)
+    run.config.update(train_config)
+    run.config.update(fsdp_config, allow_val_change=True)
+    return run
 
 
 def main(**kwargs):
     # Update the configuration for the training and sharding process
     train_config, fsdp_config = TRAIN_CONFIG(), FSDP_CONFIG()
     update_config((train_config, fsdp_config), **kwargs)
-
     # Set the seeds for reproducibility
-    torch.cuda.manual_seed(train_config.seed)
+    if is_xpu_available():
+        torch.xpu.manual_seed(train_config.seed)
     torch.manual_seed(train_config.seed)
     random.seed(train_config.seed)
 
@@ -64,9 +86,18 @@ def main(**kwargs):
         world_size = int(os.environ["WORLD_SIZE"])
 
     if torch.distributed.is_initialized():
-        torch.cuda.set_device(local_rank)
+        if is_xpu_available():
+            torch.xpu.set_device(local_rank)
+        elif torch.cuda.is_available():
+            torch.cuda.set_device(local_rank)
         clear_gpu_cache(local_rank)
         setup_environ_flags(rank)
+
+    wandb_run = None
+
+    if train_config.use_wandb:
+        if not train_config.enable_fsdp or rank==0:
+            wandb_run = setup_wandb(train_config, fsdp_config, **kwargs)    
 
     # Load the pre-trained model and setup its configuration
     use_cache = False if train_config.enable_fsdp else None
@@ -88,6 +119,7 @@ def main(**kwargs):
                 load_in_8bit=True if train_config.quantization else None,
                 device_map="auto" if train_config.quantization else None,
                 use_cache=use_cache,
+                attn_implementation="sdpa" if train_config.use_fast_kernels else None,
             )
         else:
             llama_config = LlamaConfig.from_pretrained(train_config.model_name)
@@ -101,18 +133,8 @@ def main(**kwargs):
             load_in_8bit=True if train_config.quantization else None,
             device_map="auto" if train_config.quantization else None,
             use_cache=use_cache,
+            attn_implementation="sdpa" if train_config.use_fast_kernels else None,
         )
-    if train_config.enable_fsdp and train_config.use_fast_kernels:
-        """
-        For FSDP and FSDP+PEFT, setting 'use_fast_kernels' will enable
-        using of Flash Attention or Xformer memory-efficient kernels
-        based on the hardware being used. This would speed up fine-tuning.
-        """
-        try:
-            from optimum.bettertransformer import BetterTransformer
-            model = BetterTransformer.transform(model)
-        except ImportError:
-            print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
 
     # Load the tokenizer and add special tokens
     tokenizer = LlamaTokenizer.from_pretrained(train_config.model_name)
@@ -122,7 +144,7 @@ def main(**kwargs):
 
     # Prepare the model for int8 training if quantization is enabled
     if train_config.quantization:
-        model = prepare_model_for_int8_training(model)
+        model = prepare_model_for_kbit_training(model)
 
     # Convert the model to bfloat16 if fsdp and pure_bf16 is enabled
     if train_config.enable_fsdp and fsdp_config.pure_bf16:
@@ -132,7 +154,15 @@ def main(**kwargs):
         peft_config = generate_peft_config(train_config, kwargs)
         model = get_peft_model(model, peft_config)
         model.print_trainable_parameters()
+        if wandb_run:
+            wandb_run.config.update(peft_config)
 
+        
+    hsdp_device_mesh = None
+    if fsdp_config.hsdp and fsdp_config.sharding_strategy == ShardingStrategy.HYBRID_SHARD:
+        hsdp_device_mesh = hsdp_device_mesh(replica_group_size=fsdp_config.replica_group_size, sharding_group_size=fsdp_config.sharding_group_size)
+        print("HSDP device mesh is ready")
+        
     #setting up FSDP if enable_fsdp is enabled
     if train_config.enable_fsdp:
         if not train_config.use_peft and train_config.freeze_layers:
@@ -141,6 +171,12 @@ def main(**kwargs):
 
         mixed_precision_policy, wrapping_policy = get_policies(fsdp_config, rank)
         my_auto_wrapping_policy = fsdp_auto_wrap_policy(model, LlamaDecoderLayer)
+        
+        device_id = 0
+        if is_xpu_available():
+            device_id = torch.xpu.current_device()
+        elif torch.cuda.is_available():
+            device_id = torch.cuda.current_device()
 
         model = FSDP(
             model,
@@ -148,7 +184,8 @@ def main(**kwargs):
             cpu_offload=CPUOffload(offload_params=True) if fsdp_config.fsdp_cpu_offload else None,
             mixed_precision=mixed_precision_policy if not fsdp_config.pure_bf16 else None,
             sharding_strategy=fsdp_config.sharding_strategy,
-            device_id=torch.cuda.current_device(),
+            device_mesh=hsdp_device_mesh,
+            device_id=device_id,
             limit_all_gathers=True,
             sync_module_states=train_config.low_cpu_fsdp,
             param_init_fn=lambda module: module.to_empty(device=torch.device("cuda"), recurse=False)
@@ -157,7 +194,10 @@ def main(**kwargs):
         if fsdp_config.fsdp_activation_checkpointing:
             apply_fsdp_checkpointing(model)
     elif not train_config.quantization and not train_config.enable_fsdp:
-        model.to("cuda")
+        if is_xpu_available():
+            model.to("xpu:0")
+        elif torch.cuda.is_available():
+            model.to("cuda")
 
     dataset_config = generate_dataset_config(train_config, kwargs)
 
@@ -237,9 +277,13 @@ def main(**kwargs):
         fsdp_config if train_config.enable_fsdp else None,
         local_rank if train_config.enable_fsdp else None,
         rank if train_config.enable_fsdp else None,
+        wandb_run,
     )
     if not train_config.enable_fsdp or rank==0:
         [print(f'Key: {k}, Value: {v}') for k, v in results.items()]
+        if train_config.use_wandb:
+            for k,v in results.items():
+                wandb_run.summary[k] = v
 
 if __name__ == "__main__":
     fire.Fire(main)

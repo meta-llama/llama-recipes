@@ -14,6 +14,8 @@ class train_config:
     batching_strategy: str="packing" #alternative: padding
     context_length: int=4096
     gradient_accumulation_steps: int=1
+    gradient_clipping: bool = False
+    gradient_clipping_threshold: float = 1.0
     num_epochs: int=3
     num_workers_dataloader: int=1
     lr: float=1e-4
@@ -36,3 +38,5 @@ class train_config:
     dist_checkpoint_folder: str="fine-tuned" # will be used if using FSDP
     save_optimizer: bool=False # will be used if using FSDP
     use_fast_kernels: bool = False # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
+    use_wandb: bool = False # Enable wandb for experient tracking
+    save_metrics: bool = False # saves training metrics to a json file for later plotting
