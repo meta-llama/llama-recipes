@@ -187,6 +187,7 @@ class H2OLlamaAttention(nn.Module):
         self._init_rope()
 
         self.past_key_value = HHCache()
+        pdb.set_trace()
 
     def _init_rope(self):
         if self.config.rope_scaling is None:
