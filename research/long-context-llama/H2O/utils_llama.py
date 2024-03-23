@@ -19,6 +19,9 @@ from transformers.models.llama.modeling_llama import (
     LlamaForCausalLM,
 )
 from cache_utils import Cache
+from transformers.utils import logging
+
+logger = logging.get_logger(__name__)
 
 __all__ = ["H2OLlamaForCausalLM"]
 
