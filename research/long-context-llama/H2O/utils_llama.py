@@ -336,6 +336,7 @@ def enable_h2ocache_forward(
     past_seen_tokens = 0
     if use_cache:  # kept for BC (cache positions)
         if not isinstance(past_key_values, StaticCache):
+            pdb.set_trace()
             past_key_values = HHCache.from_legacy_cache(past_key_values)
             past_seen_tokens = past_key_values.get_seq_length()
 
