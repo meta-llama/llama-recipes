@@ -538,4 +538,4 @@ class H2OLlamaForCausalLM(LlamaForCausalLM):
         super().__init__(config)
         num_layers = len(self.model.layers)
         for layer_idx in range(num_layers):
-            self.model.layers[layer_idx].self_attn = H2OLlamaAttention(config)
+            self.model.layers[layer_idx].self_attn = H2OLlamaAttention(config, layer_idx)
