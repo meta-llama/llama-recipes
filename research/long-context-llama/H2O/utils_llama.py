@@ -186,8 +186,8 @@ class H2OLlamaAttention(nn.Module):
         self.o_proj = nn.Linear(self.hidden_size, self.hidden_size, bias=config.attention_bias)
         self._init_rope()
 
-        self.past_key_value = HHCache()
-        pdb.set_trace()
+        # self.past_key_value = HHCache()
+        # pdb.set_trace()
 
     def _init_rope(self):
         if self.config.rope_scaling is None:
