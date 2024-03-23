@@ -18,6 +18,7 @@ from transformers.models.llama.modeling_llama import (
     apply_rotary_pos_emb,
     LlamaForCausalLM,
 )
+from cache_utils import Cache
 
 __all__ = ["H2OLlamaForCausalLM"]
 
