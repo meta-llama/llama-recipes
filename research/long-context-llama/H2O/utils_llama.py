@@ -20,6 +20,7 @@ from transformers.models.llama.modeling_llama import (
 )
 from cache_utils import Cache, HHCache
 from transformers.utils import logging
+from transformers.modeling_outputs import BaseModelOutputWithPast
 
 logger = logging.get_logger(__name__)
 
