@@ -18,7 +18,7 @@ from transformers.models.llama.modeling_llama import (
     apply_rotary_pos_emb,
     LlamaForCausalLM,
 )
-from cache_utils import Cache, HHCache
+from cache_utils import Cache, HHCache, StaticCache
 from transformers.utils import logging
 from transformers.modeling_outputs import BaseModelOutputWithPast
 
