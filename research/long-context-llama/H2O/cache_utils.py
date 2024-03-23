@@ -364,6 +364,7 @@ class HHCache(Cache):
         Support for backwards-compatible `past_key_value` indexing, e.g. `past_key_value[0][0].shape[2]` to get the
         sequence length.
         """
+        print(layer_idx, len(self))
         if layer_idx < len(self):
             return (self.key_cache[layer_idx], self.value_cache[layer_idx])
         else:
