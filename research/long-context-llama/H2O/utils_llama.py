@@ -336,8 +336,7 @@ def enable_h2ocache_forward(
     past_seen_tokens = 0
     if use_cache:  # kept for BC (cache positions)
         if not isinstance(past_key_values, StaticCache):
-            pdb.set_trace()
-            past_key_values = HHCache.from_legacy_cache(past_key_values)
+            past_key_values = HHCache.from_legacy_cache(self.num_window_length, self.num_heavy_hitter_tokens, past_key_values)
             past_seen_tokens = past_key_values.get_seq_length()
 
     if cache_position is None:
@@ -709,3 +708,5 @@ class H2OLlamaForCausalLM(LlamaForCausalLM):
             self.model.layers[layer_idx].self_attn = H2OLlamaAttention(config, layer_idx)
 
         self.model.forward = types.MethodType(enable_h2ocache_forward, self.model)
+        self.model.num_heavy_hitter_tokens = config.num_heavy_hitter_tokens
+        self.model.num_window_length = config.num_window_length
