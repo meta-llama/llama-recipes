@@ -554,7 +554,7 @@ class HHCache(Cache):
         """Converts a cache in the legacy cache format into an equivalent `DynamicCache`."""
         cache = cls(window_length, num_hh_tokens)
         if past_key_values is not None:
-            for layer_idx in range(len(past_key_values)):
+            for layer_idx in range(len(past_key_values) // 3):
                 key_states = past_key_values[layer_idx * 3]
                 value_states = past_key_values[layer_idx * 3 + 1]
                 accumulated_attention_scores = past_key_values[layer_idx * 3 + 2]
