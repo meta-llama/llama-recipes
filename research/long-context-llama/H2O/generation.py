@@ -33,8 +33,8 @@ if __name__ == '__main__':
     parser.add_argument("--model-name", type=str, default="")
 
     parser.add_argument("--enable_h2o_generation", action='store_true')
-    parser.add_argument("--num_heavy_hitter_tokens", type=int, default=256)
-    parser.add_argument("--num_window_length", type=int, default=512)
+    parser.add_argument("--num_heavy_hitter_tokens", type=int, default=128)
+    parser.add_argument("--num_window_length", type=int, default=256)
 
     parser.add_argument("--enable_position_rolling", action='store_true')
 
