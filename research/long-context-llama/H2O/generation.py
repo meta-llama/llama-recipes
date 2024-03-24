@@ -134,7 +134,7 @@ if __name__ == '__main__':
             
             results.append(result)
 
-    print('Final Results: {:.6f}, rouge-2: {:.6f}, rouge-l: {:.6f}'.format(np.mean(rouge1_score_list), np.mean(rouge2_score_list), np.mean(rougel_score_list)))
+    print('Average Rouge1: {:.6f}, Rouge-2: {:.6f}, Rouge-l: {:.6f}'.format(np.mean(rouge1_score_list), np.mean(rouge2_score_list), np.mean(rougel_score_list)))
     with open(output_path, 'w') as f:
         for result in results:
             f.write(json.dumps(result) + '\n')
