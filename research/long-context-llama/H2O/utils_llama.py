@@ -401,6 +401,8 @@ def enable_h2ocache_forward(
             all_self_attns += (layer_outputs[1],)
 
     hidden_states = self.norm(hidden_states)
+    
+    import pdb; pdb.set_trace()
 
     # add hidden states from the last decoder layer
     if output_hidden_states:
