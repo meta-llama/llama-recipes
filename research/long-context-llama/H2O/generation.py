@@ -15,7 +15,7 @@ import dataclasses
 from xopen import xopen
 
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
-from utils_llama import H2OLlamaForCausalLM
+from utils.llama import H2OLlamaForCausalLM
 
 def set_seed(args):
     np.random.seed(args.seed)

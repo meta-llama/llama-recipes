@@ -17,7 +17,7 @@ from transformers.models.llama.modeling_llama import (
     LlamaRotaryEmbedding,
     LlamaForCausalLM,
 )
-from kv_cache import Cache, HHCache, StaticCache
+from utils.cache import Cache, HHCache, StaticCache
 from transformers.utils import logging
 from transformers.modeling_outputs import BaseModelOutputWithPast
 
