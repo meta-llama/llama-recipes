@@ -166,7 +166,8 @@ class H2OLlamaAttention(nn.Module):
         past_key_value = getattr(self, "past_key_value", past_key_value)
         cos, sin = self.rotary_emb(value_states, position_ids)
 
-        print(position_ids)
+        if self.layer_idx == 0:
+            print(position_ids)
 
 
 
