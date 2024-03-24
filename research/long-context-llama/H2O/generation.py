@@ -92,7 +92,6 @@ if __name__ == '__main__':
 
             input_ids = tokenizer(prompt, add_special_tokens=False, return_tensors='pt').input_ids.to(model.device)
 
-            print(input_ids)
             output_sequences = model.generate(
                 input_ids=input_ids,
                 max_length=request['max_tokens'] + len(input_ids[0]),
@@ -102,11 +101,6 @@ if __name__ == '__main__':
                 num_return_sequences=request['n'],
                 return_dict_in_generate=True, output_scores=True,
             )
-
-            print('Finish')
-
-            # if args.enable_h2o_generation:
-            #     self._clean_cache()
 
             tokens = tokenizer.convert_ids_to_tokens(output_sequences['sequences'].squeeze(0))[len(input_ids[0]):]
             logprobs = [logits.log_softmax(dim=-1).max().item() for logits in output_sequences['scores']]
