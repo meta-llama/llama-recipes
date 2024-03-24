@@ -369,7 +369,6 @@ class HHCache(Cache):
         sequence length.
         """
         if layer_idx < len(self):
-            print(layer_idx, self.key_cache[layer_idx].shape)
             return (self.key_cache[layer_idx], self.value_cache[layer_idx])
         else:
             raise KeyError(f"Cache only has {len(self)} layers, attempted to access layer with index {layer_idx}")
@@ -380,7 +379,6 @@ class HHCache(Cache):
         keys and values
         """
         for layer_idx in range(len(self)):
-            print(layer_idx, self.key_cache[layer_idx].shape)
             yield (self.key_cache[layer_idx], self.value_cache[layer_idx])
 
     def __len__(self):

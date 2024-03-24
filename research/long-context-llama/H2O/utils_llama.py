@@ -301,6 +301,8 @@ class H2OLlamaAttention(nn.Module):
         if not output_attentions:
             attn_weights = None
 
+        print(past_key_value.key_cache[self.layer_idx].shape, past_key_value.accumulated_attention_scores[self.layer_idx].shape)
+
         return attn_output, attn_weights, past_key_value
 
 
