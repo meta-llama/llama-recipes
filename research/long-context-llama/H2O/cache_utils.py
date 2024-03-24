@@ -457,8 +457,10 @@ class HHCache(Cache):
             A tuple containing the updated key and value states.
         """
         # Update the number of seen tokens
+        
         if layer_idx == 0:
             self._seen_tokens += key_states.shape[-2]
+            import pdb; pdb.set_trace()
 
         # Update the cache
         if len(self.key_cache) <= layer_idx:
