@@ -301,8 +301,6 @@ class H2OLlamaAttention(nn.Module):
         if not output_attentions:
             attn_weights = None
 
-        pdb.set_trace()
-
         return attn_output, attn_weights, past_key_value
 
 
