@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
     parser.add_argument("--enable_position_rolling", action='store_true')
 
-    parser.add_argument("--sample_num", type=int, default=10)
+    parser.add_argument("--sample_num", type=int, default=1000)
     parser.add_argument("--seed", type=int, default=42, help="random seed for initialization")
 
     args = parser.parse_args()
