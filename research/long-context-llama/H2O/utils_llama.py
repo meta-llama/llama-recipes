@@ -187,7 +187,8 @@ class H2OLlamaAttention(nn.Module):
                 query_position_ids = position_ids
                 key_position_ids = position_ids
 
-            cos, sin = self.rotary_emb(value_states, key_position_ids)
+            key_cos, key_sin = self.rotary_emb(value_states, key_position_ids)
+            query_cos, query_sin = self.rotary_emb(value_states, query_position_ids)
 
             if self.layer_idx == 0:
                 print(kv_seq_len, query_position_ids, key_position_ids)
