@@ -82,7 +82,7 @@ class H2OLlamaAttention(nn.Module):
         self.max_position_embeddings = config.max_position_embeddings
         self.rope_theta = config.rope_theta
         self.is_causal = True
-        self.positional_rolling = True
+        self.positional_rolling = config.enable_position_rolling
 
         if (self.head_dim * self.num_heads) != self.hidden_size:
             raise ValueError(
