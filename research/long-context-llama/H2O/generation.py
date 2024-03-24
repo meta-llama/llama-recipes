@@ -102,6 +102,8 @@ if __name__ == '__main__':
                 return_dict_in_generate=True, output_scores=True,
             )
 
+            print('Finish')
+
             # if args.enable_h2o_generation:
             #     self._clean_cache()
 
