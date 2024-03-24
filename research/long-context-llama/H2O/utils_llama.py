@@ -419,6 +419,8 @@ def enable_h2ocache_forward(
         )
     if not return_dict:
         return tuple(v for v in [hidden_states, next_cache, all_hidden_states, all_self_attns] if v is not None)
+    
+    import pdb;pdb.set_trace()
     return BaseModelOutputWithPast(
         last_hidden_state=hidden_states,
         past_key_values=next_cache,
