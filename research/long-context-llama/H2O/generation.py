@@ -92,6 +92,7 @@ if __name__ == '__main__':
 
             input_ids = tokenizer(prompt, add_special_tokens=False, return_tensors='pt').input_ids.to(model.device)
 
+            print(input_ids)
             output_sequences = model.generate(
                 input_ids=input_ids,
                 max_length=request['max_tokens'] + len(input_ids[0]),
