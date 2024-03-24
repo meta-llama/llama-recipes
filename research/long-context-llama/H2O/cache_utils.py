@@ -547,6 +547,7 @@ class HHCache(Cache):
         legacy_cache = ()
         for layer_idx in range(len(self)):
             legacy_cache += ((self.key_cache[layer_idx], self.value_cache[layer_idx], self.accumulated_attention_scores[layer_idx], ))
+        import pdb; pdb.set_trace()
         return legacy_cache
 
     @classmethod
