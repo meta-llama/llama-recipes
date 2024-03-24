@@ -546,7 +546,7 @@ class HHCache(Cache):
         """Converts the `DynamicCache` instance into the its equivalent in the legacy cache format."""
         legacy_cache = ()
         for layer_idx in range(len(self)):
-            legacy_cache += ((self.key_cache[layer_idx], self.value_cache[layer_idx]), self.accumulated_attention_scores[layer_idx], )
+            legacy_cache += ((self.key_cache[layer_idx], self.value_cache[layer_idx], self.accumulated_attention_scores[layer_idx], ))
         return legacy_cache
 
     @classmethod
