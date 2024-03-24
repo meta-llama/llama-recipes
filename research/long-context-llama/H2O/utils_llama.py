@@ -770,7 +770,7 @@ class H2OLlamaForCausalLM(LlamaForCausalLM):
                 cache_length = past_length if max_cache_length is None else torch.min(max_cache_length, past_length)
             # TODO joao: remove this `else` after `generate` prioritizes `Cache` objects
             else:
-                cache_length = past_length = past_key_values[0][0].shape[2]
+                cache_length = past_length = past_key_values[0].shape[2] # length = num_layers * 3 (3 -> key, value, score)
                 max_cache_length = None
 
             # Keep only the unprocessed tokens:
