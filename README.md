@@ -38,24 +38,27 @@ Some features (especially fine-tuning with FSDP + PEFT) currently require PyTorc
 ### Installing
 Llama-recipes provides a pip distribution for easy install and usage in other projects. Alternatively, it can be installed from source.
 
+> [!NOTE]
+> Ensure you use the correct CUDA version (from `nvidia-smi`) when installing the PyTorch wheels. Here we are using 11.8 as `cu118`
+
 #### Install with pip
 ```
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes
+pip install --extra-index-url https://download.pytorch.org/whl/cu118 llama-recipes
 ```
 
 #### Install with optional dependencies
 Llama-recipes offers the installation of optional packages. There are three optional dependency groups.
 To run the unit tests we can install the required dependencies with:
 ```
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[tests]
+pip install --extra-index-url https://download.pytorch.org/whl/cu118 llama-recipes[tests]
 ```
 For the vLLM example we need additional requirements that can be installed with:
 ```
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[vllm]
+pip install --extra-index-url https://download.pytorch.org/whl/cu118 llama-recipes[vllm]
 ```
 To use the sensitive topics safety checker install with:
 ```
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[auditnlg]
+pip install --extra-index-url https://download.pytorch.org/whl/cu118 llama-recipes[auditnlg]
 ```
 Optional dependencies can also be combines with [option1,option2].
 
@@ -65,14 +68,14 @@ To install from source e.g. for development use these commands. We're using hatc
 git clone git@github.com:meta-llama/llama-recipes.git
 cd llama-recipes
 pip install -U pip setuptools
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .
+pip install --extra-index-url https://download.pytorch.org/whl/cu118 -e .
 ```
 For development and contributing to llama-recipes please install all optional dependencies:
 ```
 git clone git@github.com:meta-llama/llama-recipes.git
 cd llama-recipes
 pip install -U pip setuptools
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .[tests,auditnlg,vllm]
+pip install --extra-index-url https://download.pytorch.org/whl/cu118 -e .[tests,auditnlg,vllm]
 ```
 
 
