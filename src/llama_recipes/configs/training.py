@@ -17,6 +17,8 @@ class train_config:
     gradient_clipping: bool = False
     gradient_clipping_threshold: float = 1.0
     num_epochs: int=3
+    max_train_step: int=0
+    max_eval_step: int=0
     num_workers_dataloader: int=1
     lr: float=1e-4
     weight_decay: float=0.0
