@@ -1,11 +1,11 @@
 # Extending Llama to a new language
 
-In this recipe, we will see how to add a new language to the Llama family of models. The steps are quite general and can be easily adapted to other models as well. Using this recipe, you should be able to replicate the findings of (OpenHathi)[https://huggingface.co/sarvamai/OpenHathi-7B-Hi-v0.1-Base].
+In this recipe, we will see how to add a new language to the Llama family of models. The steps are quite general and can be easily adapted to other models as well. Using this recipe, you should be able to replicate the findings of [OpenHathi](https://huggingface.co/sarvamai/OpenHathi-7B-Hi-v0.1-Base).
 
 ## Data
-The original OpenHathi model uses a combination of (Sangraha)[https://huggingface.co/datasets/ai4bharat/sangraha] and Wikipedia as its primary data sources. If the reader is interested in using these sources, they would also have to preprocess the data: clean, filter, and deduplicate. See (Setu)[https://github.com/AI4Bharat/setu/] for an easy way to do this at scale.
+The original OpenHathi model uses a combination of [Sangraha](https://huggingface.co/datasets/ai4bharat/sangraha) and Wikipedia as its primary data sources. If the reader is interested in using these sources, they would also have to preprocess the data: clean, filter, and deduplicate. See [Setu](https://github.com/AI4Bharat/setu) for an easy way to do this at scale.
 
-In this tutorial, we will use the [Varta](https://huggingface.co/datasets/rahular/varta) dataset which contains 40M+ news articles taken from (DailyHunt)[https://m.dailyhunt.in/]. Since this data is already high-quality, we can skip the pre-processing step mentioned above. We will use the Hindi subset here, but you can add any other language present in the dataset by only passing the right language code (advanced users can also tweak the code to add multiple languages at once). 
+In this tutorial, we will use the [Varta](https://huggingface.co/datasets/rahular/varta) dataset which contains 40M+ news articles taken from [DailyHunt](https://m.dailyhunt.in/). Since this data is already high-quality, we can skip the pre-processing step mentioned above. We will use the Hindi subset here, but you can add any other language present in the dataset by only passing the right language code (advanced users can also tweak the code to add multiple languages at once). 
 
 ## Tokenizer
 Our first step towards augmenting a new language to an LLM is creating a better tokenizer. We define 'better' in terms of fertility score or the number of in-language tokens present in the tokenizer. Note that we should add new tokens without disturbing the original vocabulary, and therefore creating a better tokenizer usually involves 2 steps: (i) building a new, in-language only tokenizer, and (ii) merging this new tokenizer with the original. 
@@ -57,7 +57,7 @@ OpenHathi uses a two-stage pre-training process:
 - Phase 1: learn to translate paragraphs of text (use translated text as context and generate the original text)
 - Phase 2: bilingual next token prediction (train on text where the language changes after every sentence)
 
-We can easily create data for both phases using any translation model. OpenHathi uses (IndicTrans2)[https://github.com/AI4Bharat/IndicTrans2]. We provide sample code for both phases below.
+We can easily create data for both phases using any translation model. OpenHathi uses [IndicTrans2](https://github.com/AI4Bharat/IndicTrans2). We provide sample code for both phases below.
 
 ### Phase 1
 With the assumption that we don't have source-native data, let us first get some English data to translate. 
@@ -71,7 +71,7 @@ for d in ds:
     english_paragraphs.append(" ".join(d["text"].split("\n")))
 ```
 
-Now, our goal is to create data in the format `{translated_paragraph}\n\n{english_paragraph}`. We can use the `translate_paragraph` function ((link)[https://github.com/AI4Bharat/IndicTrans2/blob/main/huggingface_interface/example.py#L150]) from the IndicTrans2 codebase to do this easily.
+Now, our goal is to create data in the format `{translated_paragraph}\n\n{english_paragraph}`. We can use the `translate_paragraph` function ([link](https://github.com/AI4Bharat/IndicTrans2/blob/main/huggingface_interface/example.py#L150])) from the IndicTrans2 codebase to do this easily.
 
 ```
 quantization = ""
@@ -86,7 +86,7 @@ for para in english_paragraphs:
 ```
 
 ### Phase 2
-This is almost the same as phase 1, except that we have to replace the original sentences in an alternating manner to get the data in the required format. We can use the `split_sentences` ((link)[https://github.com/AI4Bharat/IndicTrans2/blob/main/huggingface_interface/example.py#L60]) and `batch_translate` ((link)[https://github.com/AI4Bharat/IndicTrans2/blob/main/huggingface_interface/example.py#L109]) functions to do this.
+This is almost the same as phase 1, except that we have to replace the original sentences in an alternating manner to get the data in the required format. We can use the `split_sentences` ([link](https://github.com/AI4Bharat/IndicTrans2/blob/main/huggingface_interface/example.py#L60])) and `batch_translate` ([link](https://github.com/AI4Bharat/IndicTrans2/blob/main/huggingface_interface/example.py#L109)) functions to do this.
 
 ```
 quantization = ""
@@ -106,7 +106,7 @@ for para in english_paragraphs:
 ```
 
 ### Train
-Finally, we can start finetuning Llama2 on these datasets by following the (finetuning recipes)[https://github.com/subramen/llama-recipes/tree/new-folder-structure/recipes/finetuning]. Remember to pass the new tokenizer path as an argument to the script: `--tokenizer_name=./extended_tokenizer`.
+Finally, we can start finetuning Llama2 on these datasets by following the [finetuning recipes](https://github.com/rahul-sarvam/llama-recipes/tree/main/recipes/finetuning). Remember to pass the new tokenizer path as an argument to the script: `--tokenizer_name=./extended_tokenizer`.
 
 OpenHathi was trained on 64 A100 80GB GPUs. Here are the hyperparameters used and other training details:
 - maximum learning rate: 2e-4
@@ -127,26 +127,18 @@ OpenHathi was trained on 64 A100 80GB GPUs. Here are the hyperparameters used an
 
 The resulting loss plots are shown below:
 
-<figure>
-    <img src="imgs/phase1-train-loss.png"
-         alt="Phase 1: train loss">
-    <figcaption>Phase 1: train loss.</figcaption>
-</figure>
+Phase 1: train loss
 
-<figure>
-    <img src="imgs/phase1-eval-loss.png"
-         alt="Phase 1: eval loss">
-    <figcaption>Phase 1: eval loss.</figcaption>
-</figure>
+![Phase 1: train loss](imgs/phase1-train-loss.png)
 
-<figure>
-    <img src="imgs/phase2-train-loss.png"
-         alt="Phase 2: train loss">
-    <figcaption>Phase 2: train loss.</figcaption>
-</figure>
+Phase 1: eval loss
 
-<figure>
-    <img src="imgs/phase2-eval-loss.png"
-         alt="Phase 2: eval loss">
-    <figcaption>Phase 2: eval loss.</figcaption>
-</figure>
+![Phase 1: eval loss](imgs/phase1-eval-loss.png)
+
+Phase 2: train loss
+
+![Phase 2: train loss](imgs/phase2-train-loss.png)
+
+Phase 2: eval loss
+
+![Phase 2: eval loss](imgs/phase2-eval-loss.png)
