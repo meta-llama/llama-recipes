@@ -7,6 +7,7 @@ from dataclasses import dataclass
 @dataclass
 class train_config:
     model_name: str="PATH/to/LLAMA/7B"
+    tokenizer_name: str=None
     enable_fsdp: bool=False
     low_cpu_fsdp: bool=False
     run_validation: bool=True
