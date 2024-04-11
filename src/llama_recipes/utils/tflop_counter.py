@@ -451,22 +451,19 @@ class FlopCounterMode(TorchDispatchMode):
             self.stop_counting()
             if self.display:
                 if self.rank is None or self.rank == 0:
-                    print("exiting flop counter")
                     print("self.flop_counts", self.flop_counts["Global"].values())
                     print(self.get_table(self.depth))
         super().__exit__(*args)
     def start_counting(self):
         self.flop_counts.clear()
         self.ready = True
-        print("start_counting")
+    def is_ready(self):
+        return self.ready
     def stop_counting(self):
         self.ready = False
-        print("stop_counting")
     def __torch_dispatch__(self, func, types, args=(), kwargs=None):
         if not self.ready:
-            print("not ready yet, stop_counting")
-            return
-        print("in torch_dispatch now")
+            return func(*args, **kwargs)
         kwargs = kwargs if kwargs else {}
         out = func(*args, **kwargs)
         func_packet = func._overloadpacket
