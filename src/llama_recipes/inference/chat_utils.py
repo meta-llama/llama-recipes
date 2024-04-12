@@ -17,7 +17,44 @@ Dialog = List[Message]
 
 B_INST, E_INST = "[INST]", "[/INST]"
 B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n"
+
 def format_tokens(dialogs, tokenizer):
+    if tokenizer.vocab_size >= 128000:
+        return _format_tokens_llama3(dialogs, tokenizer)
+    else:
+        return _format_tokens_llama2(dialogs, tokenizer)
+
+
+def _encode_header(message, tokenizer):
+    tokens = []
+    tokens.extend(tokenizer.encode("<|start_header_id|>"))
+    tokens.extend(tokenizer.encode(message["role"]))
+    tokens.extend(tokenizer.encode("<|end_header_id|>"))
+    tokens.extend(tokenizer.encode("\n\n"))
+    return tokens
+
+def _encode_message(message, tokenizer):
+    tokens = _encode_header(message, tokenizer)
+    tokens.extend(tokenizer.encode(message["content"].strip()))
+    tokens.extend(tokenizer.encode("<|eot_id|>"))
+    return tokens
+
+def _format_dialog(dialog, tokenizer):
+    tokens = []
+    tokens.extend(tokenizer.encode("<|begin_of_text|>"))
+    for msg in dialog:
+        tokens.extend(_encode_message(msg, tokenizer))
+    tokens.extend(
+        _encode_header({"role": "assistant", "content": ""}, tokenizer)
+        )
+    return tokens
+
+
+def _format_tokens_llama3(dialogs, tokenizer):
+    return [_format_dialog(dialog, tokenizer) for dialog in dialogs]
+
+
+def _format_tokens_llama2(dialogs, tokenizer):
     prompt_tokens = []
     for dialog in dialogs:
         if dialog[0]["role"] == "system":
@@ -57,7 +94,7 @@ def format_tokens(dialogs, tokenizer):
         )
         prompt_tokens.append(dialog_tokens)
     return prompt_tokens
-        
+
 
 def read_dialogs_from_file(file_path):
     with open(file_path, 'r') as file:
