@@ -25,10 +25,18 @@ class alpaca_dataset:
     test_split: str = "val"
     data_path: str = "src/llama_recipes/datasets/alpaca_data.json"
     
+@dataclass
+class dania_dataset:
+    dataset: str = "dania_dataset"
+    train_split: str = "train"
+    test_split: str = "val"
+    data_path: str = "/workspace/jupyter/llama-recipes/src/llama_recipes/data/llama_guard/Dania_annotated_data_02_27_partitions/ExtractedAnnotations02.27.24_train_llama_training_ready_formatfix.json"
     
+
 @dataclass
 class custom_dataset:
     dataset: str = "custom_dataset"
     file: str = "examples/custom_dataset.py"
     train_split: str = "train"
     test_split: str = "validation"
+        
