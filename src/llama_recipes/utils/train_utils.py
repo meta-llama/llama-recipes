@@ -25,8 +25,8 @@ from llama_recipes.model_checkpointing import save_model_checkpoint, save_model_
 from llama_recipes.policies import fpSixteen,bfSixteen, get_llama_wrapper
 from llama_recipes.utils.memory_utils import MemoryTrace
 from accelerate.utils import is_xpu_available, is_ccl_available
-from llama_recipes.utils.tflop_counter import FlopCounterMode
-
+#from llama_recipes.utils.tflop_counter import FlopCounterMode
+from llama_recipes.utils.flop_utils import FlopMeasure
 def set_tokenizer_params(tokenizer: LlamaTokenizer):
     tokenizer.pad_token_id = 0
     tokenizer.padding_side = "left"
@@ -62,7 +62,7 @@ def throughput_measure_context(cfg, local_rank=None):
     elif use_flop_counter:
         if cfg.max_train_step > 0 and cfg.max_train_step < cfg.flop_counter_startpoint:
             raise ValueError(f"flop counter requires at least {cfg.flop_counter_startpoint} train steps, please increase the max_train_step, current max_train_step {cfg.max_train_step}")
-        with FlopCounterMode(rank=local_rank) as flop_counter:
+        with FlopMeasure(rank=local_rank) as flop_counter:
             yield flop_counter
     else:
         torch_profiler = contextlib.nullcontext()
