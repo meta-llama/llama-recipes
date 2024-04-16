@@ -1274,7 +1274,7 @@ IndicTrans
 OpenHathi
 OpenHathi's
 Sangraha
-Saravam
+Sarvam
 Setu
 Varta
 bfloat
