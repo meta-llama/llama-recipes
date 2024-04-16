@@ -54,8 +54,10 @@ Now, you have a new Llama2 tokenizer which works the same way on English text bu
 
 ## Continual pre-training
 OpenHathi uses a two-stage pre-training process:
-- Phase 1: learn to translate paragraphs of text (use translated text as context and generate the original text)
-- Phase 2: bilingual next token prediction (train on text where the language changes after every sentence)
+- Phase 1: learn to translate paragraphs of text (use translated text as context and generate the original text, ~15B tokens)
+- Phase 2: bilingual next token prediction (train on text where the language changes after every sentence, ~15B tokens)
+
+Note: OpenHathi's final data mixture also contains monolingual data and romanized transliterations.
 
 We can easily create data for both phases using any translation model. OpenHathi uses [IndicTrans2](https://github.com/AI4Bharat/IndicTrans2). We provide sample code for both phases below.
 
@@ -64,7 +66,7 @@ With the assumption that we don't have source-native data, let us first get some
 
 ```
 from datasets import load_dataset
-ds = load_dataset("rahular/varta", split="validation", streaming=True)
+ds = load_dataset("rahular/varta", split="train", streaming=True)
 english_paragraphs = []
 for d in ds:
     if d["langCode"] != "en": continue
@@ -83,6 +85,11 @@ phase1_data = []
 for para in english_paragraphs:
     trans_para = translate_paragraph(para, "eng_Latn", "hin_Deva", en_indic_model, en_indic_tokenizer, ip)
     phase1_data.append({"text": f"{trans_para}\n\n{para}"})
+
+# if you want to save it for future, you can do so easily with HF datasets
+from datasets import Dataset
+phase1_ds = Dataset.from_list(phase1_data)
+phase1_ds.save_to_disk("data/phase1")
 ```
 
 ### Phase 2
@@ -103,6 +110,11 @@ for para in english_paragraphs:
         sent_to_append = en_sent if idx % 2 == 0 else trans_sent
         final_para.append(sent_to_append)
     phase2_data.append({"text": " ".join(final_para)})
+
+# if you want to save it for future, you can do so easily with HF datasets
+from datasets import Dataset
+phase2_ds = Dataset.from_list(phase2_data)
+phase2_ds.save_to_disk("data/phase2")
 ```
 
 ### Train
@@ -125,7 +137,7 @@ OpenHathi was trained on 64 A100 80GB GPUs. Here are the hyperparameters used an
 - deepspeed stage 2
 - dtype: bfloat16
 
-The resulting loss plots are shown below:
+The resulting (partial) loss plots from the OpenHathi training are shown below:
 
 Phase 1: train loss
 
