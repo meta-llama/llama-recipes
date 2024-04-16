@@ -59,8 +59,8 @@ def throughput_measure_context(cfg, local_rank=None):
         ) as torch_profiler:
             yield torch_profiler
     elif use_flop_counter:
-        if cfg.max_train_step > 0 and cfg.max_train_step < cfg.flop_counter_startpoint:
-            raise ValueError(f"flop counter requires at least {cfg.flop_counter_startpoint} train steps, please increase the max_train_step, current max_train_step {cfg.max_train_step}")
+        if cfg.max_train_step > 0 and cfg.max_train_step < cfg.flop_counter_start:
+            raise ValueError(f"flop counter requires at least {cfg.flop_counter_start} train steps, please increase the max_train_step, current max_train_step {cfg.max_train_step}")
         with FlopMeasure(rank=local_rank) as flop_counter:
             yield flop_counter
     else:
@@ -136,7 +136,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         if not train_config.enable_fsdp or local_rank==0:
                             print("max training steps reached, stopping training, total train steps finished: ", total_train_steps-1)
                         break
-                    if train_config.flop_counter and total_train_steps == train_config.flop_counter_startpoint:
+                    if train_config.flop_counter and total_train_steps == train_config.flop_counter_start:
                         print("start flop counting at the step: ", total_train_steps)
                         measure_context.start_counting()
                     for key in batch.keys():

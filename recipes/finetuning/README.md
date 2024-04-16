@@ -50,9 +50,9 @@ save_model: bool = False
 dist_checkpoint_root_folder: str="model_checkpoints"
 dist_checkpoint_folder: str="fine-tuned"
 save_optimizer: bool=False
-flop_counter: bool=False # Enable Flop counter to measure model throughput, can not be used with pytorch profiler at the same time.
-flop_counter_startpoint: int=3 # The step to start profiling, default is 3, which means after 3 steps of warmup stage, the profiler will start to count flops.
-use_profiler: bool=False # Enable pytorch profiler, can not be used with flop counter at the same time.
+flop_counter: bool=False # Enable FLOPS counter to measure model throughput, can not be used with pytorch profiler at the same time.
+flop_counter_start: int=3 # The step to start profiling, default is 3, which means after 3 steps of warm-up stage, the profiler will start to count FLOPS.
+use_profiler: bool=False # Enable pytorch profiler, can not be used with FLOPS counter at the same time.
 profiler_dir: str="PATH/to/save/profiler/results" # will be used if using profiler
 ```
 
@@ -94,8 +94,8 @@ You'll be able to access a dedicated project or run link on [wandb.ai](https://w
     <img src="../../docs/images/wandb_screenshot.png" alt="wandb screenshot" width="500" />
 </div>
 
-## FLop Counting and Pytorch Profiling
+## FLOPS Counting and Pytorch Profiling
 
-To help with benchmarking effort, we are adding the support for counting the flops during the fine-tuning process. You can achieve this by setting `--flop_counter` when launching your single/multi GPU fine-tuning. Use `--flop_counter_startpoint` to choose which step to count the flops. It is recommended to allow a warmup stage before using the flop counter.
+To help with benchmarking effort, we are adding the support for counting the FLOPS during the fine-tuning process. You can achieve this by setting `--flop_counter` when launching your single/multi GPU fine-tuning. Use `--flop_counter_start` to choose which step to count the FLOPS. It is recommended to allow a warm-up stage before using the FLOPS counter.
 
-Similarly, you can set `--use_profiler` flag and pass a profiling output path using `--profiler_dir` to capture the profile traces of your model using [PyTorch profiler](https://pytorch.org/tutorials/intermediate/tensorboard_profiler_tutorial.html). This would be helpful for debugging purposes. However, the `--flop_counter` and `--use_profiler` can not be used in the same time to ensure the measurement accuarcy.
+Similarly, you can set `--use_profiler` flag and pass a profiling output path using `--profiler_dir` to capture the profile traces of your model using [PyTorch profiler](https://pytorch.org/tutorials/intermediate/tensorboard_profiler_tutorial.html). This would be helpful for debugging purposes. However, the `--flop_counter` and `--use_profiler` can not be used in the same time to ensure the measurement accuracy.
