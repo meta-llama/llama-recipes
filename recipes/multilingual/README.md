@@ -106,7 +106,7 @@ for para in english_paragraphs:
 ```
 
 ### Train
-Finally, we can start finetuning Llama2 on these datasets by following the [finetuning recipes](https://github.com/rahul-sarvam/llama-recipes/tree/main/recipes/finetuning). Remember to pass the new tokenizer path as an argument to the script: `--tokenizer_name=./extended_tokenizer`.
+Finally, we can start finetuning Llama2 on these datasets by following the [finetuning recipes](https://github.com/meta-llama/llama-recipes/tree/main/recipes/finetuning). Remember to pass the new tokenizer path as an argument to the script: `--tokenizer_name=./extended_tokenizer`.
 
 OpenHathi was trained on 64 A100 80GB GPUs. Here are the hyperparameters used and other training details:
 - maximum learning rate: 2e-4
