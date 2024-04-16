@@ -1,5 +1,5 @@
 # Extending Llama to a new language
-
+Authored by : Saravam team
 In this recipe, we will see how to add a new language to the Llama family of models. The steps are quite general and can be easily adapted to other models as well. Using this recipe, you should be able to replicate the findings of [OpenHathi](https://huggingface.co/sarvamai/OpenHathi-7B-Hi-v0.1-Base).
 
 ## Data
