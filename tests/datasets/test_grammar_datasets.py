@@ -11,8 +11,8 @@ EXPECTED_RESULTS = {
         "pos": 31,
     },
     "hsramall/hsramall-7b-hf":{
-        "label": 791,
-        "pos": 25,
+        "label": 40,
+        "pos": 26,
     },
 }
 
