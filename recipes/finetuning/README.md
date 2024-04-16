@@ -1,8 +1,8 @@
 # Finetuning Llama
 
-This folder contains instructions to fine-tune Llama 2 on a 
+This folder contains instructions to fine-tune Llama 2 on a
 * [single-GPU setup](./singlegpu_finetuning.md)
-* [multi-GPU setup](./multigpu_finetuning.md) 
+* [multi-GPU setup](./multigpu_finetuning.md)
 
 using the canonical [finetuning script](../../src/llama_recipes/finetuning.py) in the llama-recipes package.
 
@@ -25,22 +25,24 @@ It lets us specify the training settings for everything from `model_name` to `da
 ```python
 
 model_name: str="PATH/to/LLAMA 2/7B"
-enable_fsdp: bool= False
+enable_fsdp: bool=False
 run_validation: bool=True
 batch_size_training: int=4
 gradient_accumulation_steps: int=1
+max_train_step: int=0
+max_eval_step: int=0
 num_epochs: int=3
 num_workers_dataloader: int=2
 lr: float=2e-4
 weight_decay: float=0.0
-gamma: float= 0.85
+gamma: float=0.85
 use_fp16: bool=False
 mixed_precision: bool=True
 val_batch_size: int=4
 dataset = "samsum_dataset" # alpaca_dataset, grammar_dataset
-peft_method: str = "lora" # None , llama_adapter, prefix
+peft_method: str="lora" # None , llama_adapter, prefix
 use_peft: bool=False
-output_dir: str = "./ft-output"
+output_dir: str="./ft-output"
 freeze_layers: bool = False
 num_freeze_layers: int = 1
 quantization: bool = False
@@ -48,7 +50,10 @@ save_model: bool = False
 dist_checkpoint_root_folder: str="model_checkpoints"
 dist_checkpoint_folder: str="fine-tuned"
 save_optimizer: bool=False
-
+flop_counter: bool=False # Enable Flop counter to measure model throughput, can not be used with pytorch profiler at the same time.
+flop_counter_startpoint: int=3 # The step to start profiling, default is 3, which means after 3 steps of warmup stage, the profiler will start to count flops.
+use_profiler: bool=False # Enable pytorch profiler, can not be used with flop counter at the same time.
+profiler_dir: str="PATH/to/save/profiler/results" # will be used if using profiler
 ```
 
 * [Datasets config file](../../src/llama_recipes/configs/datasets.py) provides the available options for datasets.
@@ -84,7 +89,13 @@ You can enable [W&B](https://wandb.ai/) experiment tracking by using `use_wandb`
 ```bash
 python -m llama_recipes.finetuning --use_peft --peft_method lora --quantization --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model --use_wandb
 ```
-You'll be able to access a dedicated project or run link on [wandb.ai](https://wandb.ai) and see your dashboard like the one below. 
+You'll be able to access a dedicated project or run link on [wandb.ai](https://wandb.ai) and see your dashboard like the one below.
 <div style="display: flex;">
     <img src="../../docs/images/wandb_screenshot.png" alt="wandb screenshot" width="500" />
 </div>
+
+## FLop Counting and Pytorch Profiling
+
+To help with benchmarking effort, we are adding the support for counting the flops during the fine-tuning process. You can achieve this by setting `--flop_counter` when launching your single/multi GPU fine-tuning. Use `--flop_counter_startpoint` to choose which step to count the flops. It is recommended to allow a warmup stage before using the flop counter.
+
+Similarly, you can set `--use_profiler` flag and pass a profiling output path using `--profiler_dir` to capture the profile traces of your model using [PyTorch profiler](https://pytorch.org/tutorials/intermediate/tensorboard_profiler_tutorial.html). This would be helpful for debugging purposes. However, the `--flop_counter` and `--use_profiler` can not be used in the same time to ensure the measurement accuarcy.
