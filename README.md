@@ -7,8 +7,9 @@ The 'llama-recipes' repository is a companion to the [Llama 2 model](https://git
 > | Token | Description |
 > |---|---|
 > `<\|begin_of_text\|>` | This is equivalent to the BOS token. |
-> `<\|eot_id\|>` | This signifies the end of the message in a turn. This is equivalent to the EOS token. |
+> `<\|eot_id\|>` | This signifies the end of the message in a turn. |
 > `<\|start_header_id\|>{role}<\|end_header_id\|>` | These tokens enclose the role for a particular message. The possible roles can be: system, user, assistant. |
+> `<\|end_of_text\|>` | This is equivalent to the EOS token. On generating this token, Llama 3 will cease to generate more tokens |
 > 
 > A multiturn-conversation with Llama 3 follows this prompt template:
 > ```
