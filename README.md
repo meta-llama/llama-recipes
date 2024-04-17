@@ -2,14 +2,14 @@
 
 The 'llama-recipes' repository is a companion to the [Llama 2 model](https://github.com/facebookresearch/llama). The goal of this repository is to provide a scalable library for fine-tuning Llama 2, along with some example scripts and notebooks to quickly get started with using the Llama 2 models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Llama 2 and other tools in the LLM ecosystem. The examples here showcase how to run Llama 2 locally, in the cloud, and on-prem.
 
-> [!NOTE]
+> [!IMPORTANT]
 > Llama 3 has a new prompt template and special tokens (based on the tiktoken tokenizer).
-> ```
-> ## New Special Tokens
-> <|begin_of_text|>: This is equivalent to the BOS token
-> <|eot_id|>: This signifies the end of the message in a turn. This is equivalent to the EOS token.
-> <|start_header_id|>{role}<|end_header_id|>: These tokens enclose the role for a particular message. The possible roles can be: system, user, assistant.
-> ```
+> | Token | Description |
+> |---|---|
+> `<|begin_of_text|>` | This is equivalent to the BOS token. |
+> `<|eot_id|>` | This signifies the end of the message in a turn. This is equivalent to the EOS token. |
+> `<|start_header_id|>{role}<|end_header_id|>` | These tokens enclose the role for a particular message. The possible roles can be: system, user, assistant. |
+> 
 > A multiturn-conversation with Llama 3 follows this prompt template:
 > ```
 > <|begin_of_text|><|start_header_id|>system<|end_header_id|>
