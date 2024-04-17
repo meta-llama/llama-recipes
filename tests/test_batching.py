@@ -9,7 +9,7 @@ EXPECTED_SAMPLE_NUMBER ={
         "train": 96,
         "eval": 42,
     },
-    "hsramall/hsramall-7b-hf": {
+    "meta-llama/Llama-3-7b-hf": {
         "train": 79,
         "eval": 34,
     }

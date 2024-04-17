@@ -10,7 +10,7 @@ EXPECTED_RESULTS = {
         "label": 8432,
         "pos": 242,
     },
-    "hsramall/hsramall-7b-hf":{
+    "meta-llama/Llama-3-7b-hf":{
         "label": 2250,
         "pos": 211,
     },
