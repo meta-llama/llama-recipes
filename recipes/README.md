@@ -2,7 +2,8 @@ This folder contains examples organized by topic:
 
 | Subfolder | Description |
 |---|---|
-[quickstart](./quickstart) | The "Hello World" of using Llama2, start here if you are new to using Llama2.
+[quickstart](./quickstart)|The "Hello World" of using Llama2, start here if you are new to using Llama2
+[multilingual](./multilingual)|Scripts to add a new language to Llama2
 [finetuning](./finetuning)|Scripts to finetune Llama2 on single-GPU and multi-GPU setups
 [inference](./inference)|Scripts to deploy Llama2 for inference locally and using model servers
 [use_cases](./use_cases)|Scripts showing common applications of Llama2
