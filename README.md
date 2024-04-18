@@ -2,6 +2,28 @@
 <!-- markdown-link-check-disable -->
 The 'llama-recipes' repository is a companion to the [Meta Llama 2](https://github.com/meta-llama/llama) and [Meta Llama 3](https://github.com/meta-llama/llama3) models. The goal of this repository is to provide a scalable library for fine-tuning Meta Llama models, along with some example scripts and notebooks to quickly get started with using the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Meta Llama and other tools in the LLM ecosystem. The examples here showcase how to run Meta Llama locally, in the cloud, and on-prem.
 <!-- markdown-link-check-enable -->
+> [!IMPORTANT]
+> Llama 3 has a new prompt template and special tokens (based on the tiktoken tokenizer).
+> | Token | Description |
+> |---|---|
+> `<\|begin_of_text\|>` | This is equivalent to the BOS token. |
+> `<\|eot_id\|>` | This signifies the end of the message in a turn. |
+> `<\|start_header_id\|>{role}<\|end_header_id\|>` | These tokens enclose the role for a particular message. The possible roles can be: system, user, assistant. |
+> `<\|end_of_text\|>` | This is equivalent to the EOS token. On generating this token, Llama 3 will cease to generate more tokens |
+> 
+> A multiturn-conversation with Llama 3 follows this prompt template:
+> ```
+> <|begin_of_text|><|start_header_id|>system<|end_header_id|>
+>
+> {{ system_prompt }}<|eot_id|><|start_header_id|>user<|end_header_id|>
+>
+> {{ user_message_1 }}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+>
+> {{ model_answer_1 }}<|eot_id|><|start_header_id|>user<|end_header_id|>
+>
+> {{ user_message_2 }}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+> ```
+> More details on the new tokenizer and prompt template: <PLACEHOLDER_URL>
 > [!NOTE]
 > The llama-recipes repository was recently refactored to promote a better developer experience of using the examples. Some files have been moved to new locations. The `src/` folder has NOT been modified, so the functionality of this repo and package is not impacted.
 > 
