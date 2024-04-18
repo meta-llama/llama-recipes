@@ -1,7 +1,7 @@
 # Llama Recipes: Examples to get started using the Llama models from Meta
-
-The 'llama-recipes' repository is a companion to the [Llama 2 model](https://github.com/facebookresearch/llama). The goal of this repository is to provide a scalable library for fine-tuning Llama 2, along with some example scripts and notebooks to quickly get started with using the Llama 2 models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Llama 2 and other tools in the LLM ecosystem. The examples here showcase how to run Llama 2 locally, in the cloud, and on-prem.
-
+<!-- markdown-link-check-disable -->
+The 'llama-recipes' repository is a companion to the [Meta Llama 2](https://github.com/meta-llama/llama) and [Meta Llama 3](https://github.com/meta-llama/llama3) models. The goal of this repository is to provide a scalable library for fine-tuning Meta Llama models, along with some example scripts and notebooks to quickly get started with using the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Meta Llama and other tools in the LLM ecosystem. The examples here showcase how to run Meta Llama locally, in the cloud, and on-prem.
+<!-- markdown-link-check-enable -->
 > [!NOTE]
 > The llama-recipes repository was recently refactored to promote a better developer experience of using the examples. Some files have been moved to new locations. The `src/` folder has NOT been modified, so the functionality of this repo and package is not impacted.
 > 
@@ -9,7 +9,7 @@ The 'llama-recipes' repository is a companion to the [Llama 2 model](https://git
 
 ## Table of Contents
 
-- [Llama Recipes: Examples to get started using the Llama models from Meta](#llama-recipes-examples-to-get-started-using-the-llama-models-from-meta)
+- [Llama Recipes: Examples to get started using the Meta Llama models from Meta](#llama-recipes-examples-to-get-started-using-the-llama-models-from-meta)
   - [Table of Contents](#table-of-contents)
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
@@ -76,11 +76,11 @@ pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .[t
 ```
 
 
-### Getting the Llama models
-You can find Llama 2 models on Hugging Face hub [here](https://huggingface.co/meta-llama), **where models with `hf` in the name are already converted to Hugging Face checkpoints so no further conversion is needed**. The conversion step below is only for original model weights from Meta that are hosted on Hugging Face model hub as well.
+### Getting the Meta Llama models
+You can find Meta Llama models on Hugging Face hub [here](https://huggingface.co/meta-llama), **where models with `hf` in the name are already converted to Hugging Face checkpoints so no further conversion is needed**. The conversion step below is only for original model weights from Meta that are hosted on Hugging Face model hub as well.
 
 #### Model conversion to Hugging Face
-The recipes and notebooks in this folder are using the Llama 2 model definition provided by Hugging Face's transformers library.
+The recipes and notebooks in this folder are using the Meta Llama model definition provided by Hugging Face's transformers library.
 
 Given that the original checkpoint resides under models/7B you can install all requirements and convert the checkpoint with:
 
@@ -105,15 +105,15 @@ Most of the code dealing with Llama usage is organized across 2 main folders: `r
 Contains examples are organized in folders by topic:
 | Subfolder | Description |
 |---|---|
-[quickstart](./recipes/quickstart) | The "Hello World" of using Llama2, start here if you are new to using Llama2.
-[finetuning](./recipes/finetuning)|Scripts to finetune Llama2 on single-GPU and multi-GPU setups
-[inference](./recipes/inference)|Scripts to deploy Llama2 for inference locally and using model servers
+[quickstart](./recipes/quickstart) | The "Hello World" of using Llama, start here if you are new to using Llama.
+[finetuning](./recipes/finetuning)|Scripts to finetune Llama on single-GPU and multi-GPU setups
+[inference](./recipes/inference)|Scripts to deploy Llama for inference locally and using model servers
 [use_cases](./recipes/use_cases)|Scripts showing common applications of Llama2
 [responsible_ai](./recipes/responsible_ai)|Scripts to use PurpleLlama for safeguarding model outputs
 [llama_api_providers](./recipes/llama_api_providers)|Scripts to run inference on Llama via hosted endpoints
-[benchmarks](./recipes/benchmarks)|Scripts to benchmark Llama 2 models inference on various backends
+[benchmarks](./recipes/benchmarks)|Scripts to benchmark Llama models inference on various backends
 [code_llama](./recipes/code_llama)|Scripts to run inference with the Code Llama models
-[evaluation](./recipes/evaluation)|Scripts to evaluate fine-tuned Llama2 models using `lm-evaluation-harness` from `EleutherAI`
+[evaluation](./recipes/evaluation)|Scripts to evaluate fine-tuned Llama models using `lm-evaluation-harness` from `EleutherAI`
 
 ### `src/`
 
@@ -133,5 +133,8 @@ Contains modules which support the example recipes:
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## License
-See the License file [here](LICENSE) and Acceptable Use Policy [here](USE_POLICY.md)
+<!-- markdown-link-check-disable -->
+See the License file for Meta Llama 2 [here](https://llama.meta.com/llama2/license/) and Acceptable Use Policy [here](https://llama.meta.com/llama2/use-policy/)
 
+See the License file for Meta Llama 3 [here](https://llama.meta.com/llama3/license/) and Acceptable Use Policy [here](https://llama.meta.com/llama3/use-policy/)
+<!-- markdown-link-check-enable -->
