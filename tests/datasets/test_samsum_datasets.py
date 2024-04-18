@@ -10,7 +10,7 @@ EXPECTED_RESULTS = {
         "label": 8432,
         "pos": 242,
     },
-    "meta-llama/Llama-3-8b-hf":{
+    "meta-llama/Meta-Llama-3-8B":{
         "label": 2250,
         "pos": 211,
     },
