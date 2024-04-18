@@ -181,12 +181,10 @@ def build_default_prompt(
         llama_guard_version: LlamaGuardVersion = LlamaGuardVersion.LLAMA_GUARD_2):
     
     if llama_guard_version == LlamaGuardVersion.LLAMA_GUARD_2:
-        print("Llama Guard 2")
         categories = LLAMA_GUARD_2_CATEGORY
         category_short_name_prefix = LLAMA_GUARD_2_CATEGORY_SHORT_NAME_PREFIX
         prompt_template = PROMPT_TEMPLATE_2
     else:
-        print("Llama Guard 1")
         categories = LLAMA_GUARD_1_CATEGORY
         category_short_name_prefix = LLAMA_GUARD_1_CATEGORY_SHORT_NAME_PREFIX
         prompt_template = PROMPT_TEMPLATE_1
