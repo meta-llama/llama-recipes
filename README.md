@@ -1,7 +1,7 @@
 # Llama Recipes: Examples to get started using the Llama models from Meta
-
+<!-- markdown-link-check-disable -->
 The 'llama-recipes' repository is a companion to the [Meta Llama 2](https://github.com/meta-llama/llama) and [Meta Llama 3](https://github.com/meta-llama/llama3) models. The goal of this repository is to provide a scalable library for fine-tuning Meta Llama models, along with some example scripts and notebooks to quickly get started with using the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Meta Llama and other tools in the LLM ecosystem. The examples here showcase how to run Meta Llama locally, in the cloud, and on-prem.
-
+<!-- markdown-link-check-enable -->
 > [!NOTE]
 > The llama-recipes repository was recently refactored to promote a better developer experience of using the examples. Some files have been moved to new locations. The `src/` folder has NOT been modified, so the functionality of this repo and package is not impacted.
 > 
