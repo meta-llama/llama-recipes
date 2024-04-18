@@ -76,7 +76,6 @@ def main(
 
     model.eval()
 
-
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenizer.pad_token = tokenizer.eos_token
 
