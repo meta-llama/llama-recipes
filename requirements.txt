@@ -1,4 +1,4 @@
-torch>=2.0.1
+torch>=2.2
 accelerate
 appdirs
 loralib
@@ -15,3 +15,6 @@ scipy
 optimum
 matplotlib
 gradio
+chardet
+openai
+typing-extensions==4.8.0
