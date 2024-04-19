@@ -10,7 +10,7 @@ The 'llama-recipes' repository is a companion to the [Meta Llama 2](https://gith
 > `<\|eot_id\|>` | This signifies the end of the message in a turn. |
 > `<\|start_header_id\|>{role}<\|end_header_id\|>` | These tokens enclose the role for a particular message. The possible roles can be: system, user, assistant. |
 > `<\|end_of_text\|>` | This is equivalent to the EOS token. On generating this token, Llama 3 will cease to generate more tokens |
-> 
+>
 > A multiturn-conversation with Llama 3 follows this prompt template:
 > ```
 > <|begin_of_text|><|start_header_id|>system<|end_header_id|>
@@ -26,7 +26,7 @@ The 'llama-recipes' repository is a companion to the [Meta Llama 2](https://gith
 > More details on the new tokenizer and prompt template: <PLACEHOLDER_URL>
 > [!NOTE]
 > The llama-recipes repository was recently refactored to promote a better developer experience of using the examples. Some files have been moved to new locations. The `src/` folder has NOT been modified, so the functionality of this repo and package is not impacted.
-> 
+>
 > Make sure you update your local clone by running `git pull origin main`
 
 ## Table of Contents
@@ -55,29 +55,29 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 #### PyTorch Nightlies
-Some features (especially fine-tuning with FSDP + PEFT) currently require PyTorch nightlies to be installed. Please make sure to install the nightlies if you're using these features following [this guide](https://pytorch.org/get-started/locally/).
+I you want to use PyTorch nightlies instead of the stable release, go to [this guide](https://pytorch.org/get-started/locally/) to retrieve the right `--extra-index-url URL` parameter for the `pip install` commands on your platform.
 
 ### Installing
 Llama-recipes provides a pip distribution for easy install and usage in other projects. Alternatively, it can be installed from source.
 
 #### Install with pip
 ```
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes
+pip install llama-recipes
 ```
 
 #### Install with optional dependencies
 Llama-recipes offers the installation of optional packages. There are three optional dependency groups.
 To run the unit tests we can install the required dependencies with:
 ```
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[tests]
+pip install llama-recipes[tests]
 ```
 For the vLLM example we need additional requirements that can be installed with:
 ```
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[vllm]
+pip install llama-recipes[vllm]
 ```
 To use the sensitive topics safety checker install with:
 ```
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[auditnlg]
+pip install llama-recipes[auditnlg]
 ```
 Optional dependencies can also be combines with [option1,option2].
 
@@ -87,14 +87,14 @@ To install from source e.g. for development use these commands. We're using hatc
 git clone git@github.com:meta-llama/llama-recipes.git
 cd llama-recipes
 pip install -U pip setuptools
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .
+pip install -e .
 ```
 For development and contributing to llama-recipes please install all optional dependencies:
 ```
 git clone git@github.com:meta-llama/llama-recipes.git
 cd llama-recipes
 pip install -U pip setuptools
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .[tests,auditnlg,vllm]
+pip install -e .[tests,auditnlg,vllm]
 ```
 
 
@@ -120,7 +120,7 @@ python src/transformers/models/llama/convert_llama_weights_to_hf.py \
 
 
 ## Repository Organization
-Most of the code dealing with Llama usage is organized across 2 main folders: `recipes/` and `src/`. 
+Most of the code dealing with Llama usage is organized across 2 main folders: `recipes/` and `src/`.
 
 ### `recipes/`
 
