@@ -20,6 +20,8 @@ from transformers import (
     AutoTokenizer,
     LlamaForCausalLM,
     LlamaConfig,
+    is_torch_npu_available,
+    is_torch_xpu_available,
 )
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
 
@@ -47,7 +49,6 @@ from llama_recipes.utils.train_utils import (
     print_model_size,
     get_policies,
 )
-from accelerate.utils import is_xpu_available
 
 def setup_wandb(train_config, fsdp_config, **kwargs):
     try:
@@ -85,7 +86,9 @@ def main(**kwargs):
         world_size = int(os.environ["WORLD_SIZE"])
 
     if torch.distributed.is_initialized():
-        if is_xpu_available():
+        if is_torch_npu_available():
+            torch.npu.set_device(local_rank)
+        elif is_torch_xpu_available():
             torch.xpu.set_device(local_rank)
         elif torch.cuda.is_available():
             torch.cuda.set_device(local_rank)
@@ -173,10 +176,15 @@ def main(**kwargs):
         my_auto_wrapping_policy = fsdp_auto_wrap_policy(model, LlamaDecoderLayer)
 
         device_id = 0
-        if is_xpu_available():
+        if is_torch_npu_available():
+            device_id = torch.npu.current_device()
+            device = torch.device("npu")
+        elif is_torch_xpu_available():
             device_id = torch.xpu.current_device()
+            device = torch.device("xpu")
         elif torch.cuda.is_available():
             device_id = torch.cuda.current_device()
+            device = torch.device("cuda")
 
         model = FSDP(
             model,
@@ -188,13 +196,15 @@ def main(**kwargs):
             device_id=device_id,
             limit_all_gathers=True,
             sync_module_states=train_config.low_cpu_fsdp,
-            param_init_fn=lambda module: module.to_empty(device=torch.device("cuda"), recurse=False)
+            param_init_fn=lambda module: module.to_empty(device=device, recurse=False)
             if train_config.low_cpu_fsdp and rank != 0 else None,
         )
         if fsdp_config.fsdp_activation_checkpointing:
             apply_fsdp_checkpointing(model)
     elif not train_config.quantization and not train_config.enable_fsdp:
-        if is_xpu_available():
+        if is_torch_npu_available():
+            model.to("npu")
+        elif is_torch_xpu_available():
             model.to("xpu:0")
         elif torch.cuda.is_available():
             model.to("cuda")

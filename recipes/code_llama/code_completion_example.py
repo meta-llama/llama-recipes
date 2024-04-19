@@ -9,7 +9,7 @@ import sys
 import time
 
 import torch
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, is_torch_npu_available, is_torch_xpu_available
 
 from llama_recipes.inference.safety_utils import get_safety_checker
 from llama_recipes.inference.model_utils import load_model, load_peft_model
@@ -48,7 +48,12 @@ def main(
         sys.exit(1)
     
     # Set the seeds for reproducibility
-    torch.cuda.manual_seed(seed)
+    if is_torch_npu_available():
+        torch.npu.manual_seed(seed)
+    elif is_torch_xpu_available():
+        torch.xpu.manual_seed(seed)
+    else:
+        torch.cuda.manual_seed(seed)
     torch.manual_seed(seed)
     
     model = load_model(model_name, quantization, use_fast_kernels)
@@ -80,8 +85,13 @@ def main(
         sys.exit(1)  # Exit the program with an error status
         
     batch = tokenizer(user_prompt, return_tensors="pt")
+    if is_torch_npu_available():
+        batch = {k: v.to("npu") for k, v in batch.items()}
+    elif is_torch_xpu_available():
+        batch = {k: v.to("xpu") for k, v in batch.items()}
+    else:
+        batch = {k: v.to("cuda") for k, v in batch.items()}
 
-    batch = {k: v.to("cuda") for k, v in batch.items()}
     start = time.perf_counter()
     with torch.no_grad():
         outputs = model.generate(

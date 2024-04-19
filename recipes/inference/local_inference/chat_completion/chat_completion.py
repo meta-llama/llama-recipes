@@ -8,12 +8,12 @@ import os
 import sys
 
 import torch
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, is_torch_npu_available, is_torch_xpu_available
 
 from llama_recipes.inference.chat_utils import read_dialogs_from_file
 from llama_recipes.inference.model_utils import load_model, load_peft_model
 from llama_recipes.inference.safety_utils import get_safety_checker
-from accelerate.utils import is_xpu_available
+
 
 def main(
     model_name,
@@ -56,7 +56,9 @@ def main(
 
 
     # Set the seeds for reproducibility
-    if is_xpu_available():
+    if is_torch_npu_available():
+        torch.npu.manual_seed(seed)
+    elif is_torch_xpu_available():
         torch.xpu.manual_seed(seed)
     else:
         torch.cuda.manual_seed(seed)
@@ -99,7 +101,9 @@ def main(
                 sys.exit(1)  # Exit the program with an error status
             tokens= torch.tensor(chat).long()
             tokens= tokens.unsqueeze(0)
-            if is_xpu_available():
+            if is_torch_npu_available():
+                tokens= tokens.to("npu:0")
+            elif is_torch_xpu_available():
                 tokens= tokens.to("xpu:0")
             else:
                 tokens= tokens.to("cuda:0")

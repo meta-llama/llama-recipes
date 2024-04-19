@@ -10,12 +10,11 @@ import time
 import gradio as gr
 
 import torch
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, is_torch_npu_available, is_torch_xpu_available
 
 from llama_recipes.inference.safety_utils import get_safety_checker, AgentType
 from llama_recipes.inference.model_utils import load_model, load_peft_model
 
-from accelerate.utils import is_xpu_available
 
 def main(
     model_name,
@@ -64,9 +63,11 @@ def main(
         sys.exit(1)  # Exit the program with an error status
 
     # Set the seeds for reproducibility
-    if is_xpu_available():
+    if is_torch_npu_available():
+        torch.npu.manual_seed(seed)
+    elif is_torch_xpu_available():
         torch.xpu.manual_seed(seed)
-    else:
+    elif torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
     torch.manual_seed(seed)
 
@@ -80,7 +81,9 @@ def main(
     tokenizer.pad_token = tokenizer.eos_token
 
     batch = tokenizer(user_prompt, padding='max_length', truncation=True, max_length=max_padding_length, return_tensors="pt")
-    if is_xpu_available():
+    if is_torch_npu_available():
+        batch = {k: v.to("npu") for k, v in batch.items()}
+    elif is_torch_xpu_available():
         batch = {k: v.to("xpu") for k, v in batch.items()}
     else:
         batch = {k: v.to("cuda") for k, v in batch.items()}

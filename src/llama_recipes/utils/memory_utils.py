@@ -6,7 +6,7 @@ import psutil
 import threading
 
 import torch
-from accelerate.utils import is_xpu_available
+from accelerate.utils import is_npu_available, is_xpu_available
 
 def byte2gb(x):
     return int(x / 2**30)
@@ -14,7 +14,11 @@ def byte2gb(x):
 class MemoryTrace:
     def __enter__(self):
         gc.collect()
-        if is_xpu_available():
+        if is_npu_available():
+            torch.npu.empty_cache()
+            torch.npu.reset_max_memory_allocated()   # reset the peak gauge to zero
+            self.begin = byte2gb(torch.xpu.memory_allocated())
+        elif is_xpu_available():
             torch.xpu.empty_cache()
             torch.xpu.reset_max_memory_allocated()   # reset the peak gauge to zero
             self.begin = byte2gb(torch.xpu.memory_allocated())
@@ -50,7 +54,19 @@ class MemoryTrace:
         self.peak_monitoring = False
 
         gc.collect()
-        if is_xpu_available():
+        if is_npu_available():
+            torch.npu.empty_cache()
+            self.end = byte2gb(torch.npu.memory_allocated())
+            self.peak = byte2gb(torch.npu.max_memory_allocated())
+            npu_info = torch.npu.memory_stats()
+            self.peak_active_gb = byte2gb(npu_info["active_bytes.all.peak"])
+            self.malloc_retries = npu_info.get("num_alloc_retries", 0)
+            self.peak_active_gb = byte2gb(npu_info["active_bytes.all.peak"])
+            self.m_ooms = npu_info.get("num_ooms", 0)
+            self.used = byte2gb(self.end - self.begin)
+            self.peaked = byte2gb(self.peak - self.begin)
+            self.max_reserved = byte2gb(torch.npu.max_memory_reserved())
+        elif is_xpu_available():
             torch.xpu.empty_cache()
             self.end = byte2gb(torch.xpu.memory_allocated())
             self.peak = byte2gb(torch.xpu.max_memory_allocated())
@@ -82,6 +98,8 @@ class MemoryTrace:
         
     def print_stats(self):
         device_str = None
+        if is_npu_available():
+            device_str = "NPU"
         if is_xpu_available():
             device_str = "XPU"
         elif torch.cuda.is_available():
