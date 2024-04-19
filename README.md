@@ -7,9 +7,9 @@ The 'llama-recipes' repository is a companion to the [Meta Llama 2](https://gith
 > | Token | Description |
 > |---|---|
 > `<\|begin_of_text\|>` | This is equivalent to the BOS token. |
-> `<\|eot_id\|>` | This signifies the end of the message in a turn. |
+> `<\|eot_id\|>` | This signifies the end of the message in a turn. The generate function needs to be set up as shown below or in [this example](./recipes/inference/local_inference/chat_completion/chat_completion.py) to terminate the generation after the turn.|
 > `<\|start_header_id\|>{role}<\|end_header_id\|>` | These tokens enclose the role for a particular message. The possible roles can be: system, user, assistant. |
-> `<\|end_of_text\|>` | This is equivalent to the EOS token. On generating this token, Llama 3 will cease to generate more tokens |
+> `<\|end_of_text\|>` | This is equivalent to the EOS token. Its usually not used during multiturn-conversations. Instead, each message is terminated with `<\|eot_id\|>` |
 >
 > A multiturn-conversation with Llama 3 follows this prompt template:
 > ```
@@ -23,7 +23,21 @@ The 'llama-recipes' repository is a companion to the [Meta Llama 2](https://gith
 >
 > {{ user_message_2 }}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 > ```
-> More details on the new tokenizer and prompt template: <PLACEHOLDER_URL>
+>
+> To signal the end of the current message the model emits the `<\|eot_id\|>` token. To terminate the generation we need to call the model's generate function as follows:
+> ```
+> terminators = [
+>     tokenizer.eos_token_id,
+>     tokenizer.convert_tokens_to_ids("<|eot_id|>")
+>     ]
+>  ...
+> outputs = model.generate(
+>     ...
+>     eos_token_id=terminators,
+>     )
+> ```
+>
+> More details on the new tokenizer and prompt template: https://llama.meta.com/docs/model-cards-and-prompt-formats/meta-llama-3#special-tokens-used-with-meta-llama-3
 > [!NOTE]
 > The llama-recipes repository was recently refactored to promote a better developer experience of using the examples. Some files have been moved to new locations. The `src/` folder has NOT been modified, so the functionality of this repo and package is not impacted.
 >
