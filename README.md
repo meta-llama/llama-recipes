@@ -4,7 +4,7 @@ The 'llama-recipes' repository is a companion to the [Meta Llama 3](https://gith
 
 <!-- markdown-link-check-enable -->
 > [!IMPORTANT]
-> Llama 3 has a new prompt template and special tokens (based on the tiktoken tokenizer).
+> Meta Llama 3 has a new prompt template and special tokens (based on the tiktoken tokenizer).
 > | Token | Description |
 > |---|---|
 > `<\|begin_of_text\|>` | This is equivalent to the BOS token. |
@@ -12,7 +12,7 @@ The 'llama-recipes' repository is a companion to the [Meta Llama 3](https://gith
 > `<\|eot_id\|>` | This token signifies the end of the message in a turn i.e. the end of a single message by a system, user or assistant role as shown below.|
 > `<\|start_header_id\|>{role}<\|end_header_id\|>` | These tokens enclose the role for a particular message. The possible roles can be: system, user, assistant. |
 >
-> A multiturn-conversation with Llama 3 follows this prompt template:
+> A multiturn-conversation with Meta Llama 3 follows this prompt template:
 > ```
 > <|begin_of_text|><|start_header_id|>system<|end_header_id|>
 >
