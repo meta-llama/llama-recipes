@@ -1295,3 +1295,4 @@ eot
 multiturn
 tiktoken
 eos
+ollama
