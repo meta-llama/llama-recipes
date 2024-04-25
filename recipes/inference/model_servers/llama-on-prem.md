@@ -145,7 +145,6 @@ Then run the command below to deploy a quantized version of the Llama 3 8b chat 
 
 ```
 docker run --gpus all --shm-size 1g -e HUGGING_FACE_HUB_TOKEN=$token -p 8080:80 -v $volume:/data ghcr.io/huggingface/text-generation-inference:2.0 --model-id $model
-
 ```
 
 After this, you'll be able to run the command below on another terminal:
