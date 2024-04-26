@@ -5,7 +5,7 @@ This demo app uses Llama 3 to return a text summary of a YouTube video. It shows
 This demo app shows how to use LangChain and Llama 3 to let users ask questions about **structured** data stored in a SQL DB. As the 2023-24 NBA season is entering the playoff, we use the NBA roster info saved in a SQLite DB to show you how to ask Llama 3 questions about your favorite teams or players.
 
 ## [LiveData](LiveData.ipynb): Ask Llama 3 about Live Data (using Replicate or [OctoAI](../llama_api_providers/OctoAI_API_examples/LiveData.ipynb))
-This demo app shows how to perform live data augmented generation tasks with Llama 3, [LlamaIndex](https://github.com/run-llama/llama_index), another leading open-source framework for building LLM apps, and the [Trvily](https://tavily.com) live search API.
+This demo app shows how to perform live data augmented generation tasks with Llama 3, [LlamaIndex](https://github.com/run-llama/llama_index), another leading open-source framework for building LLM apps, and the [Tavily](https://tavily.com) live search API.
 
 ## [WhatsApp Chatbot](./chatbots/whatsapp_llama/whatsapp_llama3.md): Building a Llama 3 Enabled WhatsApp Chatbot
 This step-by-step tutorial shows how to use the [WhatsApp Business API](https://developers.facebook.com/docs/whatsapp/cloud-api/overview) to build a Llama 3 enabled WhatsApp chatbot.
