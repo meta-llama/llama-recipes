@@ -1296,3 +1296,4 @@ multiturn
 tiktoken
 eos
 ollama
+tavily

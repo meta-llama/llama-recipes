@@ -1,14 +1,14 @@
-# Building a Llama-enabled Messenger Chatbot
+# Building a Llama 3 Enabled Messenger Chatbot
 
-This step-by-step tutorial shows the complete process of building a Llama-enabled Messenger chatbot. A demo video of using the iOS Messenger app to send a question to a Facebook business page and receive the Llama 2 generated answer is [here](https://drive.google.com/file/d/1B4ijFH4X3jEHZfkGdTPmdsgpUes_RNud/view).
+This step-by-step tutorial shows the complete process of building a Llama-enabled Messenger chatbot. A demo video of using the iOS Messenger app to send a question to a Facebook business page and receive the Llama 3 generated answer is [here](https://drive.google.com/file/d/1B4ijFH4X3jEHZfkGdTPmdsgpUes_RNud/view).
 
-If you're interested in a Llama-enabled WhatsApp chatbot, see [here](../whatsapp_llama/whatsapp_llama2.md) for a tutorial.
+If you're interested in a Llama 3 enabled WhatsApp chatbot, see [here](../whatsapp_llama/whatsapp_llama3.md) for a tutorial.
 
 ## Overview
 
-Messenger from Meta is a messaging service that allows a Facebook business page to respond to people who are interested in their business using [Messenger Platform](https://developers.facebook.com/docs/messenger-platform/overview). The benefits of an intelligent and knowledgable Llama 2 powered chatbot are obvious, including cost saving and better customer experience such as 24x7 availability. In this tutorial, we'll cover the details of integrating Llama 2 with the Messenger Platform to build a basic Llama 2 enabled chatbot - for more Llama 2 application development and deployment demos such as how to integrate your own data with Llama 2, see the recipes.
+Messenger from Meta is a messaging service that allows a Facebook business page to respond to people who are interested in their business using [Messenger Platform](https://developers.facebook.com/docs/messenger-platform/overview). The benefits of an intelligent and knowledgable Llama 3 powered chatbot are obvious, including cost saving and better customer experience such as 24x7 availability. In this tutorial, we'll cover the details of integrating Llama 3 with the Messenger Platform to build a basic Llama 3 enabled chatbot - for more Llama 3 application development and deployment demos such as how to integrate your own data with Llama 3, see the recipes.
 
-The diagram below shows the components and overall data flow of the Llama 2 enabled Messenger chatbot demo we built, using an Amazon EC2 instance as an example for running the web server.
+The diagram below shows the components and overall data flow of the Llama 3 enabled Messenger chatbot demo we built, using an Amazon EC2 instance as an example for running the web server.
 
 ![](../../../../docs/images/messenger_llama_arch.jpg)
 
@@ -16,7 +16,7 @@ The diagram below shows the components and overall data flow of the Llama 2 enab
 
 1. A Facebook Page is required to send and receive messages using the Messenger Platform - see [here](https://www.facebook.com/business/help/461775097570076?id=939256796236247) for details about Facebook Pages and how to create a new page. 
 
-2. If you have followed the [Llama WhatsApp chatbot tutorial](../whatsapp_llama/whatsapp_llama2.md), or if you already have a Meta developer account and a business app, then you can skip this step. Otherwise, you need to first [create a Meta developer account](https://developers.facebook.com/) and then [create a business app](https://developers.facebook.com/docs/development/create-an-app/).
+2. If you have followed the [Llama WhatsApp chatbot tutorial](../whatsapp_llama/whatsapp_llama3.md), or if you already have a Meta developer account and a business app, then you can skip this step. Otherwise, you need to first [create a Meta developer account](https://developers.facebook.com/) and then [create a business app](https://developers.facebook.com/docs/development/create-an-app/).
 
 3. Add the Messenger product to your business app by going to your business app's Dashboard, click "Add Product" and then select "Messenger".
 
@@ -26,9 +26,9 @@ The diagram below shows the components and overall data flow of the Llama 2 enab
 
 ![](../../../../docs/images/messenger_api_settings.png)
 
-## Writing Llama 2 Enabled Web App
+## Writing Llama 3 Enabled Web App
 
-The Python-based web app we developed uses [LangChain](https://www.langchain.com/), an open source LLM development framework, and [Replicate](https://replicate.com/), a service provider hosting LLM models in the cloud, to receive the user query sent by the webhook, which will be covered in the next section, pass the query to Llama 2, and send the Llama 2 answer back to the webhook. For more information on how to use LangChain or LlamaIndex, another LLM app building framework, and other Llama cloud providers or on-premise deployment options to develop Llama 2 apps, see the recipes.
+The Python-based web app we developed uses [LangChain](https://www.langchain.com/), an open source LLM development framework, and [Replicate](https://replicate.com/), a service provider hosting LLM models in the cloud, to receive the user query sent by the webhook, which will be covered in the next section, pass the query to Llama 3, and send the Llama 3 answer back to the webhook. For more information on how to use LangChain or LlamaIndex, another LLM app building framework, and other Llama 3 cloud providers or on-premise deployment options to develop Llama 3 apps, see the recipes.
 
 First, let's create a new conda (or you can use venv if you like) environment and install all the required packages:
 
@@ -38,10 +38,10 @@ conda activate messenger-llama
 pip install langchain replicate flask requests uvicorn gunicorn
 ```
 
-Then, create a Python file named [llama_messenger.py](llama_messenger.py) that creates a Llama 2 instance and defines an HTTP method `msgrcvd_page` to:
+Then, create a Python file named [llama_messenger.py](llama_messenger.py) that creates a Llama 3 instance and defines an HTTP method `msgrcvd_page` to:
 
 1. receive the user message forwarded by the webhook;
-2. ask Llama 2 for the answer;
+2. ask Llama 3 for the answer;
 3. send the answer back to the sender using the Facebook graph API.
 
 ```
@@ -55,11 +55,11 @@ import requests
 import json
 
 os.environ["REPLICATE_API_TOKEN"] = "<your replicate api token"    
-llama2_13b_chat = "meta/llama-2-13b-chat:f4e2de70d66816a838a89eeeb621910adffb0dd0baba3976c96980970978018d"
+llama3_8b_chat = "meta/meta-llama-3-8b-instruct"
 
 llm = Replicate(
-    model=llama2_13b_chat,
-    model_kwargs={"temperature": 0.01, "top_p": 1, "max_new_tokens":500}
+    model=llama3_8b_chat,
+    model_kwargs={"temperature": 0.0, "top_p": 1, "max_new_tokens":500}
 )
 
 app = Flask(__name__)
@@ -91,7 +91,7 @@ Replace <page_access_token> with the access token copied in step 5 "Open Messeng
 
 ## Modifying the Webhook 
 
-Open your glitch.com webhook URL created earlier, and change your `app.js` to simply forward the user message and the user and page ids sent by the Messenger Platform to the Llama 2 enabled web app `llama_messenger.py` described in the previous section:
+Open your glitch.com webhook URL created earlier, and change your `app.js` to simply forward the user message and the user and page ids sent by the Messenger Platform to the Llama 3 enabled web app `llama_messenger.py` described in the previous section:
 
 ```
 "use strict";
@@ -167,7 +167,7 @@ app.get("/webhook", (req, res) => {
 });
 
 ```
-Remember to change <web server public IP>, which needs to be publicly visible, to the IP of the server where your Llama 2 enabled web app in the previous section runs.
+Remember to change <web server public IP>, which needs to be publicly visible, to the IP of the server where your Llama 3 enabled web app in the previous section runs.
 
 Note: It's possible and even recommended to implement a webhook in Python and call the Llama directly inside the webhook, instead of making an HTTP request, as the JavaScript code above does, to a Python app which calls Llama and sends the answer to Messenger.
 
@@ -181,7 +181,7 @@ gunicorn -b 0.0.0.0:5000 llama_messenger:app
 
 If you use Amazon EC2 as your web server, make sure you have port 5000 added to your EC2 instance's security group's inbound rules. 
 
-Now you can open your Messenger app, select the Facebook page you connected in Messenger's API Settings, enter a message and receive the Llama 2's answer shortly, as shown in the demo video in the beginning of this post.
+Now you can open your Messenger app, select the Facebook page you connected in Messenger's API Settings, enter a message and receive the Llama 3's answer shortly, as shown in the demo video in the beginning of this post.
 
 To debug any possible issues, go to your glitch.com app log and copy the URL generated there when a Messenger message is sent, which looks like this:
 

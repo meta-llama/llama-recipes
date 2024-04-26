@@ -1,5 +1,5 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
-# This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
+# This software may be used and distributed according to the terms of the Llama 3 Community License Agreement.
 
 import langchain
 from langchain.llms import Replicate
@@ -11,11 +11,11 @@ import requests
 import json
 
 os.environ["REPLICATE_API_TOKEN"] = "<your replicate api token>"
-llama2_13b_chat = "meta/llama-2-13b-chat:f4e2de70d66816a838a89eeeb621910adffb0dd0baba3976c96980970978018d"
+llama3_8b_chat = "meta/meta-llama-3-8b-instruct"
 
 llm = Replicate(
-    model=llama2_13b_chat,
-    model_kwargs={"temperature": 0.01, "top_p": 1, "max_new_tokens":500}
+    model=llama3_8b_chat,
+    model_kwargs={"temperature": 0.0, "top_p": 1, "max_new_tokens":500}
 )
 
 app = Flask(__name__)
