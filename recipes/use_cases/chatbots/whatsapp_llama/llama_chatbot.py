@@ -1,5 +1,5 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
-# This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
+# This software may be used and distributed according to the terms of the Llama 3 Community License Agreement.
 
 import langchain
 from langchain.llms import Replicate
@@ -39,26 +39,25 @@ class WhatsAppClient:
         return response.status_code
 
 os.environ["REPLICATE_API_TOKEN"] = "<your replicate api token>"    
-llama2_13b_chat = "meta/llama-2-13b-chat:f4e2de70d66816a838a89eeeb621910adffb0dd0baba3976c96980970978018d"
+llama3_8b_chat = "meta/meta-llama-3-8b-instruct"
 
 llm = Replicate(
-    model=llama2_13b_chat,
-    model_kwargs={"temperature": 0.01, "top_p": 1, "max_new_tokens":500}
+    model=llama3_8b_chat,
+    model_kwargs={"temperature": 0.0, "top_p": 1, "max_new_tokens":500}
 )
 client = WhatsAppClient()
 app = Flask(__name__)
 
 @app.route("/")
 def hello_llama():
-    return "<p>Hello Llama 2</p>"
+    return "<p>Hello Llama 3</p>"
 
 @app.route('/msgrcvd', methods=['POST', 'GET'])
 def msgrcvd():    
     message = request.args.get('message')
-    #client.send_template_message("hello_world", "en_US", "14086745477")
     answer = llm(message)
     print(message)
     print(answer)
-    client.send_text_message(llm(message), "14086745477")
+    client.send_text_message(llm(message), "<your phone number>")
     return message + "<p/>" + answer
 

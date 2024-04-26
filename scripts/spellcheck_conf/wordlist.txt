@@ -1308,3 +1308,5 @@ fmbench
 ipykernel
 leaderboards
 txn
+ollama
+tavily

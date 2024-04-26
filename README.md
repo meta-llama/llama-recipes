@@ -1,9 +1,10 @@
 # Llama Recipes: Examples to get started using the Llama models from Meta
 <!-- markdown-link-check-disable -->
-The 'llama-recipes' repository is a companion to the [Meta Llama 2](https://github.com/meta-llama/llama) and [Meta Llama 3](https://github.com/meta-llama/llama3) models. The goal of this repository is to provide a scalable library for fine-tuning Meta Llama models, along with some example scripts and notebooks to quickly get started with using the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Meta Llama and other tools in the LLM ecosystem. The examples here showcase how to run Meta Llama locally, in the cloud, and on-prem.
+The 'llama-recipes' repository is a companion to the [Meta Llama 3](https://github.com/meta-llama/llama3) models. The goal of this repository is to provide a scalable library for fine-tuning Meta Llama models, along with some example scripts and notebooks to quickly get started with using the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Meta Llama and other tools in the LLM ecosystem. The examples here showcase how to run Meta Llama locally, in the cloud, and on-prem. [Meta Llama 2](https://github.com/meta-llama/llama) is also supported in this repository. We highly recommend everyone to utilize [Meta Llama 3](https://github.com/meta-llama/llama3) due to its enhanced capabilities.
+
 <!-- markdown-link-check-enable -->
 > [!IMPORTANT]
-> Llama 3 has a new prompt template and special tokens (based on the tiktoken tokenizer).
+> Meta Llama 3 has a new prompt template and special tokens (based on the tiktoken tokenizer).
 > | Token | Description |
 > |---|---|
 > `<\|begin_of_text\|>` | This is equivalent to the BOS token. |
@@ -11,7 +12,7 @@ The 'llama-recipes' repository is a companion to the [Meta Llama 2](https://gith
 > `<\|eot_id\|>` | This token signifies the end of the message in a turn i.e. the end of a single message by a system, user or assistant role as shown below.|
 > `<\|start_header_id\|>{role}<\|end_header_id\|>` | These tokens enclose the role for a particular message. The possible roles can be: system, user, assistant. |
 >
-> A multiturn-conversation with Llama 3 follows this prompt template:
+> A multiturn-conversation with Meta Llama 3 follows this prompt template:
 > ```
 > <|begin_of_text|><|start_header_id|>system<|end_header_id|>
 >
@@ -133,7 +134,7 @@ Contains examples are organized in folders by topic:
 [quickstart](./recipes/quickstart) | The "Hello World" of using Llama, start here if you are new to using Llama.
 [finetuning](./recipes/finetuning)|Scripts to finetune Llama on single-GPU and multi-GPU setups
 [inference](./recipes/inference)|Scripts to deploy Llama for inference locally and using model servers
-[use_cases](./recipes/use_cases)|Scripts showing common applications of Llama2
+[use_cases](./recipes/use_cases)|Scripts showing common applications of Meta Llama3
 [responsible_ai](./recipes/responsible_ai)|Scripts to use PurpleLlama for safeguarding model outputs
 [llama_api_providers](./recipes/llama_api_providers)|Scripts to run inference on Llama via hosted endpoints
 [benchmarks](./recipes/benchmarks)|Scripts to benchmark Llama models inference on various backends
@@ -159,7 +160,8 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 ## License
 <!-- markdown-link-check-disable -->
-See the License file for Meta Llama 2 [here](https://llama.meta.com/llama2/license/) and Acceptable Use Policy [here](https://llama.meta.com/llama2/use-policy/)
 
 See the License file for Meta Llama 3 [here](https://llama.meta.com/llama3/license/) and Acceptable Use Policy [here](https://llama.meta.com/llama3/use-policy/)
+
+See the License file for Meta Llama 2 [here](https://llama.meta.com/llama2/license/) and Acceptable Use Policy [here](https://llama.meta.com/llama2/use-policy/)
 <!-- markdown-link-check-enable -->
