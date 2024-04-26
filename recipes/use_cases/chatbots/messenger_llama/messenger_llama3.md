@@ -16,7 +16,7 @@ The diagram below shows the components and overall data flow of the Llama 3 enab
 
 1. A Facebook Page is required to send and receive messages using the Messenger Platform - see [here](https://www.facebook.com/business/help/461775097570076?id=939256796236247) for details about Facebook Pages and how to create a new page. 
 
-2. If you have followed the [Llama WhatsApp chatbot tutorial](../whatsapp_llama/whatsapp_llama2.md), or if you already have a Meta developer account and a business app, then you can skip this step. Otherwise, you need to first [create a Meta developer account](https://developers.facebook.com/) and then [create a business app](https://developers.facebook.com/docs/development/create-an-app/).
+2. If you have followed the [Llama WhatsApp chatbot tutorial](../whatsapp_llama/whatsapp_llama3.md), or if you already have a Meta developer account and a business app, then you can skip this step. Otherwise, you need to first [create a Meta developer account](https://developers.facebook.com/) and then [create a business app](https://developers.facebook.com/docs/development/create-an-app/).
 
 3. Add the Messenger product to your business app by going to your business app's Dashboard, click "Add Product" and then select "Messenger".
 
