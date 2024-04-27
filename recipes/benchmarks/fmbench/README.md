@@ -4,7 +4,9 @@ The [`FMBench`](https://github.com/aws-samples/foundation-model-benchmarking-too
 
 ## The need for benchmarking
 
+<!-- markdown-link-check-disable -->
 Customers often wonder what is the best AWS service to run Llama models for _my specific use-case_ and _my specific price performance requirements_. While model evaluation metrics are available on several leaderboards ([`HELM`](https://crfm.stanford.edu/helm/lite/latest/#/leaderboard), [`LMSys`](https://chat.lmsys.org/?leaderboard)), but the price performance comparison can be notoriously hard to find and even more harder to trust. In such a scenario, we think it is best to be able to run performance benchmarking yourself on either on your own dataset or on a similar (task wise, prompt size wise) open-source datasets such as ([`LongBench`](https://huggingface.co/datasets/THUDM/LongBench), [`QMSum`](https://paperswithcode.com/dataset/qmsum)). This is the problem that [`FMBench`](https://github.com/aws-samples/foundation-model-benchmarking-tool/tree/main) solves.
+<!-- markdown-link-check-enable -->
 
 ## [`FMBench`](https://github.com/aws-samples/foundation-model-benchmarking-tool/tree/main): an open-source Python package for FM benchmarking on AWS
 
@@ -71,11 +73,13 @@ The following steps provide a [Quick start guide for `FMBench`](https://github.c
 
     1. It uses a simple relationship that 750 words equals 1000 tokens, to get a more accurate representation of token counts use the `Llama2 tokenizer`. **_It is strongly recommended that for more accurate results on token throughput you use a tokenizer specific to the model you are testing rather than the default tokenizer. See instructions provided [here](https://github.com/aws-samples/foundation-model-benchmarking-tool/tree/main?tab=readme-ov-file#the-diy-version-with-gory-details) on how to use a custom tokenizer_**.
 
+        <!-- markdown-link-check-disable -->
         ```{.bash}
         account=`aws sts get-caller-identity | jq .Account | tr -d '"'`
         region=`aws configure get region`
         fmbench --config-file s3://sagemaker-fmbench-read-${region}-${account}/configs/config-llama2-7b-g5-quick.yml >> fmbench.log 2>&1
         ```
+        <!-- markdown-link-check-enable -->
 
     1. Open another terminal window and do a `tail -f` on the `fmbench.log` file to see all the traces being generated at runtime.
 
@@ -89,30 +93,38 @@ The following steps provide a [Quick start guide for `FMBench`](https://github.c
 
 Llama3 is now available on Bedrock (read [blog post](https://aws.amazon.com/blogs/aws/metas-llama-3-models-are-now-available-in-amazon-bedrock/)), and you can now benchmark it using `FMBench`. Here is the config file for benchmarking `Llama3-8b-instruct` and `Llama3-70b-instruct` on Bedrock.
 
+<!-- markdown-link-check-disable -->
 - [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-bedrock-llama3.yml) for `Llama3-8b-instruct` and `Llama3-70b-instruct`.
+<!-- markdown-link-check-enable -->
 
 ## 🚨 Benchmarking Llama3 on Amazon SageMaker 🚨
 
 Llama3 is now available on SageMaker (read [blog post](https://aws.amazon.com/blogs/machine-learning/meta-llama-3-models-are-now-available-in-amazon-sagemaker-jumpstart/)), and you can now benchmark it using `FMBench`. Here are the config files for benchmarking `Llama3-8b-instruct` and `Llama3-70b-instruct` on `ml.p4d.24xlarge` and `ml.g5.12xlarge` instance.
 
+<!-- markdown-link-check-disable -->
 - [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama3-8b-instruct-g5-p4d.yml) for `Llama3-8b-instruct` on  `ml.p4d.24xlarge` and `ml.g5.12xlarge`.
 - [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama3-70b-instruct-g5-p4d.yml) for `Llama3-70b-instruct` on  `ml.p4d.24xlarge` and `ml.g5.48xlarge`.
+<!-- markdown-link-check-enable -->
 
 ## Benchmarking Llama2 on Amazon SageMaker
 
 Llama2 models are available through SageMaker JumpStart as well as directly deployable from Hugging Face to a SageMaker endpoint. You can use `FMBench` to benchmark Llama2 on SageMaker for different combinations of instance types and inference containers.
 
+<!-- markdown-link-check-disable -->
 - [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama2-7b-g5-quick.yml) for `Llama2-7b` on `ml.g5.xlarge` and `ml.g5.2xlarge` instances, using the [Hugging Face TGI container](763104351884.dkr.ecr.us-east-1.amazonaws.com/huggingface-pytorch-tgi-inference:2.0.1-tgi1.1.0-gpu-py39-cu118-ubuntu20.04).
 - [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama2-7b-g4dn-g5-trt.yml) for `Llama2-7b` on `ml.g4dn.12xlarge` instance using the [Deep Java Library DeepSpeed container](763104351884.dkr.ecr.us-east-1.amazonaws.com/djl-inference:0.26.0-deepspeed0.12.6-cu121).
 - [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama2-13b-inf2-g5-p4d.yml) for `Llama2-13b` on `ml.g5.12xlarge`, `ml.inf2.24xlarge` and `ml.p4d.24xlarge` instances using the [Hugging Face TGI container](763104351884.dkr.ecr.us-east-1.amazonaws.com/huggingface-pytorch-tgi-inference:2.0.1-tgi1.1.0-gpu-py39-cu118-ubuntu20.04) and the [Deep Java Library & NeuronX container](763104351884.dkr.ecr.us-east-1.amazonaws.com/djl-inference:0.26.0-neuronx-sdk2.16.0).
 - [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama2-70b-g5-p4d-trt.yml) for `Llama2-70b` on `ml.p4d.24xlarge` instance using the [Deep Java Library TensorRT container](763104351884.dkr.ecr.us-east-1.amazonaws.com/djl-inference:0.26.0-tensorrtllm0.7.1-cu122).
 - [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama2-70b-inf2-g5.yml) for `Llama2-70b` on `ml.inf2.48xlarge` instance using the [HuggingFace TGI with Optimum NeuronX container](763104351884.dkr.ecr.{region}.amazonaws.com/huggingface-pytorch-tgi-inference:1.13.1-optimum0.0.17-neuronx-py310-ubuntu22.04).
+<!-- markdown-link-check-enable -->
 
 ## Benchmarking Llama2 on Amazon Bedrock
 
 The Llama2-13b-chat and Llama2-70b-chat models are available on [Bedrock](https://aws.amazon.com/bedrock/llama/). You can use `FMBench` to benchmark Llama2 on Bedrock for both on-demand throughput and provisioned throughput inference options.
 
+<!-- markdown-link-check-disable -->
 - [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-bedrock.yml) for `Llama2-13b-chat` and `Llama2-70b-chat` on Bedrock for on-demand throughput.
+<!-- markdown-link-check-enable -->
 
 - For testing provisioned throughput simply replace the `ep_name` parameter in `experiments` section of the config file with the ARN of your provisioned throughput.
 
