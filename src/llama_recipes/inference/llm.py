@@ -14,14 +14,12 @@ from abc import ABC, abstractmethod
 from typing import Callable
 
 import openai
-from langchain_together import Together
-
 from typing_extensions import override
 
-
 NUM_LLM_RETRIES = 10
-
 MAX_TOKENS = 1000
+TEMPERATURE = 0.1
+TOP_P = 0.9
 
 LOG: logging.Logger = logging.getLogger(__name__)
 
@@ -160,38 +158,35 @@ class ANYSCALE(LLM):
             "HuggingFaceH4/zephyr-7b-beta",
         ]
 
+class OctoAI(LLM):
+    """Accessing OctoAI"""
 
-class TOGETHER(LLM):
-    """Accessing TOGETHER"""
+    def __init__(self, model: str, api_key: str) -> None:
+        super().__init__(model, api_key)
+        self.client = openai.OpenAI(base_url="https://text.octoai.run/v1", api_key=api_key)  # noqa
 
     @override
     def query(self, prompt: str) -> str:
-        llm = Together(
+        # Best-level effort to suppress openai log-spew.
+        # Likely not work well in multi-threaded environment.
+        level = logging.getLogger().level
+        logging.getLogger().setLevel(logging.WARNING)
+        response = self.client.chat.completions.create(
             model=self.model,
-            temperature=0.75,
-            top_p=1,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant. Keep your responses limited to one short paragraph if possible."},
+                {"role": "user", "content": prompt},
+            ],
             max_tokens=MAX_TOKENS,
-            together_api_key=self.api_key,
+            temperature=TEMPERATURE,
+            top_p=TOP_P,
         )
-        response = llm(prompt)
-        return "".join(response)
+        logging.getLogger().setLevel(level)
+        return response.choices[0].message.content
 
     @override
     def valid_models(self) -> list[str]:
         return [
-            "mistralai/Mistral-7B-v0.1",
-            "lmsys/vicuna-7b-v1.5",
-            "togethercomputer/CodeLlama-7b",
-            "togethercomputer/CodeLlama-7b-Python",
-            "togethercomputer/CodeLlama-7b-Instruct",
-            "togethercomputer/CodeLlama-13b",
-            "togethercomputer/CodeLlama-13b-Python",
-            "togethercomputer/CodeLlama-13b-Instruct",
-            "togethercomputer/falcon-40b",
-            "togethercomputer/llama-2-7b",
-            "togethercomputer/llama-2-7b-chat",
-            "togethercomputer/llama-2-13b",
-            "togethercomputer/llama-2-13b-chat",
-            "togethercomputer/llama-2-70b",
-            "togethercomputer/llama-2-70b-chat",
+            "llamaguard-7b",
+            "llama-2-13b-chat",
         ]

@@ -7,6 +7,7 @@ from dataclasses import dataclass
 @dataclass
 class train_config:
     model_name: str="PATH/to/LLAMA/7B"
+    tokenizer_name: str=None
     enable_fsdp: bool=False
     low_cpu_fsdp: bool=False
     run_validation: bool=True
@@ -17,6 +18,8 @@ class train_config:
     gradient_clipping: bool = False
     gradient_clipping_threshold: float = 1.0
     num_epochs: int=3
+    max_train_step: int=0
+    max_eval_step: int=0
     num_workers_dataloader: int=1
     lr: float=1e-4
     weight_decay: float=0.0
