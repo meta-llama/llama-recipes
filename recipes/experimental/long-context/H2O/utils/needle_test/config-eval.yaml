@@ -1,0 +1,7 @@
+model:
+  model_provider: "OpenAI"
+  model_name: "gpt-4"
+
+prompt:
+  needle: "\nThe best thing to do in San Francisco is eat a sandwich and sit in Dolores Park on a sunny day.\n"
+  retrieval_question: "What is the best thing to do in San Francisco?"

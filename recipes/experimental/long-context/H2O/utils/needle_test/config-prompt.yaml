@@ -1,0 +1,22 @@
+prompt:
+  needle: "\nThe best thing to do in San Francisco is eat a sandwich and sit in Dolores Park on a sunny day.\n"
+  haystack_dir: "data/PaulGrahamEssays"
+  retrieval_question: "What is the best thing to do in San Francisco? Here is the most relevant sentence in the context:" # We use the Anthropic's retrieval question as the default one
+
+context:
+  min_len: 1000
+  max_len: 8000
+  interval: 10
+  manually_select_list: null  # null or a list of context lengths to manually select
+
+document_depth:
+  min_percent: 10
+  max_percent: 90
+  interval: 10
+  interval_type: "linear"  # "linear", "sigmoid" or null
+  manually_select_list: null  # null or a list of document percents to manually select
+
+tokenizer:
+  tokenizer_type: "Huggingface"
+
+save_dir: 'data/needle_test/Huggingface'

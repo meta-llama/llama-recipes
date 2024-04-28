@@ -1,5 +1,7 @@
 import math
 from typing import Any, Dict, List, Optional, Tuple, Union
+import warnings
+warnings.filterwarnings("ignore")
 
 import pdb
 import types
@@ -182,15 +184,17 @@ class H2OLlamaAttention(nn.Module):
                 # decoding stage
                 key_position_ids = torch.arange(kv_seq_len, device=hidden_states.device).unsqueeze(0)
                 query_position_ids = key_position_ids[:, -1].unsqueeze(0)
+            elif not kv_seq_len == position_ids.shape[-1]:
+                # prefilling stage with evicting
+                query_position_ids = position_ids
+                key_position_ids = torch.arange(kv_seq_len, device=hidden_states.device).unsqueeze(0)
             else:
+                # prefilling stage
                 query_position_ids = position_ids
                 key_position_ids = position_ids
 
             key_cos, key_sin = self.rotary_emb(value_states, key_position_ids)
             query_cos, query_sin = self.rotary_emb(value_states, query_position_ids)
-
-            if self.layer_idx == 0:
-                print(kv_seq_len, query_position_ids, key_position_ids)
 
             query_states = apply_rotary_pos_emb_single(query_states, query_cos, query_sin)
             key_states = apply_rotary_pos_emb_single(key_states, key_cos, key_sin)

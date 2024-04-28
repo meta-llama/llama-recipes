@@ -518,6 +518,36 @@ class HHCache(Cache):
                 cache.update(key_states, value_states, layer_idx, accumulated_attention_scores=accumulated_attention_scores)
         return cache
 
+    def evict_for_space(self, space_needed: int):
+        num_layers = len(self.key_cache)
+
+        # Update score metrics (Accumulated attention scores)
+        if len(self.accumulated_attention_scores) < num_layers:
+            raise ValueError("The accumulated_attention_scores should be updated before evicting the cache.")
+
+        for layer_idx in range(num_layers):
+            # Update KV Cache, Evict for new coming prompts
+            if self.get_seq_length(layer_idx) + space_needed > self.window_length:
+                if self.window_length - self.num_hh_tokens <= space_needed:
+                    raise ValueError("The space_needed should be less than the window_length - num_hh_tokens.")
+
+                seq_scores = self.accumulated_attention_scores[layer_idx][:, :, :-self.window_length + self.num_hh_tokens + space_needed]
+                _, keep_hh_index = torch.topk(seq_scores, self.num_hh_tokens, dim=-1)
+                keep_hh_index = keep_hh_index.sort().values
+
+                keep_local_index = torch.arange(self.get_seq_length(layer_idx) - self.window_length + self.num_hh_tokens + space_needed, self.get_seq_length(layer_idx), device=keep_hh_index.device).repeat(keep_hh_index.shape[0], keep_hh_index.shape[1], 1)
+                keep_index = torch.cat([keep_hh_index, keep_local_index], dim=-1)
+
+                mask = torch.zeros(self.accumulated_attention_scores[layer_idx].shape, dtype=torch.bool).to(keep_hh_index.device)
+                mask = mask.scatter(-1, keep_index, 1)
+
+                bsz, num_heads, _, head_dim = self.key_cache[layer_idx].shape
+                self.key_cache[layer_idx] = self.key_cache[layer_idx][mask].view(bsz, num_heads, -1, head_dim)
+                self.value_cache[layer_idx] = self.value_cache[layer_idx][mask].view(bsz, num_heads, -1, head_dim)
+                self.accumulated_attention_scores[layer_idx] = self.accumulated_attention_scores[layer_idx][mask].view(bsz, num_heads, -1)
+
+
+
 
 class StaticCache(Cache):
     """
