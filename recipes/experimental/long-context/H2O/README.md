@@ -35,8 +35,6 @@ Expected results on XSUM (Rouge-2 score) from the above scripts on Llama-2/3 mod
 | Llama-2-7B    | 0.0439 | 0.1127 | 0.1148 | 0.1182 | 0.1170 | 0.1164 | 0.1164 | 0.1164 |
 | Llama-2-13B   | 0.1180 | 0.1217 | 0.1243 | 0.1291 | 0.1302 | 0.1332 | 0.1332 | 0.1332 |
 | Llama-3-8B    | 0.1107 | 0.1189 | 0.1200 | 0.1347 | 0.1290 | 0.1311 | 0.1311 | 0.1311 |
-| Llama-3-70B   | 0.1637 | 0.1743 | 0.1869 |        |        |        |        |        |
-|               |        |        |        |        |        |        |        |        |
 
 ### Evaluation on "Needle in a Haystack" Analysis
 
