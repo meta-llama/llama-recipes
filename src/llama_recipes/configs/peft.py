@@ -24,3 +24,18 @@ class llama_adapter_config:
 class prefix_config:
      num_virtual_tokens: int=30
      task_type: str= "CAUSAL_LM"    
+
+
+@dataclass
+class qlora_config:
+     r: int=8
+     lora_alpha: int=32
+     target_modules: List[str] = field(default_factory=lambda: ["q_proj", "v_proj"])
+     bias= "none"
+     task_type: str= "CAUSAL_LM"
+     lora_dropout: float=0.05
+     inference_mode: bool = False
+     bnb_4bit_quant_type: str = "bf16"
+     bnb_4bit_compute_dtype: str = "bf16"
+     bnb_4bit_quant_storage: str = "bf16"
+     use_nested_quant: bool = False

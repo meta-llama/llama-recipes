@@ -26,12 +26,14 @@ class train_config:
     mixed_precision: bool=True
     val_batch_size: int=1
     dataset = "samsum_dataset"
-    peft_method: str = "lora" # None , llama_adapter, prefix
+    peft_method: str = "lora" # None , qlora, llama_adapter, prefix
     use_peft: bool=False
     output_dir: str = "PATH/to/save/PEFT/model"
     freeze_layers: bool = False
     num_freeze_layers: int = 1
     quantization: bool = False
+    use_4bit_quantization: bool = False
+    use_8bit_quantization: bool = False
     one_gpu: bool = False
     save_model: bool = True
     dist_checkpoint_root_folder: str="PATH/to/save/FSDP/model" # will be used if using FSDP
@@ -40,3 +42,8 @@ class train_config:
     use_fast_kernels: bool = False # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
     use_wandb: bool = False # Enable wandb for experient tracking
     save_metrics: bool = False # saves training metrics to a json file for later plotting
+    inference_mode: bool = False
+    bnb_4bit_quant_type: str = "bfloat16"
+    bnb_4bit_compute_dtype: str = "bfloat16"
+    bnb_4bit_quant_storage: str = "bfloat16"
+    use_nested_quant: bool = True

@@ -493,3 +493,35 @@ def save_to_json(output_filename, train_step_loss, train_epoch_loss, train_step_
     }
     with open(output_filename, "w") as f:
         json.dump(metrics_data, f)
+
+
+def set_quantization_settings(train_config):
+     
+    """
+    Configures and returns quantization settings based on training  and PEFT configuration.
+    
+    Parameters:
+    - train_config: training config object, expected to include settings for 4-bit "use_4bit_quantization" or 8-bit "use_8bit_quantization" along with "quantization",
+    and "qlora" as the peft_method.
+    - peft_config: peft configs that include qlora settings such as "compute_dtype", "quant_storage_dtype", "use_nested_quant", and "bnb_4bit_quant_type".
+    Returns:
+    - A BitsAndBytesConfig object configured with the specified settings.
+    """
+    from transformers import BitsAndBytesConfig
+
+    if train_config.use_4bit_quantization:
+        compute_dtype = getattr(torch, train_config.bnb_4bit_compute_dtype)
+        quant_storage_dtype = getattr(torch, train_config.bnb_4bit_quant_storage)
+        
+        # Initialize BitsAndBytesConfig with 4-bit quantization settings.
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit= train_config.use_4bit_quantization,
+            bnb_4bit_quant_type= train_config.bnb_4bit_quant_type,
+            bnb_4bit_compute_dtype= compute_dtype,
+            bnb_4bit_use_double_quant= train_config.use_nested_quant,
+            bnb_4bit_quant_storage= quant_storage_dtype,
+        )
+    # Initialize BitsAndBytesConfig with 8-bit quantization flag; 
+    elif train_config.use_8bit_quantization:
+        bnb_config = BitsAndBytesConfig(load_in_8bit=train_config.use_8bit_quantization)
+    return bnb_config
