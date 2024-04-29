@@ -2,10 +2,10 @@
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
 import fire
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
 
-from llama_recipes.inference.prompt_format_utils import build_prompt, create_conversation, LLAMA_GUARD_CATEGORY
+from llama_recipes.inference.prompt_format_utils import build_default_prompt, create_conversation, LlamaGuardVersion
 from typing import List, Tuple
 from enum import Enum
 
@@ -13,20 +13,25 @@ class AgentType(Enum):
     AGENT = "Agent"
     USER = "User"
 
-def main():
+def main(
+    model_id: str = "meta-llama/LlamaGuard-7b",
+    llama_guard_version: LlamaGuardVersion = LlamaGuardVersion.LLAMA_GUARD_1
+):
     """
-    Entry point of the program for generating text using a pretrained model.
+    Entry point for Llama Guard inference sample script.
+
+    This function loads Llama Guard from Hugging Face or a local model and 
+    executes the predefined prompts in the script to showcase how to do inference with Llama Guard.
+
     Args:
-        ckpt_dir (str): The directory containing checkpoint files for the pretrained model.
-        tokenizer_path (str): The path to the tokenizer model used for text encoding/decoding.
-        temperature (float, optional): The temperature value for controlling randomness in generation.
-            Defaults to 0.6.
-        top_p (float, optional): The top-p sampling parameter for controlling diversity in generation.
-            Defaults to 0.9.
-        max_seq_len (int, optional): The maximum sequence length for input prompts. Defaults to 128.
-        max_gen_len (int, optional): The maximum length of generated sequences. Defaults to 64.
-        max_batch_size (int, optional): The maximum batch size for generating sequences. Defaults to 4.
+        model_id (str): The ID of the pretrained model to use for generation. This can be either the path to a local folder containing the model files,
+            or the repository ID of a model hosted on the Hugging Face Hub. Defaults to 'meta-llama/LlamaGuard-7b'.
+        llama_guard_version (LlamaGuardVersion): The version of the Llama Guard model to use for formatting prompts. Defaults to LLAMA_GUARD_1.
     """
+    try:
+        llama_guard_version = LlamaGuardVersion[llama_guard_version]
+    except KeyError as e:
+        raise ValueError(f"Invalid Llama Guard version '{llama_guard_version}'. Valid values are: {', '.join([lgv.name for lgv in LlamaGuardVersion])}") from e
 
     prompts: List[Tuple[List[str], AgentType]] = [
         (["<Sample user prompt>"], AgentType.USER),
@@ -41,17 +46,16 @@ def main():
 
     ]
 
-    model_id = "meta-llama/LlamaGuard-7b"
-    
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModelForCausalLM.from_pretrained(model_id, load_in_8bit=True, device_map="auto")
+    quantization_config = BitsAndBytesConfig(load_in_8bit=True)
 
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    model = AutoModelForCausalLM.from_pretrained(model_id, quantization_config=quantization_config, device_map="auto")
     
     for prompt in prompts:
-        formatted_prompt = build_prompt(
+        formatted_prompt = build_default_prompt(
                 prompt[1], 
-                LLAMA_GUARD_CATEGORY, 
-                create_conversation(prompt[0]))
+                create_conversation(prompt[0]),
+                llama_guard_version)
 
 
         input = tokenizer([formatted_prompt], return_tensors="pt").to("cuda")
@@ -65,4 +69,7 @@ def main():
         print("\n==================================\n")
 
 if __name__ == "__main__":
-    fire.Fire(main)
+    try:
+        fire.Fire(main)
+    except Exception as e:
+        print(e)
