@@ -26,6 +26,7 @@ class train_config:
     gamma: float= 0.85
     seed: int=42
     use_fp16: bool=False
+    use_te: bool=False
     mixed_precision: bool=True
     val_batch_size: int=1
     dataset = "samsum_dataset"

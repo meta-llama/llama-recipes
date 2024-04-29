@@ -9,7 +9,6 @@ from pathlib import Path
 from pkg_resources import packaging
 from datetime import datetime
 
-
 import torch
 import torch.cuda.nccl as nccl
 import torch.distributed as dist
@@ -32,6 +31,17 @@ def set_tokenizer_params(tokenizer: LlamaTokenizer):
 # Converting Bytes to Megabytes
 def byte2mb(x):
     return int(x / 2**20)
+
+def setup_te():
+    # To avoid https://github.com/NVIDIA/TransformerEngine/issues/115
+    import transformer_engine
+    import transformer_engine_extensions
+    import transformer_engine.pytorch as te
+    from transformer_engine.common.recipe import Format, DelayedScaling
+    fp8_format = Format.HYBRID  # E4M3 during forward pass, E5M2 during backward pass
+    fp8_recipe = DelayedScaling(fp8_format=fp8_format, amax_history_len=16, amax_compute_algo="max")
+    return te, fp8_recipe
+
 
 def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None, wandb_run=None):
     """
@@ -58,6 +68,8 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         scaler = torch.cuda.amp.GradScaler()
     if train_config.enable_fsdp:
         world_size = int(os.environ["WORLD_SIZE"])
+    if train_config.use_te:
+        te, fp8_recipe = setup_te()
 
 
 
@@ -112,8 +124,12 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                             batch[key] = batch[key].to('xpu:0')
                         else:
                             batch[key] = batch[key].to('cuda:0')
-                with autocast():
-                    loss = model(**batch).loss
+                if not train_config.use_te:
+                    with autocast():
+                        loss = model(**batch).loss
+                else:
+                    with te.fp8_autocast(enabled=True, fp8_recipe=fp8_recipe):
+                        loss = model(**batch).loss
                 loss = loss / gradient_accumulation_steps
                 if train_config.save_metrics:
                     train_step_loss.append(loss.detach().float().item())

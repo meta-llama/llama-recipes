@@ -66,6 +66,10 @@ def setup_wandb(train_config, fsdp_config, **kwargs):
     run.config.update(fsdp_config, allow_val_change=True)
     return run
 
+def setup_te(train_config):
+    if train_config.use_te:
+        from llama_recipes.utils.te_utils import TELlamaForCausalLM  as LlamaForCausalLM
+
 
 def main(**kwargs):
     # Update the configuration for the training and sharding process
