@@ -29,6 +29,8 @@ from typing import List, Optional, Tuple, Dict
 from enum import Enum
 
 import torch
+from tqdm import tqdm
+
 
 # -
 
@@ -68,6 +70,8 @@ def llm_eval(prompts, load_in_8bit=True, load_in_4bit = False, logprobs = False)
     if logprobs:
         result_logprobs: List[List[Tuple[int, float]]] = []
 
+    total_length = len(prompts)
+    progress_bar = tqdm(colour="blue", desc=f"Prompts", total=total_length, dynamic_ncols=True)
     for prompt in prompts:
         formatted_prompt = build_prompt(
                 prompt["agent_type"], 
@@ -97,7 +101,9 @@ def llm_eval(prompts, load_in_8bit=True, load_in_4bit = False, logprobs = False)
 
         prompt["result"] = result
         results.append(result)
+        progress_bar.update(1)
 
+    progress_bar.close()
     return (results, result_logprobs if logprobs else None)  
 
 
@@ -120,6 +126,8 @@ def pytorch_llm_eval(prompts: List[Tuple[List[str], AgentType, str, str, str]], 
 
 
     results: List[str] = []
+    total_length = len(prompts)
+    progress_bar = tqdm(colour="blue", desc=f"Prompts", total=total_length, dynamic_ncols=True)
     for prompt in prompts:
         formatted_prompt = build_prompt(
                 prompt["agent_type"], 
@@ -140,7 +148,9 @@ def pytorch_llm_eval(prompts: List[Tuple[List[str], AgentType, str, str, str]], 
             prompt["logprobs"] = result[0]["logprobs"]
 
         results.append(generation_result)
+        progress_bar.update(1)
 
+    progress_bar.close()
     return results
 
 # Setting variables used by the Llama classes
@@ -172,16 +182,20 @@ def main():
     ]
 
     
-    results = llm_eval(prompts, load_in_8bit = False, load_in_4bit = True)
+    # results = llm_eval(prompts, load_in_8bit = False, load_in_4bit = True)
+    results = pytorch_llm_eval(prompts, ckpt_dir="../../../../llama/models/llama_guard-v2/")
     
     for i, prompt in enumerate(prompts):
         print(prompt['prompt'])
-        print(f"> {results[0][i]}")
+        print(f"> {results[0]}")
         print("\n==================================\n")
 
 # used to be able to import this script in another notebook and not run the main function
 if __name__ == '__main__' and '__file__' not in globals():
-    from huggingface_hub import login
-    login()
+    # from huggingface_hub import login
+    # login()
     main()
-    
+
+torch.cuda.empty_cache()
+
+

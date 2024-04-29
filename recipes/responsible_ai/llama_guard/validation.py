@@ -76,8 +76,6 @@ def validate_agent_type(value):
     except ValueError:
         raise ValueError(f"Invalid AgentType. Choose from: {[agent_type.value for agent_type in AgentType]}")
 
-
-
 def run_validation(jsonl_file_path, agent_type, type: Type, load_in_8bit: bool = True, load_in_4bit: bool = False, ckpt_dir = None):
 
     input_file_path = Path(jsonl_file_path)
@@ -87,9 +85,12 @@ def run_validation(jsonl_file_path, agent_type, type: Type, load_in_8bit: bool =
     # Preparing prompts
     prompts: List[Tuple[List[str], AgentType, str, str, str]] = []
     with open(jsonl_file_path, "r") as f:
+        # i = 0
         for i, line in enumerate(f):
             entry = json.loads(line)
-            
+            # if i == 10:
+            #     break
+            # i += 1
             # Format prompt and add to list
             prompt = format_prompt(entry, agent_type)
             prompts.append(prompt)
@@ -108,7 +109,7 @@ def run_validation(jsonl_file_path, agent_type, type: Type, load_in_8bit: bool =
     average_precision = parse_logprobs(prompts, type)
     print(f"average precision {average_precision:.2%}")
 
-    
+
 # -
 
 # ## Average presicion
@@ -145,10 +146,11 @@ def parse_logprobs(prompts, type: Type):
 #
 
 # +
-prompts_file = "prompts.jsonl"
+prompts_file = "valid_prompts_6cat_1122.jsonl"
+# prompts_file = "prompt_train_set_with_label.jsonl"
 
 # When the type is pytorch, there is no quantization options
-run_validation(prompts_file, AgentType.USER, Type.PYTORCH, ckpt_dir = "path/to/llama_guard/")
+run_validation(prompts_file, AgentType.USER, Type.PYTORCH, ckpt_dir = "/home/ubuntu/projects/llama/models/llama_guard-v2/")
 # -
 
 # clean up the cache from running the previous validation
@@ -158,10 +160,11 @@ torch.cuda.empty_cache()
 # Login to HF to access the model, if necessary
 # from huggingface_hub import login
 # login()
-# -
 
+# +
 # By default, load_in_8bit is true. To run unquantized or with 4bit quantization, set load_in_8bit to False and load_in_4bit to true
-run_validation(prompts_file, AgentType.USER, Type.HF, load_in_8bit = False, load_in_4bit = True)
+# run_validation(prompts_file, AgentType.USER, Type.HF, load_in_8bit = False, load_in_4bit = True)
+# -
 
 
 
