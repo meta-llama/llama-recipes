@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 @dataclass
 class train_config:
-    model_name: str="PATH/to/LLAMA/7B"
+    model_name: str="PATH/to/Model"
     tokenizer_name: str=None
     enable_fsdp: bool=False
     low_cpu_fsdp: bool=False
@@ -29,7 +29,7 @@ class train_config:
     mixed_precision: bool=True
     val_batch_size: int=1
     dataset = "samsum_dataset"
-    peft_method: str = "lora" # None , llama_adapter, prefix
+    peft_method: str = "lora" # None,llama_adapter, prefix
     use_peft: bool=False
     output_dir: str = "PATH/to/save/PEFT/model"
     freeze_layers: bool = False

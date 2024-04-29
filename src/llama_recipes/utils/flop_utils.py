@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, Optional, Union
-
+import time
 import torch
 from torch.utils.flop_counter import FlopCounterMode
 
@@ -15,14 +15,12 @@ class FlopMeasure(FlopCounterMode):
 
     .. code-block:: python
 
-        mod = ...
-        flop_counter = FlopMeasure(mod)
+        model = ...
+        flop_counter = FlopMeasure(model,local_rank=0,warmup_step=3)
         for batch in enumerate(dataloader):
             with flop_counter:
-                if step == 3:
-                    flop_counter.start_counting()
-                mod(batch)
-                flop_counter.stop_counting()
+                model(batch)
+                flop_counter.step()
     """
 
     def __init__(
@@ -32,50 +30,58 @@ class FlopMeasure(FlopCounterMode):
         display: bool = True,
         custom_mapping: Dict[Any, Any] = None,
         rank=None,
+        warmup_step: int = 3,
     ):
         super().__init__(mods, depth, display, custom_mapping)
-        self.ready = False
         self.rank = rank
+        self.warmup_step = warmup_step
+        self.start_time = 0
+        self.end_time = 0
 
+    def step(self):
+        # decrease the warmup step by 1 for every step, so that the flop counting will start when warmup_step =0. Stop decreasing when warm_up reaches -1.
+        if self.warmup_step >= 0:
+            self.warmup_step -= 1
+        if self.warmup_step == 0 and self.start_time == 0:
+            self.start_time = time.time()
+        elif self.warmup_step == -1 and self.start_time != 0 and self.end_time == 0:
+            self.end_time = time.time()
     def __enter__(self):
-        self.ready = False
+        if self.warmup_step == 0:
+            self.start_time = time.time()
         super().__enter__()
         return self
-
+    def is_done(self):
+        return self.warmup_step == -1
     def get_total_flops(self):
         return super().get_total_flops()
-
+    def get_flops_per_sec(self):
+        if self.start_time == 0 or self.end_time == 0:
+            print("Warning: flop count did not finish correctly")
+            return 0
+        return super().get_total_flops()/ (self.end_time - self.start_time)
     def get_table(self, depth=2):
         return super().get_table(depth)
 
     def __exit__(self, *args):
-        self.ready = False
         if self.get_total_flops() == 0:
             print(
                 "Warning: did not record any flops this time. Skipping the flop report"
             )
         else:
-            self.stop_counting()
             if self.display:
                 if self.rank is None or self.rank == 0:
-                    print("self.flop_counts", self.get_total_flops())
+                    print("Total time used in this flop counting step is: {}".format(self.end_time - self.start_time))
+                    print("The total TFlop per second is: {}".format(self.get_flops_per_sec() / 1e12))
+                    print("The tflop_count table is below:")
                     print(self.get_table(self.depth))
             # Disable the display feature so that we don't print the table again
             self.display = False
         super().__exit__(*args)
 
-    def start_counting(self):
-        self.ready = True
-
-    def is_ready(self):
-        return self.ready
-
-    def stop_counting(self):
-        self.ready = False
-
     def __torch_dispatch__(self, func, types, args=(), kwargs=None):
-        # return the original output if not ready
-        if not self.ready:
-            return func(*args, **kwargs)
-        # otherwise, count the flops and return the original output
-        return super().__torch_dispatch__(func, types, args, kwargs)
+        # when warmup_step is 0, count the flops and return the original output
+        if self.warmup_step == 0:
+            return super().__torch_dispatch__(func, types, args, kwargs)
+        # otherwise, just return the original output
+        return func(*args, **kwargs)

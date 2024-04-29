@@ -59,9 +59,9 @@ def profile(cfg, local_rank=None):
         ) as torch_profiler:
             yield torch_profiler
     elif use_flop_counter:
-        if cfg.max_train_step > 0 and cfg.max_train_step < cfg.flop_counter_start:
-            raise ValueError(f"flop counter requires at least {cfg.flop_counter_start} train steps, please increase the max_train_step, current max_train_step {cfg.max_train_step}")
-        with FlopMeasure(rank=local_rank) as flop_counter:
+        if cfg.max_train_step > 0 and cfg.max_train_step <= cfg.flop_counter_start:
+            raise ValueError(f"flop counter requires at least {cfg.flop_counter_start + 1} train steps, please increase the max_train_step, current max_train_step {cfg.max_train_step}")
+        with FlopMeasure(rank=local_rank,warmup_step=cfg.flop_counter_start) as flop_counter:
             yield flop_counter
     else:
         torch_profiler = contextlib.nullcontext()
@@ -135,9 +135,6 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         if not train_config.enable_fsdp or local_rank==0:
                             print("max training steps reached, stopping training, total train steps finished: ", total_train_steps-1)
                         break
-                    if train_config.flop_counter and total_train_steps == train_config.flop_counter_start:
-                        print("start flop counting at the step: ", total_train_steps)
-                        profile_context.start_counting()
                     for key in batch.keys():
                         if train_config.enable_fsdp:
                             if is_xpu_available():
@@ -183,11 +180,10 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                             optimizer.step()
                             optimizer.zero_grad()
                             pbar.update(1)
-                    if train_config.use_profiler:
+                    if train_config.use_profiler or train_config.flop_counter:
                         profile_context.step()
-                    if train_config.flop_counter and profile_context.is_ready():
-                        TFlops = profile_context.get_total_flops() / 1e12
-                        profile_context.stop_counting()
+                    if train_config.flop_counter and profile_context.is_done():
+                        TFlops = profile_context.get_flops_per_sec() / 1e12
                     if wandb_run:
                         if not train_config.enable_fsdp or rank==0:
                             wandb_run.log({
