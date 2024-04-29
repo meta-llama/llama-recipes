@@ -9,7 +9,7 @@ We will also need 2 packages:
 1. [PEFT](https://github.com/huggingface/peft) to use parameter-efficient finetuning.
 2. [FSDP](https://pytorch.org/tutorials/intermediate/FSDP_adavnced_tutorial.html) which helps us parallelize the training over multiple GPUs. [More details](./LLM_finetuning_overview.md#2-full-partial-parameter-finetuning).
 
-> [!NOTE]  
+> [!NOTE]
 > The llama-recipes package will install PyTorch 2.0.1 version. In case you want to use FSDP with PEFT for multi GPU finetuning, please install the PyTorch nightlies ([details](../../README.md#pytorch-nightlies))
 >
 > INT8 quantization is not currently supported in FSDP
@@ -30,7 +30,7 @@ Get access to a machine with multiple GPUs (in this case we tested with 4 A100 a
 <details>
 <summary>Multi-node Multi-GPU</summary>
 Here we use a slurm script to schedule a job with slurm over multiple nodes.
-    
+
     # Change the num nodes and GPU per nodes in the script before running.
     sbatch ./multi_node.slurm
 
@@ -95,7 +95,7 @@ torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp --model_name
 
 
 ## [TIP] Slow interconnect between nodes?
-In case you are dealing with slower interconnect network between nodes, to reduce the communication overhead you can make use of `--hsdp` flag. 
+In case you are dealing with slower interconnect network between nodes, to reduce the communication overhead you can make use of `--hsdp` flag.
 
 HSDP (Hybrid sharding Data Parallel) helps to define a hybrid sharding strategy where you can have FSDP within `sharding_group_size` which can be the minimum number of GPUs you can fit your model and DDP between the replicas of the model specified by `replica_group_size`.
 
@@ -107,5 +107,8 @@ torchrun --nnodes 4 --nproc_per_node 8 ./finetuning.py --enable_fsdp --low_cpu_f
 
 ```
 
+## FLOPS Counting and Pytorch Profiling
 
+To help with benchmarking effort, we are adding the support for counting the FLOPS during the fine-tuning process. You can achieve this by setting `--flop_counter` when launching your single/multi GPU fine-tuning. Use `--flop_counter_start` to choose which step to count the FLOPS. It is recommended to allow a warm-up stage before using the FLOPS counter.
 
+Similarly, you can set `--use_profiler` flag and pass a profiling output path using `--profiler_dir` to capture the profile traces of your model using [PyTorch profiler](https://pytorch.org/tutorials/intermediate/tensorboard_profiler_tutorial.html). To get accurate profiling result, the pytorch profiler requires a warm-up stage and the current config is wait=1, warmup=2, active=3, thus the profiler will start the profiling after step 3 and will record the next 3 steps. Therefore, in order to use pytorch profiler, the --max-train-step has been greater than 6.  The pytorch profiler would be helpful for debugging purposes. However, the `--flop_counter` and `--use_profiler` can not be used in the same time to ensure the measurement accuracy.

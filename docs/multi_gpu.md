@@ -8,7 +8,7 @@ To run fine-tuning on multi-GPUs, we will  make use of two packages:
 
 Given the combination of PEFT and FSDP, we would be able to fine tune a Llama 2 model on multiple GPUs in one node or multi-node.
 
-## Requirements 
+## Requirements
 To run the examples, make sure to install the llama-recipes package and clone the github repository in order to use the provided [`finetuning.py`](../recipes/finetuning/finetuning.py) script with torchrun (See [README.md](../README.md) for details).
 
 **Please note that the llama_recipes package will install PyTorch 2.0.1 version, in case you want to run FSDP + PEFT, please make sure to install PyTorch nightlies.**
@@ -140,7 +140,10 @@ save_model: bool = False
 dist_checkpoint_root_folder: str="model_checkpoints"
 dist_checkpoint_folder: str="fine-tuned"
 save_optimizer: bool=False
-
+flop_counter: bool=False # Enable FLOPS counter to measure model throughput, can not be used with pytorch profiler at the same time.
+flop_counter_start: int=3 # The step to start profiling, default is 3, which means after 3 steps of warm-up stage, the profiler will start to count FLOPS.
+use_profiler: bool=False # Enable pytorch profiler, can not be used with FLOPS counter at the same time.
+profiler_dir: str="PATH/to/save/profiler/results" # will be used if using profiler
 ```
 
 * [Datasets config file](../src/llama_recipes/configs/datasets.py) provides the available options for datasets.
@@ -167,3 +170,9 @@ save_optimizer: bool=False
 * `fsdp_activation_checkpointing` enables activation checkpoining for FSDP, this saves significant amount of memory with the trade off of recomputing itermediate activations during the backward pass. The saved memory can be re-invested in higher batch sizes to increase the throughput. We recommond you use this option.
 
 * `pure_bf16` it moves the  model to `BFloat16` and if `optimizer` is set to `anyprecision` then optimizer states will be kept in `BFloat16` as well. You can use this option if necessary.
+
+## FLOPS Counting and Pytorch Profiling
+
+To help with benchmarking effort, we are adding the support for counting the FLOPS during the fine-tuning process. You can achieve this by setting `--flop_counter` when launching your single/multi GPU fine-tuning. Use `--flop_counter_start` to choose which step to count the FLOPS. It is recommended to allow a warm-up stage before using the FLOPS counter.
+
+Similarly, you can set `--use_profiler` flag and pass a profiling output path using `--profiler_dir` to capture the profile traces of your model using [PyTorch profiler](https://pytorch.org/tutorials/intermediate/tensorboard_profiler_tutorial.html). To get accurate profiling result, the pytorch profiler requires a warm-up stage and the current config is wait=1, warmup=2, active=3, thus the profiler will start the profiling after step 3 and will record the next 3 steps. Therefore, in order to use pytorch profiler, the --max-train-step has been greater than 6.  The pytorch profiler would be helpful for debugging purposes. However, the `--flop_counter` and `--use_profiler` can not be used in the same time to ensure the measurement accuracy.
