@@ -1,6 +1,8 @@
 # Finetuning Llama
 
-This folder contains instructions to fine-tune Llama 2 on a
+
+This folder contains instructions to fine-tune Meta Llama 3 on a
+
 * [single-GPU setup](./singlegpu_finetuning.md)
 * [multi-GPU setup](./multigpu_finetuning.md)
 
@@ -9,7 +11,7 @@ using the canonical [finetuning script](../../src/llama_recipes/finetuning.py) i
 If you are new to fine-tuning techniques, check out an overview: [](./LLM_finetuning_overview.md)
 
 > [!TIP]
-> If you want to try finetuning Llama 2 with Huggingface's trainer, here is a Jupyter notebook with an [example](./huggingface_trainer/peft_finetuning.ipynb)
+> If you want to try finetuning Meta Llama 3 with Huggingface's trainer, here is a Jupyter notebook with an [example](./huggingface_trainer/peft_finetuning.ipynb)
 
 
 ## How to configure finetuning settings?
@@ -97,7 +99,7 @@ It lets us specify the training settings for everything from `model_name` to `da
 You can enable [W&B](https://wandb.ai/) experiment tracking by using `use_wandb` flag as below. You can change the project name, entity and other `wandb.init` arguments in `wandb_config`.
 
 ```bash
-python -m llama_recipes.finetuning --use_peft --peft_method lora --quantization --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model --use_wandb
+python -m llama_recipes.finetuning --use_peft --peft_method lora --quantization --model_name /patht_of_model_folder/8B --output_dir Path/to/save/PEFT/model --use_wandb
 ```
 You'll be able to access a dedicated project or run link on [wandb.ai](https://wandb.ai) and see your dashboard like the one below.
 <div style="display: flex;">

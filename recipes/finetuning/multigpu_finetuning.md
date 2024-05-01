@@ -1,5 +1,5 @@
 # Fine-tuning with Multi GPU
-This recipe steps you through how to finetune a Llama 2 model on the text summarization task using the [samsum](https://huggingface.co/datasets/samsum) dataset on multiple GPUs in a single or across multiple nodes.
+This recipe steps you through how to finetune a Meta Llama 3 model on the text summarization task using the [samsum](https://huggingface.co/datasets/samsum) dataset on multiple GPUs in a single or across multiple nodes.
 
 
 ## Requirements
@@ -23,7 +23,7 @@ Get access to a machine with multiple GPUs (in this case we tested with 4 A100 a
 <details open>
 <summary>Single-node Multi-GPU</summary>
 
-    torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model
+    torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp --model_name /patht_of_model_folder/8B --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model
 
 </details>
 
@@ -49,7 +49,7 @@ The args used in the command above are:
 If interested in running full parameter finetuning without making use of PEFT methods, please use the following command. Make sure to change the `nproc_per_node` to your available GPUs. This has been tested with `BF16` on 8xA100, 40GB GPUs.
 
 ```bash
-torchrun --nnodes 1 --nproc_per_node 8  finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --use_fast_kernels
+torchrun --nnodes 1 --nproc_per_node 8  finetuning.py --enable_fsdp --model_name /patht_of_model_folder/8B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --use_fast_kernels
 ```
 
 ### Using less CPU memory (FSDP on 70B model)
@@ -79,16 +79,16 @@ To run with each of the datasets set the `dataset` flag in the command as shown 
 
 ```bash
 # grammer_dataset
-torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp  --model_name /patht_of_model_folder/7B --use_peft --peft_method lora --dataset grammar_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned  --pure_bf16 --output_dir Path/to/save/PEFT/model
+torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp  --model_name /patht_of_model_folder/8B --use_peft --peft_method lora --dataset grammar_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned  --pure_bf16 --output_dir Path/to/save/PEFT/model
 
 # alpaca_dataset
 
-torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp  --model_name /patht_of_model_folder/7B --use_peft --peft_method lora --dataset alpaca_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --output_dir Path/to/save/PEFT/model
+torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp  --model_name /patht_of_model_folder/8B --use_peft --peft_method lora --dataset alpaca_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --output_dir Path/to/save/PEFT/model
 
 
 # samsum_dataset
 
-torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --use_peft --peft_method lora --dataset samsum_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --output_dir Path/to/save/PEFT/model
+torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp --model_name /patht_of_model_folder/8B --use_peft --peft_method lora --dataset samsum_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --output_dir Path/to/save/PEFT/model
 
 ```
 
@@ -112,3 +112,4 @@ torchrun --nnodes 4 --nproc_per_node 8 ./finetuning.py --enable_fsdp --low_cpu_f
 To help with benchmarking effort, we are adding the support for counting the FLOPS during the fine-tuning process. You can achieve this by setting `--flop_counter` when launching your single/multi GPU fine-tuning. Use `--flop_counter_start` to choose which step to count the FLOPS. It is recommended to allow a warm-up stage before using the FLOPS counter.
 
 Similarly, you can set `--use_profiler` flag and pass a profiling output path using `--profiler_dir` to capture the profile traces of your model using [PyTorch profiler](https://pytorch.org/tutorials/intermediate/tensorboard_profiler_tutorial.html). To get accurate profiling result, the pytorch profiler requires a warm-up stage and the current config is wait=1, warmup=2, active=3, thus the profiler will start the profiling after step 3 and will record the next 3 steps. Therefore, in order to use pytorch profiler, the --max-train-step has been greater than 6.  The pytorch profiler would be helpful for debugging purposes. However, the `--flop_counter` and `--use_profiler` can not be used in the same time to ensure the measurement accuracy.
+

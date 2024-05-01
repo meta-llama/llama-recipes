@@ -6,7 +6,7 @@ To run fine-tuning on a single GPU, we will  make use of two packages
 
 2- [bitsandbytes](https://github.com/TimDettmers/bitsandbytes) int8 quantization.
 
-Given combination of PEFT and Int8 quantization, we would be able to fine_tune a Llama 2 7B model on one consumer grade GPU such as A10.
+Given combination of PEFT and Int8 quantization, we would be able to fine_tune a Meta Llama 3 8B model on one consumer grade GPU such as A10.
 
 ## Requirements
 To run the examples, make sure to install the llama-recipes package (See [README.md](../README.md) for details).
@@ -20,7 +20,7 @@ Get access to a machine with one GPU or if using a multi-GPU machine please make
 
 ```bash
 
-python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization --use_fp16 --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization --use_fp16 --model_name /patht_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 ```
 The args used in the command above are:
@@ -51,16 +51,16 @@ to run with each of the datasets set the `dataset` flag in the command as shown 
 ```bash
 # grammer_dataset
 
-python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization  --dataset grammar_dataset --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization  --dataset grammar_dataset --model_name /patht_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 # alpaca_dataset
 
-python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization  --dataset alpaca_dataset --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization  --dataset alpaca_dataset --model_name /patht_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 
 # samsum_dataset
 
-python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization  --dataset samsum_dataset --model_name /patht_of_model_folder/7B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization  --dataset samsum_dataset --model_name /patht_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 ```
 
