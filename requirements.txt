@@ -18,3 +18,4 @@ gradio
 chardet
 openai
 typing-extensions==4.8.0
+tabulate
