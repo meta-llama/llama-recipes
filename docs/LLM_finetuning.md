@@ -1,6 +1,6 @@
 ## LLM Fine-Tuning
 
-Here we discuss fine-tuning Llama 2 with a couple of different recipes. We will cover two scenarios here:
+Here we discuss fine-tuning Meta Llama 3 with a couple of different recipes. We will cover two scenarios here:
 
 
 ## 1. **Parameter Efficient Model Fine-Tuning**
@@ -42,7 +42,7 @@ You can also keep most of the layers frozen and only fine-tune a few layers. The
 
 
 
-In this scenario depending on the model size, you might need to go beyond one GPU, especially if your model does not fit into one GPU for training. In this case Llama 2 7B parameter won't fit into one gpu.
+In this scenario depending on the model size, you might need to go beyond one GPU, especially if your model does not fit into one GPU for training. In this case Meta Llama 3 8B parameter won't fit into one gpu.
 The way you want to think about it is, you would need enough GPU memory to keep model parameters, gradients and optimizer states. Where each of these, depending on the precision you are training, can take up multiple times of your parameter count x precision( depending on if its fp32/ 4 bytes, fp16/2 bytes/ bf16/2 bytes).
 For example AdamW optimizer keeps 2 parameters for each of your parameters and in many cases these are kept in fp32. This implies that depending on how many layers you are training/ unfreezing your GPU memory can grow beyond one GPU.
 

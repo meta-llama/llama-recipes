@@ -6,9 +6,9 @@ To run fine-tuning on multi-GPUs, we will  make use of two packages:
 
 2. [FSDP](https://pytorch.org/tutorials/intermediate/FSDP_adavnced_tutorial.html) which helps us parallelize the training over multiple GPUs. [More details](LLM_finetuning.md/#2-full-partial-parameter-finetuning).
 
-Given the combination of PEFT and FSDP, we would be able to fine tune a Llama 2 model on multiple GPUs in one node or multi-node.
+Given the combination of PEFT and FSDP, we would be able to fine tune a Meta Llama 3 8B model on multiple GPUs in one node or multi-node.
 
-## Requirements 
+## Requirements
 To run the examples, make sure to install the llama-recipes package and clone the github repository in order to use the provided [`finetuning.py`](../recipes/finetuning/finetuning.py) script with torchrun (See [README.md](../README.md) for details).
 
 **Please note that the llama_recipes package will install PyTorch 2.0.1 version, in case you want to run FSDP + PEFT, please make sure to install PyTorch nightlies.**
@@ -24,7 +24,7 @@ This runs with the `samsum_dataset` for summarization application by default.
 
 ```bash
 
-torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model
+torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp --model_name /patht_of_model_folder/8B --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model
 
 ```
 
@@ -43,7 +43,7 @@ We use `torchrun` here to spawn multiple processes for FSDP.
 Setting `use_fast_kernels` will enable using of Flash Attention or Xformer memory-efficient kernels based on the hardware being used. This would speed up the fine-tuning job. This has been enabled in `optimum` library from HuggingFace as a one-liner API, please read more [here](https://pytorch.org/blog/out-of-the-box-acceleration/).
 
 ```bash
-torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model --use_fast_kernels
+torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp --model_name /patht_of_model_folder/8B --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model --use_fast_kernels
 ```
 
 ### Fine-tuning using FSDP Only
@@ -52,7 +52,7 @@ If interested in running full parameter finetuning without making use of PEFT me
 
 ```bash
 
-torchrun --nnodes 1 --nproc_per_node 8  examples/finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --use_fast_kernels
+torchrun --nnodes 1 --nproc_per_node 8  examples/finetuning.py --enable_fsdp --model_name /patht_of_model_folder/8B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --use_fast_kernels
 
 ```
 
@@ -95,16 +95,16 @@ To run with each of the datasets set the `dataset` flag in the command as shown 
 
 ```bash
 # grammer_dataset
-torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp  --model_name /patht_of_model_folder/7B --use_peft --peft_method lora --dataset grammar_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned  --pure_bf16 --output_dir Path/to/save/PEFT/model
+torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp  --model_name /patht_of_model_folder/8B --use_peft --peft_method lora --dataset grammar_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned  --pure_bf16 --output_dir Path/to/save/PEFT/model
 
 # alpaca_dataset
 
-torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp  --model_name /patht_of_model_folder/7B --use_peft --peft_method lora --dataset alpaca_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --output_dir Path/to/save/PEFT/model
+torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp  --model_name /patht_of_model_folder/8B --use_peft --peft_method lora --dataset alpaca_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --output_dir Path/to/save/PEFT/model
 
 
 # samsum_dataset
 
-torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --use_peft --peft_method lora --dataset samsum_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --output_dir Path/to/save/PEFT/model
+torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py --enable_fsdp --model_name /patht_of_model_folder/8B --use_peft --peft_method lora --dataset samsum_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --output_dir Path/to/save/PEFT/model
 
 ```
 
@@ -116,7 +116,7 @@ It lets us specify the training settings for everything from `model_name` to `da
 
 ```python
 
-model_name: str="PATH/to/LLAMA 2/7B"
+model_name: str="PATH/to/Model"
 enable_fsdp: bool= False
 run_validation: bool=True
 batch_size_training: int=4
