@@ -44,7 +44,7 @@ We implement each approach as a control flow in LangGraph:
 
 We will build from CRAG (blue, below) to Self-RAG (green) and finally to Adaptive RAG (red):
 
-![RAG](./img/langgraph_adaptive_rag.png "RAG control flow")
+![Screenshot 2024-05-03 at 10 50 02 AM](https://github.com/rlancemartin/llama-recipes/assets/122662504/ec4aa1cd-3c7e-4cd1-a1e7-7deddc4033a8)
 
 Our fouth notebook, `langgraph-rag-agent-local`, shows how to apply LangGraph to build advanced RAG agents that run locally and reliable.
 
