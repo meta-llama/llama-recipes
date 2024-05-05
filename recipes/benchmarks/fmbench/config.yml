@@ -257,10 +257,18 @@ experiments:
       SM_NUM_GPUS: "1"
       SAGEMAKER_MODEL_SERVER_WORKERS: "1"
 
+# parameters related to how the final report is generated
 report:
+  # constraints for latency, cost and error rate
+  # an experiment is considered successful or eligible for
+  # selection for a use-case if it satisfies all of the following
+  # constraints. Experiments are scored as per this criteria
+  # higher score is better (see 4_model_metric_analysis.ipynb score_run function)
   latency_budget: 2
   cost_per_10k_txn_budget: 20
   error_rate_budget: 0
+  # other misc reporting parameters, see 4_model_metric_analysis.ipynb
+  # for more information
   per_inference_request_file: per_inference_request_results.csv
   all_metrics_file: all_metrics.csv
   txn_count_for_showing_cost: 10000
