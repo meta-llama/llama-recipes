@@ -70,7 +70,7 @@ It lets us specify the training settings for everything from `model_name` to `da
 
 * [Datasets config file](../../src/llama_recipes/configs/datasets.py) provides the available options for datasets.
 
-* [peft config file](../../src/llama_recipes/configs/peft.py) provides the supported PEFT methods and respective settings that can be modified.
+* [peft config file](../../src/llama_recipes/configs/peft.py) provides the supported PEFT methods and respective settings that can be modified. We currently support LoRA and Llama-Adapter. Please note that LoRA is the only technique which is supported in combination with FSDP.
 
 * [FSDP config file](../../src/llama_recipes/configs/fsdp.py) provides FSDP settings such as:
 

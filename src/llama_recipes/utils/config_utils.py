@@ -45,7 +45,14 @@ def generate_peft_config(train_config, kwargs):
     peft_configs = (LoraConfig, AdaptionPromptConfig, PrefixTuningConfig)
     names = tuple(c.__name__.rstrip("_config") for c in configs)
 
-    assert train_config.peft_method in names, f"Peft config not found: {train_config.peft_method}"
+    if train_config.peft_method not in names:
+        raise RuntimeError(f"Peft config not found: {train_config.peft_method}")
+
+    if train_config.peft_method == "prefix":
+        raise RuntimeError("PrefixTuning is currently not supported (see https://github.com/meta-llama/llama-recipes/issues/359#issuecomment-2089350811)")
+
+    if train_config.enable_fsdp and train_config.peft_method == "llama_adapter":
+        raise RuntimeError("Llama_adapter is currently not supported in combination with FSDP (see https://github.com/meta-llama/llama-recipes/issues/359#issuecomment-2089274425)")
 
     config = configs[names.index(train_config.peft_method)]()
 
