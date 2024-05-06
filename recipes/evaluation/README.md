@@ -28,7 +28,7 @@ Before running the evaluation script, ensure you have all the necessary dependen
 Clone the lm-evaluation-harness repository and install it:
 
 ```bash
-git clone https://github.com/matthoffner/lm-evaluation-harness.git
+git clone https://github.com/EleutherAI/lm-evaluation-harness.git
 cd lm-evaluation-harness
 pip install -e .
 

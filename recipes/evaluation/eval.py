@@ -11,7 +11,7 @@ from pathlib import Path
 
 import numpy as np
 import lm_eval
-from lm_eval import evaluator, tasks
+from lm_eval import tasks
 from lm_eval.utils import make_table
 
 
@@ -73,12 +73,11 @@ def handle_output(args, results, logger):
 
 
 def load_tasks(args):
-    tasks.initialize_tasks()
     if args.open_llm_leaderboard_tasks:
         current_dir = os.getcwd()
         config_dir = os.path.join(current_dir, "open_llm_leaderboard")
-        lm_eval.tasks.include_path(config_dir)
-        return [
+        task_manager = tasks.TaskManager(include_path=config_dir)
+        return task_manager, [
             "arc_challenge_25_shot",
             "hellaswag_10_shot",
             "truthfulqa_mc2",
@@ -86,7 +85,7 @@ def load_tasks(args):
             "gsm8k",
             "mmlu",
         ]
-    return args.tasks.split(",") if args.tasks else []
+    return None, args.tasks.split(",") if args.tasks else []
 
 
 def parse_eval_args():
@@ -190,21 +189,18 @@ def parse_eval_args():
         default=None,
         help="Additional path to include if there are external tasks.",
     )
-    parser.add_argument(
-        "--decontamination_ngrams_path", default=None
-    )  # Not currently used
     return parser.parse_args()
 
 
 def evaluate_model(args):
     try:
-        task_list = load_tasks(args)
+        task_manager, task_list = load_tasks(args)
         # Customized model such as Quantized model etc.
         # In case you are working with a custom model, you can use the following guide to add it here:
         # https://github.com/EleutherAI/lm-evaluation-harness/blob/main/docs/interface.md#external-library-usage
 
         # Evaluate
-        results = evaluator.simple_evaluate(
+        results = lm_eval.simple_evaluate(
             model=args.model,
             model_args=args.model_args,
             tasks=task_list,
@@ -214,11 +210,11 @@ def evaluate_model(args):
             device=args.device,
             use_cache=args.use_cache,
             limit=args.limit,
-            decontamination_ngrams_path=args.decontamination_ngrams_path,
             check_integrity=args.check_integrity,
             write_out=args.write_out,
             log_samples=args.log_samples,
             gen_kwargs=args.gen_kwargs,
+            task_manager=task_manager,
         )
         handle_output(args, results, logger)
 
