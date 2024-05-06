@@ -56,6 +56,6 @@ We will build from CRAG (blue, below) to Self-RAG (green) and finally to Adaptiv
 
 ### Local LangGraph RAG Agent
 
-Our fouth notebook, `langgraph-rag-agent-local`, shows how to apply LangGraph to build advanced RAG agents using Llama 3 that run locally and reliably.
+Our fourth notebook, `langgraph-rag-agent-local`, shows how to apply LangGraph to build advanced RAG agents using Llama 3 that run locally and reliably.
 
 See this [video overview](https://www.youtube.com/watch?v=sgnrL7yo1TE) for more detail.
