@@ -75,7 +75,7 @@ def parse_qa_to_json(response_string):
     # Adjusted regex to capture question-answer pairs more flexibly
     # This pattern accounts for optional numbering and different question/answer lead-ins
     pattern = re.compile(
-        r"\d*\.\s*Question:\s*(.*?)\nAnswer:\s*(.*?)(?=\n\d*\.\s*Question:|\Z)", 
+        r"\d*\.\s*Question:\s*(.*?)\nAnswer:\s*(.*?)(?=\n\d*\.\s*Question:|\Z)",
         re.DOTALL
     )
 
@@ -96,9 +96,12 @@ async def prepare_and_send_request(chat_service, api_context: dict, document_con
 
 async def generate_question_batches(chat_service, api_context: dict):
     document_text = read_file_content(api_context)
-    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf", pad_token="</s>", padding_side="right")
+    if api_context["model"] in ["meta-llama-3-70b-instruct","meta-llama-3-8b-instruct"]:
+        tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B", pad_token="</s>", padding_side="right")
+    else:
+        tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf", pad_token="</s>", padding_side="right")
     document_batches = split_text_into_chunks(api_context, document_text, tokenizer)
-    
+
     total_questions = api_context["total_questions"]
     batches_count = len(document_batches)
     base_questions_per_batch = total_questions // batches_count
@@ -116,6 +119,3 @@ async def generate_question_batches(chat_service, api_context: dict):
     question_generation_results = await asyncio.gather(*generation_tasks)
 
     return question_generation_results
-
-
-
