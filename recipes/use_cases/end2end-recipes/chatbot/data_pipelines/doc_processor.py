@@ -6,13 +6,13 @@ AVERAGE_TOKENS_PER_RESULT = 100
 
 def get_token_limit_for_model(model: str) -> int:
     """Returns the token limit for a given model."""
-    if model == "llama-2-70b-chat-fp16" or model == "llama-2-13b-chat-turbo":
+    if model == "llama-2-13b-chat" or model == "llama-2-70b-chat":
         return 4096
-    
+    else:
+        return 8192
 
 def calculate_num_tokens_for_message(encoded_text) -> int:
     """Calculates the number of tokens used by a message."""
-    
     # Added 3 to account for priming with assistant's reply, as per original comment
     return len(encoded_text) + 3
 
@@ -29,7 +29,7 @@ def split_text_into_chunks(context: dict, text: str, tokenizer) -> list[str]:
     estimated_total_question_tokens = estimated_tokens_per_question * context["total_questions"]
     # Ensure there's a reasonable minimum chunk size
     max_tokens_for_text = max(model_token_limit - tokens_for_questions - estimated_total_question_tokens, model_token_limit // 10)
-    
+
     chunks, current_chunk = [], []
     print(f"Splitting text into chunks of {max_tokens_for_text} tokens, encoded_text {len(encoded_text)}", flush=True)
     for token in encoded_text:
@@ -43,5 +43,5 @@ def split_text_into_chunks(context: dict, text: str, tokenizer) -> list[str]:
         chunks.append(tokenizer.decode(current_chunk).strip())
 
     print(f"Number of chunks in the processed text: {len(chunks)}", flush=True)
-   
+
     return chunks

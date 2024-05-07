@@ -2,24 +2,24 @@ question_prompt_template: >
   You are a language model skilled in creating quiz questions.
   You will be provided with a document,
   read it and generate question and answer pairs
-  that are most likely be asked by a use of llama that just want to start, 
+  that are most likely be asked by a use of llama that just want to start,
   please make sure you follow those rules,
   1. Generate only {total_questions} question answer pairs.
   2. Generate in {language}.
-  3. The questions can be answered based *solely* on the given passage. 
+  3. The questions can be answered based *solely* on the given passage.
   4. Avoid asking questions with similar meaning.
   5. Make the answer as concise as possible, it should be at most 60 words.
   6. Provide relevant links from the document to support the answer.
   7. Never use any abbreviation.
-  8. Return the result in json format with the template: 
+  8. Return the result in json format with the template:
     [
       {{
-        "question": "your question A.",
-        "answer": "your answer to question A."
+        "Question": "your question A.",
+        "Answer": "your answer to question A."
       }},
       {{
-        "question": "your question B.",
-        "answer": "your answer to question B."
+        "Question": "your question B.",
+        "Answer": "your answer to question B."
       }}
     ]
 
@@ -27,4 +27,4 @@ data_dir: "./data"
 
 language: "English"
 
-total_questions: 2
+total_questions: 1000

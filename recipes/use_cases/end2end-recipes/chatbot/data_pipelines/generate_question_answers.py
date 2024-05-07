@@ -5,12 +5,12 @@ import argparse
 import asyncio
 import json
 from config import load_config
-from generator_utils import generate_question_batches, parse_qa_to_json
+from generator_utils import generate_question_batches, parse_qa_to_json, get_model_name
 from itertools import chain
 import logging
 import aiofiles  # Ensure aiofiles is installed for async file operations
 from abc import ABC, abstractmethod
-from octoai.client import Client
+from octoai.client import OctoAI
 from functools import partial
 from openai import OpenAI
 
@@ -35,7 +35,7 @@ class OctoAIChatService(ChatService):
         async with request_limiter:
             try:
                 event_loop = asyncio.get_running_loop()
-                client = Client(api_context['api_key'])
+                client = OctoAI(api_context['api_key'])
                 api_chat_call = partial(
                     client.chat.completions.create,
                     model=api_context['model'],
@@ -48,7 +48,7 @@ class OctoAIChatService(ChatService):
 
                 return assistant_response_json
             except Exception as error:
-                print(f"Error during chat request execution: {error}")
+                logging.error(f"Error during chat request execution: {error}",exc_info=True)
                 return ""
 # Use the local vllm openai compatible server for generating question/answer pairs to make API call syntax consistent
 # please read for more detail:https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html.
@@ -57,25 +57,25 @@ class VllmChatService(ChatService):
         async with request_limiter:
             try:
                 event_loop = asyncio.get_running_loop()
-                client = OpenAI(api_key="EMPTY", base_url="http://localhost:"+ api_context['end_point']+"/v1")
+                model_name = get_model_name(api_context['model'])
+                client = OpenAI(api_key=api_context['api_key'], base_url="http://localhost:"+ str(api_context['endpoint'])+"/v1")
                 api_chat_call = partial(
                     client.chat.completions.create,
-                    model=api_context['model'],
+                    model=model_name,
                     messages=chat_request,
                     temperature=0.0
                 )
                 response = await event_loop.run_in_executor(None, api_chat_call)
                 assistant_response = next((choice.message.content for choice in response.choices if choice.message.role == 'assistant'), "")
                 assistant_response_json = parse_qa_to_json(assistant_response)
-
+                assert(len(assistant_response_json)!=0)
                 return assistant_response_json
             except Exception as error:
-                print(f"Error during chat request execution: {error}")
+                logging.error(f"Error during chat request execution: {error}",exc_info=True)
                 return ""
 
 async def main(context):
     if context["endpoint"]:
-        logging.info(f" Use local vllm service at port '{context["endpoint"]}'.")
         chat_service = VllmChatService()
     else:
         chat_service = OctoAIChatService()
@@ -93,7 +93,7 @@ async def main(context):
         logging.info("Data successfully written to 'data.json'. Process completed.")
 
     except Exception as e:
-        logging.error(f"An unexpected error occurred during the process: {e}")
+        logging.error(f"An unexpected error occurred during the process: {e}",exc_info=True)
 
 def parse_arguments():
     # Define command line arguments for the script
@@ -108,7 +108,7 @@ def parse_arguments():
     )
     parser.add_argument(
         "-m", "--model",
-        choices=["meta-llama-3-70b-instruct","meta-llama-3-8b-instruct","llama-2-70b-chat-fp16", "llama-2-13b-chat-fp16"],
+        choices=["meta-llama-3-70b-instruct","meta-llama-3-8b-instruct","llama-2-13b-chat", "llama-2-70b-chat"],
         default="meta-llama-3-70b-instruct",
         help="Select the model to use for generation."
     )
@@ -120,8 +120,9 @@ def parse_arguments():
     parser.add_argument(
         "-v", "--vllm_endpoint",
         default=None,
+        type=int,
         help="If a port is specified, then use local vllm endpoint for generating question/answer pairs."
-
+    )
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -133,4 +134,6 @@ if __name__ == "__main__":
     context["model"] = args.model
     context["endpoint"] = args.vllm_endpoint
     logging.info(f"Configuration loaded. Generating {args.total_questions} question/answer pairs using model '{args.model}'.")
+    if context["endpoint"]:
+        logging.info(f"Use local vllm service at port: '{args.vllm_endpoint}'.")
     asyncio.run(main(context))
