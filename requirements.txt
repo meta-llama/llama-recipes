@@ -19,3 +19,7 @@ chardet
 openai
 typing-extensions==4.8.0
 tabulate
+octoai
+python-magic
+PyPDF2
+aiofiles

@@ -2,23 +2,23 @@
 
 Large language models (LLMs) have emerged as groundbreaking tools, capable of understanding and generating human-like text. These models power many of today's advanced chatbots, providing more natural and engaging user experiences. But how do we create these intelligent systems?
 
-Here, we aim to make an FAQ model for Llama that be able to answer questions about Llama by fine-tune Llama2 7B chat using existing official Llama documents.
+Here, we aim to make an FAQ model for Llama that be able to answer questions about Llama by fine-tune Meta Llama 3 8B instruct model using existing official Llama documents.
 
 
 ### Fine-tuning Process
 
-Fine-tuning LLMs here LLama 2 involves several key steps: Data Collection, preprocessing, fine-tuning, evaluation.
+Fine-tuning Meta Llama 3 8B instruct model involves several key steps: Data Collection, Preprocessing, Fine-tuning, Evaluation.
 
 
 ### LLM Generated datasets
 
-As Chatbots are usually domain specifics and based on public or proprietary data, one common way inspired by [self-instruct paper](https://arxiv.org/abs/2212.10560) is to use LLMs to assist building the dataset from our data. For example to build an FAQ model, we can use Llama model to process our documents and help us build question and answer pair (We will showcase this here). Just keep it in mind that usually most of the proprietary LLMs has this clause in their license that you are not allowed to use the output generated from the model to train another LLM. In this case we will use Llama to fine-tune another Llama model.
+As Chatbots are usually domain specifics and based on public or proprietary data, one common way inspired by [self-instruct paper](https://arxiv.org/abs/2212.10560) is to use LLMs to assist building the dataset from our data. For example to build an FAQ model, we can use a powerful Meta Llama 3 70B model to process our documents and help us build question and answer pair (We will showcase this here). Just keep it in mind that usually most of the proprietary LLMs has this clause in their license that you are not allowed to use the output generated from the model to train another LLM. In this case we will fine-tune another Llama model with the help of Meta Llama 3 70B.
 
 
 Similarly, we will use the same LLM to evaluate the quality of generated datasets and finally evaluate the outputs from the model.
 
 
-Given this context, here we want to highlight some of best practices that need to be in place for data collection and pre-processing in general.
+Given this context, here we want to highlight some of best practices that need to be in place for data collection and preprocessing in general.
 
 ### **Data Collection & Preprocessing:**
 
@@ -129,8 +129,8 @@ For a FAQ model, you need to format your data in a way that's conducive to learn
 Question-Answer Pairing: Organize your data into pairs where each question is directly followed by its answer. This simple structure is highly effective for training models to understand and generate responses. For example:
 
 ```python
-"question": "What is Llama 2?",
-"answer": "Llama 2 is a collection of pretrained and fine-tuned large language models ranging from 7 billion to 70 billion parameters, optimized for dialogue use cases."
+"question": "What is Llama 3?",
+"answer": "Llama 3 is a collection of pretrained and fine-tuned large language models ranging from 8 billion to 70 billion parameters, optimized for dialogue use cases."
 ```
 
 
@@ -138,23 +138,23 @@ Question-Answer Pairing: Organize your data into pairs where each question is di
 
 
 4. **Fine-Tuning:** Given that we have a selected pretrained model, in this case we use LLama 2 chat 7B, fine-tunning with more specific data can improve its performance on particular tasks, such as answering questions about Llama in this case.
-#### Building Dataset 
+#### Building Dataset
 
 During the self-instruct process of generation Q&A pairs from documents, we realized that with out system prompt being
 ```python
 You are a language model skilled in creating quiz questions.
 You will be provided with a document,
 read it and generate question and answer pairs
-that are most likely be asked by a use of llama that just want to start, 
+that are most likely be asked by a use of llama that just want to start,
 please make sure you follow those rules,
 1. Generate only {total_questions} question answer pairs.
 2. Generate in {language}.
-3. The questions can be answered based *solely* on the given passage. 
+3. The questions can be answered based *solely* on the given passage.
 4. Avoid asking questions with similar meaning.
 5. Make the answer as concise as possible, it should be at most 60 words.
 6. Provide relevant links from the document to support the answer.
 7. Never use any abbreviation.
-8. Return the result in json format with the template: 
+8. Return the result in json format with the template:
   [
     {{
       "question": "your question A.",
@@ -185,7 +185,7 @@ Model tends to ignore providing the bigger picture in the questions, for example
 
 #### Data Insights
 
-We generated a dataset of almost 650 Q&A pairs from some of the open source documents about Llama 2, including getting started guide from Llama website, its FAQ, Llama 2, Purple Llama, Code Llama papers and Llama-Recipes documentations. 
+We generated a dataset of almost 800 Q&A pairs from some of the open source documents about Llama models, including getting started guide from Llama website, its FAQ, Llama 3, Purple Llama, Code Llama papers and Llama-Recipes documentations.
 
 We have run some fine-tuning experiments with single GPU using quantization with different LORA configs (all linear layer versus query and key projections only) and different number of epochs. Although train and eval loss shows decrease specially with using all linear layers in LORA configs and training with 6 epochs, still the result is far from acceptable in real tests.
 
@@ -207,6 +207,4 @@ Below are some examples of real test on the fine-tuned model with very poor resu
 </p>
 
 
-Next, we are looking into augmenting our datasets. One way to do so, is to use our Llama 70B model to read our question answer pairs and come up with two paraphrase versions of each pair to augment our data. 
-
-
+Next, we are looking into augmenting our datasets. One way to do so, is to use our Llama 70B model to read our question answer pairs and come up with two paraphrase versions of each pair to augment our data.
