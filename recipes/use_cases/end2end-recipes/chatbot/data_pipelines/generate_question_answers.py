@@ -5,7 +5,7 @@ import argparse
 import asyncio
 import json
 from config import load_config
-from generator_utils import generate_question_batches, parse_qa_to_json, get_model_name
+from generator_utils import generate_question_batches, parse_qa_to_json
 from itertools import chain
 import logging
 import aiofiles  # Ensure aiofiles is installed for async file operations
@@ -21,7 +21,10 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 rate_limit_threshold = 2000
 allowed_concurrent_requests = int(rate_limit_threshold * 0.75)
 request_limiter = asyncio.Semaphore(allowed_concurrent_requests)
-
+# Since OctoAI has different naming for llama models, create this mapping to get huggingface offical model name given OctoAI names.
+MODEL_NAME_MAPPING={"meta-llama-3-70b-instruct":"meta-llama/Meta-Llama-3-70B-Instruct",
+"meta-llama-3-8b-instruct":"meta-llama/Meta-Llama-3-8B-Instruct","llama-2-7b-chat":"meta-llama/Llama-2-7b-chat-hf"
+,"llama-2-70b-chat":"meta-llama/Llama-2-70b-chat-hf"}
 class ChatService(ABC):
     @abstractmethod
     async def execute_chat_request_async(self, api_context: dict, chat_request):
@@ -57,7 +60,7 @@ class VllmChatService(ChatService):
         async with request_limiter:
             try:
                 event_loop = asyncio.get_running_loop()
-                model_name = get_model_name(api_context['model'])
+                model_name = MODEL_NAME_MAPPING[api_context['model']]
                 client = OpenAI(api_key=api_context['api_key'], base_url="http://localhost:"+ str(api_context['endpoint'])+"/v1")
                 api_chat_call = partial(
                     client.chat.completions.create,
@@ -68,7 +71,8 @@ class VllmChatService(ChatService):
                 response = await event_loop.run_in_executor(None, api_chat_call)
                 assistant_response = next((choice.message.content for choice in response.choices if choice.message.role == 'assistant'), "")
                 assistant_response_json = parse_qa_to_json(assistant_response)
-                assert(len(assistant_response_json)!=0)
+                if len(assistant_response_json)==0:
+                    logging.error("No question/answer pairs generated. Please check the input context or model configuration.")
                 return assistant_response_json
             except Exception as error:
                 logging.error(f"Error during chat request execution: {error}",exc_info=True)
@@ -103,8 +107,8 @@ def parse_arguments():
     parser.add_argument(
         "-t", "--total_questions",
         type=int,
-        default=10,
-        help="Specify the number of question/answer pairs to generate."
+        default=100,
+        help="Specify the total number of question/answer pairs to generate."
     )
     parser.add_argument(
         "-m", "--model",

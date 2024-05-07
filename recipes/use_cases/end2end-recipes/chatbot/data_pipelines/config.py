@@ -13,6 +13,6 @@ def load_config(config_path: str = "./config.yaml"):
         config["api_key"] = os.environ["OCTOAI_API_TOKEN"]
     except KeyError:
         print("API token did not found, please set the OCTOAI_API_TOKEN environment variable if using OctoAI, otherwise set api_key to default EMPTY")
-        # local Vllm endpoint did not need API key, so set the API key to "EMPTY" if not found
+        # local Vllm endpoint did not need API key, so set the API key to "EMPTY" if OCTOAI_API_TOKEN not found
         config["api_key"] = "EMPTY"
     return config

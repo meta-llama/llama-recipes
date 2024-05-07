@@ -4,7 +4,7 @@ question_prompt_template: >
   read it and generate question and answer pairs
   that are most likely be asked by a use of llama that just want to start,
   please make sure you follow those rules,
-  1. Generate only {total_questions} question answer pairs.
+  1. Generate only {num_questions} question answer pairs.
   2. Generate in {language}.
   3. The questions can be answered based *solely* on the given passage.
   4. Avoid asking questions with similar meaning.
@@ -27,4 +27,4 @@ data_dir: "./data"
 
 language: "English"
 
-total_questions: 1000
+num_questions: 2
