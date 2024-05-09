@@ -16,7 +16,7 @@ Then run the command `streamlit run streamlit_llama2.py` and you'll see on your 
 ![](../../../docs/images/llama2-streamlit.png)
 ![](../../../docs/images/llama2-streamlit2.png)
 
-### Running [Gradio](https://www.gradio.app/) with Llama2 (using [Replicate](Llama2_Gradio.ipynb) or [OctoAI](../../llama_api_providers/OctoAI_API_examples/Llama2_Gradio.ipynb))
+### Running [Gradio](https://www.gradio.app/) with Llama2 (using [Replicate](Llama2_Gradio.ipynb) or [OctoAI](../../llama_api_providers/OctoAI_API_examples/Llama_Gradio.ipynb))
 
 To see how to query Llama2 and get answers with the Gradio UI both from the notebook and web, just launch the notebook `Llama2_Gradio.ipynb`. For more info, on how to get set up with a token to power these apps, see the note on [Replicate](../../README.md#replicate_note) and [OctoAI](../../README.md##octoai_note).
 
