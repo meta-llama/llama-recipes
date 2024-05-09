@@ -1,5 +1,28 @@
 import gradio as gr
 
+from typing import (
+    AbstractSet,
+    cast,
+    Collection,
+    Dict,
+    Iterator,
+    List,
+    Literal,
+    Sequence,
+    TypedDict,
+    Union,
+)
+
+Role = Literal["system", "user", "assistant"]
+
+
+class Message(TypedDict):
+    role: Role
+    content: str
+
+
+Dialog = Sequence[Message]
+
 def prompt_template_dropdown_listener(value):
     # This function will be called whenever the value of the dropdown changes
     if value == "Single Turn":
@@ -14,15 +37,47 @@ def prompt_template_dropdown_listener(value):
         }
 
 def format_prompt_template_listener(system_prompt, user_prompt_1, assistant_response, user_prompt_2):
+    if not user_prompt_1:
+        return {
+            ""
+        }
+    dialog: Dialog = []
+    if system_prompt: dialog.append({   "role": "system", "content": system_prompt, })
+    dialog.append({   "role": "user", "content": user_prompt_1, })
+    if assistant_response: dialog.append({   "role": "assistant", "content": assistant_response, })
+    if user_prompt_2: dialog.append({   "role": "user", "content": user_prompt_2, })
 
-        return {prompt_output: f"""
-<|begin_text|>{system_prompt}
-{user_prompt_1}
-""",
-        python_output: f"""
-        """,
-        hf_output: f"""
-        """,
+    return ChatFormat.encode_dialog_prompt(dialog)
+
+class ChatFormat:
+
+    @staticmethod
+    def encode_header( message: Message) -> List[str]:
+        prompts = []
+        prompts.append("<|start_header_id|>")
+        prompts.extend(message["role"])
+        prompts.append("<|end_header_id|>")
+        prompts.extend("\n\n")
+        return prompts
+
+    @staticmethod
+    def encode_message(message: Message) -> List[str]:
+        prompts = ChatFormat.encode_header(message)
+        prompts.extend(message["content"].strip())
+        prompts.append("<|eot_id|>")
+        return prompts
+
+    @staticmethod
+    def encode_dialog_prompt(dialog: Dialog) -> str:
+        prompts = ["<|begin_of_text|>"]
+        for message in dialog:
+            prompts.extend(ChatFormat.encode_message(message))
+        # Add the start of an assistant message for the model to complete.
+        prompts.extend(ChatFormat.encode_header({"role": "assistant", "content": ""}))
+        return {
+            prompt_output: "".join(prompts),
+            python_output: "",
+            hf_output: "",
         }
 
 
@@ -56,6 +111,9 @@ with gr.Blocks() as demo:
                         hf_output = gr.Textbox(label="Using HF Transformers", interactive=False, min_width=600, lines=25)
 
     system_prompt.change(format_prompt_template_listener, [system_prompt, user_prompt_1, assistant_response, user_prompt_2], [prompt_output, python_output, hf_output])
+    user_prompt_1.change(format_prompt_template_listener, [system_prompt, user_prompt_1, assistant_response, user_prompt_2], [prompt_output, python_output, hf_output])
+    assistant_response.change(format_prompt_template_listener, [system_prompt, user_prompt_1, assistant_response, user_prompt_2], [prompt_output, python_output, hf_output])
+    user_prompt_2.change(format_prompt_template_listener, [system_prompt, user_prompt_1, assistant_response, user_prompt_2], [prompt_output, python_output, hf_output])
 
 
 
