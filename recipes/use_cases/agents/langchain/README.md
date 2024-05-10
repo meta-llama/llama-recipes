@@ -16,7 +16,7 @@ AgentExecutor is the runtime for an agent. AgentExecutor calls the agent, execut
 
 Our first notebook, `tool-calling-agent`, shows how to build a [tool calling agent](https://python.langchain.com/docs/modules/agents/agent_types/tool_calling/) with AgentExecutor and Llama 3.
 
-This shows how to build an agent that uses web search and retrieval tools.
+This shows how to build an agent that uses web search, text2image, image2text, and text2speech tools.
 
 --- 
 
@@ -29,9 +29,9 @@ LangGraph can be used to build agents with a few pieces:
 - **Memory:** Persist information (graph state) across these steps
 - **Tool use:** Modify state at any step
 
-Our second notebook, `langgraph-agent`, shows how to build a Llama 3 powered agent that uses web search and retrieval tool in LangGraph.
+Our second notebook, `langgraph-agent`, shows an alternative way to AgentExecutor to build a Llama 3 powered agent in LangGraph. 
 
-It discusses some of the trade-offs between AgentExecutor and LangGraph.
+It discusses some of the trade-offs between AgentExecutor and LangGraph. 
 
 --- 
 
