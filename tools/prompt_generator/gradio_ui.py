@@ -47,7 +47,7 @@ with gr.Blocks() as demo:
             gr.Markdown("## Configurations")
             model = gr.Dropdown(["Llama 3", "Llama 2"], label="Model", filterable=False)
 
-            prompt_template = gr.Dropdown([SINGLE_TURN, MULTI_TURN], label="Prompt Template", filterable=False)
+            prompt_template = gr.Dropdown([SINGLE_TURN, MULTI_TURN], label="Prompt Template", filterable=False, value=SINGLE_TURN)
 
             gr.Markdown("## Input Prompts")
             system_prompt = gr.Textbox(label="System prompt", lines=2, placeholder="Optional System prompt for the model")
