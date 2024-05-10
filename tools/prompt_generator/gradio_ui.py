@@ -32,7 +32,6 @@ def format_prompt_template_listener(system_prompt, user_prompt_1, assistant_resp
     if user_prompt_2: dialog.append({   "role": "user", "content": user_prompt_2, })
 
     return {
-        notice: gr.Markdown(elem_id="notice", visible=False, value="> Check the input prompts carefully before submitting."),
         prompt_output: ChatFormat.encode_dialog_prompt(dialog),
         python_output: "",
         hf_output: "",
@@ -60,17 +59,15 @@ with gr.Blocks() as demo:
         with gr.Column(scale=3, min_width=600):
             gr.Markdown("## Output")
             with gr.Tab("Preview"):
-
-                notice = gr.Markdown(elem_id="notice", value="> Check the input prompts carefully before submitting.", visible=False)
-                prompt_output = gr.Textbox(show_label=False, interactive=False, min_width=600, lines=30)
+                prompt_output = gr.Textbox(show_label=False, interactive=False, min_width=600, lines=30, show_copy_button=True)
 
             with gr.Tab("Code"):
                 with gr.Row():
                     with gr.Tab("Plain Python"):
-                        python_output = gr.Textbox(label="Python Code", interactive=False, min_width=600, lines=25)
+                        python_output = gr.Textbox(label="Python Code", interactive=False, min_width=600, lines=30, show_copy_button=True)
                     with gr.Tab("Hugging Face"):
-                        hf_output = gr.Textbox(label="Using HF Transformers", interactive=False, min_width=600, lines=25)
+                        hf_output = gr.Textbox(label="Using HF Transformers", interactive=False, min_width=600, lines=30, show_copy_button=True)
 
-    submit.click(format_prompt_template_listener, [system_prompt, user_prompt_1, assistant_response, user_prompt_2], [notice, prompt_output, python_output, hf_output])
+    submit.click(format_prompt_template_listener, [system_prompt, user_prompt_1, assistant_response, user_prompt_2], [prompt_output, python_output, hf_output])
 
 demo.launch()
