@@ -36,7 +36,7 @@ def format_prompt_template_listener(system_prompt, user_prompt_1, assistant_resp
 
     return {
         prompt_output: ChatFormat.encode_dialog_prompt(dialog),
-        python_output: "",
+        python_output: ChatFormat.format_python_prompt_output(system_prompt, user_prompt_1, assistant_response, user_prompt_2),
         hf_output: "",
     }
 
@@ -62,12 +62,12 @@ with gr.Blocks() as demo:
         with gr.Column(scale=3, min_width=600):
             gr.Markdown("## Output")
             with gr.Tab("Preview"):
-                prompt_output = gr.Textbox(show_label=False, interactive=False, min_width=600, lines=30, show_copy_button=True)
+                prompt_output = gr.Code(show_label=True, interactive=False, min_width=600, lines=30)
 
             with gr.Tab("Code"):
                 with gr.Row():
                     with gr.Tab("Plain Python"):
-                        python_output = gr.Textbox(label="Python Code", interactive=False, min_width=600, lines=30, show_copy_button=True)
+                        python_output = gr.Code(label="Python Code", interactive=False, min_width=600, lines=30, language="python")
                     with gr.Tab("Hugging Face"):
                         hf_output = gr.Textbox(label="Using HF Transformers", interactive=False, min_width=600, lines=30, show_copy_button=True)
 
