@@ -2,9 +2,12 @@ import gradio as gr
 
 from prompt_utils import ChatFormat, Dialog
 
+SINGLE_TURN = "Single Turn"
+MULTI_TURN = "Multi Turn"
+
 def prompt_template_dropdown_listener(value):
     # This function will be called whenever the value of the dropdown changes
-    if value == "Single Turn":
+    if value == SINGLE_TURN:
         return {
             assistant_response: gr.Textbox(elem_id="assistant_response", visible = False),
             user_prompt_2: gr.Textbox(elem_id="user_prompt_2", visible = False)
@@ -15,14 +18,14 @@ def prompt_template_dropdown_listener(value):
             user_prompt_2: gr.Textbox(elem_id="user_prompt_2", visible = True)
         }
 
-def format_prompt_template_listener(system_prompt, user_prompt_1, assistant_response, user_prompt_2):
+def format_prompt_template_listener(system_prompt, user_prompt_1, assistant_response, user_prompt_2, prompt_template):
     if not user_prompt_1:
         raise gr.Error("User prompt is mandatory.")
 
     if not user_prompt_2 and assistant_response:
         raise gr.Error("When the assistant message is set, the second user prompt is mandatory.")
 
-    if (user_prompt_2 and not assistant_response) or (not user_prompt_2 and not assistant_response):
+    if prompt_template == MULTI_TURN and ((user_prompt_2 and not assistant_response) or (not user_prompt_2 and not assistant_response)):
         raise gr.Error("When generating a multi turn prompt, the assistant message is mandatory.")
 
     dialog: Dialog = []
@@ -44,7 +47,7 @@ with gr.Blocks() as demo:
             gr.Markdown("## Configurations")
             model = gr.Dropdown(["Llama 3", "Llama 2"], label="Model", filterable=False)
 
-            prompt_template = gr.Dropdown(["Single Turn", "Multi Turn"], label="Prompt Template", filterable=False)
+            prompt_template = gr.Dropdown([SINGLE_TURN, MULTI_TURN], label="Prompt Template", filterable=False)
 
             gr.Markdown("## Input Prompts")
             system_prompt = gr.Textbox(label="System prompt", lines=2, placeholder="Optional System prompt for the model")
@@ -68,6 +71,6 @@ with gr.Blocks() as demo:
                     with gr.Tab("Hugging Face"):
                         hf_output = gr.Textbox(label="Using HF Transformers", interactive=False, min_width=600, lines=30, show_copy_button=True)
 
-    submit.click(format_prompt_template_listener, [system_prompt, user_prompt_1, assistant_response, user_prompt_2], [prompt_output, python_output, hf_output])
+    submit.click(format_prompt_template_listener, [system_prompt, user_prompt_1, assistant_response, user_prompt_2, prompt_template], [prompt_output, python_output, hf_output])
 
 demo.launch()
