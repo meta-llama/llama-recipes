@@ -1,4 +1,4 @@
-gradio==4.16.0
+gradio==4.19.2
 pypdf==4.0.0
 langchain==0.1.19
 sentence-transformers==2.2.2
