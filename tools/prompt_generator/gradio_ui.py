@@ -51,9 +51,9 @@ with gr.Blocks() as demo:
 
             gr.Markdown("## Input Prompts")
             system_prompt = gr.Textbox(label="System prompt", lines=2, placeholder="Optional System prompt for the model")
-            user_prompt_1 = gr.Textbox(elem_id="user_prompt_1", label="User prompt *", lines=2, placeholder="Mandatory user prompt")
-            assistant_response = gr.Textbox(label="Assistant response", lines=2, visible=False, elem_id="assistant_response", placeholder="Mandatory assistant if prompt template is Multi Turn")
-            user_prompt_2 = gr.Textbox(label="User prompt *", lines=2, visible=False, elem_id="user_prompt_2", placeholder="Mandatory user prompt if prompt template is Multi Turn")
+            user_prompt_1 = gr.Textbox(elem_id="user_prompt_1", label="User prompt *", lines=2, placeholder="User prompt required")
+            assistant_response = gr.Textbox(label="Assistant response", lines=2, visible=False, elem_id="assistant_response", placeholder="Assistant prompt required on Multi Turn")
+            user_prompt_2 = gr.Textbox(label="User prompt *", lines=2, visible=False, elem_id="user_prompt_2", placeholder="User prompt required on Multi turn")
 
             prompt_template.input(prompt_template_dropdown_listener, prompt_template, [assistant_response, user_prompt_2])
 
@@ -71,6 +71,8 @@ with gr.Blocks() as demo:
                     with gr.Tab("Hugging Face"):
                         hf_output = gr.Textbox(label="Using HF Transformers", interactive=False, min_width=600, lines=30, show_copy_button=True)
 
-    submit.click(format_prompt_template_listener, [system_prompt, user_prompt_1, assistant_response, user_prompt_2, prompt_template], [prompt_output, python_output, hf_output])
+    inputs = [system_prompt, user_prompt_1, assistant_response, user_prompt_2, prompt_template]
+    outputs = [prompt_output, python_output, hf_output]
+    submit.click(format_prompt_template_listener, inputs, outputs)
 
 demo.launch()
