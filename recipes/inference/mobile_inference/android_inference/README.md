@@ -1,11 +1,15 @@
 # Running Llama3 8B Instruct on Android with MLC-LLM
 
+Author: Thierry Moreau - tmoreau@octo.ai
+
 # Overview
 In this tutorial we'll learn how to deploy Llama3 8B Instruct on an Android-based phone using MLC-LLM.
 
 Machine Learning Compilation for Large Language Models (MLC LLM) is a high-performance universal deployment solution that allows native deployment of any large language models with native APIs with compiler acceleration. The mission of this project is to enable everyone to develop, optimize and deploy AI models natively on everyone's devices with ML compilation techniques.
 
 You can read more about MLC-LLM at the following [link](https://github.com/mlc-ai/mlc-llm).
+
+MLC-LLM is also what powers the Llama3 inference APIs provided by [OctoAI](https://octo.ai/). You can use OctoAI for your Llama3 cloud-based inference needs by trying out the examples under the [following path](../../../llama_api_providers/OctoAI_API_examples/).
 
 This tutorial was tested with the following setup:
 * MacBook Pro 16 inch from 2021 with Apple M1 Max and 32GB of RAM running Sonoma 14.3.1
