@@ -16,7 +16,7 @@ To run fine-tuning on a single GPU, we will make use of two packages:
 ## How to run it?
 
 ```bash
-python -m finetuning.py  --use_peft --peft_method lora --quantization --use_fp16 --model_name /patht_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m finetuning.py  --use_peft --peft_method lora --quantization --use_fp16 --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 ```
 The args used in the command above are:
 
@@ -48,16 +48,16 @@ to run with each of the datasets set the `dataset` flag in the command as shown 
 ```bash
 # grammer_dataset
 
-python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset grammar_dataset --model_name /patht_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset grammar_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 # alpaca_dataset
 
-python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset alpaca_dataset --model_name /patht_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset alpaca_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 
 # samsum_dataset
 
-python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset samsum_dataset --model_name /patht_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset samsum_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 ```
 
