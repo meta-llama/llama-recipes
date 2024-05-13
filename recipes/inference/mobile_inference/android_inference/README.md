@@ -69,7 +69,7 @@ This tutorial was tested successfully on Android Studio Hedgehog | 2023.1.1 Patc
 
 JDK, such as OpenJDK >= 17, to compile Java bindings of TVM Unity runtime.
 
-We strongly recommend setting the JAVA_HOME to the JDK bundled with Android Studio. Using Android Studio’s JBR bundle as recommended here https://developer.android.com/build/jdks will reduce the chances of potential errors in JNI compilation.
+We strongly recommend setting the JAVA_HOME to the JDK bundled with Android Studio. Using Android Studio’s JBR bundle as recommended [here](https://developer.android.com/build/jdks) will reduce the chances of potential errors in JNI compilation.
 
 For instance on macOS, you'll need to point JAVA_HOME to the following.
 
