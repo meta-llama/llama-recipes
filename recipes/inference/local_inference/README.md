@@ -69,7 +69,7 @@ In case you have fine-tuned your model with pure FSDP and saved the checkpoints 
 This is helpful if you have fine-tuned you model using FSDP only as follows:
 
 ```bash
-torchrun --nnodes 1 --nproc_per_node 8  recipes/finetuning/finetuning.py --enable_fsdp --model_name /patht_of_model_folder/7B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16
+torchrun --nnodes 1 --nproc_per_node 8  recipes/finetuning/finetuning.py --enable_fsdp --model_name /path_of_model_folder/7B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16
 ```
 Then convert your FSDP checkpoint to HuggingFace checkpoints using:
 ```bash
