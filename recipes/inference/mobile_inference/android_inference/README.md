@@ -101,6 +101,8 @@ Connect your phone to your development machine. On OSX, you'll be prompted on th
 
 # Build Steps
 
+## Building the Android Package with MLC
+
 First edit the file under `android/MLCChat/mlc-package-config.json` and replace the contents with the following:
 
 ```json
@@ -136,6 +138,8 @@ The command above will take a few minutes to run as it runs through the followin
 * Compile the Llama 3 8B instruct specified in the `mlc-package-config.json` into a binary model library.
 * Build the `mlc-llm` runtime and tokenizer. In addition to the model itself, a lightweight runtime and tokenizer are required to actually run the LLM.
 
+## Building and Running MLC Chat in Android Studio
+
 Now let's launch Android Studio.
 
 * On the "Welcome to Android Studio" page, hit "Open", and navigate to `$MLC_LLM_HOME/android/MLCChat`, then hit "Open"
@@ -145,7 +149,7 @@ Now let's launch Android Studio.
 
 Connect your phone to your development machine - assuming you've followed the setup steps in the pre-requisite section, you should be able to see the device.
 
-Next:
+Next you'll need to:
 
 * Hit Build -> Make Project.
 * Hit Run -> Run 'app'
