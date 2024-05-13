@@ -1314,3 +1314,6 @@ AgentExecutor
 LangGraph
 langgraph
 vectorstore
+Kaggle
+SalesBot
+Weaviate
