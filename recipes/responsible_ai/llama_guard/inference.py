@@ -13,19 +13,13 @@
 #     name: python3
 # ---
 
-# # Running Llama Guard inference
-#
-# This notebook is intented to showcase how to run Llama Guard inference on a sample prompt for testing.
-
 # !pip install --upgrade huggingface_hub
 
 # +
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
-from llama_recipes.inference.prompt_format_utils import build_prompt, create_conversation, LLAMA_GUARD_CATEGORY
-from llama_recipes.inference.llama.generation import Llama
-
-from typing import List, Optional, Tuple, Dict
+from llama_recipes.inference.prompt_format_utils import build_default_prompt, create_conversation, LlamaGuardVersion
+from typing import List, Tuple
 from enum import Enum
 
 import torch
@@ -63,6 +57,7 @@ def llm_eval(prompts, load_in_8bit=True, load_in_4bit = False, logprobs = False)
         bnb_4bit_compute_dtype=torch_dtype
     )
 
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
     
     model = AutoModelForCausalLM.from_pretrained(model_id, quantization_config=bnb_config, device_map="auto")
 

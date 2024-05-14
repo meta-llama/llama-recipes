@@ -8,7 +8,7 @@ import os
 import sys
 import yaml
 
-from transformers import LlamaTokenizer
+from transformers import AutoTokenizer
 
 from llama_recipes.inference.model_utils import  load_llama_from_config
 
@@ -56,7 +56,7 @@ def main(
     model = load_sharded_model_single_gpu(model_def, fsdp_checkpoint_path)
     print("model is loaded from FSDP checkpoints")
     #loading the tokenizer form the  model_path
-    tokenizer = LlamaTokenizer.from_pretrained(HF_model_path_or_name)
+    tokenizer = AutoTokenizer.from_pretrained(HF_model_path_or_name)
     tokenizer.save_pretrained(consolidated_model_path)
     #save the FSDP sharded checkpoints in HF format
     model.save_pretrained(consolidated_model_path)
