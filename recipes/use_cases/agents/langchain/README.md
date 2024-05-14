@@ -11,18 +11,24 @@ LangChain offers several different ways to implement agents with Llama 3.
 We will show 3 different approaches:
 
 (1) `Tool calling agent` - Uses [AgentExecutor](https://python.langchain.com/docs/modules/agents/quick_start/) with [tool-calling](https://python.langchain.com/docs/integrations/chat/) versions of Llama 3.
+
 (2) `LangGraph tool calling agent` - Uses [LangGraph](https://python.langchain.com/docs/langgraph) with [tool-calling](https://python.langchain.com/docs/integrations/chat/) versions of Llama 3.
+
 (3) `LangGraph custom agent` - Uses [LangGraph](https://python.langchain.com/docs/langgraph) with **any** version of Llama 3 (so long as it supports supports structured output).
 
 As we move from option (1) to (3) the degree of customization and flexibility increaces:
 
-* Option (1) is great for getting started quickly with minimal code, but requires a version of Llama 3 with reliable tool-calling, is the least customiable, and uses high-level agent executor abstraction. 
-* Option (2) is more customizable than (1), but still requires a version of Llama 3 with reliable tool-calling.
-* Option (3) does not a version of Llama 3 with reliable tool-calling and is the most customizable, but requires the most work to implement. 
+(1) `Tool calling agent` is great for getting started quickly with minimal code, but requires a version of Llama 3 with reliable tool-calling, is the least customiable, and uses high-level agent executor abstraction.
+  
+(2) `LangGraph tool calling agent` is more customizable than (1), but still requires a version of Llama 3 with reliable tool-calling.
+  
+(3) `LangGraph custom agent` does not a version of Llama 3 with reliable tool-calling and is the most customizable, but requires the most work to implement. 
+
+![langgraph_agent_architectures](https://github.com/rlancemartin/llama-recipes/assets/122662504/06119cf2-08d3-470b-a19a-6eede7a01f9d)
 
 ---
 
-### `Tool calling agent` with AgentExecutor
+### `Tool calling agent with AgentExecutor`
 
 AgentExecutor is the runtime for an agent. AgentExecutor calls the agent, executes the actions it chooses, passes the action outputs back to the agent, and repeats.
 
@@ -44,7 +50,7 @@ Our third notebook, `langgraph-custom-agent`, shows how to build a Llama 3 power
 
 --- 
 
-### LangGraph RAG Agent
+### `LangGraph RAG Agent`
 
 Our fourth notebook, `langgraph-rag-agent`, shows how to apply LangGraph to build a custom Llama 3 powered RAG agent that use ideas from 3 papers:
 
@@ -60,8 +66,8 @@ We implement each approach as a control flow in LangGraph:
 We will build from CRAG (blue, below) to Self-RAG (green) and finally to Adaptive RAG (red):
 
 --- 
-
-### Local LangGraph RAG Agent
+ 
+### `Local LangGraph RAG Agent`
 
 Our fifth notebook, `langgraph-rag-agent-local`, shows how to apply LangGraph to build advanced RAG agents using Llama 3 that run locally and reliably.
 
