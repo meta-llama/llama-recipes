@@ -5,7 +5,6 @@
     "MODEL_HEADERS" : {"Content-Type": "application/json"},
     "SAFE_CHECK" : true,
     "THRESHOLD_TPS" : 7,
-    "TOKENIZER_PATH" : "../../tokenizer",
     "RANDOM_PROMPT_LENGTH" : 1000,
     "TEMPERATURE" : 0.6,
     "TOP_P" : 0.9,
