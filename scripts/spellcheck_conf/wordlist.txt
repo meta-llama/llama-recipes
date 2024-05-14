@@ -1323,7 +1323,7 @@ MTP
 MacBook
 Moreau
 NDK
-NDK’s
+NDK's
 OSX
 OnePlus
 OxygenOS
