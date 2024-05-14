@@ -1,14 +1,8 @@
 # LangChain <> Llama3 Cookbooks
 
-LLM agents use [planning, memory, and tools](https://lilianweng.github.io/posts/2023-06-23-agent/) to accomplish tasks.
+LLM agents use [planning, memory, and tools](https://lilianweng.github.io/posts/2023-06-23-agent/) to accomplish tasks. Agents can empower llama3 with important new capabilities. Here, we will show how to give llama3 the ability to perform web search, as well as multi-modality: image generation (text-to-image), image analysis (image-to-text), and voice (text-to-speech) tools!
 
-Agents can empower llama3 we important new capabilities.
-
-Here, we will show how to give llama3 the ability to perform web search, as well as multi-modality: image generation (text-to-image), image analysis (image-to-text), and voice (text-to-speech) tools!
-
-LangChain offers several different ways to implement agents with Llama 3. 
-
-We will show 3 different approaches:
+LangChain offers several different ways to implement agents with Llama 3:
 
 (1) `Tool calling agent` - Uses [AgentExecutor](https://python.langchain.com/docs/modules/agents/quick_start/) with [tool-calling](https://python.langchain.com/docs/integrations/chat/) versions of Llama 3.
 
