@@ -34,7 +34,7 @@ def update_config(config, **kwargs):
                     if hasattr(config, param_name):
                         setattr(config, param_name, v)
                     else:
-                        # In case of specialized config we can warm user
+                        # In case of specialized config we can warn user
                         print(f"Warning: {config_name} does not accept parameter: {k}")
             elif isinstance(config, train_config):
                 print(f"Warning: unknown parameter {k}")

@@ -23,7 +23,7 @@ Get access to a machine with multiple GPUs (in this case we tested with 4 A100 a
 <details open>
 <summary>Single-node Multi-GPU</summary>
 
-    torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp --model_name /patht_of_model_folder/8B --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model
+    torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp --model_name /path_of_model_folder/8B --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model
 
 </details>
 
@@ -49,7 +49,7 @@ The args used in the command above are:
 If interested in running full parameter finetuning without making use of PEFT methods, please use the following command. Make sure to change the `nproc_per_node` to your available GPUs. This has been tested with `BF16` on 8xA100, 40GB GPUs.
 
 ```bash
-torchrun --nnodes 1 --nproc_per_node 8  finetuning.py --enable_fsdp --model_name /patht_of_model_folder/8B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --use_fast_kernels
+torchrun --nnodes 1 --nproc_per_node 8  finetuning.py --enable_fsdp --model_name /path_of_model_folder/8B --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --use_fast_kernels
 ```
 
 ### Using less CPU memory (FSDP on 70B model)
@@ -57,7 +57,7 @@ torchrun --nnodes 1 --nproc_per_node 8  finetuning.py --enable_fsdp --model_name
 If you are running full parameter fine-tuning on the 70B model, you can enable `low_cpu_fsdp` mode as the following command. This option will load model on rank0 only before moving model to devices to construct FSDP. This can dramatically save cpu memory when loading large models like 70B (on a 8-gpu node, this reduces cpu memory from 2+T to 280G for 70B model). This has been tested with `BF16` on 16xA100, 80GB GPUs.
 
 ```bash
-torchrun --nnodes 1 --nproc_per_node 8 finetuning.py --enable_fsdp --low_cpu_fsdp --pure_bf16 --model_name /patht_of_model_folder/70B --batch_size_training 1 --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned
+torchrun --nnodes 1 --nproc_per_node 8 finetuning.py --enable_fsdp --low_cpu_fsdp --pure_bf16 --model_name /path_of_model_folder/70B --batch_size_training 1 --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned
 ```
 
 
@@ -79,16 +79,16 @@ To run with each of the datasets set the `dataset` flag in the command as shown 
 
 ```bash
 # grammer_dataset
-torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp  --model_name /patht_of_model_folder/8B --use_peft --peft_method lora --dataset grammar_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned  --pure_bf16 --output_dir Path/to/save/PEFT/model
+torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp  --model_name /path_of_model_folder/8B --use_peft --peft_method lora --dataset grammar_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned  --pure_bf16 --output_dir Path/to/save/PEFT/model
 
 # alpaca_dataset
 
-torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp  --model_name /patht_of_model_folder/8B --use_peft --peft_method lora --dataset alpaca_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --output_dir Path/to/save/PEFT/model
+torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp  --model_name /path_of_model_folder/8B --use_peft --peft_method lora --dataset alpaca_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --output_dir Path/to/save/PEFT/model
 
 
 # samsum_dataset
 
-torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp --model_name /patht_of_model_folder/8B --use_peft --peft_method lora --dataset samsum_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --output_dir Path/to/save/PEFT/model
+torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp --model_name /path_of_model_folder/8B --use_peft --peft_method lora --dataset samsum_dataset --save_model --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --pure_bf16 --output_dir Path/to/save/PEFT/model
 
 ```
 
@@ -103,7 +103,7 @@ This will require to set the Sharding strategy in [fsdp config](../../src/llama_
 
 ```bash
 
-torchrun --nnodes 4 --nproc_per_node 8 ./finetuning.py --enable_fsdp --low_cpu_fsdp --fsdp_config.pure_bf16 --model_name /patht_of_model_folder/70B --batch_size_training 1 --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --hsdp --sharding_group_size n --replica_group_size world_size/n
+torchrun --nnodes 4 --nproc_per_node 8 ./finetuning.py --enable_fsdp --low_cpu_fsdp --fsdp_config.pure_bf16 --model_name /path_of_model_folder/70B --batch_size_training 1 --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned --hsdp --sharding_group_size n --replica_group_size world_size/n
 
 ```
 
