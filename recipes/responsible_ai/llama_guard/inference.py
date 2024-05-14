@@ -13,13 +13,20 @@
 #     name: python3
 # ---
 
-# !pip install --upgrade huggingface_hub
+# # Running Llama Guard inference
+#
+# This notebook is intented to showcase how to run Llama Guard inference on a sample prompt for testing.
+
+# +
+# # !pip install --upgrade huggingface_hub
 
 # +
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
 from llama_recipes.inference.prompt_format_utils import build_default_prompt, create_conversation, LlamaGuardVersion
-from typing import List, Tuple
+from llama_recipes.inference.llama.generation import Llama
+
+from typing import List, Optional, Tuple, Dict
 from enum import Enum
 
 import torch
@@ -39,15 +46,46 @@ class AgentType(Enum):
     AGENT = "Agent"
     USER = "User"
 
-def llm_eval(prompts, load_in_8bit=True, load_in_4bit = False, logprobs = False) -> Tuple[List[str], Optional[List[List[Tuple[int, float]]]]]:
+def llm_eval(prompts: List[Tuple[List[str], AgentType]],
+            model_id: str = "meta-llama/Meta-Llama-Guard-2-8B",
+            llama_guard_version: LlamaGuardVersion = LlamaGuardVersion.LLAMA_GUARD_2.name, 
+            load_in_8bit: bool = True, 
+            load_in_4bit: bool = False, 
+            logprobs: bool = False) -> Tuple[List[str], Optional[List[List[Tuple[int, float]]]]]:
+    """
+    Runs Llama Guard inference with HF transformers. Works with Llama Guard 1 or 2
 
-    model_id = "meta-llama/LlamaGuard-7b"
-    
+    This function loads Llama Guard from Hugging Face or a local model and 
+    executes the predefined prompts in the script to showcase how to do inference with Llama Guard.
+
+    Parameters
+    ----------
+        prompts : List[Tuple[List[str], AgentType]]
+            List of Tuples containing all the conversations to evaluate. The tuple contains a list of messages that configure a conversation and a role.
+        model_id : str 
+            The ID of the pretrained model to use for generation. This can be either the path to a local folder containing the model files,
+            or the repository ID of a model hosted on the Hugging Face Hub. Defaults to 'meta-llama/Meta-Llama-Guard-2-8B'.
+        llama_guard_version : LlamaGuardVersion
+            The version of the Llama Guard model to use for formatting prompts. Defaults to LLAMA_GUARD_2.
+        load_in_8bit : bool
+            defines if the model should be loaded in 8 bit. Uses BitsAndBytes. Default True 
+        load_in_4bit : bool
+            defines if the model should be loaded in 4 bit. Uses BitsAndBytes and nf4 method. Default False
+        logprobs: bool
+            defines if it should return logprobs for the output tokens as well. Default False
+
+    """
+
+    try:
+        llama_guard_version = LlamaGuardVersion[llama_guard_version]
+    except KeyError as e:
+        raise ValueError(f"Invalid Llama Guard version '{llama_guard_version}'. Valid values are: {', '.join([lgv.name for lgv in LlamaGuardVersion])}") from e
+
     tokenizer = AutoTokenizer.from_pretrained(model_id)
 
-    torch_dtype = torch.float32
-    if load_in_4bit:
-        torch_dtype = torch.bfloat16
+    torch_dtype = torch.bfloat16
+    # if load_in_4bit:
+    #     torch_dtype = torch.bfloat16
 
     bnb_config = BitsAndBytesConfig(
         load_in_8bit=load_in_8bit,
@@ -57,7 +95,6 @@ def llm_eval(prompts, load_in_8bit=True, load_in_4bit = False, logprobs = False)
         bnb_4bit_compute_dtype=torch_dtype
     )
 
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
     
     model = AutoModelForCausalLM.from_pretrained(model_id, quantization_config=bnb_config, device_map="auto")
 
@@ -68,10 +105,10 @@ def llm_eval(prompts, load_in_8bit=True, load_in_4bit = False, logprobs = False)
     total_length = len(prompts)
     progress_bar = tqdm(colour="blue", desc=f"Prompts", total=total_length, dynamic_ncols=True)
     for prompt in prompts:
-        formatted_prompt = build_prompt(
+        formatted_prompt = build_default_prompt(
                 prompt["agent_type"], 
-                LLAMA_GUARD_CATEGORY, 
-                create_conversation(prompt["prompt"]))
+                create_conversation(prompt["prompt"]),
+                llama_guard_version)
 
 
         input = tokenizer([formatted_prompt], return_tensors="pt").to("cuda")
@@ -104,7 +141,11 @@ def llm_eval(prompts, load_in_8bit=True, load_in_4bit = False, logprobs = False)
 
 # -
 
-def pytorch_llm_eval(prompts: List[Tuple[List[str], AgentType, str, str, str]], ckpt_dir, logprobs: bool = False):
+def pytorch_llm_eval(prompts: List[Tuple[List[str], AgentType, str, str, str]], 
+                     ckpt_dir, 
+                     logprobs: bool = False,
+                    llama_guard_version: LlamaGuardVersion = LlamaGuardVersion.LLAMA_GUARD_2, 
+):
     # defaults
     temperature = 1
     top_p = 1
@@ -124,10 +165,10 @@ def pytorch_llm_eval(prompts: List[Tuple[List[str], AgentType, str, str, str]], 
     total_length = len(prompts)
     progress_bar = tqdm(colour="blue", desc=f"Prompts", total=total_length, dynamic_ncols=True)
     for prompt in prompts:
-        formatted_prompt = build_prompt(
+        formatted_prompt = build_default_prompt(
                 prompt["agent_type"], 
-                LLAMA_GUARD_CATEGORY, 
-                create_conversation(prompt["prompt"]))
+                create_conversation(prompt["prompt"]),
+                llama_guard_version)
 
         result = generator.text_completion(
             [formatted_prompt],
@@ -175,15 +216,15 @@ def main():
             "agent_type": AgentType.AGENT
         }
     ]
-
     
     # results = llm_eval(prompts, load_in_8bit = False, load_in_4bit = True)
-    results = pytorch_llm_eval(prompts, ckpt_dir="../../../../llama/models/llama_guard-v2/")
+    results = pytorch_llm_eval(prompts, ckpt_dir="../../../../llama/models/guard-llama/", llama_guard_version=LlamaGuardVersion.LLAMA_GUARD_1.name)
     
     for i, prompt in enumerate(prompts):
         print(prompt['prompt'])
-        print(f"> {results[0]}")
+        print(f"> {results[0][i]}")
         print("\n==================================\n")
+
 
 # used to be able to import this script in another notebook and not run the main function
 if __name__ == '__main__' and '__file__' not in globals():
