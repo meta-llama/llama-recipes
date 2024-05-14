@@ -121,10 +121,28 @@ def parse_qa_to_json(response_string):
 async def prepare_and_send_request(chat_service, api_context: dict, document_content: str, num_questions: int) -> dict:
     prompt_for_system = api_context['question_prompt_template'].format(num_questions=num_questions, language=api_context["language"])
     chat_request_payload = [{'role': 'system', 'content': prompt_for_system}, {'role': 'user', 'content': document_content}]
-    result = await chat_service.execute_chat_request_async(api_context, chat_request_payload)
+    result = await chat_service.execute_chat_request_async(api_context, chat_request_payload,eval=False)
     if not result:
         return {}
-    return json.loads(await chat_service.execute_chat_request_async(api_context, chat_request_payload))
+    return json.loads(await chat_service.execute_chat_request_async(api_context, chat_request_payload,eval=False))
+# This function is used to evaluate the quality of generated QA pairs. Return the original QA pair if the model eval result is YES. Otherwise, return an empty dict.
+async def data_eval_request(chat_service, api_context: dict, document_content: dict) -> dict:
+    prompt_for_system = api_context['eval_prompt_template'].format(language=api_context["language"])
+    chat_request_payload = [{'role': 'system', 'content': prompt_for_system}, {'role': 'user', 'content': f"Question: {document_content['question']}, Answer: {document_content['answer']}"}]
+    result = await chat_service.execute_chat_request_async(api_context, chat_request_payload,eval=True)
+    if not result:
+        return {}
+    if "Answer" not in result:
+        print("Error: eval response does not contain answer")
+        print(document_content,result)
+        return {}
+    # Send back the original QA pair is the model eval result is YES
+    if result["Answer"] == "YES":
+        return document_content
+    else:
+        print(document_content,result)
+    return {}
+
 
 async def generate_question_batches(chat_service, api_context: dict):
     document_text = read_file_content(api_context)
@@ -158,3 +176,20 @@ async def generate_question_batches(chat_service, api_context: dict):
     question_generation_results = await asyncio.gather(*generation_tasks)
 
     return question_generation_results
+
+async def generate_data_eval(chat_service, api_context: dict, generated_questions: list):
+    eval_tasks = []
+    for batch_index, batch_content in enumerate(generated_questions):
+        try:
+            result = data_eval_request(chat_service, api_context, batch_content)
+            eval_tasks.append(result)
+        except Exception as e:
+            print(f"Error during data eval request execution: {e}")
+
+    eval_results = await asyncio.gather(*eval_tasks)
+    curated_data = []
+    for item in eval_results:
+        # if the item is not empty, add it to the curated data list
+        if item:
+            curated_data.append(item)
+    return curated_data

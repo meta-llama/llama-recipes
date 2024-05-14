@@ -40,6 +40,12 @@ This python program will read all the documents inside of "data" folder and spli
 
 ### Step 3: Run the training
 
+Run distributed training with:
 ```bash
-torchrun --nnodes 1 --nproc_per_node 1  examples/finetuning.py  --use_peft --peft_method lora --quantization --model_name meta-llama/Llama-2-7b-chat-hf --output_dir ./peft-7b-quantized  --num_epochs 1 --batch_size 1 --dataset "custom_dataset" --custom_dataset.file "examples/llama_dataset.py"  --run_validation False  --custom_dataset.data_path './dataset.json'
+CUDA_VISIBLE_DEVICES=0,1  torchrun --nnodes 1 --nproc_per_node 2  recipes/finetuning/finetuning.py --use_peft --enable_fsdp --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir chatbot-8b --num_epochs 10 --batch_size_training 4 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/chatbot_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/chatbot/data_pipelines/data.json'
+```
+### Step 4: Testing with local inference
+
+```bash
+python recipes/inference/local_inference/inference.py --model_name meta-llama/Meta-Llama-3-8B-Instruct --peft_model chatbot-8b
 ```

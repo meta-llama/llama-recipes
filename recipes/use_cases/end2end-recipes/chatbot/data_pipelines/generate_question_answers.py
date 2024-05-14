@@ -5,7 +5,7 @@ import argparse
 import asyncio
 import json
 from config import load_config
-from generator_utils import generate_question_batches, parse_qa_to_json
+from generator_utils import generate_question_batches, parse_qa_to_json, generate_data_eval
 from itertools import chain
 import logging
 import aiofiles  # Ensure aiofiles is installed for async file operations
@@ -27,14 +27,14 @@ MODEL_NAME_MAPPING={"meta-llama-3-70b-instruct":"meta-llama/Meta-Llama-3-70B-Ins
 ,"llama-2-70b-chat":"meta-llama/Llama-2-70b-chat-hf"}
 class ChatService(ABC):
     @abstractmethod
-    async def execute_chat_request_async(self, api_context: dict, chat_request):
+    async def execute_chat_request_async(self, api_context: dict, chat_request, eval=False):
         pass
 
 # Please implement your own chat service class here.
 # The class should inherit from the ChatService class and implement the execute_chat_request_async method.
 # The following are two example chat service classes that you can use as a reference.
 class OctoAIChatService(ChatService):
-    async def execute_chat_request_async(self, api_context: dict, chat_request):
+    async def execute_chat_request_async(self, api_context: dict, chat_request, eval=False):
         async with request_limiter:
             try:
                 event_loop = asyncio.get_running_loop()
@@ -47,7 +47,10 @@ class OctoAIChatService(ChatService):
                 )
                 response = await event_loop.run_in_executor(None, api_chat_call)
                 assistant_response = next((choice.message.content for choice in response.choices if choice.message.role == 'assistant'), "")
-                assistant_response_json = parse_qa_to_json(assistant_response)
+                if eval:
+                    assistant_response_json = json.loads(assistant_response)
+                else:
+                    assistant_response_json = parse_qa_to_json(assistant_response)
 
                 return assistant_response_json
             except Exception as error:
@@ -56,7 +59,7 @@ class OctoAIChatService(ChatService):
 # Use the local vllm openai compatible server for generating question/answer pairs to make API call syntax consistent
 # please read for more detail:https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html.
 class VllmChatService(ChatService):
-    async def execute_chat_request_async(self, api_context: dict, chat_request):
+    async def execute_chat_request_async(self, api_context: dict, chat_request, eval=False):
         async with request_limiter:
             try:
                 event_loop = asyncio.get_running_loop()
@@ -70,9 +73,10 @@ class VllmChatService(ChatService):
                 )
                 response = await event_loop.run_in_executor(None, api_chat_call)
                 assistant_response = next((choice.message.content for choice in response.choices if choice.message.role == 'assistant'), "")
-                assistant_response_json = parse_qa_to_json(assistant_response)
-                if len(assistant_response_json)==0:
-                    logging.error("No question/answer pairs generated. Please check the input context or model configuration.")
+                if eval:
+                    assistant_response_json = json.loads(assistant_response)
+                else:
+                    assistant_response_json = parse_qa_to_json(assistant_response)
                 return assistant_response_json
             except Exception as error:
                 logging.error(f"Error during chat request execution: {error}",exc_info=True)
@@ -90,12 +94,19 @@ async def main(context):
             logging.warning("No data generated. Please check the input context or model configuration.")
             return
         flattened_list = list(chain.from_iterable(data))
+        # with open("data.json") as fp:
+        #     flattened_list = json.load(fp)
         logging.info(f"Successfully generated {len(flattened_list)} question/answer pairs.")
         # Use asynchronous file operation for writing to the file
-        async with aiofiles.open("data.json", "w") as output_file:
-            await output_file.write(json.dumps(flattened_list, indent=4))
-        logging.info("Data successfully written to 'data.json'. Process completed.")
 
+        # async with aiofiles.open("data.json", "w") as output_file:
+        #     await output_file.write(json.dumps(flattened_list, indent=4))
+        # logging.info("Data successfully written to 'data.json'. Process completed.")
+        curated_data = await generate_data_eval(chat_service, context,flattened_list)
+        logging.info(f"Only {len(curated_data)} question/answer pairs pass the self-curation")
+        async with aiofiles.open("curated_data.json", "w") as curated_data:
+             await curated_data.write(json.dumps(flattened_list, indent=4))
+        logging.info("Data successfully written to 'curated_data.json'. Process completed.")
     except Exception as e:
         logging.error(f"An unexpected error occurred during the process: {e}",exc_info=True)
 

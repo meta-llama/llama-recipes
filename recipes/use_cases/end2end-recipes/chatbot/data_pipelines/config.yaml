@@ -1,10 +1,9 @@
 question_prompt_template: >
   You are a language model skilled in creating quiz questions.
   You will be provided with a document,
-  read it and generate question and answer pairs
-  that are most likely be asked by a use of llama that just want to start,
+  read it and please generate question and answer that are most likely be asked by a user of llama model,
   please make sure you follow those rules,
-  1. Generate only {num_questions} question answer pairs.
+  1. Generate at most {num_questions} question answer pairs, you can generate less questions if you believe there are nothing related to Llama.
   2. Generate in {language}.
   3. The questions can be answered based *solely* on the given passage.
   4. Avoid asking questions with similar meaning.
@@ -22,6 +21,17 @@ question_prompt_template: >
         "Answer": "your answer to question B."
       }}
     ]
+
+eval_prompt_template: >
+  Below is a question and answer pair about Llama language model. Evaluate
+  whether or not this qusestion and answer pair will be helpful for a user of Llama langauge model.
+  Respond with only a single JSON blob with an "explanation" field that is a short (less than 100 word)
+  explanation of your answer and an "answer" field which is YES or NO. Only generate the answer in {language}.
+  Return the result in json format with the template:
+    {{
+      "Reason": "your reason here.",
+      "Answer": "YES or No."
+    }},
 
 data_dir: "./data"
 
