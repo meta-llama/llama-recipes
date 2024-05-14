@@ -15,12 +15,9 @@ scipy
 optimum
 matplotlib
 gradio
-<<<<<<< HEAD
 jupyter
 jupytext
-=======
 chardet
 openai
 typing-extensions==4.8.0
 tabulate
->>>>>>> main
