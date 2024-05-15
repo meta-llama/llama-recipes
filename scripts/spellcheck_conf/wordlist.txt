@@ -1314,6 +1314,9 @@ AgentExecutor
 LangGraph
 langgraph
 vectorstore
+Kaggle
+SalesBot
+Weaviate
 MediaGen
 SDXL
 SVD
