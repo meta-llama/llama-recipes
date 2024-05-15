@@ -1342,3 +1342,9 @@ sha
 tmoreau
 toolchain
 wifi
+Kaggle
+SalesBot
+Weaviate
+MediaGen
+SDXL
+SVD
