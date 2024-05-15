@@ -150,7 +150,7 @@ prompts_file = "valid_prompts_6cat_1122.jsonl"
 # prompts_file = "prompt_train_set_with_label.jsonl"
 
 # When the type is pytorch, there is no quantization options
-run_validation(prompts_file, AgentType.USER, Type.PYTORCH, ckpt_dir = "/home/ubuntu/projects/llama/models/llama_guard-v2/")
+# run_validation(prompts_file, AgentType.USER, Type.PYTORCH, ckpt_dir = "/home/ubuntu/projects/llama/models/llama_guard-v2/")
 # -
 
 # clean up the cache from running the previous validation
@@ -160,11 +160,10 @@ torch.cuda.empty_cache()
 # Login to HF to access the model, if necessary
 # from huggingface_hub import login
 # login()
-
-# +
-# By default, load_in_8bit is true. To run unquantized or with 4bit quantization, set load_in_8bit to False and load_in_4bit to true
-# run_validation(prompts_file, AgentType.USER, Type.HF, load_in_8bit = False, load_in_4bit = True)
 # -
+
+# By default, load_in_8bit is true. To run unquantized or with 4bit quantization, set load_in_8bit to False and load_in_4bit to true
+run_validation(prompts_file, AgentType.USER, Type.HF, load_in_8bit = False, load_in_4bit = True)
 
 
 
