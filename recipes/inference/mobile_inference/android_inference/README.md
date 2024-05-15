@@ -54,7 +54,7 @@ Android Studio [install](https://developer.android.com/studio) with NDK and CMak
 To install NDK and CMake, in the Android Studio welcome page, click “Projects → SDK Manager → SDK Tools”. Set up the following environment variables:
 
 * ANDROID_NDK so that $ANDROID_NDK/build/cmake/android.toolchain.cmake is available.
-* TVM_NDK_CC that points to NDK’s clang compiler.
+* TVM_NDK_CC that points to NDK's clang compiler.
 
 For instance, the paths will look like the following on OSX for user `moreau`:
 ```bash
