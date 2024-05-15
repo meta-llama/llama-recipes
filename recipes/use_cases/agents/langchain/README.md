@@ -1,24 +1,24 @@
 # LangChain <> Llama3 Cookbooks
 
-LLM agents use [planning, memory, and tools](https://lilianweng.github.io/posts/2023-06-23-agent/) to accomplish tasks. Agents can empower llama3 with important new capabilities. Here, we will show how to give llama3 the ability to perform web search, as well as multi-modality: image generation (text-to-image), image analysis (image-to-text), and voice (text-to-speech) tools!
+LLM agents use [planning, memory, and tools](https://lilianweng.github.io/posts/2023-06-23-agent/) to accomplish tasks. Agents can empower Llama 3 with important new capabilities. Here, we will show how to give Llama 3 the ability to perform web search, as well as multi-modality: image generation (text-to-image), image analysis (image-to-text), and voice (text-to-speech) tools!
 
 LangChain offers several different ways to implement agents with Llama 3:
 
-(1) `Tool calling agent` - Uses [AgentExecutor](https://python.langchain.com/docs/modules/agents/quick_start/) with [tool-calling](https://python.langchain.com/docs/integrations/chat/) versions of Llama 3.
+(1) `ReAct agent` - Uses [AgentExecutor](https://python.langchain.com/docs/modules/agents/quick_start/) with [tool-calling](https://python.langchain.com/docs/integrations/chat/) versions of Llama 3.
 
 (2) `LangGraph tool calling agent` - Uses [LangGraph](https://python.langchain.com/docs/langgraph) with [tool-calling](https://python.langchain.com/docs/integrations/chat/) versions of Llama 3.
 
 (3) `LangGraph custom agent` - Uses [LangGraph](https://python.langchain.com/docs/langgraph) with **any** version of Llama 3 (so long as it supports supports structured output).
 
-As we move from option (1) to (3) the degree of customization and flexibility increaces:
+As we move from option (1) to (3) the degree of customization and flexibility increases:
 
-(1) `Tool calling agent` is great for getting started quickly with minimal code, but requires a version of Llama 3 with reliable tool-calling, is the least customiable, and uses high-level agent executor abstraction.
+(1) `ReAct agent` using AgentExecutor is a great for getting started quickly with minimal code, but requires a version of Llama 3 with reliable tool-calling, is the least customizable, and uses higher-level AgentExecutor abstraction.
   
-(2) `LangGraph tool calling agent` is more customizable than (1), but still requires a version of Llama 3 with reliable tool-calling.
+(2) `LangGraph tool calling agent` is more customizable than (1) because the LLM assistant (planning) and tool call (action) nodes are defined by the user, but it still requires a version of Llama 3 with reliable tool-calling.
   
 (3) `LangGraph custom agent` does not a version of Llama 3 with reliable tool-calling and is the most customizable, but requires the most work to implement. 
 
-![langgraph_agent_architectures](https://github.com/rlancemartin/llama-recipes/assets/122662504/06119cf2-08d3-470b-a19a-6eede7a01f9d)
+![langgraph_agent_architectures](https://github.com/rlancemartin/llama-recipes/assets/122662504/5ed2bef0-ae11-4efa-9e88-ab560a4d0022)
 
 ---
 
