@@ -49,7 +49,7 @@ Make sure rustc, cargo, and rustup are available in $PATH.
 
 ## Android Studio
 
-Android Studio [install](https://developer.android.com/studio) with NDK and CMake.
+Install Android Studio from <!-- markdown-link-check-disable -->https://developer.android.com/studio<!-- markdown-link-check-enable --> with NDK and CMake.
 
 To install NDK and CMake, in the Android Studio welcome page, click “Projects → SDK Manager → SDK Tools”. Set up the following environment variables:
 
@@ -69,7 +69,7 @@ This tutorial was tested successfully on Android Studio Hedgehog | 2023.1.1 Patc
 
 JDK, such as OpenJDK >= 17, to compile Java bindings of TVM Unity runtime.
 
-We strongly recommend setting the JAVA_HOME to the JDK bundled with Android Studio. Using Android Studio’s JBR bundle as recommended [here](https://developer.android.com/build/jdks) will reduce the chances of potential errors in JNI compilation.
+We strongly recommend setting the JAVA_HOME to the JDK bundled with Android Studio. Using Android Studio’s JBR bundle as recommended (<!-- markdown-link-check-disable -->https://developer.android.com/build/jdks<!-- markdown-link-check-enable -->) will reduce the chances of potential errors in JNI compilation.
 
 For instance on macOS, you'll need to point JAVA_HOME to the following.
 
