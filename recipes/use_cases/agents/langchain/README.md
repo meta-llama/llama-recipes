@@ -22,9 +22,9 @@ As we move from option (1) to (3) the degree of customization and flexibility in
 
 ---
 
-### `Tool calling agent with AgentExecutor`
+### `ReAct agent`
 
-AgentExecutor is the runtime for an agent. AgentExecutor calls the agent, executes the actions it chooses, passes the action outputs back to the agent, and repeats.
+The AgentExecutor manages the loop of planning, executing tool calls, and processing outputs until an AgentFinish signal is generated, indicating task completion
 
 Our first notebook, `tool-calling-agent`, shows how to build a [tool calling agent](https://python.langchain.com/docs/modules/agents/agent_types/tool_calling/) with AgentExecutor and Llama 3.
 
