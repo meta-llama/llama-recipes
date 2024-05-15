@@ -22,7 +22,7 @@ question_prompt_template: >
       }}
     ]
 
-eval_prompt_template: >
+curation_prompt_template: >
   Below is a question and answer pair about Llama language model. Evaluate
   whether or not this qusestion and answer pair will be helpful for a user of Llama langauge model.
   Respond with only a single JSON blob with an "explanation" field that is a short (less than 100 word)

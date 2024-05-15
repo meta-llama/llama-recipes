@@ -1,4 +1,4 @@
-## Data Preprocessing Steps
+## End to End Steps to create a Chatbot using fine-tuning
 
 ### Step 1 : Prepare related documents
 
@@ -38,13 +38,53 @@ python generate_question_answers.py -v 8000 -t 800
 
 This python program will read all the documents inside of "data" folder and split the data into batches by the context window limit (8K for Meta Llama3 and 4K for Llama 2) and apply the chat template, defined in "config.yaml", to each batch. Then it will use each batch to query VLLM server and save the return answers into data.json after some post-process steps.
 
-### Step 3: Run the training
+### Step 3: Run the fune-tuning
 
-Run distributed training with:
+Run distributed fune-tuning with:
 ```bash
 CUDA_VISIBLE_DEVICES=0,1  torchrun --nnodes 1 --nproc_per_node 2  recipes/finetuning/finetuning.py --use_peft --enable_fsdp --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir chatbot-8b --num_epochs 10 --batch_size_training 4 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/chatbot_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/chatbot/data_pipelines/data.json'
 ```
-### Step 4: Testing with local inference
+
+or run the fine-tuning in single-GPU:
+
+```bash
+python recipes/finetuning/finetuning.py --use_peft --enable_fsdp --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir chatbot-8b --num_epochs 10 --batch_size_training 4 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/chatbot_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/chatbot/data_pipelines/data.json'
+```
+
+For more details, please check the readme in the finetuning recipe.
+
+### Step 4: Evaluating with local inference
+
+Once we have the fine-tuned model, we now need to evaluate it to understand its performance. Normally, to create a evaluation set, we should first gather some questions and manually write the ground truth answer. In this case, we created a eval set based on the Llama [Troubleshooting & FAQ](https://llama.meta.com/faq/), where the answers are written by human experts. Then we pass the evalset question to our fine-tuned model to get the model generated answers. To compare the model generated answers with ground truth, we can use either traditional eval method, eg. calcucate rouge score, or use LLM to act like a judge to score the similarity of them.
+
+First we need to start the VLLM servers to host our fine-tuned 8B model. Since we used peft library to get a LoRA adapter, we need to pass special arguments to VLLM to enable the LoRA feature. Now, the VLLM server actually will first load the original model, then apply our LoRA adapter weights.
+
+```bash
+python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3-8B-Instruct --enable-lora --lora-modules chatbot=./chatbot-8b --port 8000  --disable-log-requests
+```
+
+**NOTE** If encounter import error: "ImportError: punica LoRA kernels could not be imported.", this means that Vllm must be installed with punica LoRA kernels to support LoRA adapter, please use following commands to install the VLLM from source.
+
+```bash
+git clone https://github.com/vllm-project/vllm.git
+cd vllm
+VLLM_INSTALL_PUNICA_KERNELS=1 pip install -e .
+```
+
+Then pass the eval_set json file into the VLLM servers and start the comparison evaluation. Notice that our model name is now called chatbot instead of meta-llama/Meta-Llama-3-8B-Instruct.
+
+```bash
+python eval_chatbot.py -m chatbot -v 8000
+```
+We can also quickly compare our fine-tuned chatbot model with original 8B model using
+
+```bash
+python eval_chatbot.py -m meta-llama/Meta-Llama-3-8B-Instruct -v 8000
+```
+
+### Step 5: Testing with local inference
+
+Once we believe our fine-tuned model has passed our evaluation and we can deploy it locally to manually test it by asking questions.
 
 ```bash
 python recipes/inference/local_inference/inference.py --model_name meta-llama/Meta-Llama-3-8B-Instruct --peft_model chatbot-8b

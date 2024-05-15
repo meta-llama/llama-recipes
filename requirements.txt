@@ -23,3 +23,6 @@ octoai
 python-magic
 PyPDF2
 aiofiles
+evaluate
+rouge_score
+bert_score

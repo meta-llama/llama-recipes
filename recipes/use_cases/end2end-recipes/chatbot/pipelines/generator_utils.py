@@ -14,7 +14,6 @@ import json
 # Initialize logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-
 def read_text_file(file_path):
     try:
         with open(file_path, 'r') as f:
@@ -86,7 +85,7 @@ def clean(s):
             if any(c.isalnum() for c in item):
                 result.append(item)
         return " ".join(result)
-
+# given a response string, return a string that can be saved as json.
 def parse_qa_to_json(response_string):
     split_lines = response_string.split("\n")
     start,end = None,None
@@ -114,7 +113,8 @@ def parse_qa_to_json(response_string):
         question = " ".join(split_lines[start:end]).split('"Question":')[1]
         answer = " ".join(split_lines[end:]).split('"Answer":')[1]
         qa_set.add((clean(question), clean(answer)))
-    qa_list = [{"question": q, "answer":a} for q,a in qa_set]
+    qa_list = [{"Question": q, "Answer":a} for q,a in qa_set]
+
     return json.dumps(qa_list, indent=4)
 
 
@@ -127,8 +127,8 @@ async def prepare_and_send_request(chat_service, api_context: dict, document_con
     return json.loads(await chat_service.execute_chat_request_async(api_context, chat_request_payload,eval=False))
 # This function is used to evaluate the quality of generated QA pairs. Return the original QA pair if the model eval result is YES. Otherwise, return an empty dict.
 async def data_eval_request(chat_service, api_context: dict, document_content: dict) -> dict:
-    prompt_for_system = api_context['eval_prompt_template'].format(language=api_context["language"])
-    chat_request_payload = [{'role': 'system', 'content': prompt_for_system}, {'role': 'user', 'content': f"Question: {document_content['question']}, Answer: {document_content['answer']}"}]
+    prompt_for_system = api_context['curation_prompt_template'].format(language=api_context["language"])
+    chat_request_payload = [{'role': 'system', 'content': prompt_for_system}, {'role': 'user', 'content': f"Question: {document_content['Question']}, Answer: {document_content['Answer']}"}]
     result = await chat_service.execute_chat_request_async(api_context, chat_request_payload,eval=True)
     if not result:
         return {}
