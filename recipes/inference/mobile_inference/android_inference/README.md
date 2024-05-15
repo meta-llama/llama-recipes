@@ -103,24 +103,7 @@ Connect your phone to your development machine. On OSX, you'll be prompted on th
 
 ## Building the Android Package with MLC
 
-First edit the file under `android/MLCChat/mlc-package-config.json` and replace the contents with the following:
-
-```json
-{
-    "device": "android",
-    "model_list": [
-        {
-            "model": "HF://mlc-ai/Llama-3-8B-Instruct-q4f16_1-MLC",
-            "estimated_vram_bytes": 4348727787,
-            "model_id": "Llama-3-8B-Instruct",
-            "overrides": {
-                "context_window_size": 768,
-                "prefill_chunk_size": 256
-            }
-        }
-    ]
-}
-```
+First edit the file under `android/MLCChat/mlc-package-config.json` and with the [mlc-package-config.json](./mlc-package-config.json) in llama-recipes.
 
 To understand what these JSON fields mean you can refer to this [documentation](https://llm.mlc.ai/docs/deploy/android.html#step-2-build-runtime-and-model-libraries).
 
