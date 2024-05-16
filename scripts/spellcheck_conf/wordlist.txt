@@ -1317,3 +1317,9 @@ vectorstore
 AgentFinish
 ReAct
 customizable
+Kaggle
+SalesBot
+Weaviate
+MediaGen
+SDXL
+SVD

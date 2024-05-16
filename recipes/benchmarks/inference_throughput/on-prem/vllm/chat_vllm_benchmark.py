@@ -40,8 +40,6 @@ MODEL_HEADERS = params["MODEL_HEADERS"]
 SAFE_CHECK = params["SAFE_CHECK"]
 # Threshold for tokens per second below which we deem the query to be slow
 THRESHOLD_TPS = params["THRESHOLD_TPS"] 
-# Default Llama tokenizer, replace with your own tokenizer 
-TOKENIZER_PATH = params["TOKENIZER_PATH"] 
 TEMPERATURE = params["TEMPERATURE"]
 TOP_P = params["TOP_P"]
 # Add your model endpoints here, specify the port number. You can acquire the endpoint when creating a on-prem server like vLLM.
@@ -55,8 +53,8 @@ else:
     print("No available GPUs")
 
 
-# This tokenizer is downloaded from Azure model catalog for each specific models. The main purpose is to decode the reponses for token calculation
-tokenizer = transformers.AutoTokenizer.from_pretrained(TOKENIZER_PATH)
+# This tokenizer is downloaded from HuggingFace based on the model path you set. Note Llama 3 use a different tokenizer compare to Llama 2
+tokenizer = transformers.AutoTokenizer.from_pretrained(MODEL_PATH)
 
 num_token_input_prompt = len(tokenizer.encode(PROMPT))
 print(f"Number of token for input prompt: {num_token_input_prompt}")
