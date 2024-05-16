@@ -8,7 +8,7 @@ LangChain offers several different ways to implement agents with Llama 3:
 
 (2) `LangGraph tool calling agent` - Uses [LangGraph](https://python.langchain.com/docs/langgraph) with [tool-calling](https://python.langchain.com/docs/integrations/chat/) versions of Llama 3.
 
-(3) `LangGraph custom agent` - Uses [LangGraph](https://python.langchain.com/docs/langgraph) with **any** version of Llama 3 (so long as it supports supports structured output).
+(3) `LangGraph custom agent` - Uses [LangGraph](https://python.langchain.com/docs/langgraph) with **any** version of Llama 3 (so long as it supports structured output).
 
 As we move from option (1) to (3) the degree of customization and flexibility increases:
 
@@ -16,7 +16,7 @@ As we move from option (1) to (3) the degree of customization and flexibility in
   
 (2) `LangGraph tool calling agent` is more customizable than (1) because the LLM assistant (planning) and tool call (action) nodes are defined by the user, but it still requires a version of Llama 3 with reliable tool-calling.
   
-(3) `LangGraph custom agent` does not a version of Llama 3 with reliable tool-calling and is the most customizable, but requires the most work to implement. 
+(3) `LangGraph custom agent` does not require a version of Llama 3 with reliable tool-calling and is the most customizable, but requires the most work to implement. 
 
 ![langgraph_agent_architectures](https://github.com/rlancemartin/llama-recipes/assets/122662504/5ed2bef0-ae11-4efa-9e88-ab560a4d0022)
 
@@ -24,7 +24,7 @@ As we move from option (1) to (3) the degree of customization and flexibility in
 
 ### `ReAct agent`
 
-The AgentExecutor manages the loop of planning, executing tool calls, and processing outputs until an AgentFinish signal is generated, indicating task completion
+The AgentExecutor manages the loop of planning, executing tool calls, and processing outputs until an AgentFinish signal is generated, indicating task completion.
 
 Our first notebook, `tool-calling-agent`, shows how to build a [tool calling agent](https://python.langchain.com/docs/modules/agents/agent_types/tool_calling/) with AgentExecutor and Llama 3.
 
@@ -53,11 +53,12 @@ Our fourth notebook, `langgraph-rag-agent`, shows how to apply LangGraph to buil
 * Adaptive RAG [paper](https://arxiv.org/abs/2403.14403) routes queries between different RAG approaches based on their complexity.
 
 We implement each approach as a control flow in LangGraph:
-- **Planning:** The sequence of RAG steps (e.g., retrieval, grading, and generation) that we want the agent to take
-- **Memory:** All the RAG-related information (input question, retrieved documents, etc) that we want to pass between steps
-- **Tool use:** All the tools needed for RAG (e.g., decide web search or vectorstore retrieval based on the question)
+- **Planning:** The sequence of RAG steps (e.g., retrieval, grading, and generation) that we want the agent to take.
+- **Memory:** All the RAG-related information (input question, retrieved documents, etc) that we want to pass between steps.
+- **Tool use:** All the tools needed for RAG (e.g., decide web search or vectorstore retrieval based on the question).
 
 We will build from CRAG (blue, below) to Self-RAG (green) and finally to Adaptive RAG (red):
+
 
 --- 
  
