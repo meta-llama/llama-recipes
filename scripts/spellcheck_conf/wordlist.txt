@@ -1314,6 +1314,9 @@ AgentExecutor
 LangGraph
 langgraph
 vectorstore
+AgentFinish
+ReAct
+customizable
 Kaggle
 SalesBot
 Weaviate
