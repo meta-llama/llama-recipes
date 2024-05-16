@@ -1342,6 +1342,9 @@ sha
 tmoreau
 toolchain
 wifi
+AgentFinish
+ReAct
+customizable
 Kaggle
 SalesBot
 Weaviate
