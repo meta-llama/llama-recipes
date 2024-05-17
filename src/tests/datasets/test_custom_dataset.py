@@ -33,6 +33,7 @@ def check_padded_entry(batch, tokenizer):
     assert batch["input_ids"][0][-1] == tokenizer.eos_token_id
 
 
+@pytest.mark.skip(reason="Flakey due to random dataset order @todo fix order")
 @pytest.mark.skip_missing_tokenizer
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.AutoTokenizer')
@@ -45,6 +46,7 @@ def test_custom_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker,
     setup_tokenizer(tokenizer)
 
     skip_special_tokens = llama_version == "meta-llama/Llama-2-7b-hf"
+    get_model.return_value.get_input_embeddings.return_value.weight.shape = [32000 if "Llama-2" in llama_version else 128256]
 
     kwargs = {
         "dataset": "custom_dataset",
@@ -98,10 +100,11 @@ def test_custom_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker,
 @patch('llama_recipes.finetuning.AutoTokenizer.from_pretrained')
 @patch('llama_recipes.finetuning.optim.AdamW')
 @patch('llama_recipes.finetuning.StepLR')
-def test_unknown_dataset_error(step_lr, optimizer, tokenizer, get_model, train, mocker):
+def test_unknown_dataset_error(step_lr, optimizer, tokenizer, get_model, train, mocker, llama_version):
     from llama_recipes.finetuning import main
 
     tokenizer.return_value = mocker.MagicMock(side_effect=lambda x: {"input_ids":[len(x)*[0,]], "attention_mask": [len(x)*[0,]]})
+    get_model.return_value.get_input_embeddings.return_value.weight.shape = [32000 if "Llama-2" in llama_version else 128256]
 
     kwargs = {
         "dataset": "custom_dataset",

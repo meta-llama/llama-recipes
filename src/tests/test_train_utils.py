@@ -103,6 +103,7 @@ def test_save_to_json(temp_output_dir, mocker):
     train_config.max_train_step = 0
     train_config.max_eval_step = 0
     train_config.output_dir = temp_output_dir
+    train_config.use_profiler = False
 
     results = train(
         model,

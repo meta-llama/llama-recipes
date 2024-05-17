@@ -7,7 +7,7 @@ import pytest
 import torch
 from llama_recipes.inference.chat_utils import read_dialogs_from_file
 
-ROOT_DIR = Path(__file__).parents[1]
+ROOT_DIR = Path(__file__).parents[2]
 CHAT_COMPLETION_DIR = ROOT_DIR / "recipes/inference/local_inference/chat_completion/"
 
 sys.path = [CHAT_COMPLETION_DIR.as_posix()] + sys.path
@@ -107,6 +107,7 @@ def test_chat_completion(
     from chat_completion import main
 
     setup_tokenizer(tokenizer)
+    load_model.return_value.get_input_embeddings.return_value.weight.shape = [32000 if "Llama-2" in llama_version else 128256]
 
     kwargs = {
         "prompt_file": (CHAT_COMPLETION_DIR / "chats.json").as_posix(),
