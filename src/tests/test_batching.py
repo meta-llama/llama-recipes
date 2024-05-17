@@ -25,7 +25,8 @@ def test_packing(step_lr, optimizer, get_model, tokenizer, train, setup_tokenize
     from llama_recipes.finetuning import main
 
     setup_tokenizer(tokenizer)
-
+    get_model.return_value.get_input_embeddings.return_value.weight.shape = [32000 if "Llama-2" in llama_version else 128256]
+    
     kwargs = {
         "model_name": llama_version,
         "batch_size_training": 8,
@@ -72,6 +73,7 @@ def test_distributed_packing(dist, is_initialized, fsdp, setup, step_lr, optimiz
     from llama_recipes.finetuning import main
 
     setup_tokenizer(tokenizer)
+    get_model.return_value.get_input_embeddings.return_value.weight.shape = [32000 if "Llama-2" in llama_version else 128256]
 
     rank = 1
     os.environ['LOCAL_RANK'] = f'{rank}'
