@@ -5,8 +5,8 @@ matrix:
     d: en_US
   dictionary:
     wordlists:
-    - scripts/spellcheck_conf/wordlist.txt
-    output: scripts/spellcheck_conf/wordlist.dic
+    - .github/scripts/spellcheck_conf/wordlist.txt
+    output: .github/scripts/spellcheck_conf/wordlist.dic
     encoding: utf-8
   pipeline:
   - pyspelling.filters.context:
