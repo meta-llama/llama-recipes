@@ -121,7 +121,7 @@ def parse_qac_to_json(response_string):
         qa_set.add((clean(question), clean(answer),clean(context)))
     qa_list = [{"Question": q, "Answer":a, "Context":c} for q,a,c in qa_set]
 
-    return json.dumps(qa_list, indent=4)
+    return qa_list
 
 def parse_qa_to_json(response_string):
     split_lines = response_string.split("\n")
@@ -155,14 +155,13 @@ def parse_qa_to_json(response_string):
     return qa_list
 
 async def prepare_and_send_request(chat_service, api_context: dict, document_content: str, num_questions: int) -> dict:
+    if num_questions == 0:
+        logging.info(f"Error: num_questions is 0")
+        return {}
     prompt_for_system = api_context['question_prompt_template'].format(num_questions=num_questions, language=api_context["language"])
     chat_request_payload = [{'role': 'system', 'content': prompt_for_system}, {'role': 'user', 'content': document_content}]
-    result = await chat_service.execute_chat_request_async(api_context, chat_request_payload)
     # parse the result string to a list of dict that has Question, Answer, Context
-    result = parse_qac_to_json(result)
-    if not result:
-        return {}
-    return json.loads(await chat_service.execute_chat_request_async(api_context, chat_request_payload,eval=False))
+    return await chat_service.execute_chat_request_async(api_context, chat_request_payload)
 # This function is used to evaluate the quality of generated QA pairs. Return the original QA pair if the model eval result is YES. Otherwise, return an empty dict.
 async def data_curation_request(chat_service, api_context: dict, document_content: dict) -> dict:
     prompt_for_system = api_context['curation_prompt_template'].format(language=api_context["language"])
@@ -208,14 +207,17 @@ async def generate_question_batches(chat_service, api_context: dict):
         questions_in_current_batch = base_questions_per_batch + (1 if batch_index < extra_questions else 0)
         print(f"Batch {batch_index + 1} - {questions_in_current_batch} questions ********")
         try:
-            result = prepare_and_send_request(chat_service, api_context, batch_content, questions_in_current_batch)
-            generation_tasks.append(result)
+            task = prepare_and_send_request(chat_service, api_context, batch_content, questions_in_current_batch)
+            generation_tasks.append(task)
         except Exception as e:
             print(f"Error during chat request execution: {e}")
 
     question_generation_results = await asyncio.gather(*generation_tasks)
-
-    return question_generation_results
+    final_result = []
+    for result in question_generation_results:
+        parsed_json = parse_qac_to_json(result)
+        final_result.extend(parsed_json)
+    return final_result
 
 async def generate_data_curation(chat_service, api_context: dict, generated_questions: list):
     eval_tasks = []

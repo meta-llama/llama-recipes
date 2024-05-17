@@ -60,7 +60,6 @@ class VllmChatService(ChatService):
             )
             response = await event_loop.run_in_executor(None, api_chat_call)
             assistant_response = next((choice.message.content for choice in response.choices if choice.message.role == 'assistant'), "")
-            print("assistant_response",assistant_response)
             return assistant_response
         except Exception as error:
             logging.error(f"Error during chat request execution: {error}",exc_info=True)

@@ -7,7 +7,6 @@ import json
 from config import load_config
 from generator_utils import generate_question_batches, generate_data_curation
 from chat_utils import OctoAIChatService, VllmChatService
-from itertools import chain
 import logging
 import aiofiles  # Ensure aiofiles is installed for async file operations
 
@@ -23,11 +22,11 @@ async def main(context):
         chat_service = OctoAIChatService()
     try:
         logging.info("Starting to generate question/answer pairs.")
+        # Generate question/answer pairs as list
         data = await generate_question_batches(chat_service, context)
         if not data:
             logging.warning("No data generated. Please check the input context or model configuration.")
             return
-        data = list(chain.from_iterable(data))
         logging.info(f"Successfully generated {len(data)} question/answer pairs.")
         if context["use_curation"]:
             logging.info("Starting to do self-curation using LLM.")

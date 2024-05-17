@@ -5,7 +5,7 @@ question_prompt_template: >
   which includes LLama, Llama2, Meta Llama3, Code Llama, Meta Llama Guard 1,	Meta Llama Guard 2,
   then extract the context that is related to the question and answer, preferably using the sentences from original text,
   please make sure you follow those rules:
-  1. Generate at most {num_questions} question answer pairs, you can generate less questions if you believe there are nothing related to Llama language models.
+  1. Generate {num_questions} question answer pairs.
   2. For each question and answer pair, add the context that is related to the question and answer, preferably using the sentences from original text
   3. Generate in {language}.
   4. The questions can be answered based *solely* on the given passage.

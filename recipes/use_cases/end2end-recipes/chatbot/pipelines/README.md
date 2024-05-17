@@ -6,7 +6,7 @@ Download all your desired docs in PDF, Text or Markdown format to "data" folder 
 
 In this case we have an example of [Getting started with Meta Llama](https://llama.meta.com/get-started/) and other llama related documents such Llama3, Purple Llama, Code Llama papers. Ideally, we should have searched all Llama documents across the web and follow the procedure below on them but that would be very costly for the purpose of a tutorial, so we will stick to our limited documents here. In this case, we want to use Llama FAQ as eval data so we should not put it into the data folder for training.
 
-TODO: Download conversations in the Llama github issues and use it as training data.
+TODO: Download conversations in the Llama github issues and use it as training data. To get 5K QA pairs
 ### Step 2 : Prepare data (Q&A pairs) for fine-tuning
 
 To use Meta Llama 3 70B model for the question and answer (Q&A) pair datasets creation from the prepared documents, we can either use Meta Llama 3 70B APIs from LLM cloud providers or host local LLM server.
