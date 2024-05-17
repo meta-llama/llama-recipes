@@ -5,7 +5,6 @@ from octoai.client import OctoAI
 from functools import partial
 from openai import OpenAI
 import json
-from generator_utils import generate_question_batches, parse_qa_to_json, generate_data_eval
 # Configure logging to include the timestamp, log level, and message
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 # Since OctoAI has different naming for llama models, create this mapping to get huggingface offical model name given OctoAI names.
@@ -18,14 +17,14 @@ allowed_concurrent_requests = int(rate_limit_threshold * 0.75)
 request_limiter = asyncio.Semaphore(allowed_concurrent_requests)
 class ChatService(ABC):
     @abstractmethod
-    async def execute_chat_request_async(self, api_context: dict, chat_request, eval=False):
+    async def execute_chat_request_async(self, api_context: dict, chat_request):
         pass
 
 # Please implement your own chat service class here.
 # The class should inherit from the ChatService class and implement the execute_chat_request_async method.
 # The following are two example chat service classes that you can use as a reference.
 class OctoAIChatService(ChatService):
-    async def execute_chat_request_async(self, api_context: dict, chat_request, eval=False):
+    async def execute_chat_request_async(self, api_context: dict, chat_request):
         async with request_limiter:
             try:
                 event_loop = asyncio.get_running_loop()
@@ -38,41 +37,31 @@ class OctoAIChatService(ChatService):
                 )
                 response = await event_loop.run_in_executor(None, api_chat_call)
                 assistant_response = next((choice.message.content for choice in response.choices if choice.message.role == 'assistant'), "")
-                if eval:
-                    assistant_response_json = json.loads(assistant_response)
-                else:
-                    assistant_response_json = parse_qa_to_json(assistant_response)
-
-                return assistant_response_json
+                return assistant_response
             except Exception as error:
                 logging.error(f"Error during chat request execution: {error}",exc_info=True)
                 return ""
 # Use the local vllm openai compatible server for generating question/answer pairs to make API call syntax consistent
 # please read for more detail:https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html.
 class VllmChatService(ChatService):
-    async def execute_chat_request_async(self, api_context: dict, chat_request, eval=False):
-        async with request_limiter:
-            try:
-                event_loop = asyncio.get_running_loop()
-                if api_context["model"] in MODEL_NAME_MAPPING:
-                    model_name = MODEL_NAME_MAPPING[api_context['model']]
-                else:
-                    model_name = api_context['model']
-                client = OpenAI(api_key=api_context['api_key'], base_url="http://localhost:"+ str(api_context['endpoint'])+"/v1")
-                api_chat_call = partial(
-                    client.chat.completions.create,
-                    model=model_name,
-                    messages=chat_request,
-                    temperature=0.0
-                )
-                response = await event_loop.run_in_executor(None, api_chat_call)
-                assistant_response = next((choice.message.content for choice in response.choices if choice.message.role == 'assistant'), "")
-                if eval:
-                    print(assistant_response)
-                    assistant_response_json = json.loads(assistant_response)
-                else:
-                    assistant_response_json = parse_qa_to_json(assistant_response)
-                return assistant_response_json
-            except Exception as error:
-                logging.error(f"Error during chat request execution: {error}",exc_info=True)
-                return ""
+    async def execute_chat_request_async(self, api_context: dict, chat_request):
+        try:
+            event_loop = asyncio.get_running_loop()
+            if api_context["model"] in MODEL_NAME_MAPPING:
+                model_name = MODEL_NAME_MAPPING[api_context['model']]
+            else:
+                model_name = api_context['model']
+            client = OpenAI(api_key=api_context['api_key'], base_url="http://localhost:"+ str(api_context['endpoint'])+"/v1")
+            api_chat_call = partial(
+                client.chat.completions.create,
+                model=model_name,
+                messages=chat_request,
+                temperature=0.0
+            )
+            response = await event_loop.run_in_executor(None, api_chat_call)
+            assistant_response = next((choice.message.content for choice in response.choices if choice.message.role == 'assistant'), "")
+            print("assistant_response",assistant_response)
+            return assistant_response
+        except Exception as error:
+            logging.error(f"Error during chat request execution: {error}",exc_info=True)
+            return ""

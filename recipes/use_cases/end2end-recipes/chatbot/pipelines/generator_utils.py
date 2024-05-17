@@ -3,6 +3,7 @@
 
 import os
 import re
+import string
 from transformers import  AutoTokenizer
 import asyncio
 import magic
@@ -64,7 +65,9 @@ def process_file(file_path):
     else:
         logging.warning(f"Unsupported file type {file_type} for file {file_path}")
         return ''
-
+def remove_non_printable(s):
+    printable = set(string.printable)
+    return ''.join(filter(lambda x: x in printable, s))
 def read_file_content(context):
     file_strings = []
 
@@ -74,10 +77,8 @@ def read_file_content(context):
             file_text = process_file(file_path)
             if file_text:
                 file_strings.append(file_text)
-    text = ' '.join(file_strings)
-    if len(text) == 0:
-        logging.error(f"Error reading files, text is empty")
-    return ' '.join(file_strings)
+    text = '\n'.join(file_strings)
+    return remove_non_printable(text)
 # clean the text by removing all parts that did not contain any alphanumeric characters
 def clean(s):
         result = []
@@ -86,6 +87,42 @@ def clean(s):
                 result.append(item)
         return " ".join(result)
 # given a response string, return a string that can be saved as json.
+def parse_qac_to_json(response_string):
+    split_lines = response_string.split("\n")
+    start,mid,end = None,None,None
+    # must use set to avoid duplicate question/answer pairs due to async function calls
+    qa_set = set()
+    for i in range(len(split_lines)):
+        line = split_lines[i]
+        # starting to find "Question"
+        if not start:
+            # Once found, set start to this line number
+            if '"Question":' in line:
+                start = i
+        else:
+            # "Question" has been found, find "Answer", once found, set end to this line number
+            if '"Answer":' in line:
+                mid = i
+            elif '"Context":' in line:
+                end = i
+            # found Question means we have reached the end of the question, so add it to qa_list
+            elif '"Question":' in line:
+                question = " ".join(split_lines[start:mid]).split('"Question":')[1]
+                answer = " ".join(split_lines[mid:end]).split('"Answer":')[1]
+                context = " ".join(split_lines[end:i]).split('"Context":')[1]
+                start,mid,end = i,None,None
+                qa_set.add((clean(question), clean(answer),clean(context)))
+        # adding last question back to qa_list
+    if start and mid and end:
+        question = " ".join(split_lines[start:mid]).split('"Question":')[1]
+        answer = " ".join(split_lines[mid:end]).split('"Answer":')[1]
+        context = " ".join(split_lines[end:]).split('"Context":')[1]
+        start,mid,end = i,None,None
+        qa_set.add((clean(question), clean(answer),clean(context)))
+    qa_list = [{"Question": q, "Answer":a, "Context":c} for q,a,c in qa_set]
+
+    return json.dumps(qa_list, indent=4)
+
 def parse_qa_to_json(response_string):
     split_lines = response_string.split("\n")
     start,end = None,None
@@ -115,29 +152,32 @@ def parse_qa_to_json(response_string):
         qa_set.add((clean(question), clean(answer)))
     qa_list = [{"Question": q, "Answer":a} for q,a in qa_set]
 
-    return json.dumps(qa_list, indent=4)
-
+    return qa_list
 
 async def prepare_and_send_request(chat_service, api_context: dict, document_content: str, num_questions: int) -> dict:
     prompt_for_system = api_context['question_prompt_template'].format(num_questions=num_questions, language=api_context["language"])
     chat_request_payload = [{'role': 'system', 'content': prompt_for_system}, {'role': 'user', 'content': document_content}]
-    result = await chat_service.execute_chat_request_async(api_context, chat_request_payload,eval=False)
+    result = await chat_service.execute_chat_request_async(api_context, chat_request_payload)
+    # parse the result string to a list of dict that has Question, Answer, Context
+    result = parse_qac_to_json(result)
     if not result:
         return {}
     return json.loads(await chat_service.execute_chat_request_async(api_context, chat_request_payload,eval=False))
 # This function is used to evaluate the quality of generated QA pairs. Return the original QA pair if the model eval result is YES. Otherwise, return an empty dict.
-async def data_eval_request(chat_service, api_context: dict, document_content: dict) -> dict:
+async def data_curation_request(chat_service, api_context: dict, document_content: dict) -> dict:
     prompt_for_system = api_context['curation_prompt_template'].format(language=api_context["language"])
-    chat_request_payload = [{'role': 'system', 'content': prompt_for_system}, {'role': 'user', 'content': f"Question: {document_content['Question']}, Answer: {document_content['Answer']}"}]
-    result = await chat_service.execute_chat_request_async(api_context, chat_request_payload,eval=True)
+    chat_request_payload = [{'role': 'system', 'content': prompt_for_system}, {'role': 'user', 'content': f"Question: {document_content['Question']} \n Answer: {document_content['Answer']}\n Context: {document_content['Context']} "}]
+    result = await chat_service.execute_chat_request_async(api_context, chat_request_payload)
     if not result:
         return {}
-    if "Answer" not in result:
+    # no parsing needed, just return the loads the result as a dict
+    result = json.loads(result)
+    if "Result" not in result:
         print("Error: eval response does not contain answer")
         print(document_content,result)
         return {}
     # Send back the original QA pair is the model eval result is YES
-    if result["Answer"] == "YES":
+    if result["Result"] == "YES":
         return document_content
     else:
         print(document_content,result)
@@ -177,11 +217,11 @@ async def generate_question_batches(chat_service, api_context: dict):
 
     return question_generation_results
 
-async def generate_data_eval(chat_service, api_context: dict, generated_questions: list):
+async def generate_data_curation(chat_service, api_context: dict, generated_questions: list):
     eval_tasks = []
     for batch_index, batch_content in enumerate(generated_questions):
         try:
-            result = data_eval_request(chat_service, api_context, batch_content)
+            result = data_curation_request(chat_service, api_context, batch_content)
             eval_tasks.append(result)
         except Exception as e:
             print(f"Error during data eval request execution: {e}")

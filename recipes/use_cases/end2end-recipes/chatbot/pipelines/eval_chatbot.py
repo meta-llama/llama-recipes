@@ -8,6 +8,7 @@ from config import load_config
 import asyncio
 import json
 from itertools import chain
+from generator_utils import parse_qa_to_json
 
 def compute_rouge_score(generated : str, reference: str):
     rouge_score = evaluate.load('rouge')
@@ -24,24 +25,23 @@ def compute_bert_score(generated : str, reference: str):
         references=reference,
         lang="en"
     )
-# This function is used to evaluate the quality of generated QA pairs. Return the original QA pair if the model eval result is YES. Otherwise, return an empty dict.
+# This function is used to eval the fine-tuned model, given the question, generate the answer.
 async def eval_request(chat_service, api_context: dict, question: str) -> dict:
     prompt_for_system = api_context['eval_prompt_template'].format(language=api_context["language"])
     chat_request_payload = [{'role': 'system', 'content': prompt_for_system}, {'role': 'user', 'content': f"Question: {question}"}]
     # Getting a list of result, in this case, there should be only one result
-    results = await chat_service.execute_chat_request_async(api_context, chat_request_payload,eval=False)
-    # convert the result string to a list
-    results = eval(results)
-    if not results or len(results) > 1:
-        print("results",type(results),len(results),results)
+    response_string = await chat_service.execute_chat_request_async(api_context, chat_request_payload)
+    # convert the result string to a dict that contains Question, Answer
+    result_list = parse_qa_to_json(response_string)
+    if not result_list or len(result_list) > 1:
+        print("Error: eval response should be a list of one result dict")
         return {}
-    result = results[0]
+    result = result_list[0]
     if "Answer" not in result:
         print("Error: eval response does not contain answer")
-        print(question,result)
         return {}
-    print("result",result)
     # Send back the model generated answer
+
     return result["Answer"]
 
 async def generate_eval_answer(chat_service, api_context: dict, questions: list):

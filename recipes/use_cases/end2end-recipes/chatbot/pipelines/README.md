@@ -4,8 +4,9 @@
 
 Download all your desired docs in PDF, Text or Markdown format to "data" folder inside the data_pipelines folder.
 
-In this case we have an example of [Getting started with Meta Llama](https://llama.meta.com/get-started/) and other llama related documents such Llama3, Purple Llama, Code Llama papers along with Llama FAQ. Ideally, we should have searched all Llama documents across the web and follow the procedure below on them but that would be very costly for the purpose of a tutorial, so we will stick to our limited documents here.
+In this case we have an example of [Getting started with Meta Llama](https://llama.meta.com/get-started/) and other llama related documents such Llama3, Purple Llama, Code Llama papers. Ideally, we should have searched all Llama documents across the web and follow the procedure below on them but that would be very costly for the purpose of a tutorial, so we will stick to our limited documents here. In this case, we want to use Llama FAQ as eval data so we should not put it into the data folder for training.
 
+TODO: Download conversations in the Llama github issues and use it as training data.
 ### Step 2 : Prepare data (Q&A pairs) for fine-tuning
 
 To use Meta Llama 3 70B model for the question and answer (Q&A) pair datasets creation from the prepared documents, we can either use Meta Llama 3 70B APIs from LLM cloud providers or host local LLM server.
@@ -25,30 +26,35 @@ Alternatively we can use on prem solutions such as the [TGI](../../../examples/h
 
 ```bash
 # Make sure VLLM has been installed
-CUDA_VISIBLE_DEVICES=0,1 python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3-70B-Instruct --tensor-parallel-size 2 --disable-log-requests --port 8000
+CUDA_VISIBLE_DEVICES=0,1 python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3-70B-Instruct --tensor-parallel-size 2 --disable-log-requests --port 8001
 ```
 
 **NOTE** Please make sure the port has not been used. Since Meta Llama3 70B instruct model requires at least 135GB GPU memory, we need to use multiple GPUs to host it in a tensor parallel way.
 
-Once the server is ready, we can query the server given the port number 8000 in another terminal. Here, "-v" sets the port number and "-t" sets the total questions we want to generate.
+Once the server is ready, we can query the server given the port number 8001 in another terminal. Here, "-v" sets the port number and "-t" sets the total questions we ask the Meta Llama3 70B instruct model to initially generate, but the model can choice to generate less questions if it can not found any Llama related context to avoid the model generate questions that too trivial and unrelated.
 
 ```bash
-python generate_question_answers.py -v 8000 -t 800
+python generate_question_answers.py -v 8001 -t 1000
 ```
 
-This python program will read all the documents inside of "data" folder and split the data into batches by the context window limit (8K for Meta Llama3 and 4K for Llama 2) and apply the chat template, defined in "config.yaml", to each batch. Then it will use each batch to query VLLM server and save the return answers into data.json after some post-process steps.
+This python program will read all the documents inside of "data" folder and split the data into batches by the context window limit (8K for Meta Llama3 and 4K for Llama 2) and apply the question_prompt_template, defined in "generation_config.yaml", to each batch. Then it will use each batch to query VLLM server and save the return QA pairs and the contexts. Additionally, we will add another step called self-curation (see more details in [Self-Alignment with Instruction Backtranslation](https://arxiv.org/abs/2308.06259)), which uses another 70B model to evaluate whether a QA pair is based on the context and provides relevant information about Llama language models given that context. We will then save all the QA pairs that passed the evaluation into data.json file as our final fine-tuning training set.
 
+Example of QA pair that did not pass the self-curation, in this case the QA pair did not focus on Llama model:
+```json
+{'Question': 'What is the name of the pre-trained model for programming and natural languages?', 'Answer': 'CodeBERT', 'Context': 'Zhangyin Feng, Daya Guo, Duyu Tang, Nan Duan, Xiaocheng Feng, Ming Gong, Linjun Shou, Bing Qin, Ting Liu, Daxin Jiang, and Ming Zhou. CodeBERT: A pre-trained model for programming and natural languages. In EMNLP (Findings), volume EMNLP 2020 of Findings of ACL, pp. 15361547. Association for Computational Linguistics, 2020.'} {'Reason': 'The question and answer pair is not relevant to the context about Llama language models, as it discusses CodeBERT, which is not a Llama model.', 'Result': 'NO'}
+```
 ### Step 3: Run the fune-tuning
+In the llama-recipe main folder, we can start the fine-tuning step using the following commands:
 
-Run distributed fune-tuning with:
+For distributed fine-tuning:
 ```bash
-CUDA_VISIBLE_DEVICES=0,1  torchrun --nnodes 1 --nproc_per_node 2  recipes/finetuning/finetuning.py --use_peft --enable_fsdp --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir chatbot-8b --num_epochs 10 --batch_size_training 4 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/chatbot_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/chatbot/data_pipelines/data.json'
+CUDA_VISIBLE_DEVICES=0,1  torchrun --nnodes 1 --nproc_per_node 2  recipes/finetuning/finetuning.py --use_peft --enable_fsdp --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir chatbot-8b --num_epochs 6 --batch_size_training 4 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/chatbot_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/chatbot/pipelines/data.json'
 ```
 
-or run the fine-tuning in single-GPU:
+For fine-tuning in single-GPU:
 
 ```bash
-python recipes/finetuning/finetuning.py --use_peft --enable_fsdp --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir chatbot-8b --num_epochs 10 --batch_size_training 4 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/chatbot_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/chatbot/data_pipelines/data.json'
+CUDA_VISIBLE_DEVICES=0 python recipes/finetuning/finetuning.py --quantization --use_peft --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir chatbot-8b --num_epochs 6 --batch_size_training 2 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/chatbot_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/chatbot/pipelines/data.json'
 ```
 
 For more details, please check the readme in the finetuning recipe.
@@ -82,9 +88,10 @@ We can also quickly compare our fine-tuned chatbot model with original 8B model 
 python eval_chatbot.py -m meta-llama/Meta-Llama-3-8B-Instruct -v 8000
 ```
 
+TODO: evaluation using LLM as judge
 ### Step 5: Testing with local inference
 
-Once we believe our fine-tuned model has passed our evaluation and we can deploy it locally to manually test it by asking questions.
+Once we believe our fine-tuned model has passed our evaluation and we can deploy it locally to manually test it by manually asking questions.
 
 ```bash
 python recipes/inference/local_inference/inference.py --model_name meta-llama/Meta-Llama-3-8B-Instruct --peft_model chatbot-8b

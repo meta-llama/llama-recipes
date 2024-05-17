@@ -2,11 +2,12 @@ eval_prompt_template: >
   You are a AI assistant that skilled in answering questions related to Llama model.
   Below is a question from a llama user, please answer it in {language}, make the answer as concise as possible, it should be at most 100 words.
   Return the result with the template:
-  {{
+  [
+    {{
       "Question": "The question user asked to you"
       "Answer": "Your answer to the question"
   }}
-
+  ]
 eval_json: "./evalset.json"
 
 language: "English"

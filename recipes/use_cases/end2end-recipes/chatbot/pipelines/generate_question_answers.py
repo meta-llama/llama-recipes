@@ -5,7 +5,7 @@ import argparse
 import asyncio
 import json
 from config import load_config
-from generator_utils import generate_question_batches, generate_data_eval
+from generator_utils import generate_question_batches, generate_data_curation
 from chat_utils import OctoAIChatService, VllmChatService
 from itertools import chain
 import logging
@@ -27,20 +27,15 @@ async def main(context):
         if not data:
             logging.warning("No data generated. Please check the input context or model configuration.")
             return
-        flattened_list = list(chain.from_iterable(data))
-        # with open("data.json") as fp:
-        #     flattened_list = json.load(fp)
-        logging.info(f"Successfully generated {len(flattened_list)} question/answer pairs.")
-        # Use asynchronous file operation for writing to the file
-
-        # async with aiofiles.open("data.json", "w") as output_file:
-        #     await output_file.write(json.dumps(flattened_list, indent=4))
-        # logging.info("Data successfully written to 'data.json'. Process completed.")
-        curated_data = await generate_data_eval(chat_service, context,flattened_list)
-        logging.info(f"Only {len(curated_data)} question/answer pairs pass the self-curation")
-        async with aiofiles.open("curated_data.json", "w") as curated_data:
-             await curated_data.write(json.dumps(flattened_list, indent=4))
-        logging.info("Data successfully written to 'curated_data.json'. Process completed.")
+        data = list(chain.from_iterable(data))
+        logging.info(f"Successfully generated {len(data)} question/answer pairs.")
+        if context["use_curation"]:
+            logging.info("Starting to do self-curation using LLM.")
+            data = await generate_data_curation(chat_service, context,data)
+            logging.info(f"Only {len(data)} question/answer pairs pass the self-curation")
+        async with aiofiles.open(context['output_path'], "w") as output_file:
+             await output_file.write(json.dumps(data, indent=4))
+        logging.info(f"Data successfully written to {context['output_path']}. Process completed.")
     except Exception as e:
         logging.error(f"An unexpected error occurred during the process: {e}",exc_info=True)
 
@@ -72,6 +67,11 @@ def parse_arguments():
         type=int,
         help="If a port is specified, then use local vllm endpoint for generating question/answer pairs."
     )
+    parser.add_argument(
+        "-o", "--output_path",
+        default="./data.json",
+        help="set the output path for the generated QA pairs. Default is data.json"
+    )
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -82,6 +82,9 @@ if __name__ == "__main__":
     context["total_questions"] = args.total_questions
     context["model"] = args.model
     context["endpoint"] = args.vllm_endpoint
+    # If curation prompt is not empty, then use self-curation
+    context["use_curation"] = len(context["curation_prompt_template"]) > 0
+    context["output_path"] = args.output_path
     logging.info(f"Configuration loaded. Generating {args.total_questions} question/answer pairs using model '{args.model}'.")
     if context["endpoint"]:
         logging.info(f"Use local vllm service at port: '{args.vllm_endpoint}'.")
