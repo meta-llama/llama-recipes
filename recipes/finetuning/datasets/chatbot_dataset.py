@@ -11,8 +11,8 @@ import itertools
 B_INST, E_INST = "[INST]", "[/INST]"
 
 def tokenize_dialog(q_a_pair, tokenizer):
-    prompt_tokens = [tokenizer.encode(f"{tokenizer.bos_token}{B_INST} {(question).strip()} {E_INST}", add_special_tokens=False) for question in q_a_pair["question"]]
-    answer_tokens = [tokenizer.encode(f"{answer.strip()} {tokenizer.eos_token}", add_special_tokens=False) for answer in q_a_pair["answer"]]
+    prompt_tokens = [tokenizer.encode(f"{tokenizer.bos_token}{B_INST} {(question).strip()} {E_INST}", add_special_tokens=False) for question in q_a_pair["Question"]]
+    answer_tokens = [tokenizer.encode(f"{answer.strip()} {tokenizer.eos_token}", add_special_tokens=False) for answer in q_a_pair["Answer"]]
     dialog_tokens = list(itertools.chain.from_iterable(zip(prompt_tokens, answer_tokens)))
     dialog_tokens = list(itertools.chain.from_iterable(zip(prompt_tokens, answer_tokens)))
     #Add labels, convert prompt token to -100 in order to ignore in loss function
@@ -31,8 +31,8 @@ def get_custom_dataset(dataset_config, tokenizer, split, split_ratio=0.8):
     dataset = dataset['train'].train_test_split(test_size=1-split_ratio, shuffle=True)
 
     dataset = dataset[split].map(lambda sample: {
-        "question": sample["question"],
-        "answer": sample["answer"],
+        "Question": sample["Question"],
+        "Answer": sample["Answer"],
         },
         batched=True,
     )
