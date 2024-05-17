@@ -20,7 +20,7 @@ jobs:
         uses: gaurav-nelson/github-action-markdown-link-check@1.0.13
         with:
           use-verbose-mode: 'yes'
-          config-file: "scripts/markdown_link_check_config.json"
+          config-file: ".github/scripts/markdown_link_check_config.json"
 
       - name: Get changed files
         id: changed-files
@@ -56,11 +56,11 @@ jobs:
           if [ ! "$sources" ]; then
             echo "No files to spellcheck"
           else
-            pyspelling -c $GITHUB_WORKSPACE/scripts/spellcheck_conf/spellcheck.yaml --name Markdown $sources
+            pyspelling -c $GITHUB_WORKSPACE/.github/scripts/spellcheck_conf/spellcheck.yaml --name Markdown $sources
           fi
 
       - name: In the case of misspellings
         if: ${{ failure() }}
         run: |
           echo "Please fix the misspellings. If you are sure about some of them, "
-          echo "so append those to scripts/spellcheck_conf/wordlist.txt"
+          echo "so append those to .github/scripts/spellcheck_conf/wordlist.txt"

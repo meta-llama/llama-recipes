@@ -19,5 +19,5 @@ done
 if [ ! "$sources_arg" ]; then
 	echo "No files to spellcheck"
 else
-	pyspelling -c scripts/spellcheck_conf/spellcheck.yaml --name Markdown $sources_arg
+	pyspelling -c .github/scripts/spellcheck_conf/spellcheck.yaml --name Markdown $sources_arg
 fi
