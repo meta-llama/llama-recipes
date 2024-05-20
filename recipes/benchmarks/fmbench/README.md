@@ -14,7 +14,7 @@ Customers often wonder what is the best AWS service to run Llama models for _my 
 
 The following figure gives an example of the price performance numbers that include inference latency, transactions per-minute and concurrency level for running the `Llama2-13b` model on different instance types available on SageMaker using prompts for Q&A task created from the [`LongBench`](https://huggingface.co/datasets/THUDM/LongBench) dataset, these prompts are between 3000 to 3840 tokens in length. **_Note that the numbers are hidden in this figure but you would be able to see them when you run `FMBench` yourself_**.
 
-![`Llama2-13b` on different instance types ](./img/instances.png)
+![`Llama2-13b` on different instance types ](./img/business_summary.png)
 
 The following table (also included in the report) provides information about the best available instance type for that experiment<sup>1</sup>.
 
