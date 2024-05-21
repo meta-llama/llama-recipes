@@ -14,7 +14,7 @@ Customers often wonder what is the best AWS service to run Llama models for _my 
 
 The following figure gives an example of the price performance numbers that include inference latency, transactions per-minute and concurrency level for running the `Llama2-13b` model on different instance types available on SageMaker using prompts for Q&A task created from the [`LongBench`](https://huggingface.co/datasets/THUDM/LongBench) dataset, these prompts are between 3000 to 3840 tokens in length. **_Note that the numbers are hidden in this figure but you would be able to see them when you run `FMBench` yourself_**.
 
-![`Llama2-13b` on different instance types ](./img/instances.png)
+![`Llama2-13b` on different instance types ](./img/business_summary.png)
 
 The following table (also included in the report) provides information about the best available instance type for that experiment<sup>1</sup>.
 
@@ -77,7 +77,7 @@ The following steps provide a [Quick start guide for `FMBench`](https://github.c
         ```{.bash}
         account=`aws sts get-caller-identity | jq .Account | tr -d '"'`
         region=`aws configure get region`
-        fmbench --config-file s3://sagemaker-fmbench-read-${region}-${account}/configs/config-llama2-7b-g5-quick.yml >> fmbench.log 2>&1
+        fmbench --config-file s3://sagemaker-fmbench-read-${region}-${account}/configs/llama2/7b/config-llama2-7b-g5-quick.yml >> fmbench.log 2>&1
         ```
         <!-- markdown-link-check-enable -->
 
@@ -94,7 +94,7 @@ The following steps provide a [Quick start guide for `FMBench`](https://github.c
 Llama3 is now available on Bedrock (read [blog post](https://aws.amazon.com/blogs/aws/metas-llama-3-models-are-now-available-in-amazon-bedrock/)), and you can now benchmark it using `FMBench`. Here is the config file for benchmarking `Llama3-8b-instruct` and `Llama3-70b-instruct` on Bedrock.
 
 <!-- markdown-link-check-disable -->
-- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-bedrock-llama3.yml) for `Llama3-8b-instruct` and `Llama3-70b-instruct`.
+- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/bedrock/config-bedrock-llama3.yml) for `Llama3-8b-instruct` and `Llama3-70b-instruct`.
 <!-- markdown-link-check-enable -->
 
 ## 🚨 Benchmarking Llama3 on Amazon SageMaker 🚨
@@ -102,9 +102,9 @@ Llama3 is now available on Bedrock (read [blog post](https://aws.amazon.com/blog
 Llama3 is now available on SageMaker (read [blog post](https://aws.amazon.com/blogs/machine-learning/meta-llama-3-models-are-now-available-in-amazon-sagemaker-jumpstart/)), and you can now benchmark it using `FMBench`. Here are the config files for benchmarking `Llama3-8b-instruct` and `Llama3-70b-instruct` on `ml.p4d.24xlarge`, `ml.inf2.24xlarge` and `ml.g5.12xlarge` instances.
 
 <!-- markdown-link-check-disable -->
-- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama3-8b-instruct-g5-p4d.yml) for `Llama3-8b-instruct` on  `ml.p4d.24xlarge` and `ml.g5.12xlarge`.
-- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama3-70b-instruct-g5-p4d.yml) for `Llama3-70b-instruct` on  `ml.p4d.24xlarge` and `ml.g5.48xlarge`.
-- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama3-8b-inf2-g5.yml) for `Llama3-8b-instruct` on  `ml.inf2.24xlarge` and `ml.g5.12xlarge`.
+- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/llama3/8b/config-llama3-8b-instruct-g5-p4d.yml) for `Llama3-8b-instruct` on  `ml.p4d.24xlarge` and `ml.g5.12xlarge`.
+- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/llama3/70b/config-llama3-70b-instruct-g5-p4d.yml) for `Llama3-70b-instruct` on  `ml.p4d.24xlarge` and `ml.g5.48xlarge`.
+- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/llama3/8b/config-llama3-8b-inf2-g5.yml) for `Llama3-8b-instruct` on  `ml.inf2.24xlarge` and `ml.g5.12xlarge`.
 <!-- markdown-link-check-enable -->
 
 ## Benchmarking Llama2 on Amazon SageMaker
@@ -112,11 +112,11 @@ Llama3 is now available on SageMaker (read [blog post](https://aws.amazon.com/bl
 Llama2 models are available through SageMaker JumpStart as well as directly deployable from Hugging Face to a SageMaker endpoint. You can use `FMBench` to benchmark Llama2 on SageMaker for different combinations of instance types and inference containers.
 
 <!-- markdown-link-check-disable -->
-- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama2-7b-g5-quick.yml) for `Llama2-7b` on `ml.g5.xlarge` and `ml.g5.2xlarge` instances, using the [Hugging Face TGI container](763104351884.dkr.ecr.us-east-1.amazonaws.com/huggingface-pytorch-tgi-inference:2.0.1-tgi1.1.0-gpu-py39-cu118-ubuntu20.04).
-- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama2-7b-g4dn-g5-trt.yml) for `Llama2-7b` on `ml.g4dn.12xlarge` instance using the [Deep Java Library DeepSpeed container](763104351884.dkr.ecr.us-east-1.amazonaws.com/djl-inference:0.26.0-deepspeed0.12.6-cu121).
-- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama2-13b-inf2-g5-p4d.yml) for `Llama2-13b` on `ml.g5.12xlarge`, `ml.inf2.24xlarge` and `ml.p4d.24xlarge` instances using the [Hugging Face TGI container](763104351884.dkr.ecr.us-east-1.amazonaws.com/huggingface-pytorch-tgi-inference:2.0.1-tgi1.1.0-gpu-py39-cu118-ubuntu20.04) and the [Deep Java Library & NeuronX container](763104351884.dkr.ecr.us-east-1.amazonaws.com/djl-inference:0.26.0-neuronx-sdk2.16.0).
-- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama2-70b-g5-p4d-trt.yml) for `Llama2-70b` on `ml.p4d.24xlarge` instance using the [Deep Java Library TensorRT container](763104351884.dkr.ecr.us-east-1.amazonaws.com/djl-inference:0.26.0-tensorrtllm0.7.1-cu122).
-- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-llama2-70b-inf2-g5.yml) for `Llama2-70b` on `ml.inf2.48xlarge` instance using the [HuggingFace TGI with Optimum NeuronX container](763104351884.dkr.ecr.{region}.amazonaws.com/huggingface-pytorch-tgi-inference:1.13.1-optimum0.0.17-neuronx-py310-ubuntu22.04).
+- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/llama2/7b/config-llama2-7b-g5-quick.yml) for `Llama2-7b` on `ml.g5.xlarge` and `ml.g5.2xlarge` instances, using the [Hugging Face TGI container](763104351884.dkr.ecr.us-east-1.amazonaws.com/huggingface-pytorch-tgi-inference:2.0.1-tgi1.1.0-gpu-py39-cu118-ubuntu20.04).
+- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/llama2/7b/config-llama2-7b-g4dn-g5-trt.yml) for `Llama2-7b` on `ml.g4dn.12xlarge` instance using the [Deep Java Library DeepSpeed container](763104351884.dkr.ecr.us-east-1.amazonaws.com/djl-inference:0.26.0-deepspeed0.12.6-cu121).
+- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/llama2/13b/config-llama2-13b-inf2-g5-p4d.yml) for `Llama2-13b` on `ml.g5.12xlarge`, `ml.inf2.24xlarge` and `ml.p4d.24xlarge` instances using the [Hugging Face TGI container](763104351884.dkr.ecr.us-east-1.amazonaws.com/huggingface-pytorch-tgi-inference:2.0.1-tgi1.1.0-gpu-py39-cu118-ubuntu20.04) and the [Deep Java Library & NeuronX container](763104351884.dkr.ecr.us-east-1.amazonaws.com/djl-inference:0.26.0-neuronx-sdk2.16.0).
+- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/llama2/70b/config-llama2-70b-g5-p4d-trt.yml) for `Llama2-70b` on `ml.p4d.24xlarge` instance using the [Deep Java Library TensorRT container](763104351884.dkr.ecr.us-east-1.amazonaws.com/djl-inference:0.26.0-tensorrtllm0.7.1-cu122).
+- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/llama2/70b/config-llama2-70b-inf2-g5.yml) for `Llama2-70b` on `ml.inf2.48xlarge` instance using the [HuggingFace TGI with Optimum NeuronX container](763104351884.dkr.ecr.{region}.amazonaws.com/huggingface-pytorch-tgi-inference:1.13.1-optimum0.0.17-neuronx-py310-ubuntu22.04).
 <!-- markdown-link-check-enable -->
 
 ## Benchmarking Llama2 on Amazon Bedrock
@@ -124,7 +124,7 @@ Llama2 models are available through SageMaker JumpStart as well as directly depl
 The Llama2-13b-chat and Llama2-70b-chat models are available on [Bedrock](https://aws.amazon.com/bedrock/llama/). You can use `FMBench` to benchmark Llama2 on Bedrock for both on-demand throughput and provisioned throughput inference options.
 
 <!-- markdown-link-check-disable -->
-- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/config-bedrock.yml) for `Llama2-13b-chat` and `Llama2-70b-chat` on Bedrock for on-demand throughput.
+- [Config file](https://github.com/aws-samples/foundation-model-benchmarking-tool/blob/main/src/fmbench/configs/bedrock/config-bedrock.yml) for `Llama2-13b-chat` and `Llama2-70b-chat` on Bedrock for on-demand throughput.
 <!-- markdown-link-check-enable -->
 
 - For testing provisioned throughput simply replace the `ep_name` parameter in `experiments` section of the config file with the ARN of your provisioned throughput.
