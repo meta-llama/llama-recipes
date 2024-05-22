@@ -27,7 +27,7 @@ The args used in the command above are:
 
 * `--use_peft` boolean flag to enable PEFT methods in the script
 
-* `--peft_method` to specify the PEFT method, here we use `lora` other options are `llama_adapter`, `prefix`.
+* `--peft_method` to specify the PEFT method, here we use `lora` other options are `llama_adapter`.
 
 * `--quantization` boolean flag to enable int8 quantization
 
