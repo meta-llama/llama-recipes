@@ -48,13 +48,15 @@ In the llama-recipe main folder, we can start the fine-tuning step using the fol
 
 For distributed fine-tuning:
 ```bash
-CUDA_VISIBLE_DEVICES=0,1  torchrun --nnodes 1 --nproc_per_node 2  recipes/finetuning/finetuning.py --use_peft --enable_fsdp --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir chatbot-8b --num_epochs 6 --batch_size_training 4 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/chatbot_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/chatbot/pipelines/data.json'
+CUDA_VISIBLE_DEVICES=0,1  torchrun --nnodes 1 --nproc_per_node 2  recipes/finetuning/finetuning.py --use_peft --enable_fsdp --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir chatbot-8b --num_epochs 10 --batch_size_training 4 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/chatbot_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/chatbot/pipelines/data.json'
 ```
+
+CUDA_VISIBLE_DEVICES=0,1  torchrun --nnodes 1 --nproc_per_node 2  recipes/finetuning/finetuning.py --use_peft --enable_fsdp --from_peft_checkpoint chatbot-8b  --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir chatbot-8b-continue --num_epochs 10 --batch_size_training 4 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/chatbot_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/chatbot/pipelines/data.json'
 
 For fine-tuning in single-GPU:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python recipes/finetuning/finetuning.py --quantization --use_peft --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir chatbot-8b --num_epochs 6 --batch_size_training 2 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/chatbot_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/chatbot/pipelines/data.json'
+CUDA_VISIBLE_DEVICES=0 python recipes/finetuning/finetuning.py --quantization --use_peft --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir chatbot-8b --num_epochs 10 --batch_size_training 1 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/chatbot_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/chatbot/pipelines/data.json'
 ```
 
 For more details, please check the readme in the finetuning recipe.
@@ -63,13 +65,13 @@ For more details, please check the readme in the finetuning recipe.
 
 Once we have the fine-tuned model, we now need to evaluate it to understand its performance. Normally, to create a evaluation set, we should first gather some questions and manually write the ground truth answer. In this case, we created a eval set based on the Llama [Troubleshooting & FAQ](https://llama.meta.com/faq/), where the answers are written by human experts. Then we pass the evalset question to our fine-tuned model to get the model generated answers. To compare the model generated answers with ground truth, we can use either traditional eval method, eg. calcucate rouge score, or use LLM to act like a judge to score the similarity of them.
 
-First we need to start the VLLM servers to host our fine-tuned 8B model. Since we used peft library to get a LoRA adapter, we need to pass special arguments to VLLM to enable the LoRA feature. Now, the VLLM server actually will first load the original model, then apply our LoRA adapter weights.
+First we need to start the VLLM servers to host our fine-tuned 8B model. Since we used peft library to get a LoRA adapter, we need to pass special arguments to VLLM to enable the LoRA feature. Now, the VLLM server actually will first load the original model, then apply our LoRA adapter weights. Then we can feed the eval_set json file into the VLLM servers and start the comparison evaluation. Notice that our model name is now called "chatbot" instead of "meta-llama/Meta-Llama-3-8B-Instruct".
 
 ```bash
 python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3-8B-Instruct --enable-lora --lora-modules chatbot=./chatbot-8b --port 8000  --disable-log-requests
 ```
 
-**NOTE** If encounter import error: "ImportError: punica LoRA kernels could not be imported.", this means that Vllm must be installed with punica LoRA kernels to support LoRA adapter, please use following commands to install the VLLM from source.
+**NOTE** If encounter import error: "ImportError: punica LoRA kernels could not be imported.", this means that VLLM must be installed with punica LoRA kernels to support LoRA adapter, please use following commands to install the VLLM from source.
 
 ```bash
 git clone https://github.com/vllm-project/vllm.git
@@ -77,7 +79,7 @@ cd vllm
 VLLM_INSTALL_PUNICA_KERNELS=1 pip install -e .
 ```
 
-Then pass the eval_set json file into the VLLM servers and start the comparison evaluation. Notice that our model name is now called chatbot instead of meta-llama/Meta-Llama-3-8B-Instruct.
+On another terminal, we can go to the recipes/use_cases/end2end-recipes/chatbot/pipelines folder to start our eval script.
 
 ```bash
 python eval_chatbot.py -m chatbot -v 8000
@@ -88,7 +90,25 @@ We can also quickly compare our fine-tuned chatbot model with original 8B model 
 python eval_chatbot.py -m meta-llama/Meta-Llama-3-8B-Instruct -v 8000
 ```
 
-TODO: evaluation using LLM as judge
+**NOTE** If encounter import error: "ImportError: punica LoRA kernels could not be imported.", this means that VLLM must be installed with punica LoRA kernels to support LoRA adapter, please use following commands to install the VLLM from source.
+
+```bash
+git clone https://github.com/vllm-project/vllm.git
+cd vllm
+VLLM_INSTALL_PUNICA_KERNELS=1 pip install -e .
+```
+Lastly, we can use another 70B model as a judge to compare the answer from the fine-tuned 8B model with the groud truth and get a score. To do this, we need to host another 70B VLLM server locally with command, just make sure the port is not been used:
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1 python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3-70B-Instruct --tensor-parallel-size 2 --disable-log-requests --port 8001
+```
+
+Then we can pass the port to the eval script:
+
+```bash
+python eval_chatbot.py -m chatbot -v 8000 -j 8001
+```
+
 ### Step 5: Testing with local inference
 
 Once we believe our fine-tuned model has passed our evaluation and we can deploy it locally to manually test it by manually asking questions.

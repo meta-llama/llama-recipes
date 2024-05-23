@@ -219,9 +219,9 @@ async def generate_question_batches(chat_service, api_context: dict):
         final_result.extend(parsed_json)
     return final_result
 
-async def generate_data_curation(chat_service, api_context: dict, generated_questions: list):
+async def generate_data_curation(chat_service, api_context: dict, evaluation_list: list):
     eval_tasks = []
-    for batch_index, batch_content in enumerate(generated_questions):
+    for batch_index, batch_content in enumerate(evaluation_list):
         try:
             result = data_curation_request(chat_service, api_context, batch_content)
             eval_tasks.append(result)
@@ -235,3 +235,30 @@ async def generate_data_curation(chat_service, api_context: dict, generated_ques
         if item:
             curated_data.append(item)
     return curated_data
+
+# This function is used to evaluate the quality of generated QA pairs. Return the original QA pair if the model eval result is YES. Otherwise, return an empty dict.
+async def LLM_judge_request(chat_service, api_context: dict, document_content: dict) -> dict:
+    prompt_for_system = api_context['judge_prompt_template'].format(language=api_context["language"])
+    chat_request_payload = [{'role': 'system', 'content': prompt_for_system}, {'role': 'user', 'content': f"Question: {document_content['Question']} \n Teacher's Answer: {document_content['Ground_truth']}\n Student's Answer: {document_content['Generated_answer']} "}]
+    result = await chat_service.execute_chat_request_async(api_context, chat_request_payload)
+    if not result:
+        return {}
+    # no parsing needed, just return the loads the result as a dict
+    result = json.loads(result)
+    if "Result" not in result:
+        print("Error: eval response does not contain answer")
+        print(document_content,result)
+        return {}
+    return result
+
+async def generate_LLM_eval(chat_service, api_context: dict, judge_list: list):
+    eval_tasks = []
+    for batch_index, batch_content in enumerate(judge_list):
+        try:
+            result = LLM_judge_request(chat_service, api_context, batch_content)
+            eval_tasks.append(result)
+        except Exception as e:
+            print(f"Error during data eval request execution: {e}")
+
+    judge_results = await asyncio.gather(*eval_tasks)
+    return judge_results

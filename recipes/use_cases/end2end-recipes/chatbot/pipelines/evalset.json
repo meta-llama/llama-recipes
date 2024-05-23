@@ -1,4 +1,16 @@
 [
+    {
+        "question":"What is the difference on the tokenization techniques that Meta Llama 3 uses compare Llama 2?",
+        "answer": "Llama 2 uses SentencePiece for tokenization, whereas Llama 3 has transitioned to OpenAI’s Tiktoken. Llama 3 also introduces a ChatFormat class, special tokens, including those for end-of-turn markers and other features to enhance support for chat-based interactions and dialogue processing."
+    },
+    {
+        "question":"How many tokens were used in Llama 3 pretrain?",
+        "answer": "Llama 3 is pretrained on over 15T tokens that were all collected from publicly available sources."
+    },
+{
+    "question": "what are the goals for Llama 3",
+    "answer":  "With Llama 3, we set out to build the best open models that are on par with the best proprietary models available today. We wanted to address developer feedback to increase the overall helpfulness of Llama 3 and are doing so while continuing to play a leading role on responsible use and deployment of LLMs. We are embracing the open source ethos of releasing early and often to enable the community to get access to these models while they are still in development."
+},
 {
 "question": "What if I want to access Llama models but I’m not sure if my use is permitted under the Llama 2 Community License?",
 "answer": "On a limited case by case basis, we will consider bespoke licensing requests from individual entities. Please contact llamamodels@meta.com to provide more details about your request."
@@ -144,4 +156,3 @@
 "answer": "No, such companies are not prohibited when their usage of Llama is not related to the operation of critical infrastructure. Llama, however, may not be used in the operation of critical infrastructure by any company, regardless of government certifications."
 }
 ]
-

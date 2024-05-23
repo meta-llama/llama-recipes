@@ -185,7 +185,7 @@ Model tends to ignore providing the bigger picture in the questions, for example
 
 #### Data Insights
 
-We generated a dataset of almost 800 Q&A pairs from some of the open source documents about Llama models, including getting started guide from Llama website, its FAQ, Llama 3, Purple Llama, Code Llama papers and Llama-Recipes documentations.
+We generated a dataset of almost 3600 Q&A pairs from some of the open source documents about Llama models, including getting started guide from Llama website, its FAQ, Llama 3, Purple Llama, Code Llama papers and Llama-Recipes documentations.
 
 We have run some fine-tuning experiments with single GPU using quantization with different LORA configs (all linear layer versus query and key projections only) and different number of epochs. Although train and eval loss shows decrease specially with using all linear layers in LORA configs and training with 6 epochs, still the result is far from acceptable in real tests.
 
@@ -205,6 +205,3 @@ Below are some examples of real test on the fine-tuned model with very poor resu
   <img src=./poor-test-1.png alt="Poor Test Results example 1" width="48%" style="margin-right: 2%;"/>
   <img src=./poor-test-2.png alt="Poor Test Results example 1" width="48%"/>
 </p>
-
-
-Next, we are looking into augmenting our datasets. One way to do so, is to use our Llama 70B model to read our question answer pairs and come up with two paraphrase versions of each pair to augment our data.

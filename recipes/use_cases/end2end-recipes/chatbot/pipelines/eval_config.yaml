@@ -8,6 +8,15 @@ eval_prompt_template: >
       "Answer": "Your answer to the question"
   }}
   ]
+judge_prompt_template: >
+  You are provided with a question, a teacher answer and a student answer. Given that question, you need to score the how good the student answer is compare to
+  the teacher's answer. If the student's answer is correct based on the teacher's answer, then return YES. If the answer is not faithful, then return NO
+  and explain which part of the answer if not faithful in the Reason section.
+  Return the result in json format with the template:
+    {{
+      "Reason": "your reason here.",
+      "Result": "YES or NO."
+    }}
 eval_json: "./evalset.json"
 
 language: "English"
