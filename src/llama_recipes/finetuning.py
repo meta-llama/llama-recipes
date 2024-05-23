@@ -250,6 +250,10 @@ def main(**kwargs):
             pin_memory=True,
             **val_dl_kwargs,
         )
+        if len(eval_dataloader) == 0:
+            raise ValueError("The eval set size is too small for dataloader to load even one batch. Please increase the size of eval set.")
+        else:
+            print(f"--> Num of Validation Set Batches loaded = {len(eval_dataloader)}")
 
     # Initialize the optimizer and learning rate scheduler
     if fsdp_config.pure_bf16 and fsdp_config.optimizer == "anyprecision":
