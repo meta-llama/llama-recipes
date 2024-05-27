@@ -11,6 +11,7 @@ from llama_recipes.datasets import (
     get_grammar_dataset,
     get_alpaca_dataset,
     get_samsum_dataset,
+    sharegpt_dataset
 )
 
 
@@ -54,11 +55,12 @@ DATASET_PREPROC = {
     "grammar_dataset": get_grammar_dataset,
     "samsum_dataset": get_samsum_dataset,
     "custom_dataset": get_custom_dataset,
+    "sharegpt_dataset": sharegpt_dataset
 }
 
 
 def get_preprocessed_dataset(
-    tokenizer, dataset_config, split: str = "train"
+        tokenizer, dataset_config, split: str = "train"
 ) -> torch.utils.data.Dataset:
     if not dataset_config.dataset in DATASET_PREPROC:
         raise NotImplementedError(f"{dataset_config.dataset} is not (yet) implemented")
