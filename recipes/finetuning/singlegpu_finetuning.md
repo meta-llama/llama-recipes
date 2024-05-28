@@ -16,7 +16,7 @@ To run fine-tuning on a single GPU, we will make use of two packages:
 ## How to run it?
 
 ```bash
-python -m finetuning.py  --use_peft --peft_method lora --quantization --use_fp16 --model_name /patht_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python finetuning.py  --use_peft --peft_method lora --quantization --use_fp16 --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 ```
 The args used in the command above are:
 
@@ -34,7 +34,7 @@ Currently 3 open source datasets are supported that can be found in [Datasets co
 
 * `grammar_dataset` : use this [notebook](../../src/llama_recipes/datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process the Jfleg and C4 200M datasets for grammar checking.
 
-* `alpaca_dataset` : to get this open source data please download the `aplaca.json` to `dataset` folder.
+* `alpaca_dataset` : to get this open source data please download the `alpaca.json` to `dataset` folder.
 
 
 ```bash
@@ -46,18 +46,18 @@ wget -P ../../src/llama_recipes/datasets https://raw.githubusercontent.com/tatsu
 to run with each of the datasets set the `dataset` flag in the command as shown below:
 
 ```bash
-# grammer_dataset
+# grammar_dataset
 
-python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset grammar_dataset --model_name /patht_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset grammar_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 # alpaca_dataset
 
-python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset alpaca_dataset --model_name /patht_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset alpaca_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 
 # samsum_dataset
 
-python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset samsum_dataset --model_name /patht_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset samsum_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 ```
 

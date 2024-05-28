@@ -15,3 +15,9 @@ This step-by-step tutorial shows how to use the [Messenger Platform](https://dev
 
 ### RAG Chatbot Example (running [locally](./chatbots/RAG_chatbot/RAG_Chatbot_Example.ipynb) or on [OctoAI](../llama_api_providers/OctoAI_API_examples/RAG_Chatbot_example/RAG_Chatbot_Example.ipynb))
 A complete example of how to build a Llama 3 chatbot hosted on your browser that can answer questions based on your own data using retrieval augmented generation (RAG). You can run Llama2 locally if you have a good enough GPU or on OctoAI if you follow the note [here](../README.md#octoai_note).
+
+## [Sales Bot](./chatbots/sales_bot/SalesBot.ipynb): Sales Bot with Llama3 - A Summarization and RAG Use Case
+An summarization + RAG use case built around the Amazon product review Kaggle dataset to build a helpful Music Store Sales Bot. The summarization and RAG are built on top of Llama models hosted on OctoAI, and the vector database is hosted on Weaviate Cloud Services.
+
+## [Media Generation](./MediaGen.ipynb): Building a Video Generation Pipeline with Llama3
+This step-by-step tutorial shows how to use leverage Llama 3 to drive the generation of animated videos using SDXL and SVD. More specifically it relies on JSON formatting to produce a scene-by-scene story board of a recipe video. The user provides the name of a dish, then Llama 3 describes a step by step guide to reproduce the said dish. This step by step guide is brought to life with models like SDXL and SVD.
