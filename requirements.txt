@@ -26,3 +26,9 @@ aiofiles
 evaluate
 rouge_score
 bert_score
+mdc
+langchain_experimental
+python-dotenv==1.0.1
+pyyaml==6.0.1
+coloredlogs==15.0.1
+sentence_transformers

@@ -169,7 +169,6 @@ async def generate_questions(chat_service, api_context: dict):
     return final_result
 
 def add_chunk_to_dataset(
-    client: None,
     chunks: list[str],
     chunk: str,
     x: int = 5,
