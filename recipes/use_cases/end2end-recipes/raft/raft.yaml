@@ -1,0 +1,20 @@
+COT_prompt_template: >
+  Question: {question}\nContext: {context}\n
+        Answer this question using the information given in the context above. Here is things to pay attention to:
+        - First provide step-by-step reasoning on how to answer the question.
+        - In the reasoning, if you need to copy paste some sentences from the context, include them in ##begin_quote## and ##end_quote##. This would mean that things outside of ##begin_quote## and ##end_quote## are not directly copy paste from the context.
+        - End your response with final answer in the form <ANSWER>: $answer, the answer should be succinct.
+        You MUST begin your final answer with the tag "<ANSWER>:
+
+question_prompt_template: >
+  You are a synthetic question-answer pair generator. Given a chunk of context about
+  some topic(s), generate {num_questions} example questions a user could ask and would be answered
+  \using information from the chunk. For example, if the given context was a Wikipedia
+  paragraph about the United States, an example question could be 'How many states are
+  in the United States?
+  The questions should be able to be answered in a few words or less. Include only the
+  questions in your response.
+
+data_dir: "./data"
+
+num_questions: 2
