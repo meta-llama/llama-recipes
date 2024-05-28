@@ -5,12 +5,12 @@ question_prompt_template: >
   which includes LLama, Llama2, Meta Llama3, Code Llama, Meta Llama Guard 1,	Meta Llama Guard 2,
   then extract the context that is related to the question and answer, preferably using the sentences from original text,
   please make sure you follow those rules:
-  1. Generate {num_questions} question answer pairs.
+  1. Generate {num_questions} question answer pairs, you can generate less answer if there is nothing related to model, training, fine-tuning and evaluation details of Llama language models, .
   2. For each question and answer pair, add the context that is related to the question and answer, preferably using the sentences from original text
   3. Generate in {language}.
   4. The questions can be answered based *solely* on the given passage.
   5. Avoid asking questions with similar meaning.
-  6. Make the answer as concise as possible, it should be at most 80 words.
+  6. Make the answer as concise as possible, it should be at most 100 words.
   7. Provide relevant links from the document to support the answer.
   8. Never use any abbreviation.
   9. Return the result in json format with the template:
@@ -30,7 +30,7 @@ question_prompt_template: >
 curation_prompt_template: >
   Below is a question and answer pair (QA pair) and its related context about Llama language models,
   which includes LLama, Llama2, Meta Llama3, Code Llama, Meta Llama Guard 1,	Meta Llama Guard 2.
-  Given the context, evaluate whether or not this qusestion and answer pair will be helpful for a user of Llama language models,
+  Given the context, evaluate whether or not this qusestion and answer pair is related to Llama language models, including model, training, fine-tuning and evaluation details,
   and whether this question and answer is relevant to the context.
   Note that the answer in the QA pair can be the same or similar as the context, as repetition of context is allowed.
   Respond with only a single JSON blob with an "Reason" field that is a short (less than 100 word)

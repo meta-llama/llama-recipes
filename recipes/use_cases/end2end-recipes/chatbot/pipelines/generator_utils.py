@@ -78,6 +78,9 @@ def read_file_content(context):
             if file_text:
                 file_strings.append(file_text)
     text = '\n'.join(file_strings)
+    text = remove_non_printable(text)
+    with open(context['data_dir'] + '/' + 'all_text.txt', 'w') as f:
+        f.write(text)
     return remove_non_printable(text)
 # clean the text by removing all parts that did not contain any alphanumeric characters
 def clean(s):
