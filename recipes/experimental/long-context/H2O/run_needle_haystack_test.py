@@ -32,6 +32,7 @@ if __name__ == '__main__':
     parser.add_argument("--enable_h2o_generation", action='store_true')
     parser.add_argument("--num_heavy_hitter_tokens", type=int, default=128)
     parser.add_argument("--num_window_length", type=int, default=256)
+    parser.add_argument("--num_chunk_size", type=int, default=2048)
 
     parser.add_argument("--enable_position_rolling", action='store_true')
 
@@ -75,6 +76,10 @@ if __name__ == '__main__':
 
             input = tokenizer(prompt, truncation=False, return_tensors="pt").to(model.device)
             context_length = input.input_ids.shape[-1]
+            if context_length > args.num_chunk_size:
+                # truncate the context to the maximum chunk size
+                input = {k: v[:, -args.num_chunk_size:] for k, v in input.items()}
+
             output = model.generate(
                 **input,
                 max_new_tokens=args.max_new_tokens,

@@ -8,11 +8,9 @@ Besides, LLMs usually have poor generation to long sequence during inference. H2
 
 Current implementation supports llama-1/2/3, from 7B to 70B. Since H2O only maintains the most important KV pairs, it might missing some important information in the middle content for some knowlege-intensive tasks.
 
-More details please refer to Paper: https://arxiv.org/pdf/2306.14048; Blog: https://allenz.work/?p=11.
+More details please refer to Paper: **https://arxiv.org/pdf/2306.14048**; Blog: **https://allenz.work/?p=11**.
 
-### Environments:
-
-transformers == 4.39.0
+**Note: this implementation is tested with transformers == 4.39.0**
 
 ### Evaluation on Summarization Tasks
 
@@ -28,13 +26,13 @@ python run_summarization.py \
 
 ##### **Results**
 
-Expected results on XSUM (Rouge-2 score) from the above scripts on Llama-2/3 models. The sequence length of inputs are ~2k, thus KV cache size larger than 2048 represents the full cache performance.
+Expected results on XSUM (Rouge-2 score, ther higher the better) from the above scripts on Llama-2/3 models. The sequence length of inputs are ~2k. Here we constrains the size of KV cache, allowing only n KVs to be write/read after the prefilling stage. n ranges from **64** to **full** where we maintain all the KV pairs. With 128 KVs, the performance can be matched as the full baseline (~2k KVs) while performance degradation is observed with 64 KVs. Also, maintaining a smaller KV cache reduces the I/O cost of KVs, thus we can achieve better throughput.
 
-| KV Cache Size | 64     | 128    | 256    | 512    | 1024   | 2048   | 4096   | 8192   |
-| ------------- | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
-| Llama-2-7B    | 0.0439 | 0.1127 | 0.1148 | 0.1182 | 0.1170 | 0.1164 | 0.1164 | 0.1164 |
-| Llama-2-13B   | 0.1180 | 0.1217 | 0.1243 | 0.1291 | 0.1302 | 0.1332 | 0.1332 | 0.1332 |
-| Llama-3-8B    | 0.1107 | 0.1189 | 0.1200 | 0.1347 | 0.1290 | 0.1311 | 0.1311 | 0.1311 |
+| KV Cache Size | 64     | 128    | 256    | 512    | 1024   | Full   |
+| ------------- | ------ | ------ | ------ | ------ | ------ | ------ |
+| Llama-2-7B    | 0.0439 | 0.1127 | 0.1148 | 0.1182 | 0.1170 | 0.1164 |
+| Llama-2-13B   | 0.1180 | 0.1217 | 0.1243 | 0.1291 | 0.1302 | 0.1332 |
+| Llama-3-8B    | 0.1107 | 0.1189 | 0.1200 | 0.1347 | 0.1290 | 0.1311 |
 
 ### Evaluation on "Needle in a Haystack" Analysis
 
@@ -42,6 +40,8 @@ The following example runs inference of Llama-3-8b-instruct on "Needle in a hays
 
 ```
 # step 1: obtain prompts for evaluation
+# download the dataset from https://github.com/gkamradt/LLMTest_NeedleInAHaystack/tree/main/needlehaystack/PaulGrahamEssays
+# modify the data-path in utils/needle_test/config-prompt.yaml (line 3: haystack_dir: "data/PaulGrahamEssays")
 python utils/needle_test/prompt.py --model_name meta-llama/Meta-Llama-3-8B-Instruct
 # modify utils/needle_test/config-prompt.yaml to adjust the min/max sequence length for the test
 
