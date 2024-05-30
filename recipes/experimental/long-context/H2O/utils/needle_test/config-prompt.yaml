@@ -5,7 +5,7 @@ prompt:
 
 context:
   min_len: 1000
-  max_len: 8000
+  max_len: 16000
   interval: 10
   manually_select_list: null  # null or a list of context lengths to manually select
 
