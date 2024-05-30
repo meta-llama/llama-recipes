@@ -43,17 +43,17 @@ For development and contributing to llama-recipes please install from source wit
 pip install -U pip setuptools
 pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .[tests,auditnlg,vllm]
 ```
-The unit tests can be found in the [tests](./tests/) folder and you can run them from the main directory using:
+The unit tests can be found in the [src/tests](./src/tests/) folder and you can run them from the main directory using:
 ```
-python -m pytest tests/
+python -m pytest src/tests/
 ```
 To run all tests of a single file you can give the filename directly:
 ```
-python -m pytest tests/test_finetuning.py
+python -m pytest src/tests/test_finetuning.py
 ```
 To run a specific test you can filter for its name with
 ```
-python -m pytest tests/test_finetuning.py -k test_finetuning_peft
+python -m pytest src/tests/test_finetuning.py -k test_finetuning_peft
 ```
 To add a new test simply create a new test file under the tests folder (filename has to start with `test_`).
 Group tests spanning the same feature in the same file and create a subfolder if the tests are very extensive.

@@ -1,10 +1,10 @@
 ## LLM Fine-Tuning
 
-Here we discuss fine-tuning Llama 2 with a couple of different recipes. We will cover two scenarios here:
+Here we discuss fine-tuning Meta Llama 3 with a couple of different recipes. We will cover two scenarios here:
 
 
 ## 1. **Parameter Efficient Model Fine-Tuning**
- This helps make the fine-tuning process more affordable even on 1 consumer grade GPU. These methods enable us to keep the whole model frozen and to just add tiny learnable parameters/ layers into the model. In this way, we just train a very tiny portion of the parameters. The most famous method in this category is [LORA](https://arxiv.org/pdf/2106.09685.pdf), LLaMA Adapter and Prefix-tuning.
+ This helps make the fine-tuning process more affordable even on 1 consumer grade GPU. These methods enable us to keep the whole model frozen and to just add tiny learnable parameters/ layers into the model. In this way, we just train a very tiny portion of the parameters. The most famous method in this category is [LORA](https://arxiv.org/pdf/2106.09685.pdf), Llama Adapter and Prefix-tuning.
 
 
 These methods will address three aspects:
@@ -14,7 +14,7 @@ These methods will address three aspects:
 
 - **Cost of deployment** – for each fine-tuned downstream model we need to deploy a separate model; however, when using these methods, only a small set of parameters (few MB instead of several GBs) of the pretrained model can do the job. In this case, for each task we only add these extra parameters on top of the pretrained model so pretrained models can be assumed as backbone and these parameters as heads for the model on different tasks.
 
-- **Catastrophic forgetting** — these methods also help with forgetting the first task that can happen in fine-tunings.
+- **Catastrophic forgetting** — these methods also help with forgetting the first task that can happen in fine-tuning.
 
 HF [PEFT](https://github.com/huggingface/peft) library provides an easy way of using these methods which we make use of here. Please read more [here](https://huggingface.co/blog/peft).
 
@@ -42,7 +42,7 @@ You can also keep most of the layers frozen and only fine-tune a few layers. The
 
 
 
-In this scenario depending on the model size, you might need to go beyond one GPU, especially if your model does not fit into one GPU for training. In this case Llama 2 7B parameter won't fit into one gpu.
+In this scenario depending on the model size, you might need to go beyond one GPU, especially if your model does not fit into one GPU for training. In this case Meta Llama 3 8B parameter won't fit into one gpu.
 The way you want to think about it is, you would need enough GPU memory to keep model parameters, gradients and optimizer states. Where each of these, depending on the precision you are training, can take up multiple times of your parameter count x precision( depending on if its fp32/ 4 bytes, fp16/2 bytes/ bf16/2 bytes).
 For example AdamW optimizer keeps 2 parameters for each of your parameters and in many cases these are kept in fp32. This implies that depending on how many layers you are training/ unfreezing your GPU memory can grow beyond one GPU.
 

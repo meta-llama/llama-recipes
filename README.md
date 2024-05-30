@@ -64,6 +64,10 @@ If you want to use PyTorch nightlies instead of the stable release, go to [this 
 ### Installing
 Llama-recipes provides a pip distribution for easy install and usage in other projects. Alternatively, it can be installed from source.
 
+> [!NOTE]
+> Ensure you use the correct CUDA version (from `nvidia-smi`) when installing the PyTorch wheels. Here we are using 11.8 as `cu118`.
+> H100 GPUs work better with CUDA >12.0
+
 #### Install with pip
 ```
 pip install llama-recipes
