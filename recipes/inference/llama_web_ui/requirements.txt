@@ -1,3 +1,0 @@
-streamlit
-langchain
-replicate

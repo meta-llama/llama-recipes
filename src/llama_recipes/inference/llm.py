@@ -187,6 +187,7 @@ class OctoAI(LLM):
     @override
     def valid_models(self) -> list[str]:
         return [
-            "llamaguard-7b",
-            "llama-2-13b-chat",
+            "llamaguard-2-8b",
+            "meta-llama-3-8b-instruct",
+            "meta-llama-3-70b-instruct",        
         ]

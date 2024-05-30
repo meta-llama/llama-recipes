@@ -1,0 +1,14 @@
+--pre
+--find-links https://mlc.ai/wheels
+mlc-llm-nightly
+mlc-ai-nightly
+attrs
+decorator
+numpy
+psutil
+pydantic
+requests
+scipy
+setuptools
+torch
+tqdm
