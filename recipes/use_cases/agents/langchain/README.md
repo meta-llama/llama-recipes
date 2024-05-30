@@ -8,6 +8,8 @@ LLM agents use [planning, memory, and tools](https://lilianweng.github.io/posts/
 
 Tool-calling agents with LangGraph use two nodes: (1) a node with an LLM decides which tool to invoke based upon the user question. It outputs the tool name and arguments to use. (2) the tool name and arguments are passed to a tool node, which calls the tool itself with the specified arguments and returns the result back to the LLM.
 
+![Screenshot 2024-05-30 at 10 48 58 AM](https://github.com/rlancemartin/llama-recipes/assets/122662504/a2c2ec40-2c7b-486e-9290-33b6da26c304)
+
 Our first notebook, `langgraph-tool-calling-agent`, show how to build our agent mentioned above using Langgraph.
 
 See this [video overview](xxx) for more detail on the design of this agent.
