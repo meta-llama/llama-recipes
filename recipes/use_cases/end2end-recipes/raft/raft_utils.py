@@ -96,7 +96,7 @@ def read_file_content(context):
                 file_strings.append(file_text)
     text = '\n'.join(file_strings)
     text = remove_non_printable(text)
-    return remove_non_printable(text)
+    return text
 
 def remove_non_printable(s):
     printable = set(string.printable)
@@ -199,6 +199,7 @@ async def add_chunk_to_dataset(
             COT_tasks.append(generate_COT(chat_service, context, chunk, question))
     COT_results = await asyncio.gather(*COT_tasks)
     for chunk, q , cot in COT_results:
+        # The COT answer will be used in the fine-tuning stage
         datapt = {
             "id": None,
             "type": "general",
@@ -237,6 +238,7 @@ async def add_chunk_to_dataset(
         for doc in docs:
             context += "<DOCUMENT>" + str(doc) + "</DOCUMENT>\n"
         context += q
+        # This instruction will be used in the fine-tuning stage
         datapt["instruction"] = context
 
         # add to dataset
@@ -253,29 +255,3 @@ async def add_chunk_to_dataset(
         else:
             ds = ds.add_item(datapt)
     return ds
-# This function is used to evaluate the quality of generated QA pairs. Return the original QA pair if the model eval result is YES. Otherwise, return an empty dict.
-async def LLM_judge_request(chat_service, api_context: dict, document_content: dict) -> dict:
-    prompt_for_system = api_context['judge_prompt_template'].format(language=api_context["language"])
-    chat_request_payload = [{'role': 'system', 'content': prompt_for_system}, {'role': 'user', 'content': f"Question: {document_content['Question']} \n Teacher's Answer: {document_content['Ground_truth']}\n Student's Answer: {document_content['Generated_answer']} "}]
-    result = await chat_service.execute_chat_request_async(api_context, chat_request_payload)
-    if not result:
-        return {}
-    # no parsing needed, just return the loads the result as a dict
-    result = json.loads(result)
-    if "Result" not in result:
-        print("Error: eval response does not contain answer")
-        print(document_content,result)
-        return {}
-    return result
-
-async def generate_LLM_eval(chat_service, api_context: dict, judge_list: list):
-    eval_tasks = []
-    for batch_index, batch_content in enumerate(judge_list):
-        try:
-            result = LLM_judge_request(chat_service, api_context, batch_content)
-            eval_tasks.append(result)
-        except Exception as e:
-            print(f"Error during data eval request execution: {e}")
-
-    judge_results = await asyncio.gather(*eval_tasks)
-    return judge_results

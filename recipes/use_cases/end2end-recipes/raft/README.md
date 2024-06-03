@@ -1,4 +1,4 @@
-## End to End Steps to create a Chatbot using fine-tuning
+## End to End Steps to create a Chatbot using Retrieval Augmented Fine Tuning(RAFT)
 
 ### Step 1 : Prepare related documents
 
@@ -6,7 +6,7 @@ Download all your desired docs in PDF, Text or Markdown format to "data" folder 
 
 In this case we have an example of [Getting started with Meta Llama](https://llama.meta.com/get-started/) and other llama related documents such Llama3, Purple Llama, Code Llama papers. Ideally, we should have searched all Llama documents across the web and follow the procedure below on them but that would be very costly for the purpose of a tutorial, so we will stick to our limited documents here. In this case, we want to use Llama FAQ as eval data so we should not put it into the data folder for training.
 
-### Step 2 : Prepare RAFT data for fine-tuning
+### Step 2 : Prepare RAFT dataset for fine-tuning
 
 To use Meta Llama 3 70B model for the RAFT datasets creation from the prepared documents, we can either use Meta Llama 3 70B APIs from LLM cloud providers or host local LLM server.
 
@@ -21,7 +21,7 @@ python generate_question_answers.py
 
 **NOTE** You need to be aware of your RPM (requests per minute), TPM (tokens per minute) and TPD (tokens per day), limit on your account in case using any of model API providers. In our case we had to process each document at a time. Then merge all the Q&A `json` files to make our dataset. We aimed for a specific number of Q&A pairs per document anywhere between 50-100. This is experimental and totally depends on your documents, wealth of information in them and how you prefer to handle question, short or longer answers etc.
 
-Alternatively we can use on prem solutions such as the [TGI](../../../../inference/model_servers/hf_text_generation_inference/README.md) or [VLLM](../../../../inference/model_servers/llama-on-prem.md). Here we will use the prompt in the [generation_config.yaml](./generation_config.yaml) to instruct the model on the expected format and rules for generating the Q&A pairs. In this example, we will show how to create a vllm openai compatible server that host Meta Llama 3 70B instruct locally, generate the Q&A pairs and apply self-curation to get the final dataset.
+Alternatively we can use on prem solutions such as the [TGI](../../../../inference/model_servers/hf_text_generation_inference/README.md) or [VLLM](../../../../inference/model_servers/llama-on-prem.md). Here we will use the prompt in the [generation_config.yaml](./generation_config.yaml) to instruct the model on the expected format and rules for generating the Q&A pairs. In this example, we will show how to create a vllm openai compatible server that host Meta Llama 3 70B instruct locally, and generate the RAFT dataset.
 
 ```bash
 # Make sure VLLM has been installed
@@ -36,15 +36,43 @@ Once the server is ready, we can query the server given the port number 8001 in 
 python raft.py -v 8001 -t 5
 ```
 
-This python program will read all the documents inside of "data" folder and split the data into batches by the chunk_size (default is 512) and apply the question_prompt_template, defined in "raft.yaml", to each batch. Then it will use each batch to query VLLM server and save the return a list of question list for each batch.
+This python program will read all the documents inside of "data" folder and transform the text into embeddings and split the data into batches by the SemanticChunker. Then we apply the question_prompt_template, defined in "raft.yaml", to each batch, and finally we will use each batch to query VLLM server and save the return a list of question list for all batches.
+
+We now have a related context as text chunk and a corresponding question list. For each question in the question list, we want to generate a Chain-of-Thought (COT) style question using Llama 3 70B Instruct as well. Once we have the COT answers, we can start to make a dataset that contains "instruction" which includes some unrelated chunks called distractor and has a probability P to include the related chunk.
+
+```python
+{
+  'id': 'seed_task_0',
+  'type': 'general',
+  'question': 'What is the official motto of the United States of America?',
+  'context': {
+    'sentences': [
+      ["the Gulf of Mexico are prone to hurricanes, ... and enforces the Act. [ 189 ] As of 2022, the U. S",
+    "energy from fossil fuel and the largest ... there are 19, 969 airports in the U. S., of which 5, 193 are designated",
+    'weaponry, ideology, and international i... and is a permanent member of the UN Security Council. The first documentary evidence of the phrase " United States',
+    '[CLS] United States of America Flag Coat of arms ... dominance in nuclear and conventional',
+    '##om ic soft pow er. [ 405 ] [ 406 ] Nearly all present ... rights in the United States are advanced by global standards.']
+    ],
+    'title': [
+      ['placeholder_title',
+      'placeholder_title',
+      'placeholder_title',
+      'placeholder_title',
+      'placeholder_title']
+    ]
+  },
+  'answer': '"In God We Trust"',
+  'cot_answer': None
+}
 
 
+```
 ### Step 3: Run the fune-tuning
 Once the dataset is ready, we can start the fine-tuning step using the following commands in the llama-recipe main folder:
 
 For distributed fine-tuning:
 ```bash
-CUDA_VISIBLE_DEVICES=0,1  torchrun --nnodes 1 --nproc_per_node 2  recipes/finetuning/finetuning.py --use_peft --enable_fsdp --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir chatbot-8b --num_epochs 10 --batch_size_training 4 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/chatbot_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/chatbot/pipelines/data.json'
+CUDA_VISIBLE_DEVICES=0,1  torchrun --nnodes 1 --nproc_per_node 2  recipes/finetuning/finetuning.py --use_peft --enable_fsdp --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir raft-8b --num_epochs 10 --batch_size_training 4 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/raft_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/raft/hotpot_vicuna_cot.jsonl'
 ```
 
 

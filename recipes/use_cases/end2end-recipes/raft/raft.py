@@ -43,7 +43,7 @@ async def main(context):
 
         # Extract format specific params
         format_params = {}
-        formatter.convert(ds=ds, format=args.output_format, output_path=args.output, output_type=args.output_type, params=format_params)
+        formatter.convert(ds=ds, format=args.output_format, output_path=args.output+"raft", output_type=args.output_type, params=format_params)
     except Exception as e:
         logging.error(f"An unexpected error occurred during the process: {e}",exc_info=True)
 

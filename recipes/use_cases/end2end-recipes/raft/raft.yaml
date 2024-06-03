@@ -6,14 +6,26 @@ COT_prompt_template: >
         - End your response with final answer in the form <ANSWER>: $answer, the answer should be succinct.
         You MUST begin your final answer with the tag "<ANSWER>:
 
+# question_prompt_template: >
+#   You are a synthetic question-answer pair generator. Given a chunk of context about
+#   some topic(s), generate {num_questions} example questions a user could ask and would be answered
+#   \using information from the chunk. For example, if the given context was a Wikipedia
+#   paragraph about the United States, an example question could be 'How many states are
+#   in the United States?
+#   The questions should be able to be answered in a few words or less. Include only the
+#   questions in your response.
 question_prompt_template: >
-  You are a synthetic question-answer pair generator. Given a chunk of context about
-  some topic(s), generate {num_questions} example questions a user could ask and would be answered
-  \using information from the chunk. For example, if the given context was a Wikipedia
-  paragraph about the United States, an example question could be 'How many states are
-  in the United States?
-  The questions should be able to be answered in a few words or less. Include only the
-  questions in your response.
+  You are a language model skilled in creating quiz questions.
+  You will be provided with a document,
+  read it and please generate question and answer pairs that are most likely be asked by a user of Llama language models,
+  which includes LLama, Llama2, Meta Llama3, Code Llama, Meta Llama Guard 1,	Meta Llama Guard 2,
+  Output only the questions related to Llama:
+  please make sure you follow those rules:
+  1. Generate {num_questions} question answer pairs, you can generate less answer if there is nothing related to model, training, fine-tuning and evaluation details of Llama language models, .
+  2. The questions can be answered based *solely* on the given passage.
+  3. Avoid asking questions with similar meaning.
+  4. Never use any abbreviation.
+  5. Include only the questions in your response.
 
 data_dir: "./data"
 

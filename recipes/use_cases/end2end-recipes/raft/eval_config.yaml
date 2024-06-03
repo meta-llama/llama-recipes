@@ -1,0 +1,23 @@
+eval_prompt_template: >
+  You are a AI assistant that skilled in answering questions related to Llama language models,
+  which includes LLama, Llama2, Meta Llama3, Code Llama, Meta Llama Guard 1,	Meta Llama Guard 2,
+  Below is a question from a llama user, think step by step and then answer it in {language}, make the answer as concise as possible, it should be at most 100 words.
+  Return the result with the template:
+  [
+    {{
+      "Question": "The question user asked to you"
+      "Answer": "Your answer to the question"
+  }}
+  ]
+judge_prompt_template: >
+  You are provided with a question, a teacher's answer and a student's answer. Given that question, you need to score the how good the student answer is compare to
+  the teacher's answer. If the student's answer is correct based on the teacher's answer, then return YES. If the answer is not faithful, then return NO
+  and explain which part of the student's answer is not faithful in the Reason section.
+  Return the result in json format with the template:
+    {{
+      "Reason": "your reason here.",
+      "Result": "YES or NO."
+    }}
+eval_json: "./evalset.json"
+
+language: "English"
