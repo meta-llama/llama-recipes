@@ -12,7 +12,7 @@ Tool-calling agents with LangGraph use two nodes: (1) a node with an LLM decides
 
 Our first notebook, `langgraph-tool-calling-agent`, shows how to build our agent mentioned above using LangGraph.
 
-See this [video overview](https://www.loom.com/share/ae10a5bc13e146efba2c446b626f6411) for more detail on the design of this agent.
+See this [video overview](https://www.youtube.com/watch?v=j2OAeeujQ9M) for more detail on the design of this agent.
 
 --- 
 
