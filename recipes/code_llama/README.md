@@ -4,7 +4,7 @@ Code llama was recently released with three flavors, base-model that support mul
 
 Find the scripts to run Code Llama, where there are two examples of running code completion and infilling.
 
-**Note** Please find the right model on HF side [here](https://huggingface.co/codellama). 
+**Note** Please find the right model on HF [here](https://huggingface.co/models?search=meta-llama%20codellama). 
 
 Make sure to install Transformers from source for now
 
@@ -36,4 +36,4 @@ To run the 70B Instruct model example run the following (you'll need to enter th
 python code_instruct_example.py --model_name codellama/CodeLlama-70b-Instruct-hf --temperature 0.2 --top_p 0.9
 
 ```
-You can learn more about the chat prompt template [on HF](https://huggingface.co/codellama/CodeLlama-70b-Instruct-hf#chat-prompt) and [original Code Llama repository](https://github.com/facebookresearch/codellama/blob/main/README.md#fine-tuned-instruction-models). HF tokenizer has already taken care of the chat template as shown in this example. 
+You can learn more about the chat prompt template [on HF](https://huggingface.co/meta-llama/CodeLlama-70b-Instruct-hf#chat-prompt) and [original Code Llama repository](https://github.com/meta-llama/codellama/blob/main/README.md#fine-tuned-instruction-models). HF tokenizer has already taken care of the chat template as shown in this example. 
