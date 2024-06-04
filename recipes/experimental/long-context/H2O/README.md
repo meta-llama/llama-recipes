@@ -14,7 +14,7 @@ More details please refer to Paper: **https://arxiv.org/pdf/2306.14048**; Blog: 
 
 ### Evaluation on Summarization Tasks
 
-The following example runs inference of Llama-2-7b and Meta-Llama-3-8B on XSUM summarization tasks. We're using `--enable_h2o_generation` to enable H2O algorithm that only keeps heavy-hitter and the local KV pairs. Use `--num_window_length `to decide the KV cache size. The number of local and heavy-hitter KV pairs equals to half of the --num_window_length (Option: the number of heavy-hitters can also be specific by `--num_heavy_hitter_tokens`) Also, use --enable_position_rolling to enable position rolling in the KV cache size that assign the positions in the KV cache instead of the ones in original sequences. Enabling positional rolling is important when sequence length exceeds the pretrained context windows, e.g., 8K in Llama-3.
+The following example runs inference of Llama-2-7b and Meta-Llama-3-8B on XSUM summarization tasks. We're using `--enable_h2o_generation` to enable H2O algorithm that only keeps heavy-hitter and the local KV pairs. Use `--num_window_length `to decide the KV cache size. The number of local and heavy-hitter KV pairs equals to half of the --num_window_length (Option: the number of heavy-hitters can also be decided by `--num_heavy_hitter_tokens`) Also, use --enable_position_rolling to enable position rolling in the KV cache size that assign the positions in the KV cache instead of the ones in original sequences. Enabling positional rolling is important when sequence length exceeds the pretrained context windows, e.g., 8K in Llama-3.
 
 ```
 python run_summarization.py \
