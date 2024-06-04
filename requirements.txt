@@ -32,3 +32,5 @@ python-dotenv==1.0.1
 pyyaml==6.0.1
 coloredlogs==15.0.1
 sentence_transformers
+faiss-gpu
+unstructured[pdf]

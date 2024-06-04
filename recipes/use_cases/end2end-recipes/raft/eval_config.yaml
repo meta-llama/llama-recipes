@@ -18,6 +18,13 @@ judge_prompt_template: >
       "Reason": "your reason here.",
       "Result": "YES or NO."
     }}
+
 eval_json: "./evalset.json"
 
 language: "English"
+
+raft_model_name: "raft-8b"
+
+base_model_name: "meta-llama/Meta-Llama-3-8B-Instruct"
+
+data_dir: "./data"

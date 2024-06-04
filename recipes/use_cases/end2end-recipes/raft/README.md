@@ -72,7 +72,7 @@ Once the dataset is ready, we can start the fine-tuning step using the following
 
 For distributed fine-tuning:
 ```bash
-CUDA_VISIBLE_DEVICES=0,1  torchrun --nnodes 1 --nproc_per_node 2  recipes/finetuning/finetuning.py --use_peft --enable_fsdp --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir raft-8b --num_epochs 10 --batch_size_training 4 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/raft_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/raft/hotpot_vicuna_cot.jsonl'
+CUDA_VISIBLE_DEVICES=0,1  torchrun --nnodes 1 --nproc_per_node 2  recipes/finetuning/finetuning.py --use_peft --enable_fsdp --peft_method lora  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir raft-8b --num_epochs 5 --batch_size_training 4 --dataset "custom_dataset" -custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/raft_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/raft/raft.jsonl'
 ```
 
 
@@ -97,7 +97,7 @@ Once we have the fine-tuned model, we now need to evaluate it to understand its 
 First we need to start the VLLM servers to host our fine-tuned 8B model. Since we used peft library to get a LoRA adapter, we need to pass special arguments to VLLM to enable the LoRA feature. Now, the VLLM server actually will first load the original model, then apply our LoRA adapter weights. Then we can feed the eval_set.json file into the VLLM servers and start the comparison evaluation. Notice that our finetuned model name is now called "chatbot" instead of "meta-llama/Meta-Llama-3-8B-Instruct".
 
 ```bash
-python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3-8B-Instruct --enable-lora --lora-modules chatbot=./chatbot-8b --port 8000  --disable-log-requests
+python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3-8B-Instruct --enable-lora --lora-modules raft-8b=./raft-8b --port 8000  --disable-log-requests
 ```
 
 **NOTE** If encounter import error: "ImportError: punica LoRA kernels could not be imported.", this means that VLLM must be installed with punica LoRA kernels to support LoRA adapter, please use following commands to install the VLLM from source.
@@ -111,33 +111,23 @@ VLLM_INSTALL_PUNICA_KERNELS=1 pip install -e .
 On another terminal, we can go to the recipes/use_cases/end2end-recipes/chatbot/pipelines folder to start our eval script.
 
 ```bash
-python eval_chatbot.py -m chatbot -v 8000
+python eval_raft.py -m raft-8b -v 8000
 ```
 
-We can also quickly compare our fine-tuned chatbot model with original Meta Llama 3 8B Instruct model using
-
-```bash
-python eval_chatbot.py -m meta-llama/Meta-Llama-3-8B-Instruct -v 8000
-```
 
 
 Lastly, we can use another Meta Llama 3 70B Instruct model as a judge to compare the answer from the fine-tuned 8B model with the groud truth and get a score. To do this, we need to host another Meta Llama 3 70B Instruct VLLM server locally with command, just make sure the port is not been used:
 
 ```bash
-CUDA_VISIBLE_DEVICES=2,3 python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3-70B-Instruct --tensor-parallel-size 2 --disable-log-requests --port 8001
+CUDA_VISIBLE_DEVICES=2,3 python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3-70B-Instruct --tensor-parallel-size 2 --disable-log-requests --port 8002
 ```
 
 Then we can pass the port to the eval script:
 
 ```bash
-python eval_chatbot.py -m chatbot -v 8000 -j 8001
+python eval_raft.py -m raft-8b -v 8000 -j 8002
 ```
 
-and similarily get the eval result for the original model:
-
-```bash
-python eval_chatbot.py -m meta-llama/Meta-Llama-3-8B-Instruct  -v 8000 -j 8001
-```
 
 
 

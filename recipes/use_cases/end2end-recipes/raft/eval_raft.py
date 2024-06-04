@@ -5,34 +5,37 @@ import logging
 import evaluate
 import argparse
 from config import load_config
-import asyncio
 import json
 from itertools import chain
-from generator_utils import parse_qa_to_json, generate_LLM_eval
-from langchain_community.llms import VLLM
+from langchain_community.llms import VLLMOpenAI
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import DirectoryLoader
 from langchain.chains import RetrievalQA
+from langchain_core.messages import HumanMessage, SystemMessage
+import re
+import string
+from collections import Counter
 
-from eval_utils import exact_match_score
-def generate_answers_model_only(model_path):
+def generate_answers_model_only(model_name,question_list,api_url="http://localhost:8000/v1",key="EMPTY"):
         # Use langchain to load the documents from data directory
     # Load the RAFT model
-    llm = VLLM(model=model_path,
-           trust_remote_code=True,  # mandatory for hf models
-           max_new_tokens=500,
-           top_p=1,
-           temperature=0.0,
-           # tensor_parallel_size=... # for distributed inference
-        )
+    llm = VLLMOpenAI(
+        openai_api_key=key,
+        openai_api_base=api_url,
+        model_name=model_name,
+        model_kwargs={"stop": ["."]},
+        temperature=0.0,)
     generated_answers = []
     for question in question_list:
-        result = llm.invoke(question)
-        generated_answers.append(result["answer"])
+        response = llm.invoke(question)
+        generated_answers.append(response)
+    if len(generated_answers) == 0:
+        logging.error("No model answers generated. Please check the input context or model configuration in ",model_name)
+        return []
     return generated_answers
-def generate_answers_with_RAG(model_path, data_dir,question_list):
+def generate_answers_with_RAG(model_name, data_dir,question_list, api_url="http://localhost:8000/v1",key="EMPTY"):
     # Use langchain to load the documents from data directory
     loader = DirectoryLoader(data_dir)
     docs = loader.load()
@@ -43,13 +46,12 @@ def generate_answers_with_RAG(model_path, data_dir,question_list):
     # Store the document into a vector store with a specific embedding model
     vectorstore = FAISS.from_documents(all_splits, HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2"))
     # Load the RAFT model
-    llm = VLLM(model=model_path,
-           trust_remote_code=True,  # mandatory for hf models
-           max_new_tokens=500,
-           top_p=1,
-           temperature=0.0,
-           # tensor_parallel_size=... # for distributed inference
-        )
+    llm = VLLMOpenAI(
+        openai_api_key=key,
+        openai_api_base=api_url,
+        model_name=model_name,
+        model_kwargs={"stop": ["."]},
+        temperature=0.0,)
     # Create a RetrievalQA chain with the vector store and RAFT model
     qa_chain = RetrievalQA.from_chain_type(
     llm,
@@ -57,10 +59,13 @@ def generate_answers_with_RAG(model_path, data_dir,question_list):
     )
     generated_answers = []
     for question in question_list:
-        result = qa_chain({"query": question})
-        generated_answers.append(result["answer"])
+        response = qa_chain({"query": question})
+        generated_answers.append(response['result'])
+    if len(generated_answers) == 0:
+        logging.error("No RAG answers generated. Please check the input context or model configuration in ",model_name)
+        return []
     return generated_answers
-def compute_rouge_score(generated : str, reference: str):
+def compute_rouge_score(generated : list, reference: list):
     rouge_score = evaluate.load('rouge')
     return rouge_score.compute(
         predictions=generated,
@@ -68,7 +73,41 @@ def compute_rouge_score(generated : str, reference: str):
         use_stemmer=True,
         use_aggregator=True
     )
-def compute_bert_score(generated : str, reference: str):
+def remove_special_tokens(text_list):
+    clean_text_list = []
+    for text in text_list:
+        text = text.replace("##begin_quote##","")
+        text = text.replace("##end_quote##","")
+        text = text.strip()
+        clean_text_list.append(text)
+    return clean_text_list
+
+def normalize_answer(s):
+
+    def remove_articles(text):
+        return re.sub(r'\b(a|an|the)\b', ' ', text)
+
+    def white_space_fix(text):
+        return ' '.join(text.split())
+
+    def remove_punc(text):
+        exclude = set(string.punctuation)
+        return ''.join(ch for ch in text if ch not in exclude)
+
+    def lower(text):
+        return text.lower()
+
+    return white_space_fix(remove_articles(remove_punc(lower(s))))
+def exact_match_score(prediction, ground_truth):
+    """Computes EM score for a single prediction and ground truth answer."""
+    num_match = 0
+    assert len(prediction) == len(ground_truth), "Answer length does not match prediction length."
+    assert(len(ground_truth) > 0)
+    for idx, (pred,gold) in enumerate(zip(prediction, ground_truth)):
+        if (normalize_answer(pred) == normalize_answer(gold)):
+            num_match += 1
+    return num_match/len(ground_truth)
+def compute_bert_score(generated : list, reference: list):
     bertscore = evaluate.load("bertscore")
     score = bertscore.compute(
         predictions=generated,
@@ -79,44 +118,65 @@ def compute_bert_score(generated : str, reference: str):
     precision = score["precision"]
     recall = score["recall"]
     return sum(precision)/len(precision), sum(recall)/len(recall), sum(f1)/len(f1)
-# This function is used to eval the fine-tuned model, given the question, generate the answer.
-async def eval_request(chat_service, api_context: dict, question: str) -> dict:
-    prompt_for_system = api_context['eval_prompt_template'].format(language=api_context["language"])
-    chat_request_payload = [{'role': 'system', 'content': prompt_for_system}, {'role': 'user', 'content': f"Question: {question}"}]
-    # Getting a list of result, in this case, there should be only one result
-    response_string = await chat_service.execute_chat_request_async(api_context, chat_request_payload)
-    # convert the result string to a dict that contains Question, Answer
-    result_list = parse_qa_to_json(response_string)
-    if not result_list or len(result_list) > 1:
-        print("Error: eval response should be a list of one result dict")
-        return {}
-    result = result_list[0]
-    if "Answer" not in result:
-        print("Error: eval response does not contain answer")
-        return {}
-    # Send back the model generated answer
-
-    return result["Answer"]
-
-async def generate_eval_answer(chat_service, api_context: dict, questions: list):
-    eval_tasks = []
-    for batch_index, question in enumerate(questions):
-        try:
-            result = eval_request(chat_service, api_context, question)
-            eval_tasks.append(result)
-        except Exception as e:
-            print(f"Error during data eval request execution: {e}")
-    print(len(eval_tasks),"eval_tasks")
-    eval_results = await asyncio.gather(*eval_tasks)
-
-    return eval_results
-
-async def main(context):
-    if context["endpoint"]:
-        chat_service = VllmChatService()
-    else:
-        chat_service = OctoAIChatService()
+def compute_judge_score(questions: list, generated : list, reference: list, context,api_url="http://localhost:8001/v1",key="EMPTY"):
+    correct_num = 0
+    model_name = "meta-llama/Meta-Llama-3-70B-Instruct"
+    llm = VLLMOpenAI(
+        openai_api_key=key,
+        openai_api_base=api_url,
+        model_name=model_name,
+        model_kwargs={"stop": ["."]},
+        temperature=0.0,)
+    for q,pred,gold in zip(questions, generated,reference):
+        # messages = [
+        #     SystemMessage(content=context['judge_prompt_template']),
+        #     HumanMessage(content=f"Question: {q} \n Teacher's Answer: {gold} \n Student's Answer: {pred} "),
+        # ]
+        messages = context['judge_prompt_template'] + "\n"
+        messages += f"Question: {q} \n Teacher's Answer: {gold} \n Student's Answer: {pred} "
+        response = llm.invoke(messages)
+        print(response+ " -------------")
+        result = json.loads(response)
+        if "Result" not in result:
+            print("Error: eval response does not contain answer")
+            print(result)
+            continue
+        correct_num += result["Result"] == "YES"
+    return correct_num/len(questions)
+def score_single(context,generated,reference,questions, run_exact_match=True,run_rouge=True, run_bert=True, run_llm_as_judge=True):
+    # set metric to default -1, means no metric is computed
+    metric = {
+        "Rouge_score": -1,
+        "BERTScore_Precision": -1,
+        "BERTScore_Recall": -1,
+        "BERTScore_F1": -1,
+        "LLM_judge_score": -1,
+        "Exact_match": -1
+    }
+    if run_rouge:
+        rouge_score = compute_rouge_score(generated,reference)
+        metric["Rouge_score"] = rouge_score
+        print("Rouge_score:",rouge_score)
+    if run_bert:
+        P, R, F1 = compute_bert_score(generated,reference)
+        print(f"BERTScore Precision: {P:.4f}, Recall: {R:.4f}, F1: {F1:.4f}")
+        metric["BERTScore_Precision"] = P
+        metric["BERTScore_Recall"] = R
+        metric["BERTScore_F1"] = F1
+    if context["judge_endpoint"] and run_llm_as_judge:
+        api_url = "http://localhost:"+str(context["judge_endpoint"])+"/v1"
+        LLM_judge_score = compute_judge_score(questions, generated, reference, context,api_url=api_url)
+        metric["LLM_judge_score"] = LLM_judge_score
+        print(f"LLM_judge_score: {LLM_judge_score}")
+    if run_exact_match:
+        exact_match = exact_match_score(generated,reference)
+        print(f"Exact_match_percentage: {exact_match:.4f}")
+        metric["Exact_match"] = exact_match
+    return metric
+def main(context):
+    # Since the eval set is small, we can run the eval without async functions
     try:
+        api_url = "http://localhost:"+str(context["vllm_endpoint"])+"/v1"
         logging.info("Starting to generate answer given the eval set.")
         with open(context["eval_json"]) as fp:
             eval_json = json.load(fp)
@@ -124,49 +184,47 @@ async def main(context):
         for index, item in enumerate(eval_json):
             questions.append(item["question"])
             groud_truth.append(item["answer"])
-        generated_answers = generate_answers_with_RAG(model_path, context,questions)
-        if not generated_answers:
-            logging.warning("No answers generated. Please check the input context or model configuration.")
-            return
-        logging.info(f"Successfully generated {len(generated_answers)} answers.")
-        judge_list = []
-        for index, item in enumerate(generated_answers):
-            judge_list.append({"Question":questions[index],"Ground_truth":groud_truth[index],"Generated_answer":generated_answers[index]})
-        if context["judge_endpoint"]:
-            # make a copy of the context then change the VLLM endpoint to judge_endpoint
-            context_copy = dict(context)
-            context_copy["endpoint"] = context["judge_endpoint"]
-            context_copy["model"] = "meta-llama/Meta-Llama-3-70B-Instruct"
-            judge_results = await generate_LLM_eval(chat_service, context_copy, judge_list)
-            correct_num = 0
-            for result in judge_results:
-                correct_num += result["Result"] == "YES"
-            LLM_judge_score = correct_num/len(judge_results)
-            print(f"The accuracy of the model is {LLM_judge_score}")
-        rouge_score = compute_rouge_score(generated_answers,groud_truth)
-        print("Rouge_score:",rouge_score)
-        P, R, F1 = compute_bert_score(generated_answers,groud_truth)
-        print(f"BERTScore Precision: {P:.4f}, Recall: {R:.4f}, F1: {F1:.4f}")
-        exact_match = 0
-        for item in judge_list:
-            exact_match += exact_match_score(item['Generated_answer'],item['Ground_truth'])
-        exact_match_percentage = exact_match/len(judge_list)
-        print(f"Exact_match_percentage: {exact_match_percentage:.4f}")
-        # Saving the eval result to a log file
-        with open(context["output_log"],"a") as fp:
-            fp.write(f"Eval_result for {context['model']} \n")
-            fp.write(f"Rouge_score: {rouge_score} \n")
-            fp.write(f"BERTScore Precision: {P:.4f}, Recall: {R:.4f}, F1: {F1:.4f} \n")
-            fp.write(f"Exact_match_percentage: {exact_match_percentage} \n")
-            if context["judge_endpoint"]:
-                fp.write(f"LLM_judge_score: {LLM_judge_score} \n")
-            fp.write(f"QA details: \n")
-            for item in judge_list:
-                fp.write(f"question: {item['Question']} \n")
-                fp.write(f"generated_answers: {item['Generated_answer']} \n")
-                fp.write(f"groud_truth: {item['Ground_truth']} \n")
-                fp.write("\n")
+        generated_answers = {
+            "RAFT": [],
+            "RAFT_RAG": [],
+            "Baseline": [],
+            "Baseline_RAG": [],
+        }
+        # Generate answers for baseline
+        base_model_name = context["base_model_name"]
+        generated_answers["Baseline"] = generate_answers_model_only(base_model_name,questions,api_url)
+        #generated_answers["Baseline_RAG"] = generate_answers_with_RAG(base_model_name, context["data_dir"],questions,api_url)
+        # Generate answers for RAFT
+        raft_model_name = context["raft_model_name"]
+        #generated_answers["RAFT"] = generate_answers_model_only(raft_model_name,questions,api_url)
+        #generated_answers["RAFT_RAG"] = generate_answers_with_RAG(raft_model_name, context["data_dir"],questions,api_url)
+        # clean special tokens from the RAFT generated answer
+        #generated_answers["RAFT"] = remove_special_tokens(generated_answers["RAFT"])
+        #generated_answers["RAFT_RAG"] = remove_special_tokens(generated_answers["RAFT_RAG"])
+        logging.info(f"Successfully generated {len(generated_answers['Baseline_RAG'])} answers for all models.")
+        # for generate answer from each model, compute the score metric
+        for model_name,model_answer in generated_answers.items():
+            if len(model_answer) != len(groud_truth):
+                print(f"The length of {model_name} answer is not equal to the length of ground truth.")
+                continue
+            metric = score_single(context,model_answer,groud_truth,questions)
+            print(f"The eval result for {model_name} is: {metric}")
+            with open(context["output_log"],"a") as fp:
+                fp.write(f"Eval_result for {model_name} \n")
+                fp.write(f"Rouge_score: {metric['Rouge_score']} \n")
+                fp.write(f"BERTScore Precision: {metric['BERTScore_Precision']:.4f}, Recall: {metric['BERTScore_Recall']:.4f}, F1: {metric['BERTScore_F1']:.4f} \n")
+                fp.write(f"Exact_match_percentage: {metric['Exact_match']} \n")
+                if context["judge_endpoint"]:
+                    fp.write(f"LLM_judge_score: {metric['LLM_judge_score']} \n")
+                fp.write(f"QA details: \n")
+                for item in zip(questions,model_answer,groud_truth):
+                    fp.write(f"question: {item[0]} \n")
+                    fp.write(f"generated_answers: {item[1]} \n")
+                    fp.write(f"groud_truth: {item[2]} \n")
+                    fp.write("\n")
+                fp.write("\n------------------------------------\n")
         logging.info(f"Eval successfully, the eval result is saved to {context['output_log']}.")
+        # Saving the eval result to a log file
     except Exception as e:
         logging.error(f"An unexpected error occurred during the process: {e}",exc_info=True)
 
@@ -176,9 +234,9 @@ def parse_arguments():
         description="Generate question/answer pairs from documentation."
     )
     parser.add_argument(
-        "-m", "--model",
-        default="chatbot",
-        help="Select the model to use for evaluation, this maybe a LoRA adapter."
+        "-m", "--raft_model_name",
+        default=None,
+        help="Provide the raft_model_name to use for evaluation. If not specified, the model_path in eval_config.yaml will be used."
     )
     parser.add_argument(
         "-c", "--config_path",
@@ -186,10 +244,15 @@ def parse_arguments():
         help="Set the configuration file path that has system prompt along with language, evalset path."
     )
     parser.add_argument(
-        "-v", "--vllm_endpoint",
+        "-d", "--data_dir",
         default=None,
+        help="Provide the data folder path to build RAG for evaluation. If not specified, the data_dir in eval_config.yaml will be used."
+    )
+    parser.add_argument(
+        "-v", "--vllm_endpoint",
+        default=8000,
         type=int,
-        help="If a port is specified, then use local vllm endpoint for evaluations."
+        help="If a port is specified, then use local vllm endpoint for eval."
     )
     parser.add_argument(
         "-j", "--judge_endpoint",
@@ -202,18 +265,20 @@ def parse_arguments():
         default="eval_result.log",
         help="save the eval result to a log file. Default is eval_result.log"
     )
+
     return parser.parse_args()
 
 if __name__ == "__main__":
     logging.info("Initializing the process and loading configuration...")
     args = parse_arguments()
     context = load_config(args.config_path)
-    context["model"] = args.model
-    context["endpoint"] = args.vllm_endpoint
+    context["vllm_endpoint"] = args.vllm_endpoint
+    if args.data_dir:
+        context["data_dir"] = args.data_dir
+    if args.raft_model_name:
+        context["raft_model_name"] = args.raft_model_name
     context["judge_endpoint"] = args.judge_endpoint
     context["output_log"] = args.output_log
-    if context["endpoint"]:
-        logging.info(f"Use local vllm service for eval at port: '{args.vllm_endpoint}'.")
     if context["judge_endpoint"]:
         logging.info(f"Use local vllm service for judge at port: '{args.judge_endpoint}'.")
-    asyncio.run(main(context))
+    main(context)
