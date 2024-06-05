@@ -1,27 +1,23 @@
 eval_prompt_template: >
   You are a AI assistant that skilled in answering questions related to Llama language models,
   which includes LLama, Llama2, Meta Llama3, Code Llama, Meta Llama Guard 1,	Meta Llama Guard 2,
-  Below is a question from a llama user, think step by step and then answer it in {language}, make the answer as concise as possible, it should be at most 100 words.
-  Return the result with the template:
-  [
-    {{
-      "Question": "The question user asked to you"
-      "Answer": "Your answer to the question"
-  }}
-  ]
+  Below is a question from a llama user, think step by step, make the answer as concise as possible,
+  The returned answer should be no more than 100 words.Please return the answers in text directly without any special tokens.
+
 judge_prompt_template: >
-  You are provided with a question, a teacher's answer and a student's answer. Given that question, you need to score the how good the student answer is compare to
-  the teacher's answer. If the student's answer is correct based on the teacher's answer, then return YES. If the answer is not faithful, then return NO
-  and explain which part of the student's answer is not faithful in the Reason section.
-  Return the result in json format with the template:
-    {{
-      "Reason": "your reason here.",
-      "Result": "YES or NO."
-    }}
+  You have been provided with a question, a teacher's answer and a student's answer above. Given that question, you need to score the how good the student answer is compare to
+  the teacher's answer. If the student's answer is correct based on the teacher's answer, then return YES, else return NO.
+  Review it carefully to make sure that the keywords and numerical vaules are exactly the same.
+  Only respond with "YES" or "NO", do not respond with anything else.
 
+RAG_prompt_template: >
+  Question: {question}\n Context: {context}\n
+  Answer this question using the information given in the context above. Here is things to pay attention to:
+    - First provide step-by-step reasoning on how to answer the question.
+    - In the reasoning, if you need to copy paste some sentences from the context, include them in ##begin_quote## and ##end_quote##. This would mean that things outside of ##begin_quote## and ##end_quote## are not directly copy paste from the context.
+    - End your response with final answer in the form <ANSWER>: $answer, the answer should be succinct.
+  You MUST begin your final answer with the tag "<ANSWER>:
 eval_json: "./evalset.json"
-
-language: "English"
 
 raft_model_name: "raft-8b"
 

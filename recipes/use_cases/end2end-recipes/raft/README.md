@@ -125,7 +125,7 @@ CUDA_VISIBLE_DEVICES=2,3 python -m vllm.entrypoints.openai.api_server  --model m
 Then we can pass the port to the eval script:
 
 ```bash
-python eval_raft.py -m raft-8b -v 8000 -j 8002
+CUDA_VISIBLE_DEVICES=4 python eval_raft.py -m raft-8b -v 8000 -j 8002
 ```
 
 

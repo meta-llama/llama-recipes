@@ -36,7 +36,6 @@ async def main(context):
                 logging.info(f"Question: {question}")
         logging.info(f"Successfully generated {sum([len(q) for c,q in chunk_questions_zip])} question/answer pairs.")
         ds = await add_chunk_to_dataset(chunk_questions_zip,context, chat_service,ds,NUM_DISTRACT_DOCS, ORCALE_P)
-        print(ds[0])
         ds.save_to_disk(args.output)
         logging.info(f"Data successfully written to {context['output']}. Process completed.")
         formatter = DatasetConverter()

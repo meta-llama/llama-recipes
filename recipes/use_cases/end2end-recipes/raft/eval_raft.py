@@ -12,59 +12,79 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import DirectoryLoader
-from langchain.chains import RetrievalQA
+from langchain_core.runnables import RunnablePassthrough
+
 from langchain_core.messages import HumanMessage, SystemMessage
 import re
 import string
 from collections import Counter
+from langchain_core.output_parsers import StrOutputParser
+from langchain.prompts.prompt import PromptTemplate
 
 def generate_answers_model_only(model_name,question_list,api_url="http://localhost:8000/v1",key="EMPTY"):
         # Use langchain to load the documents from data directory
     # Load the RAFT model
+
     llm = VLLMOpenAI(
         openai_api_key=key,
         openai_api_base=api_url,
         model_name=model_name,
-        model_kwargs={"stop": ["."]},
-        temperature=0.0,)
+        temperature=0.0,
+        max_tokens=100
+        )
+    system_prompt = SystemMessage(content=context['eval_prompt_template'])
     generated_answers = []
-    for question in question_list:
-        response = llm.invoke(question)
-        generated_answers.append(response)
+    all_tasks = [[system_prompt, HumanMessage(content=question)] for question in question_list]
+    generated_answers = llm.batch(all_tasks)
     if len(generated_answers) == 0:
         logging.error("No model answers generated. Please check the input context or model configuration in ",model_name)
         return []
-    return generated_answers
-def generate_answers_with_RAG(model_name, data_dir,question_list, api_url="http://localhost:8000/v1",key="EMPTY"):
+    return clean_text_list(generated_answers)
+def format_docs_raft(docs):
+    context = ""
+    for doc in docs:
+        context += "<DOCUMENT>" + str(doc.page_content) + "</DOCUMENT>\n"
+    return context
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
+def generate_answers_with_RAG(model_name, data_dir,question_list,rag_template,api_url="http://localhost:8000/v1",key="EMPTY"):
     # Use langchain to load the documents from data directory
     loader = DirectoryLoader(data_dir)
     docs = loader.load()
     # Split the document into chunks with a specified chunk size
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=50)
     all_splits = text_splitter.split_documents(docs)
 
     # Store the document into a vector store with a specific embedding model
-    vectorstore = FAISS.from_documents(all_splits, HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2"))
+    vectorstore = FAISS.from_documents(all_splits, HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2",model_kwargs={'device': 'cuda'}))
+    retriever = vectorstore.as_retriever(
+        search_kwargs={"k": 5}
+    )
     # Load the RAFT model
     llm = VLLMOpenAI(
         openai_api_key=key,
         openai_api_base=api_url,
         model_name=model_name,
-        model_kwargs={"stop": ["."]},
-        temperature=0.0,)
-    # Create a RetrievalQA chain with the vector store and RAFT model
-    qa_chain = RetrievalQA.from_chain_type(
-    llm,
-    retriever=vectorstore.as_retriever()
-    )
-    generated_answers = []
-    for question in question_list:
-        response = qa_chain({"query": question})
-        generated_answers.append(response['result'])
+        temperature=0.0,
+        max_tokens=100
+        )
+    all_tasks = []
+    for q in question_list:
+        # retrive the top 6 documents
+        retrieved_docs = retriever.invoke(q)
+        # format the documents into a string
+        if '8B-Instruct' in model_name:
+            documents = format_docs(retrieved_docs)
+        else:
+            documents = format_docs_raft(retrieved_docs)
+        # create a prompt
+        text = rag_template.format(context=documents,question=q)
+        all_tasks.append(text)
+    generated_answers = llm.batch(all_tasks)
     if len(generated_answers) == 0:
         logging.error("No RAG answers generated. Please check the input context or model configuration in ",model_name)
         return []
-    return generated_answers
+    return clean_text_list(generated_answers)
 def compute_rouge_score(generated : list, reference: list):
     rouge_score = evaluate.load('rouge')
     return rouge_score.compute(
@@ -73,14 +93,19 @@ def compute_rouge_score(generated : list, reference: list):
         use_stemmer=True,
         use_aggregator=True
     )
-def remove_special_tokens(text_list):
-    clean_text_list = []
+def clean_text_list(text_list):
+    result = []
     for text in text_list:
-        text = text.replace("##begin_quote##","")
-        text = text.replace("##end_quote##","")
+        # for raft model, the answer will started with <ANSWER>
+        index = text.rfind("<ANSWER>")
+        if index!= -1:
+            text = text[index:]
+        text = text.replace("begin_quote","")
+        text = text.replace("end_quote","")
+        text = text.replace("##","")
         text = text.strip()
-        clean_text_list.append(text)
-    return clean_text_list
+        result.append(text)
+    return result
 
 def normalize_answer(s):
 
@@ -125,25 +150,20 @@ def compute_judge_score(questions: list, generated : list, reference: list, cont
         openai_api_key=key,
         openai_api_base=api_url,
         model_name=model_name,
-        model_kwargs={"stop": ["."]},
-        temperature=0.0,)
+        temperature=0.0)
+    all_tasks = []
     for q,pred,gold in zip(questions, generated,reference):
-        # messages = [
-        #     SystemMessage(content=context['judge_prompt_template']),
-        #     HumanMessage(content=f"Question: {q} \n Teacher's Answer: {gold} \n Student's Answer: {pred} "),
-        # ]
-        messages = context['judge_prompt_template'] + "\n"
-        messages += f"Question: {q} \n Teacher's Answer: {gold} \n Student's Answer: {pred} "
-        response = llm.invoke(messages)
-        print(response+ " -------------")
-        result = json.loads(response)
-        if "Result" not in result:
-            print("Error: eval response does not contain answer")
-            print(result)
-            continue
-        correct_num += result["Result"] == "YES"
+        messages = [
+            HumanMessage(content=f"Question: {q} \n Teacher's Answer: {gold} \n Student's Answer: {pred} "),
+            SystemMessage(content=context['judge_prompt_template'])
+        ]
+        all_tasks.append(messages)
+    response = llm.batch(all_tasks)
+    for response in response:
+        if  "YES" in response:
+            correct_num += 1
     return correct_num/len(questions)
-def score_single(context,generated,reference,questions, run_exact_match=True,run_rouge=True, run_bert=True, run_llm_as_judge=True):
+def score_single(context,generated,reference,questions, run_exact_match=True,run_rouge=True, run_bert=True, run_llm_as_judge=False):
     # set metric to default -1, means no metric is computed
     metric = {
         "Rouge_score": -1,
@@ -192,15 +212,12 @@ def main(context):
         }
         # Generate answers for baseline
         base_model_name = context["base_model_name"]
-        generated_answers["Baseline"] = generate_answers_model_only(base_model_name,questions,api_url)
-        #generated_answers["Baseline_RAG"] = generate_answers_with_RAG(base_model_name, context["data_dir"],questions,api_url)
+        #generated_answers["Baseline"] = generate_answers_model_only(base_model_name,questions,api_url)
+        generated_answers["Baseline_RAG"] = generate_answers_with_RAG(base_model_name, context["data_dir"],questions,context['RAG_prompt_template'],api_url)
         # Generate answers for RAFT
         raft_model_name = context["raft_model_name"]
         #generated_answers["RAFT"] = generate_answers_model_only(raft_model_name,questions,api_url)
-        #generated_answers["RAFT_RAG"] = generate_answers_with_RAG(raft_model_name, context["data_dir"],questions,api_url)
-        # clean special tokens from the RAFT generated answer
-        #generated_answers["RAFT"] = remove_special_tokens(generated_answers["RAFT"])
-        #generated_answers["RAFT_RAG"] = remove_special_tokens(generated_answers["RAFT_RAG"])
+        generated_answers["RAFT_RAG"] = generate_answers_with_RAG(raft_model_name, context["data_dir"],questions,context['RAG_prompt_template'],api_url)
         logging.info(f"Successfully generated {len(generated_answers['Baseline_RAG'])} answers for all models.")
         # for generate answer from each model, compute the score metric
         for model_name,model_answer in generated_answers.items():
