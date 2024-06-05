@@ -9,7 +9,7 @@ torchtune provides:
 - YAML configs for easily configuring training, evaluation, quantization or inference recipes
 - Built-in support for many popular dataset formats and prompt templates to help you quickly get started with training
 
-Here we will show the how to use torchtune to easily finetune meta Llama 3. For more usage details, please check the[torchtune repo](https://github.com/pytorch/torchtune/tree/main).
+Here we will show the how to use torchtune to easily finetune meta Llama 3. For more usage details, please check the [torchtune repo](https://github.com/pytorch/torchtune/tree/main).
 
 ## Installation
 
@@ -100,7 +100,7 @@ Full 8B
 tune run full_finetune_single_device --config llama3/8B_full_single_device
 ```
 
-### Multi GPU
+### Multi GPU finetune
 
 Full 8B
 
