@@ -36,8 +36,6 @@ MODEL_HEADERS = params["MODEL_HEADERS"]
 SAFE_CHECK = params["SAFE_CHECK"]
 # Threshold for tokens per second below which we deem the query to be slow
 THRESHOLD_TPS = params["THRESHOLD_TPS"] 
-# Replace with your own tokenizer 
-TOKENIZER_PATH = params["TOKENIZER_PATH"] 
 RANDOM_PROMPT_LENGTH = params["RANDOM_PROMPT_LENGTH"]
 TEMPERATURE = params["TEMPERATURE"]
 TOP_P = params["TOP_P"]
@@ -52,8 +50,8 @@ else:
     print("No available GPUs")
 
 
-# This tokenizer is downloaded from Azure model catalog for each specific models. The main purpose is to decode the reponses for token calculation
-tokenizer = transformers.AutoTokenizer.from_pretrained(TOKENIZER_PATH)
+# This tokenizer is downloaded from HuggingFace based on the model path you set. Note Llama 3 use a different tokenizer compare to Llama 2
+tokenizer = transformers.AutoTokenizer.from_pretrained(MODEL_PATH)
 
 # Select vocabulary that is longer than 2 tokens (closer to real words) and close to the English (not foolproof)
 vocab = [token for token in tokenizer.get_vocab().keys() if len(token) > 2 and all(ord(c) < 128 for c in token)]

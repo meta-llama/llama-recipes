@@ -1,0 +1,276 @@
+general:
+  name: "llama2-7b-v1"      
+  model_name: "Llama2-7b"
+  
+# AWS and SageMaker settings
+aws:
+  # AWS region, this parameter is templatized, no need to change
+  region: {region}
+  # SageMaker execution role used to run FMBench, this parameter is templatized, no need to change
+  sagemaker_execution_role: {role_arn}
+  # S3 bucket to which metrics, plots and reports would be written to
+  bucket: {write_bucket}
+
+# directory paths in the write bucket, no need to change these
+dir_paths:
+  data_prefix: data
+  prompts_prefix: prompts
+  all_prompts_file: all_prompts.csv
+  metrics_dir: metrics
+  models_dir: models
+  metadata_dir: metadata
+
+# S3 information for reading datasets, scripts and tokenizer
+s3_read_data:
+  # read bucket name, templatized, if left unchanged will default to sagemaker-fmbench-read-<region>-<account_id>
+  read_bucket: {read_bucket}
+  scripts_prefix: scripts
+  
+  # S3 prefix in the read bucket where deployment and inference scripts should be placed
+  scripts_prefix: scripts
+    
+  # deployment and inference script files to be downloaded are placed in this list
+  # only needed if you are creating a new deployment script or inference script
+  # your HuggingFace token does need to be in this list and should be called "hf_token.txt"
+  script_files:
+  - hf_token.txt
+
+  # configuration files (like this one) are placed in this prefix
+  configs_prefix: configs
+
+  # list of configuration files to download, for now only pricing.yml needs to be downloaded
+  config_files:
+  - pricing.yml
+
+  # S3 prefix for the dataset files
+  source_data_prefix: source_data
+  # list of dataset files, the list below is from the LongBench dataset https://huggingface.co/datasets/THUDM/LongBench
+  source_data_files:
+  - 2wikimqa_e.jsonl
+  - 2wikimqa.jsonl
+  - hotpotqa_e.jsonl
+  - hotpotqa.jsonl
+  - narrativeqa.jsonl
+  - triviaqa_e.jsonl
+  - triviaqa.jsonl
+  # S3 prefix for the tokenizer to be used with the models
+  # NOTE 1: the same tokenizer is used with all the models being tested through a config file
+  # NOTE 2: place your model specific tokenizers in a prefix named as <model_name>_tokenizer
+  #         so the mistral tokenizer goes in mistral_tokenizer, Llama2 tokenizer goes in llama2_tokenizer and so on and so forth.
+  tokenizer_prefix: tokenizer
+  
+  # S3 prefix for prompt templates
+  prompt_template_dir: prompt_template
+
+  # prompt template to use, NOTE: same prompt template gets used for all models being tested through a config file
+  # the FMBench repo already contains a bunch of prompt templates so review those first before creating a new one
+  prompt_template_file: prompt_template_llama2.txt
+
+# steps to run, usually all of these would be
+# set to yes so nothing needs to change here
+# you could, however, bypass some steps for example
+# set the 2_deploy_model.ipynb to no if you are re-running
+# the same config file and the model is already deployed
+run_steps:
+  0_setup.ipynb: yes
+  1_generate_data.ipynb: yes
+  2_deploy_model.ipynb: yes
+  3_run_inference.ipynb: yes
+  4_model_metric_analysis.ipynb: yes
+  5_cleanup.ipynb: yes
+
+
+datasets:
+  # Refer to the 1_generate_data.ipynb notebook
+  # the dataset you use is expected to have the 
+  # columns you put in prompt_template_keys list
+  # and your prompt template also needs to have
+  # the same placeholders (refer to the prompt template folder)
+  prompt_template_keys:
+  - input
+  - context
+  
+  # if your dataset has multiple languages and it has a language
+  # field then you could filter it for a language. Similarly,
+  # you can filter your dataset to only keep prompts between
+  # a certain token length limit (the token length is determined
+  # using the tokenizer you provide in the tokenizer_prefix prefix in the
+  # read S3 bucket). Each of the array entries below create a payload file
+  # containing prompts matching the language and token length criteria.
+  filters:
+  - language: en    
+    min_length_in_tokens: 1
+    max_length_in_tokens: 500
+    payload_file: payload_en_1-500.jsonl
+  - language: en
+    min_length_in_tokens: 500
+    max_length_in_tokens: 1000
+    payload_file: payload_en_500-1000.jsonl
+  - language: en
+    min_length_in_tokens: 1000
+    max_length_in_tokens: 2000
+    payload_file: payload_en_1000-2000.jsonl
+  - language: en
+    min_length_in_tokens: 2000
+    max_length_in_tokens: 3000
+    payload_file: payload_en_2000-3000.jsonl
+  - language: en
+    min_length_in_tokens: 3000
+    max_length_in_tokens: 3840
+    payload_file: payload_en_3000-3840.jsonl
+
+# While the tests would run on all the datasets
+# configured in the experiment entries below but 
+# the price:performance analysis is only done for 1
+# dataset which is listed below as the dataset_of_interest
+metrics:
+  dataset_of_interest: en_2000-3000
+
+# all pricing information is in the pricing.yml file
+# this file is provided in the repo. You can add entries
+# to this file for new instance types and new Bedrock models
+pricing: pricing.yml
+
+# inference parameters, these are added to the payload
+# for each inference request. The list here is not static
+# any parameter supported by the inference container can be
+# added to the list. Put the sagemaker parameters in the sagemaker
+# section, bedrock parameters in the bedrock section (not shown here).
+# Use the section name (sagemaker in this example) in the inference_spec.parameter_set
+# section under experiments.
+inference_parameters:
+  sagemaker:
+    do_sample: yes
+    temperature: 0.1
+    top_p: 0.92
+    top_k: 120  
+    max_new_tokens: 100
+    return_full_text: False
+
+# Configuration for experiments to be run. The experiments section is an array
+# so more than one experiments can be added, these could belong to the same model
+# but different instance types, or different models, or even different hosting
+# options (such as one experiment is SageMaker and the other is Bedrock).
+experiments:
+  - name: llama2-7b-g5.xlarge-huggingface-pytorch-tgi-inference-2.0.1-tgi1.1.0
+    # model_id is interpreted in conjunction with the deployment_script, so if you
+    # use a JumpStart model id then set the deployment_script to jumpstart.py.
+    # if deploying directly from HuggingFace this would be a HuggingFace model id
+    # see the DJL serving deployment script in the code repo for reference.
+    model_id: meta-textgeneration-llama-2-7b-f
+    model_version: "3.*"
+    model_name: llama2-7b-f
+    ep_name: llama-2-7b-g5xlarge
+    instance_type: "ml.g5.xlarge"
+    image_uri: '763104351884.dkr.ecr.{region}.amazonaws.com/huggingface-pytorch-tgi-inference:2.0.1-tgi1.1.0-gpu-py39-cu118-ubuntu20.04'
+    deploy: yes
+    instance_count: 1
+    # FMBench comes packaged with multiple deployment scripts, such as scripts for JumpStart
+    # scripts for deploying using DJL DeepSpeed, tensorRT etc. You can also add your own.
+    # See repo for details    
+    deployment_script: jumpstart.py
+    # FMBench comes packaged with multiple inference scripts, such as scripts for SageMaker
+    # and Bedrock. You can also add your own. See repo for details
+    inference_script: sagemaker_predictor.py
+    inference_spec:
+      # this should match one of the sections in the inference_parameters section above
+      parameter_set: sagemaker
+    # runs are done for each combination of payload file and concurrency level
+    payload_files:
+    - payload_en_1-500.jsonl
+    - payload_en_500-1000.jsonl
+    - payload_en_1000-2000.jsonl
+    - payload_en_2000-3000.jsonl
+    #- payload_en_3000-3840.jsonl
+    # concurrency level refers to number of requests sent in parallel to an endpoint
+    # the next set of requests is sent once responses for all concurrent requests have
+    # been received.
+    concurrency_levels:
+    - 1
+    - 2
+    - 4
+
+    accept_eula: true
+    # Environment variables to be passed to the container
+    # this is not a fixed list, you can add more parameters as applicable.
+    env:
+      SAGEMAKER_PROGRAM: "inference.py"
+      ENDPOINT_SERVER_TIMEOUT: "3600"
+      MODEL_CACHE_ROOT: "/opt/ml/model"
+      SAGEMAKER_ENV: "1"
+      HF_MODEL_ID: "/opt/ml/model"
+      MAX_INPUT_LENGTH: "4095"
+      MAX_TOTAL_TOKENS: "4096"
+      SM_NUM_GPUS: "1"
+      SAGEMAKER_MODEL_SERVER_WORKERS: "1"
+
+  - name: llama2-7b-g5.2xlarge-huggingface-pytorch-tgi-inference-2.0.1-tgi1.1.0
+    # model_id is interpreted in conjunction with the deployment_script, so if you
+    # use a JumpStart model id then set the deployment_script to jumpstart.py.
+    # if deploying directly from HuggingFace this would be a HuggingFace model id
+    # see the DJL serving deployment script in the code repo for reference. 
+    model_id: meta-textgeneration-llama-2-7b-f
+    model_version: "3.*"
+    model_name: llama2-7b-f
+    ep_name: llama-2-7b-g5-2xlarge
+    instance_type: "ml.g5.2xlarge"
+    image_uri: '763104351884.dkr.ecr.{region}.amazonaws.com/huggingface-pytorch-tgi-inference:2.0.1-tgi1.1.0-gpu-py39-cu118-ubuntu20.04'
+    deploy: yes
+    # FMBench comes packaged with multiple deployment scripts, such as scripts for JumpStart
+    # scripts for deploying using DJL DeepSpeed, tensorRT etc. You can also add your own.
+    # See repo for details
+    instance_count: 1
+    deployment_script: jumpstart.py
+    # FMBench comes packaged with multiple inference scripts, such as scripts for SageMaker
+    # and Bedrock. You can also add your own. See repo for details
+    inference_script: sagemaker_predictor.py
+    inference_spec:
+      # this should match one of the sections in the inference_parameters section above
+      parameter_set: sagemaker
+    # runs are done for each combination of payload file and concurrency level
+    payload_files:
+    - payload_en_1-500.jsonl
+    - payload_en_500-1000.jsonl
+    - payload_en_1000-2000.jsonl
+    - payload_en_2000-3000.jsonl
+    #- payload_en_3000-3840.jsonl
+    
+    # concurrency level refers to number of requests sent in parallel to an endpoint
+    # the next set of requests is sent once responses for all concurrent requests have
+    # been received.
+    concurrency_levels:
+    - 1
+    - 2
+    - 4
+    # Added for models that require accepting a EULA
+    accept_eula: true
+    # Environment variables to be passed to the container
+    # this is not a fixed list, you can add more parameters as applicable.
+    env:
+      SAGEMAKER_PROGRAM: "inference.py"
+      ENDPOINT_SERVER_TIMEOUT: "3600"
+      MODEL_CACHE_ROOT: "/opt/ml/model"
+      SAGEMAKER_ENV: "1"
+      HF_MODEL_ID: "/opt/ml/model"
+      MAX_INPUT_LENGTH: "4095"
+      MAX_TOTAL_TOKENS: "4096"
+      SM_NUM_GPUS: "1"
+      SAGEMAKER_MODEL_SERVER_WORKERS: "1"
+
+# parameters related to how the final report is generated
+report:
+  # constraints for latency, cost and error rate
+  # an experiment is considered successful or eligible for
+  # selection for a use-case if it satisfies all of the following
+  # constraints. Experiments are scored as per this criteria
+  # higher score is better (see 4_model_metric_analysis.ipynb score_run function)
+  latency_budget: 2
+  cost_per_10k_txn_budget: 20
+  error_rate_budget: 0
+  # other misc reporting parameters, see 4_model_metric_analysis.ipynb
+  # for more information
+  per_inference_request_file: per_inference_request_results.csv
+  all_metrics_file: all_metrics.csv
+  txn_count_for_showing_cost: 10000
+  v_shift_w_single_instance: 0.025
+  v_shift_w_gt_one_instance: 0.025

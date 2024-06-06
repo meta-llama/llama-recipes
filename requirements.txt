@@ -1,4 +1,4 @@
-torch>=2.0.1
+torch>=2.2
 accelerate
 appdirs
 loralib
@@ -8,10 +8,14 @@ black[jupyter]
 datasets
 fire
 peft
-transformers>=4.34.1
+transformers>=4.40.0
 sentencepiece
 py7zr
 scipy
 optimum
 matplotlib
 gradio
+chardet
+openai
+typing-extensions==4.8.0
+tabulate

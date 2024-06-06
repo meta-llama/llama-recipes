@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "llama-recipes"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name="Hamid Shojanazeri", email="hamidnazeri@meta.com" },
   { name="Matthias Reso", email="mreso@meta.com" },
