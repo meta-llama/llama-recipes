@@ -15,5 +15,3 @@ A simple application that allows users to interact with a conversational chatbot
 ##Usage
 
 You will need to store a valid Groq API Key as a secret to proceed with this example. You can generate one for free [here](https://console.groq.com/keys).
-
-You can [fork and run this application on Replit](https://replit.com/@GroqCloud/LlamaChat-Conversational-Chatbot-with-LlamaIndex) or run it on the command line with `python main.py`.
