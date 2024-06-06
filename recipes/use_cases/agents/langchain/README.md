@@ -8,7 +8,7 @@ Agents can empower Llama 3 with important new capabilities. In particular, we wi
 
 Tool-calling agents with LangGraph use two nodes: (1) a LLM node decides which tool to invoke based upon the user input. It outputs the tool name and tool arguments to use based upon the input. (2) the tool name and arguments are passed to a tool node, which calls the tool with the specified arguments and returns the result back to the LLM.
 
-![Screenshot 2024-05-30 at 10 48 58 AM](https://github.com/rlancemartin/llama-recipes/assets/122662504/a2c2ec40-2c7b-486e-9290-33b6da26c304)
+![Screenshot 2024-06-06 at 12 36 57 PM](https://github.com/rlancemartin/llama-recipes/assets/122662504/318e4d37-01a3-481c-bc3b-1c2e1b2c0125)
 
 Our first notebook, `langgraph-tool-calling-agent`, shows how to build our agent mentioned above using LangGraph.
 
