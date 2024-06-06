@@ -11,6 +11,6 @@ visiting their websites listed below.
 - [Databricks](https://www.databricks.com/)
 - [OctoAI](https://octo.ai/)
 - [Replicate](https://replicate.com/)
-- [Snowflake](https://www.snowflake.com/en/)
+- Snowflake
 - [Together AI](https://www.together.ai/)
 
