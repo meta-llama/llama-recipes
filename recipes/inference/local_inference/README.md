@@ -61,7 +61,7 @@ python inference.py --model_name <training_config.output_dir> --peft_model <trai
 
 ```
 
-## Loading back FSDP checkpoints
+## Inference with FSDP checkpoints
 
 In case you have fine-tuned your model with pure FSDP and saved the checkpoints with "SHARDED_STATE_DICT" as shown [here](../../../src/llama_recipes/configs/fsdp.py), you can use this converter script to convert the FSDP Sharded checkpoints into HuggingFace checkpoints. This enables you to use the inference script normally as mentioned above.
 **To convert the checkpoint use the following command**:
@@ -82,6 +82,6 @@ By default, training parameter are saved in `train_params.yaml` in the path wher
 Then run inference using:
 
 ```bash
-python inference.py --model_name <training_config.output_dir> --prompt_file <test_prompt_file> 
+python inference.py --model_name <training_config.output_dir> --prompt_file <test_prompt_file>
 
 ```
