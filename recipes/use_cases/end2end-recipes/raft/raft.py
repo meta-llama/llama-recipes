@@ -1,15 +1,10 @@
-import mdc
-from mdc import MDC
 import logging
 from typing import Literal, Any
-from openai import OpenAI
 import json
 import random
-import os, shutil
+import os
 import argparse
-import asyncio
 from raft_utils import generate_questions, add_chunk_to_dataset
-from chat_utils import OctoAIChatService, VllmChatService
 from format import DatasetConverter, datasetFormats, outputDatasetTypes
 from config import load_config
 
@@ -17,27 +12,23 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 NUM_DISTRACT_DOCS = 5 # number of distracting documents to add to each chunk
 ORCALE_P = 0.8 # probability of related documents to be added to each chunk
-async def main(context):
+def main(api_config):
     ds = None
-    if context["endpoint"]:
-        chat_service = VllmChatService()
-    else:
-        chat_service = OctoAIChatService()
     try:
         logging.info("Starting to generate question pair.")
         # Generate questions as list for each chunk
-        chunk_questions_zip = await generate_questions(chat_service, context)
+        chunk_questions_zip = generate_questions(api_config)
         if not chunk_questions_zip:
-            logging.warning("No questions generated from text. Please check the input context or model configuration.")
+            logging.warning("No questions generated from text. Please check the api_config or model configuration.")
             return
         for chunk, questions in chunk_questions_zip:
             logging.info(f"Chunk: {chunk}, question length: {len(questions)}")
             for question in questions:
                 logging.info(f"Question: {question}")
         logging.info(f"Successfully generated {sum([len(q) for c,q in chunk_questions_zip])} question/answer pairs.")
-        ds = await add_chunk_to_dataset(chunk_questions_zip,context, chat_service,ds,NUM_DISTRACT_DOCS, ORCALE_P)
+        ds = add_chunk_to_dataset(chunk_questions_zip,api_config,ds,NUM_DISTRACT_DOCS, ORCALE_P)
         ds.save_to_disk(args.output)
-        logging.info(f"Data successfully written to {context['output']}. Process completed.")
+        logging.info(f"Data successfully written to {api_config['output']}. Process completed.")
         formatter = DatasetConverter()
 
         # Extract format specific params
@@ -49,7 +40,7 @@ async def main(context):
 def parse_arguments():
     # Define command line arguments for the script
     parser = argparse.ArgumentParser(
-        description="Generate question/answer pairs from documentation."
+        description="Generate RAFT question/answer/context pairs from documentation."
     )
     parser.add_argument(
         "-t", "--questions_per_chunk",
@@ -59,8 +50,7 @@ def parse_arguments():
     )
     parser.add_argument(
         "-m", "--model",
-        choices=["meta-llama-3-70b-instruct","meta-llama-3-8b-instruct","llama-2-13b-chat", "llama-2-70b-chat"],
-        default="meta-llama-3-70b-instruct",
+        default="meta-llama/Meta-Llama-3-70B-Instruct",
         help="Select the model to use for generation."
     )
     parser.add_argument(
@@ -69,10 +59,16 @@ def parse_arguments():
         help="Set the configuration file path that has system prompt along with language, dataset path and number of questions."
     )
     parser.add_argument(
-        "-v", "--vllm_endpoint",
-        default=None,
-        type=int,
-        help="If a port is specified, then use local vllm endpoint for generating question/answer pairs."
+        "-u", "--endpoint_url",
+        default="http://localhost:8001/v1",
+        type=str,
+        help="LLM API url for generating question/answer pairs."
+    )
+    parser.add_argument(
+        "-k", "--api_key",
+        default="EMPTY",
+        type=str,
+        help="LLM API key for generating question/answer pairs."
     )
     parser.add_argument("--chunk_size", type=int, default=512, help="The size of each chunk in number of tokens")
     parser.add_argument("-o","--output", type=str, default="./", help="The path at which to save the dataset")
@@ -84,13 +80,18 @@ if __name__ == "__main__":
     logging.info("Initializing the process and loading configuration...")
     args = parse_arguments()
 
-    context = load_config(args.config_path)
-    context["questions_per_chunk"] = args.questions_per_chunk
-    context["model"] = args.model
-    context["chunk_size"] = args.chunk_size
-    context["endpoint"] = args.vllm_endpoint
-    context["output"] = args.output
+    api_config = load_config(args.config_path)
+    api_config["questions_per_chunk"] = args.questions_per_chunk
+    api_config["model"] = args.model
+    api_config["chunk_size"] = args.chunk_size
+    api_config["endpoint_url"] = args.endpoint_url
+    api_config["output"] = args.output
+    api_config["api_key"] = args.api_key
+    # if OPENAI_API_KEY is defined in the system environment, use it as the API key
+    if os.environ.get('API_KEY') is not None:
+        api_config["api_key"] = os.environ["API_KEY"]
     logging.info(f"Configuration loaded. Generating {args.questions_per_chunk} question per chunk using model '{args.model}'.")
-    if context["endpoint"]:
-        logging.info(f"Use local vllm service at port: '{args.vllm_endpoint}'.")
-    asyncio.run(main(context))
+    logging.info(f"Chunk size: {args.chunk_size}.")
+    logging.info(f"Will use endpoint_url: {args.endpoint_url}.")
+    logging.info(f"Output will be written to {args.output}.")
+    main(api_config)

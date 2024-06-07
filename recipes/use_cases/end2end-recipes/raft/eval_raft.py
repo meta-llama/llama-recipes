@@ -8,6 +8,7 @@ from config import load_config
 import json
 from itertools import chain
 from langchain_community.llms import VLLMOpenAI
+
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
