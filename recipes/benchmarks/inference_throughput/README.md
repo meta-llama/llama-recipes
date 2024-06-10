@@ -1,8 +1,8 @@
 # Inference Throughput Benchmarks
-In this folder we provide a series of benchmark scripts that apply a throughput analysis for Llama 2 models inference on various backends:
+In this folder we provide a series of benchmark scripts that apply a throughput analysis for Llama models inference on various backends:
 * On-prem - Popular serving frameworks and containers (i.e. vLLM)
-* [**WIP**]Cloud API - Popular API services (i.e. Azure Model-as-a-Service)
-* [**WIP**]On-device - Popular on-device inference solutions on Android and iOS (i.e. mlc-llm, QNN)
+* Cloud API - Popular API services (i.e. Azure Model-as-a-Service or Serverless API)
+* [**WIP**]On-device - Popular on-device inference solutions on mobile and desktop (i.e. ExecuTorch, MLC-LLM, Ollama)
 * [**WIP**]Optimization - Popular optimization solutions for faster inference and quantization (i.e. AutoAWQ)
 
 # Why
@@ -16,7 +16,7 @@ Here are the parameters (if applicable) that you can configure for running the b
 * **PROMPT** - Prompt sent in for inference (configure the length of prompt, choose from 5, 25, 50, 100, 500, 1k and 2k)
 * **MAX_NEW_TOKENS** - Max number of tokens generated
 * **CONCURRENT_LEVELS** - Max number of concurrent requests
-* **MODEL_PATH** - Model source
+* **MODEL_PATH** - Model source from Huggingface
 * **MODEL_HEADERS** - Request headers
 * **SAFE_CHECK** - Content safety check (either Azure service or simulated latency)
 * **THRESHOLD_TPS** - Threshold TPS (threshold for tokens per second below which we deem the query to be slow)
