@@ -1351,3 +1351,7 @@ Weaviate
 MediaGen
 SDXL
 SVD
+QLoRA
+composable
+hackable
+safetensor

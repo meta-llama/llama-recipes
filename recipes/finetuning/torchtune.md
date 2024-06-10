@@ -42,12 +42,12 @@ options:
 
 You can also install the latest and greatest torchtune has to offer by [installing a nightly build](https://pytorch.org/torchtune/main/install.html).
 
-&nbsp;
+
 
 ---
 
 
-&nbsp;
+
 
 ## Meta Llama3 fine-tuning steps
 
@@ -60,7 +60,7 @@ This is because not all special token embeddings are initialized in the base 8B 
 In the initial experiments for Llama3-8B, QLoRA has a peak allocated memory of ``~9GB`` while LoRA on a single GPU has a peak allocated memory of ``~19GB``. To get started, you can use the default configs to kick off training.
 
 
-### Torchtune repo download
+### torchtune repo download
 We need to clone the torchtune repo to get the configs.
 
 ```bash
@@ -128,6 +128,3 @@ tune run --nproc_per_node 8 lora_finetune_distributed --config recipes/configs/l
 ```
 
 You can find a full list of all the Llama3 configs [here](https://github.com/pytorch/torchtune/tree/main/recipes/configs/llama3).
-
-
-&nbsp;
