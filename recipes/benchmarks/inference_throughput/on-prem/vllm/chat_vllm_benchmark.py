@@ -4,7 +4,6 @@
 import csv
 import json
 import time
-import random
 import threading
 import numpy as np
 import requests
@@ -18,7 +17,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.ai.contentsafety.models import AnalyzeTextOptions
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Dict, Tuple, List
+from typing import Tuple, List
 
 
 

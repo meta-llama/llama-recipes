@@ -1,7 +1,7 @@
 {
     "MAX_NEW_TOKENS" : 256,
     "CONCURRENT_LEVELS" : [1, 2, 4, 8, 16, 32, 64, 128, 256],
-    "MODEL_PATH" : "meta-llama/Meta-Llama-3-70B-Instruct",
+    "MODEL_PATH" : "meta-llama/your-model-path",
     "MODEL_HEADERS" : {"Content-Type": "application/json"},
     "SAFE_CHECK" : true,
     "THRESHOLD_TPS" : 7,

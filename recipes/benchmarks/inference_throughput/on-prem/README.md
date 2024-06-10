@@ -37,3 +37,5 @@ To run pretrained model benchmark, follow the command below.
 ```
 python pretrained_vllm_benchmark.py
 ```
+
+Refer to more vLLM benchmark details on their official Github repo [here](https://github.com/vllm-project/vllm/tree/main/benchmarks).
