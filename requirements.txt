@@ -34,3 +34,4 @@ coloredlogs==15.0.1
 sentence_transformers
 faiss-gpu
 unstructured[pdf]
+langchain_openai

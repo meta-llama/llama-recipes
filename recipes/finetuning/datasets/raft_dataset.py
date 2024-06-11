@@ -8,20 +8,39 @@ from datasets import Dataset, load_dataset, DatasetDict
 import itertools
 
 B_INST, E_INST = "[INST]", "[/INST]"
+# check system prompt token seq or user prompt token seq is in the current token list
+def check_header(targets,seq):
+    for i in range(len(seq)-3):
+        if seq[i:i+3] in targets:
+            return True
+    return False
+def replace_target(target,seq):
+    for i in range(len(seq)-3):
+        if seq[i:i+3] == target:
+            seq[i],seq[i+1],seq[i+2] = -100,-100,-100
+    return seq
 def tokenize_dialog(dialog, tokenizer):
     # If vocab size is above 128000, use the chat template to generate the tokens as it is from Llama 3 family models
     if tokenizer.vocab_size >= 128000:
         dialog_tokens = tokenizer.apply_chat_template(dialog)
-        dialog_tokens = dialog_tokens[:-4] # Remove generation prompt <|start_header_id|>assistant<|end_header_id|>\n\n
         eot_indices = [i for i,n in enumerate(dialog_tokens) if n == 128009]
         labels = copy.copy(dialog_tokens)
         last_idx = 0
+        token_length = len(dialog_tokens)
+        last_idx = 0
+        # system prompt header "<|start_header_id|>system<|end_header_id|>" has been tokenized to [128006, 9125, 128007]
+        # user prompt header "<|start_header_id|>user<|end_header_id|>" has been tokenized to [128006, 882, 128007]
+        prompt_header_seqs = [[128006, 9125, 128007],[128006, 882, 128007]]
         for n, idx in enumerate(eot_indices):
-            if n % 2 == 1:
-                last_idx = idx
-            else:
+            current_seq = labels[last_idx:idx+1]
+            if check_header(prompt_header_seqs,current_seq):
+                # found prompt header, indicating that this seq should be masked
                 labels[last_idx:idx+1] = [-100] * (idx-last_idx+1)
-
+            else:
+                last_idx = idx
+        # Lastly mask all the assistant header prompt <|start_header_id|>assistant<|end_header_id|>, which has been tokenized to [128006, 78191, 128007]
+        assistant_header_seq = [128006, 78191, 128007]
+        labels = replace_target(assistant_header_seq,labels)
         dialog_tokens = [dialog_tokens]
         labels_tokens = [labels]
     else:
@@ -51,15 +70,16 @@ def raft_tokenize(q_a_pair, tokenizer):
     documents = q_a_pair["instruction"].split('\n')[:-1]
     # output is the label
     answer = q_a_pair["output"]
-    system_prompt = "You are a helpful question answerer who can provide an answer given a question and relevant context."
-    user_prompt = prompt = """
+    system_prompt = "You are a helpful chatbot who can provide an answer to every questions from the user given a relevant context."
+    user_prompt = """
         Question: {question}\nContext: {context}\n
-        Answer this question using the information given in the context above. Here is things to pay attention to:
+        Answer this question using the information given multiple documents in the context above. Here is things to pay attention to:
         - First provide step-by-step reasoning on how to answer the question.
         - In the reasoning, if you need to copy paste some sentences from the context, include them in ##begin_quote## and ##end_quote##. This would mean that things outside of ##begin_quote## and ##end_quote## are not directly copy paste from the context.
         - End your response with final answer in the form <ANSWER>: $answer, the answer should be succinct.
         You MUST begin your final answer with the tag "<ANSWER>:".
     """.format(question=question, context=str(documents))
+
     chat = [
     {"role": "system", "content": system_prompt},
     {"role": "user", "content": user_prompt},

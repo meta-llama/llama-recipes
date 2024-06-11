@@ -15,8 +15,10 @@ from langchain_community.document_loaders import SitemapLoader,DirectoryLoader
 from bs4 import BeautifulSoup
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_community.llms import VLLMOpenAI
+from langchain_community.llms import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+
 
 
 # Initialize logging
@@ -126,17 +128,14 @@ def generate_questions(api_config):
     batches_count = len(document_batches)
     total_questions = api_config["questions_per_chunk"] * batches_count
     # use OpenAI API protocol to hanlde the chat request, including local VLLM openai compatible server
-    llm = VLLMOpenAI(
+    llm = ChatOpenAI(
         openai_api_key=key,
         openai_api_base=api_url,
         model_name=api_config["model"],
         temperature=0.0,
         max_tokens=250
         )
-    prompt = api_config['question_prompt_template'].format(num_questions=str(api_config['questions_per_chunk']))
-    system_prompt = SystemMessage(content=prompt)
-    generated_answers = []
-    all_tasks = [[system_prompt, HumanMessage(content=batch)] for batch in document_batches]
+    all_tasks = [api_config['question_prompt_template'].format(num_questions=str(api_config['questions_per_chunk']),context=document) for document in document_batches]
     generated_answers = llm.batch(all_tasks)
     if len(generated_answers) == 0:
         logging.error("No model answers generated. Please check the input context or model configuration in ",model_name)
@@ -163,7 +162,7 @@ def generate_COT(chunk_questions_zip,api_config) -> dict:
             all_tasks.append(prompt)
             chunk_questions.append((document_content,question))
     # use OpenAI API protocol to hanlde the chat request, including local VLLM openai compatible server
-    llm = VLLMOpenAI(
+    llm = ChatOpenAI(
         openai_api_key=api_config["api_key"],
         openai_api_base=api_config["endpoint_url"],
         model_name=api_config["model"],
