@@ -70,8 +70,8 @@ def parse_arguments():
         type=str,
         help="LLM API key for generating question/answer pairs."
     )
-    parser.add_argument("--chunk_size", type=int, default=512, help="The size of each chunk in number of tokens")
-    parser.add_argument("-o","--output", type=str, default="./", help="The path at which to save the dataset")
+    parser.add_argument("--chunk_size", type=int, default=1000, help="The size of each chunk in number of tokens")
+    parser.add_argument("-o","--output", type=str, default="./output/", help="The path at which to save the dataset")
     parser.add_argument("--output-format", type=str, default="hf", help="Format to convert the dataset to. Defaults to hf.", choices=datasetFormats)
     parser.add_argument("--output-type", type=str, default="jsonl", help="Type to export the dataset to. Defaults to jsonl.", choices=outputDatasetTypes)
     return parser.parse_args()

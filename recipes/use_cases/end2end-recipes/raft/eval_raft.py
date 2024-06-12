@@ -5,21 +5,14 @@ import evaluate
 import argparse
 from config import load_config
 import json
-from itertools import chain
 from langchain_openai import ChatOpenAI
-
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import DirectoryLoader
-from langchain_core.runnables import RunnablePassthrough
-
-from langchain_core.messages import HumanMessage, SystemMessage
 import re
 import string
-from collections import Counter
-from langchain_core.output_parsers import StrOutputParser
-from langchain.prompts.prompt import PromptTemplate
+
 
 def generate_answers_model_only(model_name,question_list,api_url="http://localhost:8000/v1",key="EMPTY"):
         # Use langchain to load the documents from data directory
@@ -57,7 +50,7 @@ def generate_answers_with_RAG(model_name, question_list,api_config,api_url_overw
     loader = DirectoryLoader(data_dir)
     docs = loader.load()
     # Split the document into chunks with a specified chunk size
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=50)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=api_config["chunk_size"], chunk_overlap=int(api_config["chunk_size"]/10))
     all_splits = text_splitter.split_documents(docs)
 
     # Store the document into a vector store with a specific embedding model
@@ -260,6 +253,7 @@ def main(api_config):
                 fp.write("\n------------------------------------\n")
         # Now we want to take a closer look at the questions that are not answered the same by all the models.
         judge_zip = list(zip(*[item[-1] for item in all_metrics]))
+        model_names = [item[0] for item in all_metrics]
         with open(api_config["output_log"],"a") as fp:
             for item in all_metrics:
                 fp.write(f"Model_Name: {item[0]}, LLM_SCORE: {item[1]} \n")
@@ -270,12 +264,8 @@ def main(api_config):
                 else:
                     fp.write(f"Comparing interested question: {questions[idx]} \n")
                     fp.write(f"groud_truth: {groud_truth[idx]} \n")
-                    fp.write(f"{item[2]} Baseline_answers: {generated_answers['Baseline'][idx]} \n")
-                    fp.write(f"{item[3]} Baseline_RAG_answers: {generated_answers['Baseline_RAG'][idx]} \n")
-                    fp.write(f"{item[0]} RAFT_answers: {generated_answers['RAFT'][idx]} \n")
-                    fp.write(f"{item[1]} RAFT_RAG_answers: {generated_answers['RAFT_RAG'][idx]} \n")
-                    fp.write(f"{item[4]} 70B_Base_answers: {generated_answers['70B_Base'][idx]} \n")
-                    fp.write(f"{item[5]} 70B_RAG_answers: {generated_answers['70B_RAG'][idx]} \n")
+                    for i in range(len(model_names)):
+                        fp.write(f"{item[i]} {model_names[i]}_answers: {generated_answers[model_names[i]][idx]} \n")
                     fp.write("-------\n")
 
 
@@ -328,6 +318,7 @@ def parse_arguments():
         type=str,
         help="LLM API key for generating question/answer pairs."
     )
+    parser.add_argument("--chunk_size", type=int, default=1000, help="The character size of each chunk used in RAG")
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -342,6 +333,7 @@ if __name__ == "__main__":
     api_config["judge_endpoint"] = args.judge_endpoint
     api_config["output_log"] = args.output_log
     api_config["api_key"] = args.api_key
+    api_config["chunk_size"] = args.chunk_size
     if api_config["judge_endpoint"]:
         logging.info(f"Use local vllm service for judge at port: '{args.judge_endpoint}'.")
     main(api_config)

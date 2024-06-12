@@ -2,21 +2,15 @@
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
 import os
-from transformers import  AutoTokenizer
 import logging
-import json
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_experimental.text_splitter import SemanticChunker
 from math import ceil
-import datasets
-from datasets import Dataset, load_dataset
+from datasets import Dataset
 import random
 from langchain_community.document_loaders import SitemapLoader,DirectoryLoader
 from bs4 import BeautifulSoup
-from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_community.llms import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
+
 from langchain_openai import ChatOpenAI
 
 
@@ -124,21 +118,19 @@ def generate_questions(api_config):
         logging.info(f"Error reading files, document_text is {len(document_text)}")
     embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2",model_kwargs={'device': 'cuda'})
     document_batches = get_chunks(document_text,api_config["chunk_size"],embedding_model)
-
-    batches_count = len(document_batches)
-    total_questions = api_config["questions_per_chunk"] * batches_count
     # use OpenAI API protocol to hanlde the chat request, including local VLLM openai compatible server
     llm = ChatOpenAI(
         openai_api_key=key,
         openai_api_base=api_url,
         model_name=api_config["model"],
         temperature=0.0,
-        max_tokens=250
+        max_tokens=500
         )
     all_tasks = [api_config['question_prompt_template'].format(num_questions=str(api_config['questions_per_chunk']),context=document) for document in document_batches]
     generated_answers = llm.batch(all_tasks)
+    generated_answers = [ item.content for item in generated_answers]
     if len(generated_answers) == 0:
-        logging.error("No model answers generated. Please check the input context or model configuration in ",model_name)
+        logging.error("No model answers generated. Please check the input context or model configuration in ",api_config["model"])
         return []
     final_result = []
     for result in generated_answers:
@@ -167,9 +159,10 @@ def generate_COT(chunk_questions_zip,api_config) -> dict:
         openai_api_base=api_config["endpoint_url"],
         model_name=api_config["model"],
         temperature=0.0,
-        max_tokens=350
+        max_tokens=500
         )
     generated_answers = llm.batch(all_tasks)
+    generated_answers = [ item.content for item in generated_answers]
     COT_results = []
     # return a list of (chunk, question, generated_answer)
     for (chunk, question),generated_answer in zip(chunk_questions,generated_answers):
@@ -186,7 +179,6 @@ def add_chunk_to_dataset(
     """
     Given a chunk and related questions lists, create {Q, A, D} triplets and add them to the dataset.
     """
-    COT_tasks = []
     chunks = [chunk for chunk, _ in chunk_questions_zip]
     COT_results = generate_COT(chunk_questions_zip,api_config)
     for chunk, q , cot in COT_results:

@@ -22,7 +22,7 @@ CUDA_VISIBLE_DEVICES=0,1 python -m vllm.entrypoints.openai.api_server  --model m
 Once the server is ready, we can query the server given the port number 8001 in another terminal. Here, "-u" sets the endpoint url to query and "-t" sets the number of questions we ask the Meta Llama3 70B Instruct model to generate per chunk. To use cloud API , please change the endpoint url to the cloud provider and set the api key using "-k". Here since we want to query our local hosted VLLM server, we can use following commend:
 
 ```bash
-python raft.py -u "http://localhost:8001/v1" -k "EMPTY" -t 3
+python raft.py -u "http://localhost:8001/v1" -k "EMPTY" -t 5
 ```
 
 For cloud API key, we can also set it using system environment variables, such as

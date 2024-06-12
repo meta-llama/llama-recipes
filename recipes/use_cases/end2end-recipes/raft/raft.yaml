@@ -31,7 +31,7 @@ question_prompt_template: >
 #   4. Never use any abbreviation.
 #   5. Include only the questions in your response.
 
-data_dir: "/home/kaiwu/work/pytorch/docs"
+data_dir: "./data"
 
 xml_path: ""
 

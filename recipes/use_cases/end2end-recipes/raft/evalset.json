@@ -1,130 +1,218 @@
 [
-    {
-       "question":"Why is Meta not sharing the training datasets for Llama?",
-       "answer":"We believe developers will have plenty to work with as we release our model weights and starting code for pre-trained and conversational fine-tuned versions as well as responsible use resources. While data mixes are intentionally withheld for competitive reasons, all models have gone through Meta’s internal Privacy Review process to ensure responsible data usage in building our products. We are dedicated to the responsible and ethical development of our GenAI products, ensuring our policies reflect diverse contexts and meet evolving societal expectations."
-    },
-    {
-       "question":"Did Meta use human annotators to develop the data for Llama models?",
-       "answer":"Yes. There are more details, for example, about our use of human annotators in the Llama 2 research paper."
-    },
-    {
-       "question":"Can I use the output of the models to improve the Llama family of models, even though I cannot use them for other LLMs?",
-       "answer":"It's correct that the license restricts using any part of the Llama models, including the response outputs to train another AI model (LLM or otherwise). However, one can use the outputs to further train the Llama family of models. Techniques such as Quantized Aware Training (QAT) utilize such a technique and hence this is allowed."
-    },
-    {
-       "question":"What operating systems (OS) are officially supported if I want to use Llama model?",
-       "answer":"For the core Llama GitHub repos (Llama and Llama3) Linux is the only OS currently supported by this repo. Additional OS support is available through the Llama-Recipes repo."
-    },
-    {
-       "question":"Do Llama models provide traditional autoregressive text completion?",
-       "answer":"Llama models are auto-regressive language models, built on the transformer architecture. The core language models function by taking a sequence of words as input and predicting the next word, recursively generating text."
-    },
-    {
-       "question":"Do Llama models support logit biases as a request parameter to control token probabilities during sampling?",
-       "answer":"This is implementation dependent (i.e. the code used to run the model)."
-    },
-    {
-       "question":"Do Llama models support adjusting sampling temperature or top-p threshold via request parameters?",
-       "answer":"The model itself supports these parameters, but whether they are exposed or not depends on implementation."
-    },
-    {
-       "question":"What is llama-recipes?",
-       "answer":"The llama-recipes repository is a companion to the Meta Llama 3 models. The goal of this repository is to provide a scalable library for fine-tuning Meta Llama models, along with some example scripts and notebooks to quickly get started with using the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Meta Llama and other tools in the LLM ecosystem."
-    },
-    {
-       "question":"What is the difference on the tokenization techniques that Meta Llama 3 uses compare Llama 2?",
-       "answer":"Llama 2 uses SentencePiece for tokenization, whereas Llama 3 has transitioned to OpenAI’s Tiktoken."
-    },
-    {
-       "question":"How many tokens were used in Meta Llama 3 pretrain?",
-       "answer":"Meta Llama 3 is pretrained on over 15 trillion tokens that were all collected from publicly available sources."
-    },
-    {
-       "question":"How many tokens were used in  Llama 2 pretrain?",
-       "answer":"Llama 2 was pretrained on 2 trillion tokens of data from publicly available sources."
-    },
-    {
-       "question":"What is the name of the license agreement that Meta Llama 3 is under?",
-       "answer":"Meta LLAMA 3 COMMUNITY LICENSE AGREEMENT."
-    },
-    {
-       "question":"What is the name of the license agreement that Llama 2 is under?",
-       "answer":"LLAMA 2 COMMUNITY LICENSE AGREEMENT."
-    },
-    {
-       "question":"What is the context length of Llama 2 models?",
-       "answer":"Llama 2's context is 4k"
-    },
-    {
-       "question":"What is the context length of Meta Llama 3 models?",
-       "answer":"Meta Llama 3's context is 8k"
-    },
-    {
-       "question":"When is Llama 2 trained?",
-       "answer":"Llama 2 was trained between January 2023 and July 2023."
-    },
-    {
-       "question":"What is the name of the Llama 2 model that uses Grouped-Query Attention (GQA) ",
-       "answer":"Llama 2 70B"
-    },
-    {
-       "question":"What are the names of the Meta Llama 3 model that use Grouped-Query Attention (GQA) ",
-       "answer":"Meta Llama 3 8B and Meta Llama 3 70B"
-    },
-    {
-       "question":"what are the goals for Llama 3",
-       "answer":"With Llama 3, we set out to build the best open models that are on par with the best proprietary models available today. We wanted to address developer feedback to increase the overall helpfulness of Llama 3 and are doing so while continuing to play a leading role on responsible use and deployment of LLMs. We are embracing the open source ethos of releasing early and often to enable the community to get access to these models while they are still in development."
-    },
-    {
-       "question":"What versions of Meta Llama 3 are available?",
-       "answer":"Meta Llama 3 is available in both 8B and 70B pretrained and instruction-tuned versions."
-    },
-    {
-       "question":"What are some applications of Meta Llama 3?",
-       "answer":"Meta Llama 3 supports a wide range of applications including coding tasks, problem solving, translation, and dialogue generation."
-    },
-    {
-       "question":"What improvements does Meta Llama 3 offer over previous models?",
-       "answer":"Meta Llama 3 offers enhanced scalability and performance, lower false refusal rates, improved response alignment, and increased diversity in model answers. It also excels in reasoning, code generation, and instruction following."
-    },
-    {
-       "question":"How has Meta Llama 3 been trained?",
-       "answer":"Meta Llama 3 has been trained on over 15T tokens of data using custom-built 24K GPU clusters. This training dataset is 7x larger than that used for Llama 2 and includes 4x more code."
-    },
-    {
-       "question":"What safety measures are included with Meta Llama 3?",
-       "answer":"Meta Llama 3 includes updates to trust and safety tools such as Llama Guard 2 and Cybersec Eval 2, optimized to support a comprehensive set of safety categories published by MLCommons."
-    },
-    {
-       "question":"What is Meta Llama 3?",
-       "answer":"Meta Llama 3 is a highly advanced AI model that excels at language nuances, contextual understanding, and complex tasks like translation and dialogue generation."
-    },
-    {
-       "question":"What are the pretrained versions of Meta Llama 3 available?",
-       "answer":"Meta Llama 3 is available with both 8B and 70B pretrained and instruction-tuned versions."
-    },
-    {
-       "question":"What is the context length supported by Llama 3 models?",
-       "answer":"Llama 3 models support a context length of 8K, which doubles the capacity of Llama 2."
-    },
-    {
-        "question":"What is the Prompt engineering?",
-        "answer":"It is a technique used in natural language processing (NLP) to improve the performance of the language model by providing them with more context and information about the task in hand."
-     },
-     {
-        "question":"What is the Zero-Shot Prompting?",
-        "answer":"Large language models like Meta Llama are capable of following instructions and producing responses without having previously seen an example of a task. Prompting without examples is called 'zero-shot prompting'."
-     },
-      {
-        "question":"What are the supported quantization modes in PyTorch?",
-        "answer":"Post-Training Dynamic Quantization, Post-Training Static Quantization and Quantization Aware Training (QAT)"
-     },
-     {
-        "question":"What is the LlamaIndex?",
-        "answer":"LlamaIndex is mainly a data framework for connecting private or domain-specific data with LLMs, so it specializes in RAG, smart data storage and retrieval, while LangChain is a more general purpose framework which can be used to build agents connecting multiple tools."
-     },
-     {
-       "question":"What is the LangChain?",
-       "answer":"LangChain is an open source framework for building LLM powered applications. It implements common abstractions and higher-level APIs to make the app building process easier, so you don't need to call LLM from scratch. "
-    }
- ]
+   {
+      "question":"What is quantization in machine learning?",
+      "answer":"Quantization is a technique to reduce computational and memory requirements of models by representing weights and activations with lower precision data types."
+   },
+   {
+      "question":"What are the benefits of quantization?",
+      "answer":"Benefits include smaller model sizes, faster fine-tuning, and faster inference, making it beneficial for resource-constrained environments."
+   },
+   {
+      "question":"What is post-training dynamic quantization in PyTorch?",
+      "answer":"Weights are pre-quantized ahead of time and activations are converted to int8 during inference for faster computation due to efficient int8 matrix multiplication."
+   },
+   {
+      "question":"What is quantization aware training (QAT) in PyTorch?",
+      "answer":"All weights and activations are 'fake quantized' during both forward and backward passes of training to yield higher accuracy than other methods."
+   },
+   {
+      "question":"What is TorchAO library for quantization?",
+      "answer":"TorchAO offers various quantization methods including weight only quantization and dynamic quantization, with support for 8-bit and 4-bit quantization."
+   },
+   {
+      "question":"What is prompt engineering?",
+      "answer":"Prompt engineering is a technique used in natural language processing (NLP) to improve the performance of the language model by providing them with more context and information about the task in hand. It involves creating prompts, which are short pieces of text that provide additional information or guidance to the model."
+   },
+   {
+      "question":"What are some tips for crafting effective prompts?",
+      "answer":"Be clear and concise, use specific examples, vary the prompts, test and refine, and use feedback."
+   },
+   {
+      "question":"What is zero-shot prompting?",
+      "answer":"Zero-shot prompting is the technique of using large language models like Meta Llama to follow instructions and produce responses without having previously seen an example of a task."
+   },
+   {
+      "question":"What is few-shot prompting?",
+      "answer":"Few-shot prompting is the technique of adding specific examples of desired output to prompts to generate more accurate and consistent results."
+   },
+   {
+      "question":"What is role based prompting?",
+      "answer":"Role based prompting is the technique of creating prompts based on the role or perspective of the person or entity being addressed to improve relevance and accuracy."
+   },
+   {
+      "question":"What is chain of thought technique?",
+      "answer":"Chain of thought technique is the method of providing the language model with a series of prompts or questions to help guide its thinking and generate a more coherent and relevant response."
+   },
+   {
+      "question":"What is self-consistency approach?",
+      "answer":"Self-consistency approach is the method of selecting the most frequent answer from multiple generations to enhance accuracy."
+   },
+   {
+      "question":"What is retrieval-augmented generation?",
+      "answer":"Retrieval-augmented generation is the practice of including information in the prompt that has been retrieved from an external database to incorporate facts into LLM application."
+   },
+   {
+      "question":"What is program-aided language models?",
+      "answer":"Program-aided language models is the method of instructing the LLM to write code to solve calculation tasks since LLMs are bad at arithmetic but great at code generation."
+   },
+   {
+      "question":"What is Code Llama?",
+      "answer":"Code Llama is a family of large language models for code based on Llama 2 providing state-of-the-art performance among open models, infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks."
+   },
+   {
+      "question":"What are the different flavors available in Code Llama?",
+      "answer":"The different flavors include foundation models (Code Llama), Python specializations (Code Llama - Python), and instruction-following models (Code Llama - Instruct) with 7B, 13B, and 34B parameters each."
+   },
+   {
+      "question":"How can I download Code Llama?",
+      "answer":"To download the model weights and tokenizers, visit the Meta website, accept the License, receive a signed URL over email, and then run the download.sh script passing the URL provided when prompted to start the download."
+   },
+   {
+      "question":"What is Llama Guard 2?",
+      "answer":"Llama Guard 2 provides input and output guardrails for LLM deployments based on MLCommons policy."
+   },
+   {
+      "question":"How to download the model weights and tokenizer for Llama Guard 2?",
+      "answer":"Visit the Meta website, accept the license, get approved, receive signed URL via email, then run the download.sh script."
+   },
+   {
+      "question":"Are there any examples using Llama Guard 2?",
+      "answer":"Yes, find them in the Llama recipes repository in addition to the quick start steps for Llama3."
+   },
+   {
+      "question":"Where to report issues related to Llama Guard 2 or its model?",
+      "answer":"Report via github.com/meta-llama/PurpleLlama for Llama Guard model issues or developers.facebook.com/llama_output_feedback for risky content generated by the model."
+   },
+   {
+      "question":"What is the license for Llama Guard 2?",
+      "answer":"The same license as Llama 3 applies: see the LICENSE file and accompanying Acceptable Use Policy."
+   },
+   {
+      "question":"Why is Meta not sharing the training datasets for Llama?",
+      "answer":"We believe developers will have plenty to work with as we release our model weights and starting code for pre-trained and conversational fine-tuned versions as well as responsible use resources. While data mixes are intentionally withheld for competitive reasons, all models have gone through Meta’s internal Privacy Review process to ensure responsible data usage in building our products. We are dedicated to the responsible and ethical development of our GenAI products, ensuring our policies reflect diverse contexts and meet evolving societal expectations."
+   },
+   {
+      "question":"Did Meta use human annotators to develop the data for Llama models?",
+      "answer":"Yes. There are more details, for example, about our use of human annotators in the Llama 2 research paper."
+   },
+   {
+      "question":"Can I use the output of the models to improve the Llama family of models, even though I cannot use them for other LLMs?",
+      "answer":"It's correct that the license restricts using any part of the Llama models, including the response outputs to train another AI model (LLM or otherwise). However, one can use the outputs to further train the Llama family of models. Techniques such as Quantized Aware Training (QAT) utilize such a technique and hence this is allowed."
+   },
+   {
+      "question":"What operating systems (OS) are officially supported if I want to use Llama model?",
+      "answer":"For the core Llama GitHub repos (Llama and Llama3) Linux is the only OS currently supported by this repo. Additional OS support is available through the Llama-Recipes repo."
+   },
+   {
+      "question":"Do Llama models provide traditional autoregressive text completion?",
+      "answer":"Llama models are auto-regressive language models, built on the transformer architecture. The core language models function by taking a sequence of words as input and predicting the next word, recursively generating text."
+   },
+   {
+      "question":"Do Llama models support logit biases as a request parameter to control token probabilities during sampling?",
+      "answer":"This is implementation dependent (i.e. the code used to run the model)."
+   },
+   {
+      "question":"Do Llama models support adjusting sampling temperature or top-p threshold via request parameters?",
+      "answer":"The model itself supports these parameters, but whether they are exposed or not depends on implementation."
+   },
+   {
+      "question":"What is llama-recipes?",
+      "answer":"The llama-recipes repository is a companion to the Meta Llama 3 models. The goal of this repository is to provide a scalable library for fine-tuning Meta Llama models, along with some example scripts and notebooks to quickly get started with using the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Meta Llama and other tools in the LLM ecosystem."
+   },
+   {
+      "question":"What is the difference on the tokenization techniques that Meta Llama 3 uses compare Llama 2?",
+      "answer":"Llama 2 uses SentencePiece for tokenization, whereas Llama 3 has transitioned to OpenAI’s Tiktoken."
+   },
+   {
+      "question":"How many tokens were used in Meta Llama 3 pretrain?",
+      "answer":"Meta Llama 3 is pretrained on over 15 trillion tokens that were all collected from publicly available sources."
+   },
+   {
+      "question":"How many tokens were used in  Llama 2 pretrain?",
+      "answer":"Llama 2 was pretrained on 2 trillion tokens of data from publicly available sources."
+   },
+   {
+      "question":"What is the name of the license agreement that Meta Llama 3 is under?",
+      "answer":"Meta LLAMA 3 COMMUNITY LICENSE AGREEMENT."
+   },
+   {
+      "question":"What is the name of the license agreement that Llama 2 is under?",
+      "answer":"LLAMA 2 COMMUNITY LICENSE AGREEMENT."
+   },
+   {
+      "question":"What is the context length of Llama 2 models?",
+      "answer":"Llama 2's context is 4k"
+   },
+   {
+      "question":"What is the context length of Meta Llama 3 models?",
+      "answer":"Meta Llama 3's context is 8k"
+   },
+   {
+      "question":"When is Llama 2 trained?",
+      "answer":"Llama 2 was trained between January 2023 and July 2023."
+   },
+   {
+      "question":"What is the name of the Llama 2 model that uses Grouped-Query Attention (GQA) ",
+      "answer":"Llama 2 70B"
+   },
+   {
+      "question":"What are the names of the Meta Llama 3 model that use Grouped-Query Attention (GQA) ",
+      "answer":"Meta Llama 3 8B and Meta Llama 3 70B"
+   },
+   {
+      "question":"what are the goals for Llama 3",
+      "answer":"With Llama 3, we set out to build the best open models that are on par with the best proprietary models available today. We wanted to address developer feedback to increase the overall helpfulness of Llama 3 and are doing so while continuing to play a leading role on responsible use and deployment of LLMs. We are embracing the open source ethos of releasing early and often to enable the community to get access to these models while they are still in development."
+   },
+   {
+      "question":"What versions of Meta Llama 3 are available?",
+      "answer":"Meta Llama 3 is available in both 8B and 70B pretrained and instruction-tuned versions."
+   },
+   {
+      "question":"What are some applications of Meta Llama 3?",
+      "answer":"Meta Llama 3 supports a wide range of applications including coding tasks, problem solving, translation, and dialogue generation."
+   },
+   {
+      "question":"What improvements does Meta Llama 3 offer over previous models?",
+      "answer":"Meta Llama 3 offers enhanced scalability and performance, lower false refusal rates, improved response alignment, and increased diversity in model answers. It also excels in reasoning, code generation, and instruction following."
+   },
+   {
+      "question":"How has Meta Llama 3 been trained?",
+      "answer":"Meta Llama 3 has been trained on over 15T tokens of data using custom-built 24K GPU clusters. This training dataset is 7x larger than that used for Llama 2 and includes 4x more code."
+   },
+   {
+      "question":"What safety measures are included with Meta Llama 3?",
+      "answer":"Meta Llama 3 includes updates to trust and safety tools such as Llama Guard 2 and Cybersec Eval 2, optimized to support a comprehensive set of safety categories published by MLCommons."
+   },
+   {
+      "question":"What is Meta Llama 3?",
+      "answer":"Meta Llama 3 is a highly advanced AI model that excels at language nuances, contextual understanding, and complex tasks like translation and dialogue generation."
+   },
+   {
+      "question":"What are the pretrained versions of Meta Llama 3 available?",
+      "answer":"Meta Llama 3 is available with both 8B and 70B pretrained and instruction-tuned versions."
+   },
+   {
+      "question":"What is the context length supported by Llama 3 models?",
+      "answer":"Llama 3 models support a context length of 8K, which doubles the capacity of Llama 2."
+   },
+   {
+      "question":"What is the Prompt engineering?",
+      "answer":"It is a technique used in natural language processing (NLP) to improve the performance of the language model by providing them with more context and information about the task in hand."
+   },
+   {
+      "question":"What is the Zero-Shot Prompting?",
+      "answer":"Large language models like Meta Llama are capable of following instructions and producing responses without having previously seen an example of a task. Prompting without examples is called 'zero-shot prompting'."
+   },
+   {
+      "question":"What are the supported quantization modes in PyTorch?",
+      "answer":"Post-Training Dynamic Quantization, Post-Training Static Quantization and Quantization Aware Training (QAT)"
+   },
+   {
+      "question":"What is the LlamaIndex?",
+      "answer":"LlamaIndex is mainly a data framework for connecting private or domain-specific data with LLMs, so it specializes in RAG, smart data storage and retrieval, while LangChain is a more general purpose framework which can be used to build agents connecting multiple tools."
+   },
+   {
+      "question":"What is the LangChain?",
+      "answer":"LangChain is an open source framework for building LLM powered applications. It implements common abstractions and higher-level APIs to make the app building process easier, so you don't need to call LLM from scratch. "
+   }
+]
