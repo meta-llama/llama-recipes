@@ -22,7 +22,11 @@ The main script of the application is [main.py](./main.py). Here's a brief overv
 
 ## Usage
 
+<!-- markdown-link-check-disable -->
+
 You will need to store a valid Groq API Key as a secret to proceed with this example outside of this Repl. You can generate one for free [here](https://console.groq.com/keys).
+
+<!-- markdown-link-check-enable -->
 
 You would also need your own [Pinecone](https://www.pinecone.io/) index with presidential speech embeddings to run this code locally. You can create a Pinecone API key and one index for a small project for free on their Starter plan, and visit [this Cookbook post](https://github.com/groq/groq-api-cookbook/blob/dan/replit-conversion/presidential-speeches-rag/presidential-speeches-rag.ipynb) for more info on RAG and a guide to uploading these embeddings to a vector database
 

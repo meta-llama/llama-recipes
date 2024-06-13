@@ -38,7 +38,11 @@ A well-crafted system prompt is essential for building a functional Text-to-SQL 
 
 ## Usage
 
+<!-- markdown-link-check-disable -->
+
 You will need to store a valid Groq API Key as a secret to proceed with this example. You can generate one for free [here](https://console.groq.com/keys).
+
+<!-- markdown-link-check-enable -->
 
 You can [fork and run this application on Replit](https://replit.com/@GroqCloud/Building-a-Text-to-SQL-app-with-Groqs-JSON-mode) or run it on the command line with `python main.py`.
 

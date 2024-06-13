@@ -36,7 +36,11 @@ The verified SQL queries and their descriptions are stored in YAML files located
 
 ## Usage
 
+<!-- markdown-link-check-disable -->
+
 You will need to store a valid Groq API Key as a secret to proceed with this example. You can generate one for free [here](https://console.groq.com/keys).
+
+<!-- markdown-link-check-enable -->
 
 You can [fork and run this application on Replit](https://replit.com/@GroqCloud/Execute-Verified-SQL-Queries-with-Function-Calling) or run it on the command line with `python main.py`.
 

@@ -12,9 +12,12 @@ The [CrewAI](https://docs.crewai.com/) Machine Learning Assistant is a command l
 
 - **LangChain Integration**: Incorporates LangChain to facilitate natural language processing and enhance the interaction between the user and the machine learning assistant.
 
-
 ## Usage
+
+<!-- markdown-link-check-disable -->
 
 You will need to store a valid Groq API Key as a secret to proceed with this example. You can generate one for free [here](https://console.groq.com/keys).
 
-You can [fork and run this application on Replit](https://replit.com/@GroqCloud/CrewAI-Machine-Learning-Assistant) or run it on the command line with `python main.py`. You can upload a sample .csv to the same directory as ```main.py``` to give the application a head start on your ML problem. The application will output a Markdown file including python code for your ML use case to the same directory as main.py.
+<!-- markdown-link-check-enable -->
+
+You can [fork and run this application on Replit](https://replit.com/@GroqCloud/CrewAI-Machine-Learning-Assistant) or run it on the command line with `python main.py`. You can upload a sample .csv to the same directory as `main.py` to give the application a head start on your ML problem. The application will output a Markdown file including python code for your ML use case to the same directory as main.py.

@@ -14,4 +14,8 @@ A simple application that allows users to interact with a conversational chatbot
 
 ##Usage
 
+<!-- markdown-link-check-disable -->
+
 You will need to store a valid Groq API Key as a secret to proceed with this example. You can generate one for free [here](https://console.groq.com/keys).
+
+<!-- markdown-link-check-enable -->
