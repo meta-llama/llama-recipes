@@ -16,7 +16,7 @@ A command line application that allows users to ask questions about their DuckDB
 
 ## Data
 
-The application queries data from CSV files located in the [data](app.py#L96) folder:
+The application queries data from CSV files located in the data folder:
 
 - `employees.csv`: Contains employee data including their ID, full name, and email address.
 
