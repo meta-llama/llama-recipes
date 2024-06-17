@@ -39,5 +39,5 @@ class raft_dataset:
     dataset: str = "raft_dataset"
     train_split: str = "train"
     test_split: str = "validation"
-    dataset_path: str = "hub://manufe/raft_format_dataset_finance"
+    dataset_path: str = "hub://manufe/raft_format_dataset_financebench"
     val_quantity: int = 1000
