@@ -32,3 +32,12 @@ class custom_dataset:
     file: str = "examples/custom_dataset.py"
     train_split: str = "train"
     test_split: str = "validation"
+
+
+@dataclass
+class raft_dataset:
+    dataset: str = "raft_dataset"
+    train_split: str = "train"
+    test_split: str = "validation"
+    dataset_path: str = "hub://manufe/raft_format_dataset_finance"
+    val_quantity: int = 1000
