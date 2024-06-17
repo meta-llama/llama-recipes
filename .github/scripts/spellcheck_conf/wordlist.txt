@@ -1359,3 +1359,6 @@ Replit
 Teslas
 duckdb
 teslas
+Groqs
+groq
+schemas
