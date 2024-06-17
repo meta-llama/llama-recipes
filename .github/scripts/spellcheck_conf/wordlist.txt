@@ -1362,3 +1362,8 @@ teslas
 Groqs
 groq
 schemas
+Pinecone
+Pinecone's
+Repl
+docsearch
+presidental
