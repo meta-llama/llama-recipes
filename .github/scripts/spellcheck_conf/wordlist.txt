@@ -1367,3 +1367,16 @@ Pinecone's
 Repl
 docsearch
 presidental
+CrewAI
+kickstart
+DataFrames
+Groqing
+Langchain
+Plotly
+dfs
+yfinance
+Groq's
+LlamaChat
+chatbot's
+ConversationBufferWindowMemory
+chatbot's
