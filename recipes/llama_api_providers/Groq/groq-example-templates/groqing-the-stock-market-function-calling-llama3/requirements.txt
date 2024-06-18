@@ -1,0 +1,12 @@
+streamlit
+pandas
+numpy
+groq
+langchain_community
+langchain_groq
+yfinance
+plotly
+langchain_core
+nbformat>=4.2.0
+ipython
+kaleido

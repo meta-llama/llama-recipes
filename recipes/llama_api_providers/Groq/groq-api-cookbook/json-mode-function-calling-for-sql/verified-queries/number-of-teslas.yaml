@@ -1,0 +1,6 @@
+description: Number of Teslas purchased
+sql: |
+  SELECT COUNT(*) as number_of_teslas
+  FROM purchases.csv AS p
+  JOIN employees.csv AS e ON e.employee_id = p.employee_id
+  WHERE p.product_name = 'Tesla'
