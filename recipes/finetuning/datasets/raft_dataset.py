@@ -88,7 +88,7 @@ def raft_tokenize(q_a_pair, tokenizer):
     return tokenize_dialog(chat, tokenizer)
 
 
-def get_custom_dataset(dataset_config, tokenizer, split, split_ratio=0.8):
+def get_custom_dataset(dataset_config, tokenizer, split, split_ratio=0.9):
     # load_dataset will return DatasetDict that contains all the data in the train set
     dataset_dict = load_dataset('json', data_files=dataset_config.data_path)
     dataset = dataset_dict['train']
