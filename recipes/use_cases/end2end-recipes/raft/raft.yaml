@@ -7,30 +7,34 @@ COT_prompt_template: >
   <|start_header_id|>user<|end_header_id|>
   Question: {question}\nContext: {context}\n<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 
+# question_prompt_template: >
+#   <|begin_of_text|><|start_header_id|>system<|end_header_id|> You are a synthetic question-answer pair generator. Given a chunk of context about
+#   some topic(s), generate {num_questions} example questions a user could ask and would be answered
+#   using information from the chunk. For example, if the given context was a Wikipedia
+#   paragraph about the United States, an example question could be 'How many states are
+#   in the United States?
+#   The questions should be able to be answered in 100 words or less. Include only the
+#   questions in your response.<|eot_id|>
+#   <|start_header_id|>user<|end_header_id|>
+#   Context: {context}\n <|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
 question_prompt_template: >
-  <|begin_of_text|><|start_header_id|>system<|end_header_id|> You are a synthetic question-answer pair generator. Given a chunk of context about
-  some topic(s), generate {num_questions} example questions a user could ask and would be answered
-  using information from the chunk. For example, if the given context was a Wikipedia
-  paragraph about the United States, an example question could be 'How many states are
-  in the United States?
-  The questions should be able to be answered in 100 words or less. Include only the
-  questions in your response.<|eot_id|>
+  <|begin_of_text|><|start_header_id|>system<|end_header_id|> You are a language model skilled in creating quiz questions.
+  You will be provided with a document,
+  read it and please generate factoid question and answer pairs that are most likely be asked by a user of Llama language models
+  which includes LLama, Llama2, Meta Llama3, Code Llama, Meta Llama Guard 1,	Meta Llama Guard 2
+  Your factoid questions should be answerable with a specific, concise piece of factual information from the context.
+  Your factoid questions should be formulated in the same style as questions users could ask in a search engine.
+  This means that your factoid questions MUST NOT mention something like "according to the passage" or "context".
+  please make sure you follow those rules:
+  1. Generate {num_questions} question answer pairs, you can generate less answer if there is nothing related to
+  model, training, fine-tuning and evaluation details of Llama language models,
+  2. The questions can be answered based *solely* on the given passage.
+  3. Avoid asking questions with similar meaning.
+  4. Never use any abbreviation.
+  5. The questions should be able to be answered in 60 words or less. Include only the questions in your response. <|eot_id|>
   <|start_header_id|>user<|end_header_id|>
   Context: {context}\n <|eot_id|><|start_header_id|>assistant<|end_header_id|>
-
-# question_prompt_template: >
-#   You are a language model skilled in creating quiz questions.
-#   You will be provided with a document,
-#   read it and please generate question and answer pairs that are most likely be asked by a user of Llama language models
-#   which includes LLama, Llama2, Meta Llama3, Code Llama, Meta Llama Guard 1,	Meta Llama Guard 2
-#   Output only the questions related to Llama:
-#   please make sure you follow those rules:
-#   1. Generate {num_questions} question answer pairs, you can generate less answer if there is nothing related to model, training, fine-tuning and evaluation details of Llama language models, .
-#   2. The questions can be answered based *solely* on the given passage.
-#   3. Avoid asking questions with similar meaning.
-#   4. Never use any abbreviation.
-#   5. Include only the questions in your response.
-
 data_dir: "./data"
 
 xml_path: ""

@@ -3,8 +3,7 @@
 
 import os
 import logging
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_experimental.text_splitter import SemanticChunker
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from math import ceil
 from datasets import Dataset
 import random
@@ -90,7 +89,7 @@ def read_file_content(xml_path: str, data_folder: str) -> str:
 def get_chunks(
     text: str,
     chunk_size: int = 512,
-    embedding_model: str = None
+    api_config: dict = None,
 ) -> list[str]:
     """
     Takes in a `file_path` and `doctype`, retrieves the document, breaks it down into chunks of size
@@ -102,7 +101,7 @@ def get_chunks(
     else:
         num_chunks = ceil(len(text) / chunk_size)
         logging.info(f"Splitting text into {num_chunks} chunks")
-        text_splitter = SemanticChunker(embedding_model, number_of_chunks=num_chunks)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=api_config["chunk_size"], chunk_overlap=int(api_config["chunk_size"]/10))
         chunks = text_splitter.create_documents([text])
         chunks = [chunk.page_content for chunk in chunks]
 
@@ -116,8 +115,7 @@ def generate_questions(api_config):
     document_text = read_file_content(api_config["xml_path"],api_config["data_dir"])
     if len(document_text) == 0:
         logging.info(f"Error reading files, document_text is {len(document_text)}")
-    embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2",model_kwargs={'device': 'cuda'})
-    document_batches = get_chunks(document_text,api_config["chunk_size"],embedding_model)
+    document_batches = get_chunks(document_text,api_config["chunk_size"],api_config)
     # use OpenAI API protocol to hanlde the chat request, including local VLLM openai compatible server
     llm = ChatOpenAI(
         openai_api_key=key,

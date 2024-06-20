@@ -8,10 +8,15 @@ import json
 from langchain_openai import ChatOpenAI
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter,TokenTextSplitter
+from langchain_community.vectorstores.utils import DistanceStrategy
+from datetime import datetime
 from langchain_community.document_loaders import DirectoryLoader
 import re
 import string
+import pandas as pd 
+from langchain.retrievers.document_compressors import FlashrankRerank
+from transformers import AutoTokenizer
 
 
 def generate_answers_model_only(model_name,question_list,api_url="http://localhost:8000/v1",key="EMPTY"):
@@ -36,28 +41,48 @@ def generate_answers_model_only(model_name,question_list,api_url="http://localho
 def format_docs_raft(docs):
     context = ""
     for doc in docs:
-        context += "<DOCUMENT>" + str(doc.page_content) + "</DOCUMENT>\n"
+        context += "\n<DOCUMENT>" + str(doc.page_content) + "</DOCUMENT>\n"
     return context
-def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
-def generate_answers_with_RAG(model_name, question_list,api_config,api_url_overwrite=None):
-    data_dir = api_config['data_dir']
+def build_retriever(api_config,embedding_model_name,retrieved_docs_num=5):
+    # Use langchain to load the documents from data directory
+    loader = DirectoryLoader(api_config['data_dir'])
+    docs = loader.load()
+    # Split the document into chunks with a specified chunk size
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=api_config["chunk_size"],chunk_overlap=int(api_config["chunk_size"] / 10),add_start_index=True,strip_whitespace=True)
+    # text_splitter = RecursiveCharacterTextSplitter.from_huggingface_tokenizer(
+    #     AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B"),
+    #     chunk_size=api_config["chunk_size"],
+    #     chunk_overlap=int(api_config["chunk_size"] / 10),
+    #     add_start_index=True,
+    #     strip_whitespace=True,
+    #     separators=["\n\n", "\n", ".", " ", ""],
+    # )
+    docs_processed = text_splitter.split_documents(docs)
+    # Remove duplicates
+    unique_texts = {}
+    docs_processed_unique = []
+    for doc in docs_processed:
+        if doc.page_content not in unique_texts:
+            unique_texts[doc.page_content] = True
+            docs_processed_unique.append(doc)
+
+    # Store the document into a vector store with a specific embedding model
+    embedding_model = HuggingFaceEmbeddings(
+        model_name=embedding_model_name,
+        model_kwargs={"device": "cuda"},
+        encode_kwargs={"normalize_embeddings": True},  # Set `True` for cosine similarity
+    )
+    vectorstore = FAISS.from_documents(docs_processed_unique, embedding_model, distance_strategy=DistanceStrategy.COSINE)
+    retriever = vectorstore.as_retriever(
+        search_kwargs={"k": retrieved_docs_num},
+    )
+    return retriever
+def generate_answers_with_RAG(model_name, question_list,api_config,retriever,api_url_overwrite=None):
     api_url = "http://localhost:"+str(api_config['vllm_endpoint'])+"/v1"
     if api_url_overwrite:
         api_url = api_url_overwrite
     key = api_config['api_key']
-    # Use langchain to load the documents from data directory
-    loader = DirectoryLoader(data_dir)
-    docs = loader.load()
-    # Split the document into chunks with a specified chunk size
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=api_config["chunk_size"], chunk_overlap=int(api_config["chunk_size"]/10))
-    all_splits = text_splitter.split_documents(docs)
-
-    # Store the document into a vector store with a specific embedding model
-    vectorstore = FAISS.from_documents(all_splits, HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2",model_kwargs={'device': 'cuda'}))
-    retriever = vectorstore.as_retriever(
-        search_kwargs={"k": 5}
-    )
+    rerank_topk = api_config["rerank_topk"]
     # Load the RAFT model
     llm = ChatOpenAI(
         openai_api_key=key,
@@ -68,13 +93,14 @@ def generate_answers_with_RAG(model_name, question_list,api_config,api_url_overw
         )
     all_tasks = []
     for q in question_list:
-        # retrive the top 6 documents
-        retrieved_docs = retriever.invoke(q)
+        # retrive the top K documents
+        retrieved_docs = retriever.invoke(q)        
+        if rerank_topk:
+            ranker = FlashrankRerank(top_n=rerank_topk)
+            documents = ranker.compress_documents(retrieved_docs,q)
         # format the documents into a string
-        if '8B-Instruct' in model_name:
-            documents = format_docs(retrieved_docs)
-        else:
-            documents = format_docs_raft(retrieved_docs)
+
+        documents = format_docs_raft(retrieved_docs)
         # create a prompt
         text = api_config["RAG_prompt_template"].format(context=documents,question=q)
         all_tasks.append(text)
@@ -157,10 +183,10 @@ def compute_judge_score(questions: list, generated : list, reference: list, api_
         message = api_config['judge_prompt_template'].format(question=question,prediction=prediction,gold=gold)
         all_tasks.append(message)
     judge_responses = llm.batch(all_tasks)
-    judge_responses = ["YES" in item.content.split("<ANSWER>")[-1] for item in judge_responses]
+    judge_responses = ["YES" in item.content for item in judge_responses]
     correct_num = sum(judge_responses)
     return correct_num/len(questions),judge_responses
-def score_single(api_config,generated,reference,questions, run_exact_match=True,run_rouge=True, run_bert=True, run_llm_as_judge=True):
+def score_single(api_config,generated,reference,questions, run_exact_match=True,run_rouge=True, run_bert=False, run_llm_as_judge=True):
     # set metric to default -1, means no metric is computed
     metric = {
         "Rouge_score": -1,
@@ -196,12 +222,18 @@ def main(api_config):
     try:
         api_url = "http://localhost:"+str(api_config["vllm_endpoint"])+"/v1"
         logging.info("Starting to generate answer given the eval set.")
-        with open(api_config["eval_json"]) as fp:
-            eval_json = json.load(fp)
         questions,groud_truth = [],[]
-        for index, item in enumerate(eval_json):
-            questions.append(item["question"])
-            groud_truth.append(item["answer"])
+        if api_config["eval_file"].endswith(".parquet"):
+            eval_file = pd.read_parquet(api_config["eval_file"],filters=[('source', '=', 'pt_discuss_forum')])
+            for index, item in eval_file.iterrows():
+                questions.append(item["question"]+"\nDetails:\n"+item["context"])
+                groud_truth.append(item["answer"])
+        else:
+            with open(api_config["eval_file"]) as fp:
+                eval_file = json.load(fp)
+                for index, item in enumerate(eval_file):
+                    questions.append(item["question"])
+                    groud_truth.append(item["answer"])
         generated_answers = {
             "RAFT": [],
             "RAFT_RAG": [],
@@ -211,29 +243,30 @@ def main(api_config):
             "70B_Base": [],
             
         }
-        # Generate answers for baseline
-        base_model_name = api_config["base_model_name"]
-        generated_answers["Baseline"] = generate_answers_model_only(base_model_name,questions,api_url)
-        generated_answers["Baseline_RAG"] = generate_answers_with_RAG(base_model_name, questions,api_config)
-        # Generate answers for RAFT
-        raft_model_name = api_config["raft_model_name"]
-        generated_answers["RAFT"] = generate_answers_model_only(raft_model_name,questions,api_url)
-        generated_answers["RAFT_RAG"] = generate_answers_with_RAG(raft_model_name, questions,api_config)
-
+        # build retriver
+        retriever = build_retriever(api_config,"sentence-transformers/multi-qa-mpnet-base-cos-v1",api_config["rag_topk"])
+        # Generate answers for 8B models
+        model_name = api_config["model_name"]
+        generated_answers[model_name] = generate_answers_model_only(model_name,questions,api_url)
+        generated_answers[model_name+"_RAG"] = generate_answers_with_RAG(model_name, questions,api_config,retriever)
+        print("Finished generating answers for ", model_name)
         large_model_name = "meta-llama/Meta-Llama-3-70B-Instruct"
         large_api_url = "http://localhost:"+str(api_config["judge_endpoint"])+"/v1"
         generated_answers["70B_Base"] = generate_answers_model_only(large_model_name,questions,large_api_url)
-        generated_answers["70B_RAG"] = generate_answers_with_RAG(large_model_name, questions,api_config,large_api_url,)
-        logging.info(f"Successfully generated {len(generated_answers['Baseline_RAG'])} answers for all models.")
+        generated_answers["70B_RAG"] = generate_answers_with_RAG(large_model_name, questions,api_config,retriever,large_api_url)
+        print("Finished generating answers for ", large_model_name)
+        logging.info(f"Successfully generated {len(generated_answers[model_name])} answers for all models.")
         # for generate answer from each model, compute the score metric
         all_metrics = []
+        output_file = api_config["output_log"]+str(datetime.now().strftime("%Y%m%d_%H%M%S"))
+
         for model_name,model_answer in generated_answers.items():
             if len(model_answer) != len(groud_truth):
                 print(f"The length of {model_name} answer is not equal to the length of ground truth.")
                 continue
             metric = score_single(api_config,model_answer,groud_truth,questions)
             print(f"The eval result for {model_name} is: {metric}")
-            with open(api_config["output_log"],"a") as fp:
+            with open(output_file,"a") as fp:
                 fp.write(f"Eval_result for {model_name} \n")
                 fp.write(f"Rouge_score: {metric['Rouge_score']} \n")
                 fp.write(f"BERTScore Precision: {metric['BERTScore_Precision']:.4f}, Recall: {metric['BERTScore_Recall']:.4f}, F1: {metric['BERTScore_F1']:.4f} \n")
@@ -254,20 +287,21 @@ def main(api_config):
         # Now we want to take a closer look at the questions that are not answered the same by all the models.
         judge_zip = list(zip(*[item[-1] for item in all_metrics]))
         model_names = [item[0] for item in all_metrics]
-        with open(api_config["output_log"],"a") as fp:
+        with open(output_file,"a") as fp:
             for item in all_metrics:
                 fp.write(f"Model_Name: {item[0]}, LLM_SCORE: {item[1]} \n")
             for idx,item in enumerate(judge_zip):
-                # if all the responses are "YES" or all the responses are "NO", then we skip this question
-                if sum([r=="YES" for r in item]) == len(item) or sum([r=="YES" for r in item]) == 0:
+                # if all the responses are "YES", then we skip this question
+                if sum(item) == len(item):
                     continue 
                 else:
                     fp.write(f"Comparing interested question: {questions[idx]} \n")
                     fp.write(f"groud_truth: {groud_truth[idx]} \n")
                     for i in range(len(model_names)):
                         fp.write(f"{item[i]} {model_names[i]}_answers: {generated_answers[model_names[i]][idx]} \n")
-                    fp.write("-------\n")
-
+                    fp.write("------------------------\n")
+            fp.write(json.dumps(all_metrics))
+        print("Finished evaluating the model.")
 
 
         logging.info(f"Eval successfully, the eval result is saved to {api_config['output_log']}.")
@@ -281,13 +315,13 @@ def parse_arguments():
         description="Generate question/answer pairs from documentation."
     )
     parser.add_argument(
-        "-m", "--raft_model_name",
+        "-m", "--model_name",
         default=None,
-        help="Provide the raft_model_name to use for evaluation. If not specified, the model_path in eval_config.yaml will be used."
+        help="Provide the model_name to use for evaluation. If not specified, the model_path in eval_config.yaml will be used."
     )
     parser.add_argument(
         "-c", "--config_path",
-        default="eval_config.yaml",
+        default="raft_eval_config.yaml",
         help="Set the configuration file path that has system prompt along with language, evalset path."
     )
     parser.add_argument(
@@ -309,14 +343,26 @@ def parse_arguments():
     )
     parser.add_argument(
         "-o", "--output_log",
-        default="eval_result.log",
-        help="save the eval result to a log file. Default is eval_result.log"
+        default="./eval_result",
+        help="save the eval result to a log file. Default is eval_result[timestamp].log"
     )
     parser.add_argument(
         "-k", "--api_key",
         default="EMPTY",
         type=str,
         help="LLM API key for generating question/answer pairs."
+    )
+    parser.add_argument(
+        "-r", "--rag_topk",
+        default=5,
+        type=int,
+        help="set the number of top k documents the RAG needs to retrive."
+    )
+    parser.add_argument(
+        "--rerank_topk",
+        default=0,
+        type=int,
+        help="set the number of top k documents the reranker needs to retrive."
     )
     parser.add_argument("--chunk_size", type=int, default=1000, help="The character size of each chunk used in RAG")
     return parser.parse_args()
@@ -329,11 +375,15 @@ if __name__ == "__main__":
     if args.data_dir:
         api_config["data_dir"] = args.data_dir
     if args.raft_model_name:
-        api_config["raft_model_name"] = args.raft_model_name
+        api_config["model_name"] = args.model_name
     api_config["judge_endpoint"] = args.judge_endpoint
     api_config["output_log"] = args.output_log
     api_config["api_key"] = args.api_key
     api_config["chunk_size"] = args.chunk_size
+    api_config["rag_topk"] = args.rag_topk
+    api_config["rerank_topk"] = args.rerank_topk
+    if api_config["rag_topk"] < api_config["rerank_topk"]:
+        logging.error("The rerank_topk should be smaller than rag_topk.")
     if api_config["judge_endpoint"]:
         logging.info(f"Use local vllm service for judge at port: '{args.judge_endpoint}'.")
     main(api_config)
