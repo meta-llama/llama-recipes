@@ -20,7 +20,8 @@ class llama_adapter_config:
      adapter_layers: int= 30
      task_type: str= "CAUSAL_LM"
 
+#CAUTION prefix tuning is currently not supported
 @dataclass
 class prefix_config:
      num_virtual_tokens: int=30
-     task_type: str= "CAUSAL_LM"    
+     task_type: str= "CAUSAL_LM"

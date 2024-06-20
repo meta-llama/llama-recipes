@@ -1,0 +1,6 @@
+purchase_id,purchase_date,product_name,employee_id,amount
+1,'2024-02-01',iPhone,1,750
+2,'2024-02-02',Tesla,2,70000
+3,'2024-02-03',Humane pin,3,500
+4,'2024-02-04',iPhone,4,700
+5,'2024-02-05',Tesla,5,75000

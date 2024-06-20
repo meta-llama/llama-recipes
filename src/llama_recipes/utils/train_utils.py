@@ -6,8 +6,8 @@ import time
 import yaml
 from contextlib import nullcontext
 from pathlib import Path
-from pkg_resources import packaging
 from datetime import datetime
+import contextlib
 
 
 import torch
@@ -24,14 +24,48 @@ from llama_recipes.model_checkpointing import save_model_checkpoint, save_model_
 from llama_recipes.policies import fpSixteen,bfSixteen, get_llama_wrapper
 from llama_recipes.utils.memory_utils import MemoryTrace
 from accelerate.utils import is_xpu_available, is_ccl_available
-
+from llama_recipes.utils.flop_utils import FlopMeasure
 def set_tokenizer_params(tokenizer: LlamaTokenizer):
     tokenizer.pad_token_id = 0
     tokenizer.padding_side = "left"
 
-# Converting Bytes to Megabytes
-def byte2mb(x):
-    return int(x / 2**20)
+@contextlib.contextmanager
+def profile(cfg, local_rank=None):
+    use_profiler: bool = cfg.use_profiler
+    use_flop_counter: bool = cfg.flop_counter
+    if use_flop_counter and use_profiler:
+        raise ValueError("Cannot use both profiler and flop counter")
+    if use_profiler:
+        # profiler needs a warmup stage to get the accurate profiling results
+        wait_step, warmup_step, active_step = 1, 2, 3
+        min_step = wait_step + warmup_step + active_step + 1
+        if cfg.max_train_step > 0 and cfg.max_train_step < min_step:
+            raise ValueError(f"pytorch profiler requires at least {min_step} train steps to finish the warm-up and recording stage, {wait_step} for wait_step, {warmup_step} for warmup_step, {active_step} for profiling step, please increase the max_train_step, current max_train_step {cfg.max_train_step}")
+        print(f"pytorch profiling is activated and results will be saved in {cfg.profiler_dir}")
+        with torch.profiler.profile(
+            activities=[
+                torch.profiler.ProfilerActivity.CPU,
+                torch.profiler.ProfilerActivity.CUDA,
+            ],
+            schedule=torch.profiler.schedule(wait=wait_step, warmup=warmup_step, active=active_step, repeat=1),
+            on_trace_ready=torch.profiler.tensorboard_trace_handler(
+                cfg.profiler_dir
+            ),
+            profile_memory=True,
+            with_stack=False,
+            with_flops=True,
+            record_shapes=True,
+        ) as torch_profiler:
+            yield torch_profiler
+    elif use_flop_counter:
+        if cfg.max_train_step > 0 and cfg.max_train_step <= cfg.flop_counter_start:
+            raise ValueError(f"flop counter requires at least {cfg.flop_counter_start + 1} train steps, please increase the max_train_step, current max_train_step {cfg.max_train_step}")
+        with FlopMeasure(rank=local_rank,warmup_step=cfg.flop_counter_start) as flop_counter:
+            yield flop_counter
+    else:
+        torch_profiler = contextlib.nullcontext()
+        yield None
+
 
 def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None, wandb_run=None):
     """
@@ -57,95 +91,113 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     elif train_config.use_fp16 and not train_config.enable_fsdp:
         scaler = torch.cuda.amp.GradScaler()
     if train_config.enable_fsdp:
-        world_size = int(os.environ["WORLD_SIZE"]) 
+        world_size = int(os.environ["WORLD_SIZE"])
 
-    
+
 
     autocast = torch.cuda.amp.autocast if train_config.use_fp16 else nullcontext
-
     train_prep = []
     train_loss = []
     val_prep = []
     val_loss =[]
 
     if train_config.save_metrics:
+        if not os.path.exists(train_config.output_dir):
+            os.makedirs(train_config.output_dir, exist_ok=True)
         metrics_filename = f"{train_config.output_dir}/metrics_data_{local_rank}-{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
         train_step_perplexity = []
         train_step_loss = []
         val_step_loss = []
         val_step_perplexity = []
-        
+
     epoch_times = []
     checkpoint_times = []
     results = {}
     best_val_loss = float("inf")
+    total_train_steps = 0
+    max_steps_reached = False  # Flag to indicate max training steps reached
+    # Start the training loop
     for epoch in range(train_config.num_epochs):
+        # stop when the maximum number of training steps is reached
+        if max_steps_reached:
+            break
         epoch_start_time = time.perf_counter()
         with MemoryTrace() as memtrace:  # track the memory usage
             model.train()
             total_loss = 0.0
             total_length = len(train_dataloader)//gradient_accumulation_steps
             pbar = tqdm(colour="blue", desc=f"Training Epoch: {epoch+1}", total=total_length, dynamic_ncols=True)
-            for step, batch in enumerate(train_dataloader):
-                for key in batch.keys():
-                    if train_config.enable_fsdp:
-                        if is_xpu_available():
-                            batch[key] = batch[key].to(torch.device(f"xpu:{local_rank}"))
+            with profile(train_config,local_rank) as profile_context:
+                for step, batch in enumerate(train_dataloader):
+                    total_train_steps += 1
+                    # stop when the maximum number of training steps is reached
+                    if train_config.max_train_step > 0 and total_train_steps > train_config.max_train_step:
+                        max_steps_reached = True
+                        if not train_config.enable_fsdp or local_rank==0:
+                            print("max training steps reached, stopping training, total train steps finished: ", total_train_steps-1)
+                        break
+                    for key in batch.keys():
+                        if train_config.enable_fsdp:
+                            if is_xpu_available():
+                                batch[key] = batch[key].to(torch.device(f"xpu:{local_rank}"))
+                            else:
+                                batch[key] = batch[key].to(local_rank)
                         else:
-                            batch[key] = batch[key].to(local_rank)
+
+                            if is_xpu_available():
+                                batch[key] = batch[key].to('xpu:0')
+                            else:
+                                batch[key] = batch[key].to('cuda:0')
+                    with autocast():
+                        loss = model(**batch).loss
+                    loss = loss / gradient_accumulation_steps
+                    if train_config.save_metrics:
+                        train_step_loss.append(loss.detach().float().item())
+                        train_step_perplexity.append(float(torch.exp(loss.detach().float())))
+                    total_loss += loss.detach().float()
+                    if train_config.use_fp16:
+                        # if fp16 is enabled, use gradient scaler to handle gradient update
+                        scaler.scale(loss).backward()
+                        if (step + 1) % gradient_accumulation_steps == 0 or step == len(train_dataloader) - 1:
+                            if train_config.gradient_clipping and train_config.gradient_clipping_threshold > 0.0:
+                                scaler.unscale_(optimizer)
+                                if train_config.enable_fsdp:
+                                    model.clip_grad_norm_(train_config.gradient_clipping_threshold)
+                                else:
+                                    torch.nn.utils.clip_grad_norm_(model.parameters(), train_config.gradient_clipping_threshold)
+                            scaler.step(optimizer)
+                            scaler.update()
+                            optimizer.zero_grad()
+                            pbar.update(1)
                     else:
+                        # regular backpropagation when fp16 is not used
+                        loss.backward()
+                        if (step + 1) % gradient_accumulation_steps == 0 or step == len(train_dataloader) - 1:
+                            if train_config.gradient_clipping and train_config.gradient_clipping_threshold > 0.0:
+                                if train_config.enable_fsdp:
+                                    model.clip_grad_norm_(train_config.gradient_clipping_threshold)
+                                else:
+                                    torch.nn.utils.clip_grad_norm_(model.parameters(), train_config.gradient_clipping_threshold)
+                            optimizer.step()
+                            optimizer.zero_grad()
+                            pbar.update(1)
+                    if train_config.use_profiler or train_config.flop_counter:
+                        profile_context.step()
+                    if train_config.flop_counter and profile_context.is_done():
+                        TFlops = profile_context.get_flops_per_sec() / 1e12
+                    if wandb_run:
+                        if not train_config.enable_fsdp or rank==0:
+                            wandb_run.log({
+                                'train/epoch': epoch + 1,
+                                'train/step': epoch * len(train_dataloader) + step,
+                                'train/loss': loss.detach().float(),
+                            })
 
-                        if is_xpu_available():
-                            batch[key] = batch[key].to('xpu:0')
-                        else:
-                            batch[key] = batch[key].to('cuda:0')              
-                with autocast():
-                    loss = model(**batch).loss
-                loss = loss / gradient_accumulation_steps
-                if train_config.save_metrics:
-                    train_step_loss.append(loss.detach().float().item())
-                    train_step_perplexity.append(float(torch.exp(loss.detach().float())))
-                total_loss += loss.detach().float()
-                if train_config.use_fp16:
-                    # if fp16 is enabled, use gradient scaler to handle gradient update
-                    scaler.scale(loss).backward()
-                    if (step + 1) % gradient_accumulation_steps == 0 or step == len(train_dataloader) - 1:
-                        if train_config.gradient_clipping and train_config.gradient_clipping_threshold > 0.0:
-                            scaler.unscale_(optimizer)
-                            if train_config.enable_fsdp:
-                                model.clip_grad_norm_(train_config.gradient_clipping_threshold)
-                            else:
-                                torch.nn.utils.clip_grad_norm_(model.parameters(), train_config.gradient_clipping_threshold)
-                        scaler.step(optimizer)
-                        scaler.update()
-                        optimizer.zero_grad()
-                        pbar.update(1)
-                else:
-                    # regular backpropagation when fp16 is not used
-                    loss.backward()
-                    if (step + 1) % gradient_accumulation_steps == 0 or step == len(train_dataloader) - 1:
-                        if train_config.gradient_clipping and train_config.gradient_clipping_threshold > 0.0:
-                            if train_config.enable_fsdp:
-                                model.clip_grad_norm_(train_config.gradient_clipping_threshold)
-                            else:
-                                torch.nn.utils.clip_grad_norm_(model.parameters(), train_config.gradient_clipping_threshold)
-                        optimizer.step()
-                        optimizer.zero_grad()
-                        pbar.update(1)
+                    pbar.set_description(f"Training Epoch: {epoch+1}/{train_config.num_epochs}, step {step}/{len(train_dataloader)} completed (loss: {loss.detach().float()})")
 
-                if wandb_run: 
-                    if not train_config.enable_fsdp or rank==0:
-                        wandb_run.log({
-                            'train/epoch': epoch + 1,
-                            'train/step': epoch * len(train_dataloader) + step,
-                            'train/loss': loss.detach().float(),
-                        })
-
-                pbar.set_description(f"Training Epoch: {epoch+1}/{train_config.num_epochs}, step {step}/{len(train_dataloader)} completed (loss: {loss.detach().float()})")
-
-                if train_config.save_metrics:
-                    save_to_json(metrics_filename, train_step_loss, train_loss, train_step_perplexity, train_prep, val_step_loss, val_loss, val_step_perplexity, val_prep)
-            pbar.close()
+                    if train_config.save_metrics:
+                        save_to_json(metrics_filename, train_step_loss, train_loss, train_step_perplexity, train_prep, val_step_loss, val_loss, val_step_perplexity, val_prep)
+                pbar.close()
 
         epoch_end_time = time.perf_counter()-epoch_start_time
         epoch_times.append(epoch_end_time)
@@ -158,16 +210,15 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         if train_config.enable_fsdp:
             train_epoch_loss = train_epoch_loss/world_size
         train_perplexity = torch.exp(train_epoch_loss)
-        
+
         train_prep.append(float(train_perplexity))
         train_loss.append(float(train_epoch_loss))
-        
+
         if not train_config.enable_fsdp or rank==0:
             memtrace.print_stats()
 
         # Update the learning rate as needed
         lr_scheduler.step()
-
         if train_config.run_validation:
             eval_ppl, eval_epoch_loss, temp_val_loss, temp_step_perplexity = evaluation(model, train_config, eval_dataloader, local_rank, tokenizer, wandb_run)
             if train_config.save_metrics:
@@ -231,7 +282,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                 print(f"Epoch {epoch+1}: train_perplexity={train_perplexity:.4f}, train_epoch_loss={train_epoch_loss:.4f}, epoch time {epoch_end_time}s")
         else:
             print(f"Epoch {epoch+1}: train_perplexity={train_perplexity:.4f}, train_epoch_loss={train_epoch_loss:.4f}, epoch time {epoch_end_time}s")
-        
+
         # Saving the results every epoch to plot later
         if train_config.save_metrics:
             save_to_json(metrics_filename, train_step_loss, train_loss, train_step_perplexity, train_prep, val_step_loss, val_loss, val_step_perplexity, val_prep)
@@ -253,9 +304,10 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     results["avg_checkpoint_time"] = avg_checkpoint_time
     if train_config.save_metrics:
         results["metrics_filename"] = metrics_filename
-
+    if train_config.flop_counter:
+        results["model_tflops"]= TFlops
     #saving the training params including fsdp setting for reference.
-    if train_config.enable_fsdp and not train_config.use_peft:
+    if train_config.enable_fsdp and not train_config.use_peft and rank==0:
         save_train_params(train_config, fsdp_config, rank)
 
     return results
@@ -279,8 +331,15 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb
     val_step_loss = []
     val_step_perplexity = []
     eval_loss = 0.0  # Initialize evaluation loss
+    total_eval_steps = 0
     with MemoryTrace() as memtrace:
         for step, batch in enumerate(tqdm(eval_dataloader,colour="green", desc="evaluating Epoch", dynamic_ncols=True)):
+            total_eval_steps += 1
+            # stop when the maximum number of eval steps is reached
+            if train_config.max_eval_step > 0 and total_eval_steps > train_config.max_eval_step:
+                if not train_config.enable_fsdp or local_rank==0:
+                    print("max eval steps reached, stopping evaluation, total_eval_steps: ", total_eval_steps - 1)
+                break
             for key in batch.keys():
                 if train_config.enable_fsdp:
                     batch[key] = batch[key].to(local_rank)
@@ -288,7 +347,7 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb
                     if is_xpu_available():
                         batch[key] = batch[key].to('xpu:0')
                     else:
-                        batch[key] = batch[key].to('cuda:0')  
+                        batch[key] = batch[key].to('cuda:0')
             # Ensure no gradients are computed for this scope to save memory
             with torch.no_grad():
                 # Forward pass and compute loss
@@ -296,7 +355,7 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb
                 loss = outputs.loss
                 if train_config.save_metrics:
                     val_step_loss.append(loss.detach().float().item())
-                    val_step_perplexity.append(float(torch.exp(loss.detach().float())))  
+                    val_step_perplexity.append(float(torch.exp(loss.detach().float())))
 
                 eval_loss += loss.detach().float()
             # Decode predictions and add to evaluation predictions list
@@ -324,12 +383,12 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb
     else:
         print(f" {eval_ppl=} {eval_epoch_loss=}")
 
-    if wandb_run: 
+    if wandb_run:
         wandb_run.log({
                         'eval/perplexity': eval_ppl,
                         'eval/loss': eval_epoch_loss,
                     }, commit=False)
-        
+
     return eval_ppl, eval_epoch_loss, val_step_loss, val_step_perplexity
 
 def freeze_transformer_layers(model, num_layer):
@@ -410,11 +469,11 @@ def print_model_size(model, config, rank: int = 0) -> None:
 def get_policies(cfg, rank):
     """Get the policies for mixed precision and fsdp wrapping"""
 
-    
+
     verify_bfloat_support = ((
     torch.version.cuda
     and torch.cuda.is_bf16_supported()
-    and packaging.version.parse(torch.version.cuda).release >= (11, 0)
+    and torch.version.cuda >= "11.0"
     and dist.is_nccl_available()
     and nccl.version() >= (2, 10)
     ) or

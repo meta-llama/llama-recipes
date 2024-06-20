@@ -1,0 +1,4 @@
+duckdb
+groq
+sqlparse
+pandas

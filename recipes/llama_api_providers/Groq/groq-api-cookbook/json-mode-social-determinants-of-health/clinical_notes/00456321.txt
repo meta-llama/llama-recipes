@@ -1,0 +1,31 @@
+**Date:** March 28, 2024
+
+**Patient:** David Smith, 42 years old
+
+**MRN:** 00456321
+
+**Chief Complaint:** "I've been feeling really tired lately, more than usual."
+
+**History of Present Illness:** The patient is a 42-year-old who presents with a 3-week history of increased fatigue, decreased energy, and occasional headaches. The patient reports struggling with sleep due to stress from work and personal life. The patient is currently working two part-time jobs but still finds it hard to make ends meet, indicating financial stress. They express concern over the cost of medications and healthcare visits.
+
+**Past Medical History:** Type 2 Diabetes Mellitus, Hypertension
+
+**Social History:**
+The patient juggles two jobs to make ends meet, one at a local retail store and another in a fast-food chain, neither offering full-time hours or benefits. Despite the long hours, the patient mentions financial difficulties, especially with covering rent and providing. They share an apartment with three others in an area described as 'not the safest,' due to recent break-ins and a noticeable police presence. Meals are often missed or minimal, as the patient tries to stretch their budget, sometimes seeking help from local food banks when things get particularly tight.
+
+Educationally, the patient completed high school but hasn't pursued further studies, citing lack of funds and the immediate need to support their family after graduation. They rely on buses and trains for transportation, which complicates timely access to healthcare, often causing delays or missed appointments. Socially, the patient admits to feeling isolated, with most of their family living out of state after their divorce and a personal life that has been 'on hold' due to work and financial pressures. They have a basic health insurance plan with high co-payments, which has led to skipping some recommended medical tests and treatments.
+
+**Review of Systems:** Denies chest pain, shortness of breath, or fever. Reports occasional headaches.
+
+**Physical Examination:**
+- General: Appears tired but is alert and oriented.
+- Vitals: BP 142/89, HR 78, Temp 98.6°F, Resp 16/min
+
+**Assessment/Plan:**
+- Continue to monitor blood pressure and diabetes control.
+- Discuss affordable medication options with a pharmacist.
+- Refer to a social worker to address food security, housing concerns, and access to healthcare services.
+- Encourage the patient to engage with community support groups for social support.
+- Schedule a follow-up appointment in 4 weeks or sooner if symptoms worsen.
+
+**Comments:** The patient's health concerns are compounded by socioeconomic factors, including employment status, housing stability, food security, and access to healthcare. Addressing these social determinants of health is crucial for improving the patient's overall well-being.

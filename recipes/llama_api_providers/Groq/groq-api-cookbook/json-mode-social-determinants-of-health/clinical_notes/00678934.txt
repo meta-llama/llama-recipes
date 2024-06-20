@@ -1,0 +1,28 @@
+**Date:** March 28, 2024
+
+**Patient:** Helen Johnson, 75 years old
+
+**MRN:** 00678934
+
+**Chief Complaint:** "I've been feeling quite lonely lately, and it's getting harder to get around."
+
+**History of Present Illness:** The patient, a 75-year-old, reports increasing feelings of loneliness and difficulty accessing transportation for medical appointments and social engagements. They have no family living nearby and have found their circle of friends diminishing over the years.
+
+**Past Medical History:** Type 2 Diabetes Mellitus, well-controlled; Osteoarthritis
+
+**Social History:**
+The patient lives in a comfortable, single-story home in a safe neighborhood and has no financial worries thanks to a stable retirement fund from their college-educated career. They have always been independent, but recently, the challenge of not driving has become more pronounced. The patient, who is widowed, relies on a neighbor or community services for rides, which are not always available, leading to missed appointments and social events. This lack of mobility has contributed to their social isolation. While they manage to maintain a balanced diet with grocery delivery services, the patient misses the social interaction of shopping and community events.
+
+**Review of Systems:** Positive for occasional mild depressive symptoms. Negative for acute distress or significant physical complaints.
+
+**Physical Examination:**
+- General: Well-nourished, appears older than stated age due to mobility issues.
+- Vitals: BP 130/85, HR 68, Temp 98.6°F, Resp 16/min
+
+**Assessment/Plan:**
+- Encourage participation in local senior community activities, many of which offer transportation services.
+- Refer to a social worker to explore additional resources for transportation and social engagement.
+- Consider a home health visit to assess for any additional support needs in managing daily activities.
+- Schedule a follow-up appointment in 3 months, with a reminder to arrange for transportation in advance.
+
+**Comments:** The patient's well-being is currently impacted more by social determinants such as transportation and isolation than by immediate medical concerns. Addressing these areas is crucial for improving their quality of life.
