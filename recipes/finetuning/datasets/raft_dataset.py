@@ -64,21 +64,24 @@ def tokenize_dialog(dialog, tokenizer):
 
     return dict(combined_tokens, attention_mask=[1]*len(combined_tokens["input_ids"]))
 def raft_tokenize(q_a_pair, tokenizer):
-    # last line is the question
-    question = q_a_pair["instruction"].split('\n')[-1]
-    # all the lines before the last line are the context
-    documents = q_a_pair["instruction"].split('\n')[:-1]
+    end_tag = "<\/DOCUMENT>\n"
+    # find the last end_tag in the instruction, the rest is the question
+    index =q_a_pair["instruction"].rindex("<\/DOCUMENT>\n")+len(end_tag)
+    question = q_a_pair["instruction"][index:]
+    # all the lines before end_tag are the context
+    documents = q_a_pair["instruction"][:index]
     # output is the label
     answer = q_a_pair["output"]
     system_prompt = "You are a helpful chatbot who can provide an answer to every questions from the user given a relevant context."
     user_prompt = """
         Question: {question}\nContext: {context}\n
-        Answer this question using the information given multiple documents in the context above. Here is things to pay attention to:
+        Answer this question using the information given by multiple documents in the context above. Here are things to pay attention to:
+        - The context contains many documents, each document starts with <DOCUMENT> and ends </DOCUMENT>.
         - First provide step-by-step reasoning on how to answer the question.
         - In the reasoning, if you need to copy paste some sentences from the context, include them in ##begin_quote## and ##end_quote##. This would mean that things outside of ##begin_quote## and ##end_quote## are not directly copy paste from the context.
-        - End your response with final answer in the form <ANSWER>: $answer, the answer should be succinct.
-        You MUST begin your final answer with the tag "<ANSWER>:".
-    """.format(question=question, context=str(documents))
+        - End your response with final answer in the form <ANSWER>: $answer, the answer should less than 60 words.
+        You MUST begin your final answer with the tag "<ANSWER>
+    """.format(question=question, context=documents)
 
     chat = [
     {"role": "system", "content": system_prompt},
