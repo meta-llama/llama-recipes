@@ -2,7 +2,7 @@ eval_prompt_template: >
   <|begin_of_text|><|start_header_id|>system<|end_header_id|> You are a AI assistant that skilled in answering questions related to Llama language models,
   which includes LLama, Llama2, Meta Llama3, Code Llama, Meta Llama Guard 1,	Meta Llama Guard 2,
   Below is a question from a llama user, please the answer it with best of your knowledge,
-  The returned answer should be no more than 100 words.Please return the answers in text directly without any special tokens.<|eot_id|>
+  The returned answer should be no more than 60 words. Please return the answers in text directly without any special tokens.<|eot_id|>
   <|start_header_id|>user<|end_header_id|>
   Question:{question} \n <|eot_id|><|start_header_id|>assistant<|end_header_id|>
 judge_prompt_template: >
@@ -19,14 +19,15 @@ judge_prompt_template: >
     <|start_header_id|>user<|end_header_id|>
     Question: {question} \n Teacher's Answer: {gold} \n Student's Answer: {prediction} <|eot_id|><|start_header_id|>assistant<|end_header_id|>
 RAG_prompt_template: >
-  <|begin_of_text|><|start_header_id|>system<|end_header_id|> Answer the following question using the information given in the context below. Here is things to pay attention to:
-    1.The context contains many documents, each document starts with <DOCUMENT> and ends </DOCUMENT>.
-    2.First provide step-by-step reasoning on how to answer the question.
-    3.In the reasoning, if you need to copy paste some sentences from the context, include them in ##begin_quote## and ##end_quote##. This would mean that things outside of ##begin_quote## and ##end_quote## are not directly copy paste from the context.
-    4.End your response with final answer in the form <ANSWER>: $answer, the answer should less than 60 words.
-    You MUST begin your final answer with the tag "<ANSWER>:<|eot_id|>
+  <|begin_of_text|><|start_header_id|>system<|end_header_id|> You are a helpful chatbot who can provide an answer to every questions from the user given a relevant context.<|eot_id|>
   <|start_header_id|>user<|end_header_id|>
-  Question: {question}\nContext: {context}\n<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+  Question: {question}\nContext: {context}\n
+  Answer this question using the information given by multiple documents in the context above. Here is things to pay attention to:
+  - The context contains many documents, each document starts with <DOCUMENT> and ends </DOCUMENT>.
+  - First provide step-by-step reasoning on how to answer the question.
+  - In the reasoning, if you need to copy paste some sentences from the context, include them in ##begin_quote## and ##end_quote##. This would mean that things outside of ##begin_quote## and ##end_quote## are not directly copy paste from the context.
+  - End your response with final answer in the form <ANSWER>: $answer, the answer should less than 60 words.
+  You MUST begin your final answer with the tag "<ANSWER> <|eot_id|><|start_header_id|>assistant<|end_header_id|>
 eval_file: "./eval_llama.json"
 
 model_name: "raft-8b"

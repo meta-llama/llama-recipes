@@ -1,5 +1,5 @@
 ## Introduction:
-As our Meta llama models become more popular, we noticed there is a great demand to apply our Meta Llama models toward a custom domain to better serve the customers in that domain.
+As our Meta llama models become more popular, we noticed that there is a great demand to apply our Meta Llama models toward a custom domain to better serve the customers in that domain.
 For example, a common scenario can be that a company has all the related documents in plain text for its custom domain and want to build chatbot that can help answer questions a client
 could have.
 
@@ -38,7 +38,7 @@ We can use on prem solutions such as the [TGI](../../../../inference/model_serve
 
 ```bash
 # Make sure VLLM has been installed
-CUDA_VISIBLE_DEVICES=6,7 python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3-70B-Instruct --tensor-parallel-size 2 --disable-log-requests --port 8001
+CUDA_VISIBLE_DEVICES=0,1 python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3-70B-Instruct --tensor-parallel-size 2 --disable-log-requests --port 8001
 ```
 
 **NOTE** Please make sure the port has not been used. Since Meta Llama3 70B instruct model requires at least 135GB GPU memory, we need to use multiple GPUs to host it in a tensor parallel way.
@@ -58,12 +58,14 @@ python raft.py -u "CLOUD_API_URL" -t 5
 
 **NOTE** When using cloud API, you need to be aware of your RPM (requests per minute), TPM (tokens per minute) and TPD (tokens per day), limit on your account in case using any of model API providers. This is experimental and totally depends on your documents, wealth of information in them and how you prefer to handle question, short or longer answers etc.
 
-This python program will read all the documents inside of "data" folder and transform the text into embeddings and split the data into batches by the SemanticChunker. Then we apply the question_prompt_template, defined in "raft.yaml", to each batch, and finally we will use each batch to query VLLM server and save the return a list of question list for all batches.
+This python script will read all the documents either from local or web, and split the data into text chunks of 1000 charaters (defined by "chunk_size") using RecursiveCharacterTextSplitter.
+Then we apply the question_prompt_template, defined in "raft.yaml", to each chunk, to get question list out of the text chunk.
 
-We now have a related context as text chunk and a corresponding question list. For each question in the question list, we want to generate a Chain-of-Thought (COT) style question using Llama 3 70B Instruct as well. Once we have the COT answers, we can start to make a dataset that contains "instruction" which includes some unrelated chunks called distractor and has a probability P to include the related chunk.
+We now have a related context as text chunk and a corresponding question list. For each question in the question list, we want to generate a Chain-of-Thought (COT) style question using Llama 3 70B Instruct as well.
+Once we have the COT answers, we can start to make a dataset that where each sample contains "instruction" section includes some unrelated chunks called distractor and has a probability P to include the related chunk.
 
-Here is a RAFT format json example. We have a "question" section for the generated question, "cot_answer" section for generated COT answers, where the final answer will be added after "<ANSWER>" token, and we also created a "instruction" section
-that has all the documents included (each document splited by <DOCUMENT> <\/DOCUMENT>) and finally the question appended in the very end. This "instruction"
+Here is a RAFT format json example from our saved raft.jsonl file. We have a "question" section for the generated question, "cot_answer" section for generated COT answers, where the final answer will be added after "<ANSWER>" token, and we also created a "instruction" section
+that has all the documents included (each document splited by <DOCUMENT> <\/DOCUMENT> tag) and finally the question appended in the very end. This "instruction"
 section will be the input during the training, and the "cot_answer" will be the output label that the loss will be calculated on.
 
 ```python
@@ -98,23 +100,22 @@ section will be the input during the training, and the "cot_answer" will be the 
    "instruction":"<DOCUMENT> DISTRACT_DOCS 1 <\/DOCUMENT>...<DOCUMENT> DISTRACT_DOCS 5 <\/DOCUMENT>\nWhat is the context length supported by Llama 3 models?"
 }
 ```
-To create a evalset, we can shuffle and select 100 examples out of RAFT dataset. For evaluation purpose, we only need to keep the "question" section, and the final answer section in
-"cot_answer",
+To create a evalset, ideally we should use human-annotation to create the question and answer pairs to make sure the the questions are related and answers are fully correct.
+However, for demo purpose, we will use a subset of training json as the eval set. We can shuffle and random select 100 examples out of RAFT dataset. For evaluation purpose, we only need to keep the "question" section,
+and the final answer section, marked by <ANSWER> tag in "cot_answer". Then we can manually check each example and remove those low-quaility examples, where the questions
+are not related Llama or can not be infer without correct context. After the manual check, we keep 72 question and answer pairs as the eval_llama.json.
 
 ### Step 3: Run the fune-tuning
-Once the RAFT dataset is ready, we can start the full fine-tuning step using the following commands in the llama-recipe main folder:
-
-For distributed fine-tuning:
-```bash
-CUDA_VISIBLE_DEVICES=0,1,2,3  torchrun --nnodes 1 --nproc_per_node 4  recipes/finetuning/finetuning.py --lr 1e-5 --context_length 8192 --enable_fsdp  --model_name meta-llama/Meta-Llama-3-8B-Instruct --output_dir pt_ep1_full0614 --num_epochs 1 --batch_size_training 4 --dataset "custom_dataset" --custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/raft_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/raft/raft.jsonl'
-```
-```bash
-torchrun --nnodes 1 --nproc_per_node 4  recipes/finetuning/finetuning.py --enable_fsdp --lr 1e-5 --context_length 8192 --num_epochs 1 --batch_size_training 2 --model_name meta-llama/Meta-Llama-3-8B-Instruct --dist_checkpoint_root_folder llama+pt_ep1_full0616 --dist_checkpoint_folder fine-tuned  --use_fast_kernels --dataset "custom_dataset" --custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/raft_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'recipes/use_cases/end2end-recipes/raft/pytorch_data/all_17k.jsonl'
-```
-Then convert the FSDP checkpoint to HuggingFace checkpoints using:
+Once the RAFT dataset is ready in a json format, we can start the fine-tuning steps. Unfornately we found out that the LORA method did not produce a good result so we have to use the full fine-tuning using the following commands in the llama-recipe main folder:
 
 ```bash
-python src/llama_recipes/inference/checkpoint_converter_fsdp_hf.py --fsdp_checkpoint_path  /home/kaiwu/work/llama-recipes/llama+pt_ep1_full0616/fine-tuned-meta-llama/Meta-Llama-3-8B-Instruct --consolidated_model_path /home/kaiwu/work/llama-recipes/llama+pt_ep1_full0616/fine-tuned-meta-llama --HF_model_path_or_name /home/kaiwu/work/llama-recipes/llama+pt_ep1_full0616/
+torchrun --nnodes 1 --nproc_per_node 4  recipes/finetuning/finetuning.py --enable_fsdp --lr 1e-5 --context_length 8192 --num_epochs 1 --batch_size_training 1 --model_name meta-llama/Meta-Llama-3-8B-Instruct --dist_checkpoint_root_folder PATH_TO_ROOT_FOLDER --dist_checkpoint_folder fine-tuned  --use_fast_kernels --dataset "custom_dataset" --custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/raft_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path 'PATH_TO_RAFT_JSON'
+```
+
+Then convert the FSDP checkpoint to HuggingFace checkpoint using the following command:
+
+```bash
+python src/llama_recipes/inference/checkpoint_converter_fsdp_hf.py --fsdp_checkpoint_path  PATH_TO_ROOT_FOLDER --consolidated_model_path PATH_TO_ROOT_FOLDER/fine-tuned-meta-llama --HF_model_path_or_name PATH_TO_ROOT_FOLDER
 
 ```
 
@@ -122,7 +123,8 @@ For more details, please check the readme in the finetuning recipe.
 
 ### Step 4: Evaluating with local inference
 
-Once we have the fine-tuned model, we now need to evaluate it to understand its performance. Normally, to create a evaluation set, we should first gather some questions and manually write the ground truth answer. In this case, we created a eval set mostly based on the Llama [Troubleshooting & FAQ](https://llama.meta.com/faq/), where the answers are written by human experts. Then we pass the evalset question to our fine-tuned model to get the model generated answers. To compare the model generated answers with ground truth, we can use either traditional eval method, eg. calcucate rouge score, or use LLM to act like a judge to score the similarity of them.
+Once we have the fine-tuned model, we now need to evaluate it to understand its performance. We can use either traditional eval method, eg. calcucate exact match rate or rouge score.
+In this tutorial, we can also use LLM to act like a judge to score model generated .
 
 
 ```bash
@@ -142,10 +144,10 @@ On another terminal, we can use another Meta Llama 3 70B Instruct model as a jud
 CUDA_VISIBLE_DEVICES=2,3 python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3-70B-Instruct --tensor-parallel-size 2 --disable-log-requests --port 8002
 ```
 
-Then we can pass the port to the eval script:
+Then we can pass the ports to the eval script:
 
 ```bash
-CUDA_VISIBLE_DEVICES=5 python raft_eval.py -m raft-8b -v 8000 -j 8001 -o all_rag5 -r 5
+CUDA_VISIBLE_DEVICES=1 python raft_eval.py -m raft-8b -v 8000 -j 8001 -r 5
 ```
 
 

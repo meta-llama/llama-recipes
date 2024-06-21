@@ -1,7 +1,4 @@
 import logging
-from typing import Literal, Any
-import json
-import random
 import os
 import argparse
 from raft_utils import generate_questions, add_chunk_to_dataset
@@ -10,8 +7,6 @@ from config import load_config
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-NUM_DISTRACT_DOCS = 5 # number of distracting documents to add to each chunk
-ORCALE_P = 0.8 # probability of related documents to be added to each chunk
 def main(api_config):
     ds = None
     try:
@@ -26,7 +21,7 @@ def main(api_config):
             for question in questions:
                 logging.info(f"Question: {question}")
         logging.info(f"Successfully generated {sum([len(q) for c,q in chunk_questions_zip])} question/answer pairs.")
-        ds = add_chunk_to_dataset(chunk_questions_zip,api_config,ds,NUM_DISTRACT_DOCS, ORCALE_P)
+        ds = add_chunk_to_dataset(chunk_questions_zip,api_config,ds)
         ds.save_to_disk(args.output)
         logging.info(f"Data successfully written to {api_config['output']}. Process completed.")
         formatter = DatasetConverter()
@@ -92,6 +87,7 @@ if __name__ == "__main__":
         api_config["api_key"] = os.environ["API_KEY"]
     logging.info(f"Configuration loaded. Generating {args.questions_per_chunk} question per chunk using model '{args.model}'.")
     logging.info(f"Chunk size: {args.chunk_size}.")
+    logging.info(f"num_distract_docs: {api_config['num_distract_docs']}, orcale_p: {api_config['orcale_p']}")
     logging.info(f"Will use endpoint_url: {args.endpoint_url}.")
     logging.info(f"Output will be written to {args.output}.")
     main(api_config)

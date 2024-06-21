@@ -8,7 +8,7 @@ import json
 from langchain_openai import ChatOpenAI
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from langchain.text_splitter import RecursiveCharacterTextSplitter,TokenTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores.utils import DistanceStrategy
 from datetime import datetime
 from langchain_community.document_loaders import DirectoryLoader

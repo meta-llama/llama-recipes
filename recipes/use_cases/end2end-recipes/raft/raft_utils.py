@@ -9,7 +9,7 @@ from datasets import Dataset
 import random
 from langchain_community.document_loaders import SitemapLoader,DirectoryLoader
 from bs4 import BeautifulSoup
-
+import copy
 from langchain_openai import ChatOpenAI
 
 
@@ -171,12 +171,12 @@ def add_chunk_to_dataset(
     chunk_questions_zip: list,
     api_config: dict,
     ds,
-    num_distract: int = 3,
-    p: float = 0.8,
 ) -> None:
     """
     Given a chunk and related questions lists, create {Q, A, D} triplets and add them to the dataset.
     """
+    num_distract = api_config["num_distract_docs"]
+    p = api_config["oracle_p"]
     chunks = [chunk for chunk, _ in chunk_questions_zip]
     COT_results = generate_COT(chunk_questions_zip,api_config)
     for chunk, q , cot in COT_results:
@@ -198,12 +198,8 @@ def add_chunk_to_dataset(
         indices.remove(i)
         for j in random.sample(indices, num_distract):
             docs.append(chunks[j])
-        # decides whether to add oracle document
-        oracle = random.uniform(0, 1) < p
-        if not oracle:
-            docs[0] = chunks[random.sample(indices, 1)[0]]
+        doc_copy = docs.copy()
         random.shuffle(docs)
-
         d = {
             "title": [],
             "sentences": []
@@ -221,7 +217,7 @@ def add_chunk_to_dataset(
         context += q
         # This instruction will be used in the fine-tuning stage
         datapt["instruction"] = context
-
+        datapt_copy = copy.deepcopy(datapt)
         # add to dataset
         if not ds:
             # init ds
@@ -235,4 +231,17 @@ def add_chunk_to_dataset(
             ds = Dataset.from_dict(datapt)
         else:
             ds = ds.add_item(datapt)
+        # decides whether to add refusal example where the related documents are not provided
+        oracle = random.uniform(0, 1) < p
+        if not oracle:
+            doc_copy[0] = chunks[random.sample(indices, 1)[0]]
+            random.shuffle(doc_copy)
+            context = ""
+            for doc in doc_copy:
+                context += "<DOCUMENT>" + str(doc) + "</DOCUMENT>\n"
+            context += q
+            # This instruction will be used in the fine-tuning stage
+            datapt_copy["instruction"] = context
+            datapt_copy["cot_answer"] = "Sorry, I don't know the answer to this question because related documents are not found. Please try again."
+            ds.add_item(datapt_copy)
     return ds
