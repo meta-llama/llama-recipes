@@ -48,4 +48,4 @@ questions_per_chunk: 5
 
 num_distract_docs: 5 # number of distracting documents to add to each chunk
 
-orcale_p: 0.8 # probability of related documents to be added to each chunk
+oracle_p: 0.8 # probability of related documents to be added to each chunk

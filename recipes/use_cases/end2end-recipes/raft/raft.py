@@ -87,7 +87,7 @@ if __name__ == "__main__":
         api_config["api_key"] = os.environ["API_KEY"]
     logging.info(f"Configuration loaded. Generating {args.questions_per_chunk} question per chunk using model '{args.model}'.")
     logging.info(f"Chunk size: {args.chunk_size}.")
-    logging.info(f"num_distract_docs: {api_config['num_distract_docs']}, orcale_p: {api_config['orcale_p']}")
+    logging.info(f"num_distract_docs: {api_config['num_distract_docs']}, oracle_p: {api_config['oracle_p']}")
     logging.info(f"Will use endpoint_url: {args.endpoint_url}.")
     logging.info(f"Output will be written to {args.output}.")
     main(api_config)
