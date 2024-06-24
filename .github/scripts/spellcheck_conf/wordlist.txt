@@ -1351,3 +1351,4 @@ Weaviate
 MediaGen
 SDXL
 SVD
+QLORA
