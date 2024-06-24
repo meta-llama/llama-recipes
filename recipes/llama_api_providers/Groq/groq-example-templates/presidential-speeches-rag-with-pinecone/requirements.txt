@@ -1,0 +1,8 @@
+pandas
+numpy
+groq
+langchain_community
+langchain_pinecone
+transformers
+scikit-learn
+sentence-transformers

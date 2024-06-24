@@ -11,7 +11,7 @@ using the canonical [finetuning script](../../src/llama_recipes/finetuning.py) i
 If you are new to fine-tuning techniques, check out an overview: [](./LLM_finetuning_overview.md)
 
 > [!TIP]
-> If you want to try finetuning Meta Llama 3 with Huggingface's trainer, here is a Jupyter notebook with an [example](./huggingface_trainer/peft_finetuning.ipynb)
+> If you want to try finetuning Meta Llama 3 in a Jupyter notebook you can find a quickstart notebook [here](./quickstart_peft_finetuning.ipynb)
 
 
 ## How to configure finetuning settings?
