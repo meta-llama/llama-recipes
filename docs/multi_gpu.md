@@ -56,6 +56,14 @@ torchrun --nnodes 1 --nproc_per_node 8  examples/finetuning.py --enable_fsdp --m
 
 ```
 
+### Fine-tuning using FSDP + QLORA
+
+This has been tested on 4 H100s GPUs.
+
+```bash
+ FSDP_CPU_RAM_EFFICIENT_LOADING=1 ACCELERATE_USE_FSDP=1 torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp  --quantization int4 --model_name /path_of_model_folder/70B  --mixed_precision False --low_cpu_fsdp --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model
+```
+
 ### Fine-tuning using FSDP on 70B Model
 
 If you are interested in running full parameter fine-tuning on the 70B model, you can enable `low_cpu_fsdp` mode as the following command. This option will load model on rank0 only before moving model to devices to construct FSDP. This can dramatically save cpu memory when loading large models like 70B (on a 8-gpu node, this reduces cpu memory from 2+T to 280G for 70B model). This has been tested with `BF16` on 16xA100, 80GB GPUs.
