@@ -1,0 +1,28 @@
+**Date:** March 28, 2024
+
+**Patient:** Maria Gonzalez, 30 years old
+
+**MRN:** 00567289
+
+**Chief Complaint:** "Persistent lower back pain for a few months now."
+
+**History of Present Illness:** A 30-year-old patient reports chronic lower back pain worsening over the last six months. The pain is constant, with sharp spikes during physical activities. They've mentioned how their new work-from-home situation, a result of transitioning to a full-time customer service role, has brought about mixed feelings. While the stress from commuting is gone, they find the job itself quite stressful and somewhat isolating.
+
+**Past Medical History:** Asthma, managed with medication.
+
+**Social History:**
+Transitioned to a full-time, work-from-home customer service job, the patient, who is single, appreciates the eliminated commute but feels isolated. They live in a studio downtown—affordable, yet tight on their budget, especially with student loans from their Bachelors in Communication looming. Financial concerns are apparent; they mention stretching their budget to cover essentials and occasionally opting for takeout when too pressed for time. Despite these financial pressures, they have not skipped medical care, implying a basic yet sufficient health insurance plan. Social interactions have dwindled, attributed to work's demands, hinting at a sense of isolation.
+
+**Review of Systems:** Denies any recent weight loss, fever, or other systemic symptoms.
+
+**Physical Examination:**
+- General: Appears comfortable at rest, but movement prompts discomfort.
+- Vitals: BP 118/76, HR 64, Temp 98.6°F, Resp 16/min
+
+**Assessment/Plan:**
+- Order an MRI to pinpoint the cause of the back pain.
+- Physical therapy referral for pain management and mobility improvement.
+- Suggest lifestyle changes for a healthier diet and stress management.
+- Follow-up in 6 weeks to evaluate progress and adjust the care plan as needed.
+
+**Comments:** Addressing the patient's lower back pain requires a multifaceted approach that considers their medical, physical, and social circumstances.

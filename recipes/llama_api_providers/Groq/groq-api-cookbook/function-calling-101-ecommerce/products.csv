@@ -1,0 +1,21 @@
+product_id,name,description,price,stock_quantity
+1,Laptop,High performance laptop with 16GB RAM and 512GB SSD.,753.03,15
+2,Smartphone,Latest model smartphone with a stunning display and great camera.,398.54,59
+3,Headphones,Noise-cancelling over-ear headphones with long battery life.,889.79,97
+4,Monitor,24-inch 1080p monitor with vibrant colors and wide viewing angles.,604.44,98
+5,Keyboard,Mechanical keyboard with customizable RGB lighting.,500.24,52
+6,Mouse,Wireless mouse with ergonomic design and long battery life.,321.98,57
+7,Printer,All-in-one printer with wireless connectivity and high-quality printing.,695.29,32
+8,Tablet,Portable tablet with 10-inch display and powerful processor.,625.75,28
+9,Smartwatch,Stylish smartwatch with fitness tracking and notifications.,952.72,42
+10,Camera,Digital camera with 20MP sensor and 4K video recording.,247.93,99
+11,Speaker,Bluetooth speaker with excellent sound quality and deep bass.,896.4,32
+12,Router,Wi-Fi router with high speed and wide coverage.,976.16,59
+13,External Hard Drive,1TB external hard drive with fast data transfer speeds.,434.46,18
+14,USB Flash Drive,64GB USB flash drive with compact design and reliable storage.,991.09,77
+15,Microphone,Professional microphone with clear sound and adjustable settings.,276.23,30
+16,Webcam,HD webcam with wide-angle lens and built-in microphone.,890.39,13
+17,Drone,Compact drone with HD camera and stable flight controls.,285.93,37
+18,Projector,Portable projector with bright display and multiple connectivity options.,290.22,31
+19,Fitness Tracker,Fitness tracker with heart rate monitor and sleep tracking.,953.65,4
+20,E-Reader,Lightweight e-reader with high-resolution display and long battery life.,132.15,62
