@@ -16,12 +16,8 @@ def main(api_config):
         if not chunk_questions_zip:
             logging.warning("No questions generated from text. Please check the api_config or model configuration.")
             return
-        for chunk, questions in chunk_questions_zip:
-            logging.info(f"Chunk: {chunk}, question length: {len(questions)}")
-            for question in questions:
-                logging.info(f"Question: {question}")
         logging.info(f"Successfully generated {sum([len(q) for c,q in chunk_questions_zip])} question/answer pairs.")
-        ds = add_chunk_to_dataset(chunk_questions_zip,api_config,ds)
+        ds = add_chunk_to_dataset(chunk_questions_zip,api_config)
         ds.save_to_disk(args.output)
         logging.info(f"Data successfully written to {api_config['output']}. Process completed.")
         formatter = DatasetConverter()
@@ -40,7 +36,7 @@ def parse_arguments():
     parser.add_argument(
         "-t", "--questions_per_chunk",
         type=int,
-        default=3,
+        default=4,
         help="Specify the number of question pairs to generate per chunk."
     )
     parser.add_argument(
@@ -87,7 +83,7 @@ if __name__ == "__main__":
         api_config["api_key"] = os.environ["API_KEY"]
     logging.info(f"Configuration loaded. Generating {args.questions_per_chunk} question per chunk using model '{args.model}'.")
     logging.info(f"Chunk size: {args.chunk_size}.")
-    logging.info(f"num_distract_docs: {api_config['num_distract_docs']}, oracle_p: {api_config['oracle_p']}")
+    logging.info(f"num_distract_docs: {api_config['num_distract_docs']}, refusal_probability: {api_config['refusal_probability']}")
     logging.info(f"Will use endpoint_url: {args.endpoint_url}.")
     logging.info(f"Output will be written to {args.output}.")
     main(api_config)

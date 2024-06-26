@@ -4,14 +4,12 @@
 import os
 import logging
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from math import ceil
 from datasets import Dataset
 import random
 from langchain_community.document_loaders import SitemapLoader,DirectoryLoader
 from bs4 import BeautifulSoup
-import copy
 from langchain_openai import ChatOpenAI
-
+import copy
 
 
 # Initialize logging
@@ -32,17 +30,10 @@ def strip_str(s: str) -> str:
     r += 2
     return s[l:min(r, len(s))]
 def clean_documents(raw_text):
-    unwanted= ["Technology",
-    "Getting Started",
-    "Trust & Safety",
-    "Community",
-    "Resources",
-    "Skip to main content",
-    "How-to guides"]
     all_lines = []
     for line in raw_text.split("\n"):
         line = line.strip()
-        if line in unwanted or len(line.split()) == 0:
+        if len(line.split()) == 0:
             continue
         else:
             all_lines.append(line)
@@ -73,7 +64,7 @@ def read_file_content(xml_path: str, data_folder: str) -> str:
         sitemap_loader = SitemapLoader(web_path=xml_path,is_local=True,parsing_function=clean_text)
         sitemap_loader.requests_kwargs = {"verify": False}
         docs = sitemap_loader.load()
-        return "\n".join([doc.page_content for doc in docs])
+        return docs
     elif len(data_folder) != 0:
         if not os.path.exists(data_folder):
             logging.info(f"Error: {data_folder} does not exist")
@@ -81,30 +72,35 @@ def read_file_content(xml_path: str, data_folder: str) -> str:
         # Use langchain to load the documents from data folder
         loader = DirectoryLoader(data_folder)
         docs = loader.load()
-        text = "\n".join([clean_documents(doc.page_content) for doc in docs])
-        return text
+        return docs
 
 
 
 def get_chunks(
-    text: str,
-    chunk_size: int = 512,
+    docs: list,
+    chunk_size: int = 1000,
     api_config: dict = None,
 ) -> list[str]:
     """
-    Takes in a `file_path` and `doctype`, retrieves the document, breaks it down into chunks of size
+    Takes in a list of documents, breaks them down into chunks of size
     `chunk_size`, and returns the chunks.
     """
     chunks = []
-    if  len(text) == 0:
+    if  len(docs) == 0:
         raise TypeError("Can not get chunks from empty text")
     else:
-        num_chunks = ceil(len(text) / chunk_size)
-        logging.info(f"Splitting text into {num_chunks} chunks")
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=api_config["chunk_size"], chunk_overlap=int(api_config["chunk_size"]/10))
-        chunks = text_splitter.create_documents([text])
-        chunks = [chunk.page_content for chunk in chunks]
-
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=api_config["chunk_size"],chunk_overlap=int(api_config["chunk_size"] / 10),separators= ["----------","\n\n", "\n", " "],strip_whitespace=True)
+        docs_processed = text_splitter.split_documents(docs)
+        logging.info(f"Total number of docs_processed: {len(docs_processed)}")
+        # Remove duplicates
+        unique_texts = {}
+        docs_processed_unique = []
+        for doc in docs_processed:
+            if doc.page_content not in unique_texts and len(doc.page_content) > 100 :
+                unique_texts[doc.page_content] = True
+                docs_processed_unique.append(doc)        
+        chunks = [chunk.page_content for chunk in docs_processed_unique]
+        logging.info(f"Total number of docs_processed_unique: {len(docs_processed_unique)}")
     return chunks
 # read all the files in the data folder, then split them into chunks
 # generate questions for each chunk and return zip of chunk and related questions list
@@ -112,10 +108,10 @@ def generate_questions(api_config):
     # get documents from the data folder or xml file
     api_url = api_config["endpoint_url"]
     key = api_config["api_key"]
-    document_text = read_file_content(api_config["xml_path"],api_config["data_dir"])
-    if len(document_text) == 0:
-        logging.info(f"Error reading files, document_text is {len(document_text)}")
-    document_batches = get_chunks(document_text,api_config["chunk_size"],api_config)
+    documents = read_file_content(api_config["xml_path"],api_config["data_dir"])
+    if len(documents) == 0:
+        logging.info(f"Error reading files, document_text is {len(documents)}")
+    document_batches = get_chunks(documents,api_config["chunk_size"],api_config)
     # use OpenAI API protocol to hanlde the chat request, including local VLLM openai compatible server
     llm = ChatOpenAI(
         openai_api_key=key,
@@ -146,11 +142,16 @@ def generate_questions(api_config):
 def generate_COT(chunk_questions_zip,api_config) -> dict:
     all_tasks = []
     chunk_questions = []
+    question_asked = set()
     for document_content,questions in chunk_questions_zip:
         for question in questions:
-            prompt = api_config['COT_prompt_template'].format(question=question,context=str(document_content))
-            all_tasks.append(prompt)
-            chunk_questions.append((document_content,question))
+            question = question.strip()
+            # avoid asking the same question twice
+            if question not in question_asked:
+                question_asked.add(question)
+                prompt = api_config['COT_prompt_template'].format(question=question,context=str(document_content))
+                all_tasks.append(prompt)
+                chunk_questions.append((document_content,question))
     # use OpenAI API protocol to hanlde the chat request, including local VLLM openai compatible server
     llm = ChatOpenAI(
         openai_api_key=api_config["api_key"],
@@ -170,17 +171,20 @@ def generate_COT(chunk_questions_zip,api_config) -> dict:
 def add_chunk_to_dataset(
     chunk_questions_zip: list,
     api_config: dict,
-    ds,
 ) -> None:
     """
     Given a chunk and related questions lists, create {Q, A, D} triplets and add them to the dataset.
     """
     num_distract = api_config["num_distract_docs"]
-    p = api_config["oracle_p"]
+    p = api_config["refusal_probability"]
     chunks = [chunk for chunk, _ in chunk_questions_zip]
     COT_results = generate_COT(chunk_questions_zip,api_config)
+    logging.info(f"COT generation completed, total num of COT results: {len(COT_results)}")
+    completed,refusal= 0,0
+    data_list = []
     for chunk, q , cot in COT_results:
         # The COT answer will be used as the label in the fine-tuning stage
+
         datapt = {
             "id": None,
             "type": "general",
@@ -190,8 +194,7 @@ def add_chunk_to_dataset(
             "cot_answer": cot
         }
         i = chunks.index(chunk)
-        datapt["id"] = f"seed_task_{0 if not ds else ds.num_rows}"
-
+        datapt["id"] = f"seed_task_{len(data_list)}"
         # add num_distract distractor docs
         docs = [chunk]
         indices = list(range(0, len(chunks)))
@@ -219,29 +222,24 @@ def add_chunk_to_dataset(
         datapt["instruction"] = context
         datapt_copy = copy.deepcopy(datapt)
         # add to dataset
-        if not ds:
-            # init ds
-            datapt["id"] = [datapt["id"]]
-            datapt["type"] = [datapt["type"]]
-            datapt["question"] = [datapt["question"]]
-            datapt["context"] = [datapt["context"]]
-            datapt["oracle_context"] = [datapt["oracle_context"]]
-            datapt["cot_answer"] = [datapt["cot_answer"]]
-            datapt["instruction"] = [datapt["instruction"]]
-            ds = Dataset.from_dict(datapt)
-        else:
-            ds = ds.add_item(datapt)
+        data_list.append(datapt)
         # decides whether to add refusal example where the related documents are not provided
-        oracle = random.uniform(0, 1) < p
-        if not oracle:
+        refusal = random.uniform(0, 1) <= p
+        if refusal:
             doc_copy[0] = chunks[random.sample(indices, 1)[0]]
             random.shuffle(doc_copy)
-            context = ""
+            refusl_context = ""
             for doc in doc_copy:
-                context += "<DOCUMENT>" + str(doc) + "</DOCUMENT>\n"
-            context += q
+                refusl_context += "<DOCUMENT>" + str(doc) + "</DOCUMENT>\n"
+            refusl_context += q
             # This instruction will be used in the fine-tuning stage
-            datapt_copy["instruction"] = context
+            datapt_copy["id"] = f"refusal_task_{len(data_list)}"
+            datapt_copy["instruction"] = refusl_context
             datapt_copy["cot_answer"] = "Sorry, I don't know the answer to this question because related documents are not found. Please try again."
-            ds.add_item(datapt_copy)
+            data_list.append(datapt_copy)
+            refusal += 1
+        completed += 1
+        if completed % 100 == 0:
+            logging.info(f"refusal example added: {refusal}, total examples added: {completed}, total examples to be added: {len(COT_results)- completed}")
+    ds = Dataset.from_list(data_list)
     return ds

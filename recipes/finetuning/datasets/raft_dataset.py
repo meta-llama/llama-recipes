@@ -50,12 +50,17 @@ def tokenize_dialog(dialog, tokenizer):
 
     return dict(combined_tokens, attention_mask=[1]*len(combined_tokens["input_ids"]))
 def raft_tokenize(q_a_pair, tokenizer):
-    end_tag = "<\/DOCUMENT>\n"
+    end_tag = "</DOCUMENT>"
     # find the last end_tag in the instruction, the rest is the question
-    index =q_a_pair["instruction"].rindex("<\/DOCUMENT>\n")+len(end_tag)
-    question = q_a_pair["instruction"][index:]
+    try:
+        index =q_a_pair["instruction"].rindex(end_tag)+len(end_tag)
+    except ValueError:
+        print(q_a_pair["instruction"])
+        raise Exception("The instruction does not contain the end tag <\/DOCUMENT>")
+    # all the lines after end_tag are the question
+    question = q_a_pair["instruction"][index:].strip()
     # all the lines before end_tag are the context
-    documents = q_a_pair["instruction"][:index]
+    documents = q_a_pair["instruction"][:index].strip() 
     # output is the label
     answer = q_a_pair["output"]
     system_prompt = "You are a helpful chatbot who can provide an answer to every questions from the user given a relevant context."

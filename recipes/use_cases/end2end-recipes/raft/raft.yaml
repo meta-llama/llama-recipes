@@ -46,6 +46,6 @@ chunk_size: 1000
 
 questions_per_chunk: 5
 
-num_distract_docs: 5 # number of distracting documents to add to each chunk
+num_distract_docs: 4 # number of distracting documents to add to each chunk
 
-oracle_p: 0.8 # probability of related documents to be added to each chunk
+refusal_probability: 0.05 # probability of related documents to be added to each chunk
