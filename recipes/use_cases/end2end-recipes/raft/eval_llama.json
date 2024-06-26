@@ -1,0 +1,287 @@
+[
+    {
+       "question":"What is the role of Llama2 70B in generating hard samples?",
+       "answer":" Llama2 70B generates hard samples by producing alternate policy descriptions that flip the label of existing samples."
+    },
+    {
+       "question":"What is the purpose of quantization in machine learning?",
+       "answer":" The purpose of quantization in machine learning is to reduce computational and memory requirements, making models more efficient for deployment."
+    },
+    {
+       "question":"What policy must your use of the Llama Materials adhere to, as specified in this Agreement?",
+       "answer":" The Acceptable Use Policy for the Llama Materials."
+    },
+    {
+       "question":"How is perplexity calculated in the context of fine-tuning a language model?",
+       "answer":" Perplexity is calculated as an exponentiation of the loss value."
+    },
+    {
+       "question":"How can the Memory API be used to enhance the conversational capabilities of an LLM?",
+       "answer":" The Memory API can be used to enhance the conversational capabilities of an LLM by saving conversation history and feeding it along with new questions to the LLM, enabling multi-turn natural conversation chat."
+    },
+    {
+       "question":"What token is used to signify the end of a message in a turn?",
+       "answer":" <|eot_id|>"
+    },
+    {
+       "question":"Where can I find more information about the research behind the Llama-2 model?",
+       "answer":" https:\/\/ai.meta.com\/research\/publications\/llama-2-open-foundation-and-fine-tuned-chat-models\/"
+    },
+    {
+       "question":"What tokenizer is used as the basis for the special tokens in Meta Llama ",
+       "answer":" tiktoken"
+    },
+    {
+       "question":"What does the model do with the probability of the first token to determine safety?",
+       "answer":" The model turns the probability of the first token into an \"unsafe\" class probability to determine safety."
+    },
+    {
+       "question":"Are Meta user data included in the pretraining dataset?",
+       "answer":" No"
+    },
+    {
+       "question":"What are the benefits of quantization in neural networks?",
+       "answer":" The benefits of quantization in neural networks are smaller model sizes, faster fine-tuning, and faster inference."
+    },
+    {
+       "question":"How does the GPTQ algorithm quantize the weight matrix during post-training?",
+       "answer":" The GPTQ algorithm quantizes the weight matrix by quantizing each row independently during post-training."
+    },
+    {
+       "question":"What is the capability of large language models like Meta Llama in terms of following instructions?",
+       "answer":" They can follow instructions without having previously seen an example of a task."
+    },
+    {
+       "question":"What trade-off do developers need to consider when deploying LLM systems, according to the Responsible Use Guide?",
+       "answer":" The trade-off is between model helpfulness and model alignment."
+    },
+    {
+       "question":"What is the purpose of red-teaming in your organization?",
+       "answer":" The purpose of red-teaming is to enhance safety and performance."
+    },
+    {
+       "question":"What is the purpose of the llama-recipes GitHub repo?",
+       "answer":" The purpose of the llama-recipes GitHub repo is to provide examples, demos, and guidance for using Llama models."
+    },
+    {
+       "question":"What is the purpose of Meta's Responsible Use Guide for developers using Llama ",
+       "answer":" The purpose of Meta's Responsible Use Guide is to provide guidance to developers on how to build products powered by LLMs in a responsible manner."
+    },
+    {
+       "question":"What should be defined to rate the results of the fine-tuned model?",
+       "answer":" A clear evaluation criteria."
+    },
+    {
+       "question":"What steps did the developers take to mitigate safety risks in their instruction-tuned Llama model?",
+       "answer":" The developers took the following steps to mitigate safety risks in their instruction-tuned Llama model: conducting extensive red teaming exercises, performing adversarial evaluations, and implementing safety mitigations techniques."
+    },
+    {
+       "question":"What behaviors are prohibited in the context of employment and economic benefits?",
+       "answer":" discrimination, other unlawful conduct, and harmful conduct"
+    },
+    {
+       "question":"Are there any fees or royalties required to use the Llama Materials under this license?",
+       "answer":" No, there are no fees or royalties required to use the Llama Materials under this license."
+    },
+    {
+       "question":"What is the precision in which LLM models can run without performance degradation using AWQ?",
+       "answer":" 4-bit"
+    },
+    {
+       "question":"What type of professional practices are not allowed without proper authorization or licensure?",
+       "answer":" Financial, legal, medical\/health, or related professional practices."
+    },
+    {
+       "question":"What is the F1 score of Llama Guard 2 when trained on the BeaverTails dataset?",
+       "answer":" 0.736"
+    },
+    {
+       "question":"What is the recommended step for developers before deploying applications of Llama ",
+       "answer":" Perform safety testing and tuning tailored to their specific applications of the model."
+    },
+    {
+       "question":"What is the license used for the Llama Guard model in the Purple Llama project?",
+       "answer":" Llama 2 Community License"
+    },
+    {
+       "question":"What is the first step in developing downstream models responsibly according to the updated guide?",
+       "answer":" Defining content policies and mitigations."
+    },
+    {
+       "question":"What data type is used for weights initialized from a normal distribution in 4-bit models?",
+       "answer":" NF4 (Normal Float 4)"
+    },
+    {
+       "question":"Where can I find examples of using Llama Guard in recipes?",
+       "answer":" https:\/\/github.com\/facebookresearch\/llama-recipes"
+    },
+    {
+       "question":"What is the recommended model-parallel value for the 70B model?",
+       "answer":" 8"
+    },
+    {
+       "question":"Where can you find more information about the Meta Llama 70B Model?",
+       "answer":" The model card,"
+    },
+    {
+       "question":"What percentage of the dataset typically makes up the test and validation sets when using a holdout method?",
+       "answer":" 10% - 30%,"
+    },
+    {
+       "question":"What are some hosting providers that support running Llama models?",
+       "answer":" OpenAI, Together AI, Anyscale, Replicate, Groq, etc."
+    },
+    {
+       "question":"According to the Llama Guard paper, why is it challenging to compare model performance across different models?",
+       "answer":" Because each model is built on its own policy and performs better on an evaluation dataset with a policy aligned to the model."
+    },
+    {
+       "question":"What is the advantage of having three partitions of data in the fine-tuning process?",
+       "answer":" The advantage is to get an unbiased evaluation of the model's performance."
+    },
+    {
+       "question":"What is included in the Llama 2 model download?",
+       "answer":" Model code, Model weights, README, Responsible Use Guide, License, Acceptable use policy, Model card, and Technical specifications."
+    },
+    {
+       "question":"What is the advantage of integrating with custom kernels?",
+       "answer":" The advantage of integrating with custom kernels is that it allows for support on specific devices."
+    },
+    {
+       "question":"What is the purpose of the GPTQ algorithm implemented in the AutoGPTQ library?",
+       "answer":" The purpose of the GPTQ algorithm is post-training quantization."
+    },
+    {
+       "question":"What advantage does AQLM take of when quantizing multiple weights together?",
+       "answer":" It takes advantage of interdependencies between the weights."
+    },
+    {
+       "question":"What is the primary advantage of using lower precision data in resource-constrained environments?",
+       "answer":" Faster inference and fine-tuning."
+    },
+    {
+       "question":"How can Meta Llama models be accessed on Microsoft Azure?",
+       "answer":" Meta Llama models can be accessed on Microsoft Azure through Models as a Service (MaaS) using Azure AI Studio and Model as a Platform (MaaP) using Azure Machine Learning Studio."
+    },
+    {
+       "question":"What is the purpose of aligning Llama Guard 2 with the Proof of Concept MLCommons taxonomy?",
+       "answer":" The purpose of aligning Llama Guard 2 with the Proof of Concept MLCommons taxonomy is to drive adoption of industry standards and facilitate collaboration and transparency in the LLM safety and content evaluation space."
+    },
+    {
+       "question":"What is the name of the repository that provides more examples of Llama recipes?",
+       "answer":" llama-recipes"
+    },
+    {
+       "question":"How will I receive the signed URL after my request is approved?",
+       "answer":" over email"
+    },
+    {
+       "question":"What is the purpose of the restriction on using Llama Materials?",
+       "answer":" To prevent the unauthorized use of Llama Materials to enhance competing language models."
+    },
+    {
+       "question":"What is the format of the prefix-suffix-middle method of infilling?",
+       "answer":" prefix-suffix-middle"
+    },
+
+    {
+       "question":"What is the license under which the Llama Guard model and its weights are released?",
+       "answer":" The license is the same as Llama 3, which can be found in the LICENSE file and is accompanied by the Acceptable Use Policy."
+    },
+    {
+       "question":"How do I download the 4-bit quantized Meta Llama 3 8B chat model using Ollama?",
+       "answer":" To download the 4-bit quantized Meta Llama 3 8B chat model using Ollama, run the command \"ollama pull llama3\" in your terminal."
+    },
+    {
+       "question":"How long are the download links for Llama valid for?",
+       "answer":" 24 hours"
+    },
+    {
+       "question":"What is the primary purpose of the suite of tools provided?",
+       "answer":" To support the AI lifecycle, specifically tuning models with enterprise data."
+    },
+    {
+       "question":"How does Llama Guard 2's classification performance compare to Llama Guard ",
+       "answer":" Llama Guard 2 has better classification performance than Llama Guard 1."
+    },
+    {
+       "question":"What data type is used for computations in Quantization Aware Training despite mimicking int8 values?",
+       "answer":" floating point numbers"
+    },
+    {
+       "question":"What is the purpose of providing specific examples in a prompt?",
+       "answer":" The purpose of providing specific examples in a prompt is to help the model better understand what kind of output is expected."
+    },
+    {
+        "question":"Why is Meta not sharing the training datasets for Llama?",
+        "answer":"We believe developers will have plenty to work with as we release our model weights and starting code for pre-trained and conversational fine-tuned versions as well as responsible use resources. While data mixes are intentionally withheld for competitive reasons, all models have gone through Meta’s internal Privacy Review process to ensure responsible data usage in building our products. We are dedicated to the responsible and ethical development of our GenAI products, ensuring our policies reflect diverse contexts and meet evolving societal expectations."
+     },
+     {
+        "question":"Did Meta use human annotators to develop the data for Llama models?",
+        "answer":"Yes. There are more details, for example, about our use of human annotators in the Llama 2 research paper."
+     },
+     {
+        "question":"Can I use the output of the models to improve the Llama family of models, even though I cannot use them for other LLMs?",
+        "answer":"It's correct that the license restricts using any part of the Llama models, including the response outputs to train another AI model (LLM or otherwise). However, one can use the outputs to further train the Llama family of models. Techniques such as Quantized Aware Training (QAT) utilize such a technique and hence this is allowed."
+     },
+     {
+        "question":"What operating systems (OS) are officially supported if I want to use Llama model?",
+        "answer":"For the core Llama GitHub repos (Llama and Llama3) Linux is the only OS currently supported by this repo. Additional OS support is available through the Llama-Recipes repo."
+     },
+     {
+        "question":"Do Llama models provide traditional autoregressive text completion?",
+        "answer":"Llama models are auto-regressive language models, built on the transformer architecture. The core language models function by taking a sequence of words as input and predicting the next word, recursively generating text."
+     },
+     {
+        "question":"Do Llama models support logit biases as a request parameter to control token probabilities during sampling?",
+        "answer":"This is implementation dependent (i.e. the code used to run the model)."
+     },
+     {
+        "question":"Do Llama models support adjusting sampling temperature or top-p threshold via request parameters?",
+        "answer":"The model itself supports these parameters, but whether they are exposed or not depends on implementation."
+     },
+     {
+        "question":"What is llama-recipes?",
+        "answer":"The llama-recipes repository is a companion to the Meta Llama 3 models. The goal of this repository is to provide a scalable library for fine-tuning Meta Llama models, along with some example scripts and notebooks to quickly get started with using the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Meta Llama and other tools in the LLM ecosystem."
+     },
+     {
+        "question":"What is the difference on the tokenization techniques that Meta Llama 3 uses compare Llama 2?",
+        "answer":"Llama 2 uses SentencePiece for tokenization, whereas Llama 3 has transitioned to OpenAI’s Tiktoken."
+     },
+     {
+        "question":"How many tokens were used in Meta Llama 3 pretrain?",
+        "answer":"Meta Llama 3 is pretrained on over 15 trillion tokens that were all collected from publicly available sources."
+     },
+     {
+        "question":"How many tokens were used in  Llama 2 pretrain?",
+        "answer":"Llama 2 was pretrained on 2 trillion tokens of data from publicly available sources."
+     },
+     {
+        "question":"What is the name of the license agreement that Meta Llama 3 is under?",
+        "answer":"Meta LLAMA 3 COMMUNITY LICENSE AGREEMENT."
+     },
+     {
+        "question":"What is the name of the license agreement that Llama 2 is under?",
+        "answer":"LLAMA 2 COMMUNITY LICENSE AGREEMENT."
+     },
+     {
+        "question":"What is the context length of Llama 2 models?",
+        "answer":"Llama 2's context is 4k"
+     },
+     {
+        "question":"What is the context length of Meta Llama 3 models?",
+        "answer":"Meta Llama 3's context is 8k"
+     },
+     {
+        "question":"When is Llama 2 trained?",
+        "answer":"Llama 2 was trained between January 2023 and July 2023."
+     },
+     {
+        "question":"What is the name of the Llama 2 model that uses Grouped-Query Attention (GQA) ",
+        "answer":"Llama 2 70B"
+     },
+     {
+        "question":"What are the names of the Meta Llama 3 model that use Grouped-Query Attention (GQA) ",
+        "answer":"Meta Llama 3 8B and Meta Llama 3 70B"
+     }
+ ]
