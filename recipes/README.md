@@ -11,4 +11,3 @@ This folder contains examples organized by topic:
 [llama_api_providers](./llama_api_providers)|Scripts to run inference on Llama via hosted endpoints
 [benchmarks](./benchmarks)|Scripts to benchmark Llama 3 models inference on various backends
 [code_llama](./code_llama)|Scripts to run inference with the Code Llama models
-[evaluation](./evaluation)|Scripts to evaluate fine-tuned Llama 3 models using `lm-evaluation-harness` from `EleutherAI`
