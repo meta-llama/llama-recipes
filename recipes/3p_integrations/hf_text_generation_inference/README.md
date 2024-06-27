@@ -2,7 +2,7 @@
 
 This document shows how to serve a fine tuned Llama mode with HuggingFace's text-generation-inference server. This option is currently only available for models that were trained using the LoRA method or without using the `--use_peft` argument.
 
-## Step 0: Merging the weights (Only required if LoRA method was used) 
+## Step 0: Merging the weights (Only required if LoRA method was used)
 
 In case the model was fine tuned with LoRA method we need to merge the weights of the base model with the adapter weight. For this we can use the script `merge_lora_weights.py` which is located in the same folder as this README file.
 
@@ -40,9 +40,3 @@ curl 127.0.0.1:8080/generate_stream \
 ```
 
 Further information can be found in the documentation of the [hf text-generation-inference](https://github.com/huggingface/text-generation-inference) solution.
-
-
-
-
-
-

@@ -16,7 +16,7 @@ Here we discuss frequently asked questions that may occur and we found useful al
 
 4. Can I add custom datasets?
 
-    Yes, you can find more information on how to do that [here](../recipes/finetuning/datasets/README.md).
+    Yes, you can find more information on how to do that [here](../recipes/quickstart/finetuning/datasets/README.md).
 
 5. What are the hardware SKU requirements for deploying these models?
 
