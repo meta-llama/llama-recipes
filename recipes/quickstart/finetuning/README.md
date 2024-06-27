@@ -6,7 +6,7 @@ This folder contains instructions to fine-tune Meta Llama 3 on a
 * [single-GPU setup](./singlegpu_finetuning.md)
 * [multi-GPU setup](./multigpu_finetuning.md)
 
-using the canonical [finetuning script](../../src/llama_recipes/finetuning.py) in the llama-recipes package.
+using the canonical [finetuning script](../../../src/llama_recipes/finetuning.py) in the llama-recipes package.
 
 If you are new to fine-tuning techniques, check out an overview: [](./LLM_finetuning_overview.md)
 
@@ -17,10 +17,10 @@ If you are new to fine-tuning techniques, check out an overview: [](./LLM_finetu
 ## How to configure finetuning settings?
 
 > [!TIP]
-> All the setting defined in [config files](../../src/llama_recipes/configs/) can be passed as args through CLI when running the script, there is no need to change from config files directly.
+> All the setting defined in [config files](../../../src/llama_recipes/configs/) can be passed as args through CLI when running the script, there is no need to change from config files directly.
 
 
-* [Training config file](../../src/llama_recipes/configs/training.py) is the main config file that helps to specify the settings for our run and can be found in [configs folder](../../src/llama_recipes/configs/)
+* [Training config file](../../../src/llama_recipes/configs/training.py) is the main config file that helps to specify the settings for our run and can be found in [configs folder](../../../src/llama_recipes/configs/)
 
 It lets us specify the training settings for everything from `model_name` to `dataset_name`, `batch_size` and so on. Below is the list of supported settings:
 
@@ -70,11 +70,11 @@ It lets us specify the training settings for everything from `model_name` to `da
 
 ```
 
-* [Datasets config file](../../src/llama_recipes/configs/datasets.py) provides the available options for datasets.
+* [Datasets config file](../../../src/llama_recipes/configs/datasets.py) provides the available options for datasets.
 
-* [peft config file](../../src/llama_recipes/configs/peft.py) provides the supported PEFT methods and respective settings that can be modified. We currently support LoRA and Llama-Adapter. Please note that LoRA is the only technique which is supported in combination with FSDP.
+* [peft config file](../../../src/llama_recipes/configs/peft.py) provides the supported PEFT methods and respective settings that can be modified. We currently support LoRA and Llama-Adapter. Please note that LoRA is the only technique which is supported in combination with FSDP.
 
-* [FSDP config file](../../src/llama_recipes/configs/fsdp.py) provides FSDP settings such as:
+* [FSDP config file](../../../src/llama_recipes/configs/fsdp.py) provides FSDP settings such as:
 
     * `mixed_precision` boolean flag to specify using mixed precision, defatults to true.
 
@@ -105,7 +105,7 @@ python -m llama_recipes.finetuning --use_peft --peft_method lora --quantization 
 ```
 You'll be able to access a dedicated project or run link on [wandb.ai](https://wandb.ai) and see your dashboard like the one below.
 <div style="display: flex;">
-    <img src="../../docs/images/wandb_screenshot.png" alt="wandb screenshot" width="500" />
+    <img src="../../../docs/img/wandb_screenshot.png" alt="wandb screenshot" width="500" />
 </div>
 
 ## FLOPS Counting and Pytorch Profiling
