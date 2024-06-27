@@ -105,7 +105,7 @@ python -m llama_recipes.finetuning --use_peft --peft_method lora --quantization 
 ```
 You'll be able to access a dedicated project or run link on [wandb.ai](https://wandb.ai) and see your dashboard like the one below.
 <div style="display: flex;">
-    <img src="../../docs/images/wandb_screenshot.png" alt="wandb screenshot" width="500" />
+    <img src="../../docs/img/wandb_screenshot.png" alt="wandb screenshot" width="500" />
 </div>
 
 ## FLOPS Counting and Pytorch Profiling
