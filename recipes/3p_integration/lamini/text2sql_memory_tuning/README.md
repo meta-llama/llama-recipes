@@ -1,10 +1,10 @@
 # Tune Llama 3 for text-to-SQL and improve accuracy from 30% to 95%
 
-This repo and notebook `meta-lamini.ipynb` demonstrate how to tune Llama 3 to generate valid SQL queries and improve accuracy from 30% to 95%.
+This repo and notebook `meta_lamini.ipynb` demonstrate how to tune Llama 3 to generate valid SQL queries and improve accuracy from 30% to 95%.
 
-In this notebook we'll be using Lamini, and more specifically, Lamini Memory Tuning. 
+In this notebook we'll be using Lamini, and more specifically, Lamini Memory Tuning.
 
-Lamini is an integrated platform for LLM inference and tuning for the enterprise. Lamini Memory Tuning is a new tool you can use to embed facts into LLMs that improves factual accuracy and reduces hallucinations. Inspired by information retrieval, this method has set a new standard of accuracy for LLMs with less developer effort. 
+Lamini is an integrated platform for LLM inference and tuning for the enterprise. Lamini Memory Tuning is a new tool you can use to embed facts into LLMs that improves factual accuracy and reduces hallucinations. Inspired by information retrieval, this method has set a new standard of accuracy for LLMs with less developer effort.
 
 Learn more about Lamini Memory Tuning: https://www.lamini.ai/blog/lamini-memory-tuning
 
