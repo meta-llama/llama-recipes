@@ -5,10 +5,10 @@ Please read more about OpenHathi [here](https://www.sarvam.ai/blog/announcing-op
 ## Data
 The original OpenHathi model uses a combination of [Sangraha](https://huggingface.co/datasets/ai4bharat/sangraha) and Wikipedia as its primary data sources. If the reader is interested in using these sources, they would also have to preprocess the data: clean, filter, and deduplicate. See [Setu](https://github.com/AI4Bharat/setu) for an easy way to do this at scale.
 
-In this tutorial, we will use the [Varta](https://huggingface.co/datasets/rahular/varta) dataset which contains 40M+ news articles taken from [DailyHunt](https://m.dailyhunt.in/). Since this data is already high-quality, we can skip the pre-processing step mentioned above. We will use the Hindi subset here, but you can add any other language present in the dataset by only passing the right language code (advanced users can also tweak the code to add multiple languages at once). 
+In this tutorial, we will use the [Varta](https://huggingface.co/datasets/rahular/varta) dataset which contains 40M+ news articles taken from [DailyHunt](https://m.dailyhunt.in/). Since this data is already high-quality, we can skip the pre-processing step mentioned above. We will use the Hindi subset here, but you can add any other language present in the dataset by only passing the right language code (advanced users can also tweak the code to add multiple languages at once).
 
 ## Tokenizer
-Our first step towards augmenting a new language to an LLM is creating a better tokenizer. We define 'better' in terms of fertility score or the number of in-language tokens present in the tokenizer. Note that we should add new tokens without disturbing the original vocabulary, and therefore creating a better tokenizer usually involves 2 steps: (i) building a new, in-language only tokenizer, and (ii) merging this new tokenizer with the original. 
+Our first step towards augmenting a new language to an LLM is creating a better tokenizer. We define 'better' in terms of fertility score or the number of in-language tokens present in the tokenizer. Note that we should add new tokens without disturbing the original vocabulary, and therefore creating a better tokenizer usually involves 2 steps: (i) building a new, in-language only tokenizer, and (ii) merging this new tokenizer with the original.
 
 ### Building the in-language tokenizer
 For this, we will first download and prepare the data for training the tokenizer:
@@ -62,7 +62,7 @@ Note: OpenHathi's final data mixture also contains monolingual data and romanize
 We can easily create data for both phases using any translation model. OpenHathi uses [IndicTrans2](https://github.com/AI4Bharat/IndicTrans2). We provide sample code for both phases below.
 
 ### Phase 1
-With the assumption that we don't have source-native data, let us first get some English data to translate. 
+With the assumption that we don't have source-native data, let us first get some English data to translate.
 
 ```
 from datasets import load_dataset
@@ -118,7 +118,7 @@ phase2_ds.save_to_disk("data/phase2")
 ```
 
 ### Train
-Finally, we can start finetuning Llama2 on these datasets by following the [finetuning recipes](https://github.com/meta-llama/llama-recipes/tree/main/recipes/finetuning). Remember to pass the new tokenizer path as an argument to the script: `--tokenizer_name=./extended_tokenizer`.
+Finally, we can start finetuning Llama2 on these datasets by following the [finetuning recipes](https://github.com/meta-llama/llama-recipes/tree/main/recipes/quickstart/finetuning). Remember to pass the new tokenizer path as an argument to the script: `--tokenizer_name=./extended_tokenizer`.
 
 OpenHathi was trained on 64 A100 80GB GPUs. Here are the hyperparameters used and other training details:
 - maximum learning rate: 2e-4
@@ -141,16 +141,16 @@ The resulting (partial) loss plots from the OpenHathi training are shown below:
 
 Phase 1: train loss
 
-![Phase 1: train loss](imgs/phase1-train-loss.png)
+![Phase 1: train loss](img/phase1_train_loss.png)
 
 Phase 1: eval loss
 
-![Phase 1: eval loss](imgs/phase1-eval-loss.png)
+![Phase 1: eval loss](img/phase1_eval_loss.png)
 
 Phase 2: train loss
 
-![Phase 2: train loss](imgs/phase2-train-loss.png)
+![Phase 2: train loss](img/phase2_train_loss.png)
 
 Phase 2: eval loss
 
-![Phase 2: eval loss](imgs/phase2-eval-loss.png)
+![Phase 2: eval loss](img/phase2_eval_loss.png)
