@@ -10,7 +10,7 @@ Businesses of all sizes can use the [WhatsApp Business API](https://developers.f
 
 The diagram below shows the components and overall data flow of the Llama 3 enabled WhatsApp chatbot demo we built, using Amazon EC2 instance as an example for running the web server.
 
-![](../../../../docs/images/whatsapp_llama_arch.jpg)
+![](../../../../docs/img/whatsapp_llama_arch.jpg)
 
 ## Getting Started with WhatsApp Business Cloud API
 
@@ -19,13 +19,13 @@ First, open the [WhatsApp Business Platform Cloud API Get Started Guide](https:/
 1. Add the WhatsApp product to your business app;
 2. Add a recipient number;
 3. Send a test message;
-4. Configure a webhook to receive real time HTTP notifications. 
+4. Configure a webhook to receive real time HTTP notifications.
 
 For the last step, you need to further follow the [Sample Callback URL for Webhooks Testing Guide](https://developers.facebook.com/docs/whatsapp/sample-app-endpoints) to create a free account on glitch.com to get your webhook's callback URL.
 
-Now open the [Meta for Develops Apps](https://developers.facebook.com/apps/) page and select the WhatsApp business app and you should be able to copy the curl command (as shown in the App Dashboard - WhatsApp - API Setup - Step 2 below) and run the command on a Terminal to send a test message to your WhatsApp. 
+Now open the [Meta for Develops Apps](https://developers.facebook.com/apps/) page and select the WhatsApp business app and you should be able to copy the curl command (as shown in the App Dashboard - WhatsApp - API Setup - Step 2 below) and run the command on a Terminal to send a test message to your WhatsApp.
 
-![](../../../../docs/images/whatsapp_dashboard.jpg)
+![](../../../../docs/img/whatsapp_dashboard.jpg)
 
 Note down the "Temporary access token", "Phone number ID", and "a recipient phone number" in the API Setup page above, which will be used later.
 
@@ -63,7 +63,7 @@ class WhatsAppClient:
             "Content-Type": "application/json",
         }
         self.API_URL = self.API_URL + self.WHATSAPP_CLOUD_NUMBER_ID
-        
+
     def send_text_message(self, message, phone_number):
         payload = {
             "messaging_product": 'whatsapp',
@@ -82,9 +82,9 @@ Finally, add the code below to llama_chatbot.py, which creates a Llama 3 instanc
 1. receive the user message forwarded by the webhook;
 2. ask Llama 3 for the answer;
 3. call the `WhatsAppClient`'s `send_text_message`` with a recipient's phone number.
-   
-```   
-os.environ["REPLICATE_API_TOKEN"] = "<your replicate api token>"    
+
+```
+os.environ["REPLICATE_API_TOKEN"] = "<your replicate api token>"
 llama3_8b_chat = "meta/meta-llama-3-8b-instruct"
 
 llm = Replicate(
@@ -99,7 +99,7 @@ def hello_llama():
     return "<p>Hello Llama 3</p>"
 
 @app.route('/msgrcvd', methods=['POST', 'GET'])
-def msgrcvd():    
+def msgrcvd():
     message = request.args.get('message')
     answer = llm(message)
     client.send_text_message(answer, "<a recipient phone number from your WhatsApp API Setup>")
@@ -110,19 +110,19 @@ The complete script of llama_chatbot.py is [here](llama_chatbot.py).
 
 Now it's time to modify the webhook to complete the whole app.
 
-## Modifying the Webhook 
+## Modifying the Webhook
 
 Open your glitch.com webhook URL created earlier, and after the code snippet in app.js:
 
 ```
-// message received! 
+// message received!
 console.log(req.body["entry"][0]["changes"][0]["value"]["messages"][0]["text"]["body"]);
 ```
 
 add the code below - remember to change <web server public IP>, which needs to be publicly visible, to the IP of the server where your Llama 3 enabled web app in the previous section runs:
 
 ```
-  let url = "http://<web server public IP>:5000/msgrcvd?message=" + 
+  let url = "http://<web server public IP>:5000/msgrcvd?message=" +
     req.body["entry"][0]["changes"][0]["value"]["messages"][0]["text"]["body"]
 
   axios.get(url)
@@ -140,7 +140,7 @@ The code simply forwards the user message received by the WhatsApp Cloud Platfor
   '// info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
   if (req.body.object) {
     ...
-  }    
+  }
 ```
 
 Note: It's possible and even recommended to implement a webhook in Python and call Llama 3 directly inside the webhook, instead of making an HTTP request, as the JavaScript code above does, to a Python app which calls Llama 3 and sends the answer to WhatsApp.
@@ -153,7 +153,7 @@ On your web server, run the following command on a Terminal:
 gunicorn -b 0.0.0.0:5000 llama_chatbot:app
 ```
 
-If you use Amazon EC2 as your web server, make sure you have port 5000 added to your EC2 instance's security group's inbound rules. Write down your web server's public IP, update the URL below with it, then open the URL in a browser to verify you can see the answer sent to your WhatsApp app, as well as shown in the browser: 
+If you use Amazon EC2 as your web server, make sure you have port 5000 added to your EC2 instance's security group's inbound rules. Write down your web server's public IP, update the URL below with it, then open the URL in a browser to verify you can see the answer sent to your WhatsApp app, as well as shown in the browser:
 
 ```
 http://<web server public IP>:5000/msgrcvd?message=who%20wrote%20the%20book%20godfather

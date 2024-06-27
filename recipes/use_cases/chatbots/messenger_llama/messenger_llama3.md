@@ -10,11 +10,11 @@ Messenger from Meta is a messaging service that allows a Facebook business page 
 
 The diagram below shows the components and overall data flow of the Llama 3 enabled Messenger chatbot demo we built, using an Amazon EC2 instance as an example for running the web server.
 
-![](../../../../docs/images/messenger_llama_arch.jpg)
+![](../../../../docs/img/messenger_llama_arch.jpg)
 
 ## Getting Started with Messenger Platform
 
-1. A Facebook Page is required to send and receive messages using the Messenger Platform - see [here](https://www.facebook.com/business/help/461775097570076?id=939256796236247) for details about Facebook Pages and how to create a new page. 
+1. A Facebook Page is required to send and receive messages using the Messenger Platform - see [here](https://www.facebook.com/business/help/461775097570076?id=939256796236247) for details about Facebook Pages and how to create a new page.
 
 2. If you have followed the [Llama WhatsApp chatbot tutorial](../whatsapp_llama/whatsapp_llama3.md), or if you already have a Meta developer account and a business app, then you can skip this step. Otherwise, you need to first [create a Meta developer account](https://developers.facebook.com/) and then [create a business app](https://developers.facebook.com/docs/development/create-an-app/).
 
@@ -24,7 +24,7 @@ The diagram below shows the components and overall data flow of the Llama 3 enab
 
 5. Open Messenger's API Settings, as shown in the screenshot below, then in "1. Configure webhooks", set the Callback URL and Verify Token set up in the previous step, and subscribe all message related fields for "Webhook Fields". Finally, in "2. Generate access tokens", connect your Facebook page (see step 1) and copy your page access token for later use.
 
-![](../../../../docs/images/messenger_api_settings.png)
+![](../../../../docs/img/messenger_api_settings.png)
 
 ## Writing Llama 3 Enabled Web App
 
@@ -54,7 +54,7 @@ import os
 import requests
 import json
 
-os.environ["REPLICATE_API_TOKEN"] = "<your replicate api token"    
+os.environ["REPLICATE_API_TOKEN"] = "<your replicate api token"
 llama3_8b_chat = "meta/meta-llama-3-8b-instruct"
 
 llm = Replicate(
@@ -65,7 +65,7 @@ llm = Replicate(
 app = Flask(__name__)
 
 @app.route('/msgrcvd_page', methods=['POST', 'GET'])
-def msgrcvd_page():    
+def msgrcvd_page():
     message = request.args.get('message')
     sender = request.args.get('sender')
     recipient = request.args.get('recipient')
@@ -89,7 +89,7 @@ def msgrcvd_page():
 
 Replace <page_access_token> with the access token copied in step 5 "Open Messenger's API Settings" of the previous section. Now it's time to modify the webhook to complete the whole app.
 
-## Modifying the Webhook 
+## Modifying the Webhook
 
 Open your glitch.com webhook URL created earlier, and change your `app.js` to simply forward the user message and the user and page ids sent by the Messenger Platform to the Llama 3 enabled web app `llama_messenger.py` described in the previous section:
 
@@ -110,7 +110,7 @@ app.listen(process.env.PORT || 1337, () => console.log("webhook is listening"));
 app.post("/webhook", (req, res) => {
   // Parse the request body from the POST
   let body = req.body;
-  
+
   let sender = req.body["entry"][0]["messaging"][0]['sender']['id']
   let recipient = req.body["entry"][0]["messaging"][0]['recipient']['id']
   let message = req.body["entry"][0]["messaging"][0]['message']['text']
@@ -119,10 +119,10 @@ app.post("/webhook", (req, res) => {
   if (body.object === "page") {
     // Returns a '200 OK' response to all requests
     res.status(200).send("EVENT_RECEIVED");
-    
+
     let url = "http://<web server public IP>:5000/msgrcvd_page?sender=" + sender + "&recipient=" + recipient + "&message=" + encodeURIComponent(message)
     console.log(url)
-  
+
     axios.get(url)
       .then(response => {
         // Handle the response data
@@ -131,7 +131,7 @@ app.post("/webhook", (req, res) => {
       .catch(error => {
         // Handle errors
         console.error('Axios error:', error);
-      });    
+      });
     } else {
       // Return a '404 Not Found' if event is not from a page subscription
       res.sendStatus(404);
@@ -139,7 +139,7 @@ app.post("/webhook", (req, res) => {
   });
 
 // Accepts GET requests at the /webhook endpoint. You need this URL to setup webhook initially.
-// info on verification request payload: https://developers.facebook.com/docs/graph-api/webhooks/getting-started#verification-requests 
+// info on verification request payload: https://developers.facebook.com/docs/graph-api/webhooks/getting-started#verification-requests
 app.get("/webhook", (req, res) => {
   /**
    * UPDATE YOUR VERIFY TOKEN
@@ -179,7 +179,7 @@ On your web server, run the following command on a Terminal (see [here](https://
 gunicorn -b 0.0.0.0:5000 llama_messenger:app
 ```
 
-If you use Amazon EC2 as your web server, make sure you have port 5000 added to your EC2 instance's security group's inbound rules. 
+If you use Amazon EC2 as your web server, make sure you have port 5000 added to your EC2 instance's security group's inbound rules.
 
 Now you can open your Messenger app, select the Facebook page you connected in Messenger's API Settings, enter a message and receive the Llama 3's answer shortly, as shown in the demo video in the beginning of this post.
 
@@ -190,5 +190,3 @@ http://<web server public IP>:5000/msgrcvd_page?sender=<user id>&recipient=<page
 ```
 
 Then open the URL in a browser to verify your web server can receive the message and the two ids, and generate a Llama answer before sending the answer back to Messenger.
-
-
