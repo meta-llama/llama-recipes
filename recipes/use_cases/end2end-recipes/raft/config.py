@@ -2,7 +2,6 @@
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
 import yaml
-import os
 
 def load_config(config_path: str = "./config.yaml"):
     # Read the YAML configuration file

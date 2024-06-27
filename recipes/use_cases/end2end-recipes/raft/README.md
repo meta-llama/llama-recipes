@@ -1,91 +1,84 @@
 
 ## Introduction:
-As our Meta Llama models become more popular, we noticed that there is a great demand to apply our Meta Llama models toward a custom domain to better serve the customers in that domain. For example, a common scenario can be that a company already has all the related documents in plain text for its custom domain and want to build chatbot that can help answer questions for its clients.
+As the popularity of our Meta Llama 3 models grows, we've seen a surge in demand to adapt them to specific domains, enabling businesses to better serve their customers. For instance, a company might have a vast collection of plain text documents related to their custom domain and want to create a chatbot that can answer client questions.
 
-Inspired by this demand, we want to explore the possibility of building a Llama chatbot for our Llama users using Meta Llama models, as a demo in this tutorial.  Even though our Meta Llama 3 70B Instruct model can be a great candidate, as it already has a excellent reasoning and knowledge, it is relatively costly to host in production. Therefore, we want to produce a Meta Llama 8B Instruct model based chatbot that can achieve the similar level of accuracy of Meta Llama 70B-Instruct model based chatbot to save the inference cost.
+In response to this demand, we're exploring the possibility of building a Llama chatbot that can answer Llama related questions using our Meta Llama 3 models. In this tutorial, we'll demonstrate how to do just that. While our Meta Llama 3 70B Instruct model is an excellent candidate, as it already has a excellent reasoning capabilities and knowledge, its production costs are relatively high. To reduce these costs, we'll focus on creating a Llama chatbot based on the Meta Llama 8B Instruct model, aiming to achieve similar accuracy to the Meta Llama 3 70B Instruct model while minimizing inference costs.
 
-## Data Collections
-To build a Llama bot, we need to first collect the text data. Even though ideally we should included as many Llama related web documents as possible, in this tutorial we will only include the official documents for demo purposes. For example, we can use all the raw text from offical web pages listed in [Getting started with Meta Llama](https://llama.meta.com/get-started/) but we do not want to include our FAQ page as some of the eval questions will come from there.
+## Collecting Text Data for the Llama Bot
 
-We can either use local folder or web crawl to get the text data. For local folder option, we can download all the desired docs in PDF, Text or Markdown format to "data" folder, specified in the [raft.yaml](./raft.yaml).
+To build a Llama bot, we need to collect relevant text data. Ideally, we would include a vast range of Llama-related web documents, but for demo purposes, we'll focus on official documents. For example, we can use the raw text from official web pages listed in [Getting started with Meta Llama](https://llama.meta.com/get-started/), excluding the FAQ page since some evaluation questions will come from there.
 
-Alternatively, we can create a sitemap xml, similar to the the following example, and use Langchain SitemapLoader to get all the text in the web pages.
+We have two options to obtain the text data: using a local folder or web crawling. For the local folder option, we can download the desired documents in PDF, Text, or Markdown format to the "data" folder specified in the [raft.yaml](./raft.yaml) file.
+
+Alternatively, we can create a sitemap XML file, similar to the example below, and put the file path in the [raft.yaml](./raft.yaml) file, so eventually a Langchain SitemapLoader can retrieve all the text from the web pages.
 
 ```xml
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<loc>http://llama.meta.com/responsible-use-guide/</loc>
-</url>
-<url>
-<loc>http://llama.meta.com/Llama2/</loc>
-</url>
-<url>
-<loc>http://llama.meta.com/Llama2/license/</loc>
-</url>
-......
-<url>
-<loc>http://llama.meta.com/Llama2/use-policy/</loc>
-</url>
-<url>
-<loc>http://llama.meta.com/code-Llama/</loc>
-</url>
-<url>
-<loc>http://llama.meta.com/Llama3/</loc>
-</url>
+  <url>
+    <loc>http://llama.meta.com/responsible-use-guide/</loc>
+  </url>
+  <!-- more URLs -->
 </urlset>
 ```
-## Retrieval Augmented Fine Tuning (RAFT) concepts
 
-In this tutorial, we want to introduce Retrieval Augmented Fine Tuning (RAFT) that combines finetuning with RAG to better utilize the custom domain text data.
+## Retrieval Augmented Fine Tuning (RAFT) Concepts
 
-RAFT is a general recipe to finetune a pretrained LLM to a domain-specific RAG settings. In RAFT, we prepare the training data such that each data point contains a question ( Q ), a set of documents (Dk), and a corresponding Chain-of-though style answer (A*) generated from one of the document (D*). We differentiate between two types of documents: oracle documents (D*) i.e. the documents from which the answer to the question can be deduced, and `distractor' documents (Di) that do not contain answer-relevant information, illustrated in the follwing graph:
+In this tutorial, we'll introduce Retrieval Augmented Fine Tuning (RAFT), a technique that combines fine-tuning with RAG to better utilize custom domain text data.
+
+RAFT is a general recipe for fine-tuning a pre-trained Large Language Model (LLM) to a domain-specific RAG setting. The process involves preparing training data with each data point containing:
+
+* A question (Q)
+* A set of documents (D)
+* A corresponding Chain-of-thought style answer (A*) generated from one of the documents (D*)
+
+RAFT tries to teach the models to differentiate between two types of documents:
+
+* Oracle documents (D*): documents from which the answer to the question can be deduced
+* Distractor documents (Di): documents that do not contain answer-relevant information
+
+The following graph illustrates the RAFT main concepts:
 ![RAFT images](images/RAFT.png)
 
-For more RAFT details, please check their [blog](https://gorilla.cs.berkeley.edu/blogs/9_raft.html)
+For more information on RAFT, please refer to their [blog post](https://gorilla.cs.berkeley.edu/blogs/9_raft.html).
 
-## Create RAFT dataset
+## Create RAFT Dataset
 
-To use Meta Llama 3 70B model for the RAFT datasets creation from the prepared documents, we can either use Meta Llama 3 70B APIs from LLM cloud providers or host local LLM server.
+To create a RAFT dataset from the prepared documents, we can use the Meta Llama 3 70B Instruct model either through APIs from LLM cloud providers or by hosting a local VLLM server.
 
-We can use on prem solutions such as the [TGI](../../../../inference/model_servers/hf_text_generation_inference/README.md) or [VLLM](../../../../inference/model_servers/Llama-on-prem.md).
+For this example, we'll demonstrate how to create a VLLM OpenAI-compatible server that hosts Meta Llama 3 70B Instruct locally and generates the RAFT dataset.
 
-In this example, we will show how to create a vllm openai compatible server that host Meta Llama 3 70B instruct locally, and generate the RAFT dataset.
+**Local Server Setup**
 
+First, ensure VLLM is installed. Then, run the following command to start the VLLM server:
 ```bash
-# Make sure VLLM has been installed
 CUDA_VISIBLE_DEVICES=0,1 python -m vllm.entrypoints.openai.api_server  --model meta-Llama/Meta-Llama-3-70B-Instruct --tensor-parallel-size 2 --disable-log-requests --port 8001
 ```
+**Note**: Make sure the port is available, and the server requires at least 135GB GPU memory, so we need to use multiple GPUs in a tensor parallel way.
 
-**NOTE** Please make sure the port has not been used. Since Meta Llama3 70B instruct model requires at least 135GB GPU memory, we need to use multiple GPUs to host it in a tensor parallel way.
+**Querying the Server**
 
-Once the server is ready, we can query the server given the port number 8001 in another terminal. Here, "-u" sets the endpoint url to query and "-t" sets the number of questions we ask the Meta Llama3 70B Instruct model to generate per chunk. To use cloud API , please change the endpoint url to the cloud provider and set the api key using "-k". Here since we want to query our local hosted VLLM server, we can use following command:
-
+Once the server is ready, query it using the following command in another terminal:
 ```bash
 python raft.py -u "http://localhost:8001/v1" -k "EMPTY" -t 4
 ```
+If you prefer to use a cloud API, replace the endpoint URL with the cloud provider's URL and set the API key using the `-k` flag or environment variables.
 
-For cloud API key, we can also set it using system environment variables, such as
+**RAFT Dataset Generation**
 
-```bash
-export API_KEY="THE_API_KEY_HERE"
-python raft.py -u "CLOUD_API_URL" -t 4
-```
+The [raft.py](raft.py) script reads all documents from local or web sources, depending on the settings, and splits the data into text chunks of 1000 characters using RecursiveCharacterTextSplitter.
 
-**NOTE** When using cloud API, you need to be aware of your RPM (requests per minute), TPM (tokens per minute) and TPD (tokens per day), limit on your account in case using any of model API providers. This is experimental and totally depends on your documents, wealth of information in them and how you prefer to handle question, short or longer answers etc.
+Then, it applies the `question_prompt_template` defined in [raft.yaml](raft.yaml) to each chunk to generate queries to Meta Llama 3 70B model, and the model will generate a question list (By default 4 questions in that list) for each text chunk. For each question and corresponding text chunk, we generate a Chain-of-Thought (COT) style answer using Meta Llama 3 70B Instruct APIs.
 
-This [raft.py](./raft.py) will read all the documents either from local or web depending on the settings, and split the data into text chunks of 1000 characters (defined by "chunk_size") using RecursiveCharacterTextSplitter.
+Once we have the COT answers, we can create a dataset where each sample contains an "instruction" section. This section includes some unrelated chunks called distractors (by default, we add 4 distractors). In the original RAFT method, there is an oracle probability P (by default, 80%) that a related document will be included. This means that there is a 1-P (by default, 20%) chance that no related documents are provided, and the RAFT model should still try to predict the COT answer label, as stated in the blog, "By removing the oracle documents in some instances of the training data, we are compelling the model to memorize domain-knowledge."
 
-Then we apply the question_prompt_template, defined in [raft.yaml](./raft.yaml), to each chunk, to get question list out of the text chunk.
+**Modification to Add Refusal Examples**
 
-We now have a related context as text chunk and a corresponding question list. For each question in the question list, we want to generate a Chain-of-Thought (COT) style answer using Meta Llama 3 70B Instruct as well.
+In this tutorial, we made an important modification by adding additional refusal examples (by default, this refusal probability is 5%). When the related documents are not presented, we set the COT answer label to "Sorry, I don't know the answer to this question because related documents are not found. Please try again." Our hypothesis is that this will increase answer precision and reduce chatbot hallucination. In real-world production scenarios, we prefer that the chatbot refuses to answer when not enough context is provided, so that we can detect this refusal signal and mitigate the risk of producing wrong or misleading answers (e.g., we can ask a human agent to take over the conversation to better serve customers).
 
-Once we have the COT answers, we can start to make a dataset where each sample contains "instruction" section that includes some unrelated chunks called distractor (by default we add 4 distractors). In the original RAFT method, there is a oracle probility P (by default 80%) that a related document will be included. This means that there is 1-P (by defualt 20%) chances that no related documents are provided, and the RAFT model should still try to predict COT_answer label, as the blog stated that "By removing the oracle documents in some instances of the training data, we are compelling the model to memorize domain-knowledge.".
+**RAFT Format JSON Example**
 
-In this tutorial we made a important modification by adding some additional refusal examples (by default this refusal probability is 5%) that when the related documents are not presented, we make the COT_answer label to be "Sorry, I don't know the answer to this question because related documents are not found. Please try again.". Our hyposis is that this will increase answer precision and reduce chatbot hallucination.  In real world production scenario, we prefer that the chatbot refuse to answer when no enough context are provided, so that we can detect this refusal signal and mitigate the risk of producing wrong or misleading answer, eg. we can ask for human agent to take over the conversation to better serve customers.
-
-Here is a RAFT format json example from our saved raft.jsonl file. We have a "question" section for the generated question, "cot_answer" section for generated COT answers, where the final answer will be added after "<ANSWER>" token, and we also created a "instruction" section
-that has all the documents included (each document splitted by <DOCUMENT> <\/DOCUMENT> tag) and finally the generated question appended in the very end. This "instruction" section will be the input during the fine-tuning, and the "cot_answer" will be the output label that the loss will be calculated on.
-
-```python
+Here is a RAFT format JSON example from our saved `raft.jsonl` file:
+```json
 {
    "id":"seed_task_228",
    "type":"general",
@@ -115,92 +108,101 @@ that has all the documents included (each document splitted by <DOCUMENT> <\/DOC
    "instruction":"<DOCUMENT> DISTRACT_DOCS 1 <\/DOCUMENT>...<DOCUMENT> DISTRACT_DOCS 4 <\/DOCUMENT>\nWhat is the context length supported by Llama 3 models?"
 }
 ```
-To create a eval set, ideally we should use human-annotation to create the question and answer pairs to make sure the the questions are related and answers are fully correct.
+As shown in the above example, we have a "question" section for the generated question, a "cot_answer" section for the generated COT answers (where the final answer will be added after the "<ANSWER>" token), and an "instruction" section that has all the documents included (each document split by `<DOCUMENT>` and `</DOCUMENT>` tags) and finally the generated question appended at the end. This "instruction" section will be the input during fine-tuning, and the "cot_answer" will be the output label that the loss will be calculated on.
 
-However, this humman-annotation is costly and time-consuming. For demo purpose, we will use a subset of training json and our FAQ web page as the eval set. We can shuffle and random select 100 examples out of Llama RAFT dataset. For evaluation purpose, we only need to keep the "question" section, and the final answer section, marked by <ANSWER> tag in "cot_answer".
+## Creating an Evaluation Set
+To create a reliable evaluation set, it's ideal to use human-annotated question and answer pairs. This ensures that the questions are relevant and the answers are accurate. However, human annotation is time-consuming and costly. For demonstration purposes, we'll use a subset of the validation set, which will never be used in the fine-tuning. We only need to keep the "question" section and the final answer section, marked by the `<ANSWER>` tag in "cot_answer". We'll manually check each example and select only the good ones. We want to ensure that the questions are general enough to be used for web search engine queries and are related to Llama. We'll also use some QA pairs from our FAQ page, with modifications. This will result in 72 question and answer pairs as our evaluation set, saved as `eval_llama.json`.
 
-Then we can manually check each example and only pick the good examples. We want to make sure the questions are general enough that can be used to query the web search engine and are related Llama. Moreover, we also used some QA pairs, with some modification, from our FAQ page. Together, we created 72 question and answer pairs as the the eval set called eval_llama.json.
-
-## Fune-tuning steps
-
-Once the RAFT dataset is ready in a json format, we can start the fine-tuning steps. Unfortunately we found out that the LORA method did not produce a good result so we have to use the full fine-tuning method. We can use the following commands as an example in the Llama-recipes main folder:
+## Fine-Tuning Steps
+Once the RAFT dataset is ready in JSON format, we can start fine-tuning. Unfortunately, the LORA method didn't produce good results, so we'll use the full fine-tuning method. We can use the following commands as an example in the llama-recipes main folder:
 
 ```bash
-export PATH_TO_ROOT_FOLDER = ./raft-8b
-export PATH_TO_RAFT_JSON = recipes/use_cases/end2end-recipes/raft/output/raft.jsonl
+export PATH_TO_ROOT_FOLDER=./raft-8b
+export PATH_TO_RAFT_JSON=recipes/use_cases/end2end-recipes/raft/output/raft.jsonl
 torchrun --nnodes 1 --nproc_per_node 4  recipes/finetuning/finetuning.py --enable_fsdp --lr 1e-5 --context_length 8192 --num_epochs 1 --batch_size_training 1 --model_name meta-Llama/Meta-Llama-3-8B-Instruct --dist_checkpoint_root_folder $PATH_TO_ROOT_FOLDER --dist_checkpoint_folder fine-tuned  --use_fast_kernels --dataset "custom_dataset" --custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/raft_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path $PATH_TO_RAFT_JSON
 ```
 
-For more details about multi-GPU finetuning, please check the [multigpu_finetuning.md](../../../finetuning/multigpu_finetuning.md) in the finetuning recipe.
+For more details on multi-GPU fine-tuning, please refer to the [multigpu_finetuning.md](../../../finetuning/multigpu_finetuning.md) in the finetuning recipe.
 
-Then we need to convert the FSDP checkpoint to HuggingFace checkpoint using the following command:
+Next, we need to convert the FSDP checkpoint to a HuggingFace checkpoint using the following command:
 
 ```bash
 python src/Llama_recipes/inference/checkpoint_converter_fsdp_hf.py --fsdp_checkpoint_path  "$PATH_TO_ROOT_FOLDER/fine-tuned-meta-Llama/Meta-Llama-3-8B-Instruct" --consolidated_model_path "$PATH_TO_ROOT_FOLDER"
 ```
 
-For more details about FSDP to HuggingFace checkpoint conversion, please check the [readme](../../../inference/local_inference/README.md) in the inference/local_inference recipe.
+For more details on FSDP to HuggingFace checkpoint conversion, please refer to the [readme](../../../inference/local_inference/README.md) in the inference/local_inference recipe.
 
-## Evaluation steps
+## Evaluation Steps
+Once we have the RAFT model, we need to evaluate its performance. In this tutorial, we'll not only use traditional evaluation methods (e.g., calculating exact match rate or ROUGE score) but also use LLM as a judge to score model-generated answers.
 
-Once we have the RAFT model, we now need to evaluate it to understand its performance. In this tutorial, we not only use traditional eval method, eg. calculate exact match rate or rouge score but also use LLM to act like a judge to score model generated.
+We'll launch a VLLM server to host our converted model from `PATH_TO_ROOT_FOLDER`. To make things easier, we can rename the model folder to `raft-8b`.
 
-We need to launch a VLLM server to host our converted model from PATH_TO_ROOT_FOLDER. To make things easier, we can rename the model folder raft-8b.
 ```bash
 CUDA_VISIBLE_DEVICES=1 python -m vllm.entrypoints.openai.api_server  --model raft-8b --port 8000  --disable-log-requests
 ```
 
-Similarly if we want to get 8B instruct baseline, we can launch a 8B model VLLM server instead:
+Similarly, if we want to get the 8B instruct baseline, we can launch a 8B model VLLM server instead:
 
 ```bash
 CUDA_VISIBLE_DEVICES=1 python -m vllm.entrypoints.openai.api_server  --model  meta-Llama/Meta-Llama-3-8B-Instruct --port 8000  --disable-log-requests
 ```
 
-On another terminal, we can use another Meta Llama 3 70B Instruct model as a judge to compare the answer from the RAFT 8B model with the ground truth and get a score. To do this, we need to host another Meta Llama 3 70B Instruct VLLM server locally with command, just make sure the port is not been used:
-
+On another terminal, we can use another Meta Llama 3 70B Instruct model as a judge to compare the answers from the RAFT 8B model with the ground truth and get a score. To do this, we need to host another Meta Llama 3 70B Instruct VLLM server locally with the command, making sure the port is not in use:
 ```bash
 CUDA_VISIBLE_DEVICES=2,3 python -m vllm.entrypoints.openai.api_server  --model meta-Llama/Meta-Llama-3-70B-Instruct --tensor-parallel-size 2 --disable-log-requests --port 8001
 ```
 
-Then we can pass the ports to the eval script to eval our raft model once our raft-8b vllm server is running:
-
+Then, we can pass the ports to the eval script to evaluate our RAFT model once our `raft-8b` VLLM server is running:
 ```bash
 CUDA_VISIBLE_DEVICES=4 python raft_eval.py -m raft-8b -u "http://localhost:8000/v1" -j "http://localhost:8001/v1" -r 5
 ```
 
-To eval the 8B baseline we can use once our 8B vllm server is running:
-
+To evaluate the 8B baseline, we can use the following command once our 8B VLLM server is running:
 ```bash
 CUDA_VISIBLE_DEVICES=4 python raft_eval.py -m meta-Llama/Meta-Llama-3-8B-Instruct -u "http://localhost:8000/v1" -j "http://localhost:8001/v1" -r 5
 ```
 
-**NOTE** Please make sure the folder name in --model matches the "model_name" section in raft_eval_config.yaml. Otherwise VLLM will raise model not found error. By default, the RAFT model is called "raft-8b". Here "-u" specify the raft model endpoint url, "-j" specify the judge model endpoint url, "-r" defines how many top_k documents the RAG should retrieve.
+**NOTE**: Please ensure that the `--model` in VLLM server creation matches the `--m` in raft_eval.py. Otherwise, VLLM will raise a `model not found` error. By default, the RAFT model is called "raft-8b". Here, `-u` specifies the RAFT model endpoint URL, `-j` specifies the judge model endpoint URL, and `-r` defines how many top-k documents the RAG should retrieve.
 
-This [raft_eval.py](./raft_eval.py) will load questions from eval set and generated answers from models and models+RAG. It will compare the generated answers with the ground truth to get the eval metrics, such as Rouge score or LLM_as_judge score, then save those metrics and eval details to logs.
+This [raft_eval.py](./raft_eval.py) script will load questions from the evaluation set, generate answers from models and models+RAG, and compare the generated answers with the ground truth to get the evaluation metrics, such as ROUGE score or LLM-as-judge score. It will then save those metrics and evaluation details to eval logs.
 
-## Experiment results
+## Experiment Results
 
-During our experiments, we did not get a good result from just using Llama website. We believe that our initial data from Llama website is not enough as it only has 327K characters and generates 1980+ RAFT examples. To increase our RAFT examples, we created another pytorch RAFT dataset with the text from offical web pages under [Pytorch blogs](https://pytorch.org/blog/) and [Pytorch tutorials](https://pytorch.org/tutorials/). This pytorch RAFT dataset has 20K RAFT examples generated from 4.7 million characters. Together, we have an all_data dataset that combines both Llama raft dataset and pytorch dataset. Then we fine-tuned the 8B model on those datasets separately for 1 epoch with learning rate of 1e-5 to get 3 RAFT models, namely Llama_only model, pytorch_only model and all_data model.  We used Llama website raw text as our RAG knowledge base and the document chunks_size is the same as the raft chunk_size 1000 characters.
+**Overview**
 
-We tested 5 models + RAG: all_data RAFT model, Llama_only RAFT model, pytorch_only RAFT model, 8B baseline, 70B baseline with the RAG document topk retrieve parameters of 3, 5 and 7. We used a Meta Llama 70B Instruct model as the judge to score our model generated answer with the ground truth in our eval set.
+During our experiments, we encountered issues with using only the Llama website data, which consisted 1980+ RAFT examples generated from 327K characters text. We believed that this initial data was insufficient, so we created an additional PyTorch RAFT dataset using text from official [Pytorch blogs](https://pytorch.org/blog/) and [Pytorch tutorials](https://pytorch.org/tutorials/). This new dataset contains 20K+ RAFT examples generated from 4.7 million characters. We combined both datasets to create an `all_data` dataset. We then fine-tuned the 8B model on each dataset separately for 1 epoch with a learning rate of 1e-5, resulting in three RAFT models: `llama_only`, `pytorch_only`, and `all_data`.
 
-Here are the LLM_as_judge results:
+**Evaluation on non-RAG baseline**
+
+First we run a non-RAG baseline, just using Meta Llama 3 8B Instruct and Meta Llama 3 70B Instruct model to see if our model can already answers some questions without any fine-tuning and external knowledge base. The LLM score, the percentage of correctness marked by LLM_as_judge, for 8B is 47.9% and 70B is 59.2%. Clearly, there are some information that has been pretrained into our Meta Llama 3 models.
+
+**Evaluation on RAG baseline**
+
+Then we tested these 3 RAFT models with Langchain RAG, along with the Meta Llama 3 8B Instruct and Meta Llama 3 70B Instruct RAG baselines, using the RAG document top-k retrieve parameters of 3, 5, and 7. We deployed a Meta Llama 70B Instruct model as the judge to score our model-generated answers against the ground truth in our evaluation set. The LLM scores are shown below:
+
 
 ![RAFT LLM_score comparison](images/LLM_score_comparison.png)
 
-From the result, we noticed that RAFT models are performing very similarly to 8B baseline, noticeably worse than 70B baseline when context documents are limited (top_k <=5), but then RAFT models performs much better when top_k = 7, specially all_data 8B model already outperform 70B baseline (76.06% vs 74.65%).
+Our results showed that RAFT models performed similarly to the 8B RAG baseline, but noticeably worse than the 70B RAG baseline when context documents were limited (top_k <= 5). However, when top_k = 7, the RAFT models performance suddenly increase, with the `all_data` 8B model achieving a score of 76.06% which beats the 70B baseline's 74.65%.
 
-Taking closer look at the number of refusal examples (when model saying “I do not know”). The all_data model is more cautious and tends to refuse to answer, where Llama_only_RAFT did not learn to refuse at all, because the Llama_only dataset only has 1980+ examples.
+**Refusal Examples**
+
+We also analyzed the number of refusal examples, where the model responded with "Sorry, I do not know." The `all_data` model was more cautious and tended to refuse to answer, whereas the `llama_only` RAFT model did not learn to refuse at all, likely due to the limited dataset size.
 
 ![Num of refusal comparison](images/Num_of_refusal_comparison.png)
 
-We created a graph that shows the precision of our model answer, eg. when our RAFT model decides to answer, what is the likelihood of producing correct answers. Calculated by $\frac{LLMScore}{1-\frac{numRefusal}{totalQA}}$
+**Precision Analysis**
 
-Note that during our tests, the 8B and 70B baseline never refused to answer, so the precision of those models is the same as the LLM_score. We noticed that our RAFT models tend to refuse to answer when the provided documents are limited (top_k < 5), but if it decided to generate an answer, the likelyhood of being correct is higher. Specifically, when top_k =7, the all_data raft model has 82.97% likelihood of producing a correct answer when it decides to answer, far better than the 70B baseline of 74.65%.
+We calculated the precision of our model answers, which represents the likelihood of producing correct answers when the model decides to respond. The formula used was $\frac{LLMScore}{1-\frac{numRefusal}{totalQA}}$.
 
 ![Answers Precision](images/Answers_Precision.png)
 
-Here are some examples where our all_data RAFT can correctly answer while 70B failed:
+Note that the 8B and 70B RAG baselines never refused to answer, so their precision was equivalent to their LLM_score. Our `all_data` and `pytorch_only` models tended to refuse to answer when provided documents were limited (top_k < 5), but when they did generate an answer, the likelihood of it being correct was higher. Specifically, when top_k = 7, the `all_data` RAFT model had an 82.97% likelihood of producing a correct answer when it decided to respond, outperforming the 70B baseline.
+
+**Example Comparisons**
+
+Here are some examples where our `all_data` RAFT model correctly answered questions that the 70B baseline failed to answer:
+
 ```
 Comparing interested question: What tokenizer is used as the basis for the special tokens in Meta Llama
 ground_truth:  tiktoken
@@ -211,23 +213,29 @@ False 70B_RAG_answers: <ANSWER>: The tokenizer used as the basis for the special
 ```
 Comparing interested question: What is the license under which the Llama Guard model and its weights are released?
 groud_truth:  The license is the same as Llama 3, which can be found in the LICENSE file and is accompanied by the Acceptable Use Policy.
-True raft-8b_RAG_answers: <ANSWER>: The license under which the Llama Guard model and its weights are released is the same as Llama 3, and the [LICENSE](../LICENSE) file contains more information about the license.
+True all_data_RAG_answers: <ANSWER>: The license under which the Llama Guard model and its weights are released is the same as Llama 3, and the [LICENSE](../LICENSE) file contains more information about the license.
 False 70B_RAG_answers: <ANSWER>: The Llama Guard model and its weights are licensed under the Llama 2 Community license.
 ```
 
-Some learnings from these experiments:
-1.Few thousands of RAFT examples did not yield a great result. From our experiments, above 10K RAFT examples is needed.
-2.The LLM_as_judge is not always reliable, we noticed that some answers have been scored incorrectly.
-3.The chunk_size for RAFT documents chunk and RAG document chunk should be the same.
-4.RAFT method seems to help the LLM to differentiate the related documents from distractors rather than force the LLM to memorize the training data as we used Pytorch data as additional data to help our Llama chatbot to answer Llama questions. More research experiments will be needed to understand more about this.
+**Key Takeaways**
 
+From our experiments, we learned:
 
-## Local inference steps
+1. Few thousand RAFT examples are insufficient, and at least 10K examples are recommended.
+2. The LLM_as_judge is not always reliable, and we noticed there are chances that answers were scored incorrectly.
+3. The chunk_size for RAFT documents and RAG documents should be the same.
+4. The RAFT method appears to help the LLM differentiate related documents from distractors rather than forcing it to memorize the training data, as we used Pytorch data as additional data to help our Llama chatbot to answer Llama questions. More research experiments will be needed to understand more about this.
 
-Once we believe our RAFT model has passed our evaluation and we can deploy it locally to play with it by manually asking questions. We can do this by
+## Local Inference Steps
+
+Once we evaluated and refined our RAFT model, we can deploy it locally to interact with it by asking questions manually. To do this, run the following command:
 
 ```bash
 python recipes/inference/local_inference/inference.py --model_name raft-8b
 ```
 
-Lastly, special thanks to the first author of RAFT paper Tianjun Zhang to work together with us on this tutorial and provide many guidance during our experiments.
+For more details,please check [local_inference recipe](../../../inference/local_inference/README.md)
+
+## Acknowledgements
+
+Finally, we would like to extend special thanks to Tianjun Zhang, the first author of the [RAFT paper](https://arxiv.org/pdf/2403.10131), for collaborating with us on this tutorial and providing valuable guidance throughout our experiments. Our code is also partially inspired by the [RAFT section in Gorilla github](https://github.com/ShishirPatil/gorilla/tree/main/raft).

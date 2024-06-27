@@ -15,7 +15,6 @@ from langchain_community.document_loaders import DirectoryLoader
 import re
 import string
 import pandas as pd 
-from langchain.retrievers.document_compressors import FlashrankRerank
 
 
 def generate_answers_model_only(model_name,question_list,api_url="http://localhost:8000/v1",key="EMPTY"):
@@ -73,7 +72,6 @@ def generate_answers_with_RAG(model_name, question_list,api_config,retriever,api
     if api_url_overwrite:
         api_url = api_url_overwrite
     key = api_config['api_key']
-    rerank_topk = api_config["rerank_topk"]
     # Load the RAFT model
     llm = ChatOpenAI(
         openai_api_key=key,
@@ -86,11 +84,7 @@ def generate_answers_with_RAG(model_name, question_list,api_config,retriever,api
     for q in question_list:
         # retrive the top K documents
         retrieved_docs = retriever.invoke(q)        
-        if rerank_topk:
-            ranker = FlashrankRerank(top_n=rerank_topk)
-            documents = ranker.compress_documents(retrieved_docs,q)
         # format the documents into a string
-
         documents = format_docs_raft(retrieved_docs)
         # create a prompt
         text = api_config["RAG_prompt_template"].format(context=documents,question=q)
@@ -149,17 +143,6 @@ def exact_match_score(prediction, ground_truth):
         if (normalize_answer(pred) == normalize_answer(gold)):
             num_match += 1
     return num_match/len(ground_truth)
-def compute_bert_score(generated : list, reference: list):
-    bertscore = evaluate.load("bertscore")
-    score = bertscore.compute(
-        predictions=generated,
-        references=reference,
-        lang="en"
-    )
-    f1 = score["f1"]
-    precision = score["precision"]
-    recall = score["recall"]
-    return sum(precision)/len(precision), sum(recall)/len(recall), sum(f1)/len(f1)
 def compute_judge_score(questions: list, generated : list, reference: list, api_config,api_url="http://localhost:8001/v1",key="EMPTY"):
     correct_num = 0
     model_name = "meta-llama/Meta-Llama-3-70B-Instruct"
@@ -177,13 +160,10 @@ def compute_judge_score(questions: list, generated : list, reference: list, api_
     judge_responses = ["YES" in item.content for item in judge_responses]
     correct_num = sum(judge_responses)
     return correct_num/len(questions),judge_responses
-def score_single(api_config,generated,reference,questions, run_exact_match=True,run_rouge=True, run_bert=False, run_llm_as_judge=True):
+def score_single(api_config,generated,reference,questions, run_exact_match=True,run_rouge=True, run_llm_as_judge=True):
     # set metric to default -1, means no metric is computed
     metric = {
         "Rouge_score": -1,
-        "BERTScore_Precision": -1,
-        "BERTScore_Recall": -1,
-        "BERTScore_F1": -1,
         "LLM_judge_score": -1,
         "Exact_match": -1
     }
@@ -191,12 +171,6 @@ def score_single(api_config,generated,reference,questions, run_exact_match=True,
         rouge_score = compute_rouge_score(generated,reference)
         metric["Rouge_score"] = rouge_score
         print("Rouge_score:",rouge_score)
-    if run_bert:
-        P, R, F1 = compute_bert_score(generated,reference)
-        print(f"BERTScore Precision: {P:.4f}, Recall: {R:.4f}, F1: {F1:.4f}")
-        metric["BERTScore_Precision"] = P
-        metric["BERTScore_Recall"] = R
-        metric["BERTScore_F1"] = F1
     if api_config["judge_endpoint_url"] and run_llm_as_judge:
         api_url = api_config["judge_endpoint_url"]
         LLM_judge_score,judge_responses = compute_judge_score(questions, generated, reference, api_config,api_url=api_url)
@@ -235,8 +209,8 @@ def main(api_config):
         print("Finished generating answers for ", model_name)
         large_model_name = "meta-llama/Meta-Llama-3-70B-Instruct"
         large_api_url = api_config["judge_endpoint_url"]
-        #generated_answers["70B_Base"] = generate_answers_model_only(large_model_name,questions,large_api_url)
-        #generated_answers["70B_RAG"] = generate_answers_with_RAG(large_model_name, questions,api_config,retriever,large_api_url)
+        generated_answers["70B_Base"] = generate_answers_model_only(large_model_name,questions,large_api_url)
+        generated_answers["70B_RAG"] = generate_answers_with_RAG(large_model_name, questions,api_config,retriever,large_api_url)
         print("Finished generating answers for ", large_model_name)
         logging.info(f"Successfully generated {len(generated_answers[model_name+'_RAG'])} answers for all models.")
         # for generate answer from each model, compute the score metric
@@ -252,7 +226,6 @@ def main(api_config):
             with open(output_file,"a") as fp:
                 fp.write(f"Eval_result for {model_name} \n")
                 fp.write(f"Rouge_score: {metric['Rouge_score']} \n")
-                fp.write(f"BERTScore Precision: {metric['BERTScore_Precision']:.4f}, Recall: {metric['BERTScore_Recall']:.4f}, F1: {metric['BERTScore_F1']:.4f} \n")
                 fp.write(f"Exact_match_percentage: {metric['Exact_match']} \n")
                 judge_responses = ["None"] * len(questions)
                 if api_config["judge_endpoint_url"]:
@@ -341,12 +314,6 @@ def parse_arguments():
         type=int,
         help="set the number of top k documents the RAG needs to retrive."
     )
-    parser.add_argument(
-        "--rerank_topk",
-        default=0,
-        type=int,
-        help="set the number of top k documents the reranker needs to retrive."
-    )
     parser.add_argument("--chunk_size", type=int, default=1000, help="The character size of each chunk used in RAG")
     return parser.parse_args()
 
@@ -364,9 +331,6 @@ if __name__ == "__main__":
     api_config["api_key"] = args.api_key
     api_config["chunk_size"] = args.chunk_size
     api_config["rag_topk"] = args.rag_topk
-    api_config["rerank_topk"] = args.rerank_topk
-    if api_config["rag_topk"] < api_config["rerank_topk"]:
-        logging.error("The rerank_topk should be smaller than rag_topk.")
     if api_config["judge_endpoint_url"]:
         logging.info(f"The judge model url is: '{args.judge_endpoint_url}'.")
     main(api_config)
