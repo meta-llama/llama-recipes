@@ -8,4 +8,4 @@ Meta Llama Guard and Meta Llama Guard 2 are new models that provide input and ou
 The [llama_guard](llama_guard) folder contains the inference script to run Meta Llama Guard locally. Add test prompts directly to the [inference script](llama_guard/inference.py) before running it.
 
 ### Running on the cloud
-The notebooks [Purple_Llama_Anyscale](Purple_Llama_Anyscale.ipynb) & [Purple_Llama_OctoAI](Purple_Llama_Octoai.ipynb) contain examples for running Meta Llama Guard on cloud hosted endpoints.
+The notebooks [Purple_Llama_Anyscale](Purple_Llama_Anyscale.ipynb) & [Purple_Llama_OctoAI](Purple_Llama_OctoAi.ipynb) contain examples for running Meta Llama Guard on cloud hosted endpoints.
