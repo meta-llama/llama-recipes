@@ -22,6 +22,7 @@ If you are new to developing with Meta Llama models, this is where you should st
 | Hybrid Sharded Data Parallel (HSDP)            | ✅ |
 | Dataset packing & padding                      | ✅ |
 | BF16 Optimizer ( Pure BF16)                    | ✅ |
+| Profiling & MFU tracking                       | ✅ |
 | Gradient accumulation                          | ✅ |
 | CPU offloading                                 | ✅ |
 | FSDP checkpoint conversion to HF for inference | ✅ |
