@@ -7,7 +7,7 @@ We support benchmark on these serving framework:
 
 # vLLM - Getting Started
 
-To get started, we first need to deploy containers on-prem as a API host. Follow the guidance [here](../../../../recipes/3p_integration/llama_on_prem.md#setting-up-vllm-with-llama-3) to deploy vLLM on-prem.
+To get started, we first need to deploy containers on-prem as a API host. Follow the guidance [here](../../../../recipes/3p_integrations/llama_on_prem.md#setting-up-vllm-with-llama-3) to deploy vLLM on-prem.
 
 Note that in common scenario which overall throughput is important, we suggest you prioritize deploying as many model replicas as possible to reach higher overall throughput and request-per-second (RPS), comparing to deploy one model container among multiple GPUs for model parallelism. Additionally, as deploying multiple model replicas, there is a need for a higher level wrapper to handle the load balancing which here has been simulated in the benchmark scripts.
 For example, we have an instance from Azure that has 8xA100 80G GPUs, and we want to deploy the Meta Llama 3 70B instruct model, which is around 140GB with FP16. So for deployment we can do:

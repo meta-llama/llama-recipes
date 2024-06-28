@@ -137,7 +137,7 @@ Contains examples are organized in folders by topic:
 |---|---|
 [quickstart](./recipes/quickstart) | The "Hello World" of using Llama, start here if you are new to using Llama.
 [use_cases](./recipes/use_cases)|Scripts showing common applications of Meta Llama3
-[3p_integration](./recipes/3p_integration)|Partner owned folder showing common applications of Meta Llama3
+[3p_integrations](./recipes/3p_integrations)|Partner owned folder showing common applications of Meta Llama3
 [responsible_ai](./recipes/responsible_ai)|Scripts to use PurpleLlama for safeguarding model outputs
 
 ### `src/`
