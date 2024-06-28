@@ -14,7 +14,7 @@ These methods will address three aspects:
 
 - **Cost of deployment** – for each fine-tuned downstream model we need to deploy a separate model; however, when using these methods, only a small set of parameters (few MB instead of several GBs) of the pretrained model can do the job. In this case, for each task we only add these extra parameters on top of the pretrained model so pretrained models can be assumed as backbone and these parameters as heads for the model on different tasks.
 
-- **Catastrophic forgetting** — these methods also help with forgetting the first task that can happen in fine-tuning.
+- **Catastrophic forgetting** — these methods also help with forgetting the first task that can happen in finetuning.
 
 HF [PEFT](https://github.com/huggingface/peft) library provides an easy way of using these methods which we make use of here. Please read more [here](https://huggingface.co/blog/peft).
 
@@ -35,9 +35,9 @@ Full parameter fine-tuning has its own advantages, in this method there are mult
 You can also keep most of the layers frozen and only fine-tune a few layers. There are many different techniques to choose from to freeze/unfreeze layers based on different criteria.
 
 <div style="display: flex;">
-    <img src="./img/feature_based_fn.png" alt="Image 1" width="250" />
-    <img src="./img/feature_based_fn_2.png" alt="Image 2" width="250" />
-    <img src="./img/full_param_fn.png" alt="Image 3" width="250" />
+    <img src="../../docs/img/feature_based_fn.png" alt="Image 1" width="250" />
+    <img src="../../docs/img/feature_based_fn_2.png" alt="Image 2" width="250" />
+    <img src="../../docs/img/full_param_fn.png" alt="Image 3" width="250" />
 </div>
 
 
