@@ -8,7 +8,7 @@ In response to this demand, we're exploring the possibility of building a Llama 
 
 To build a Llama bot, we need to collect relevant text data. Ideally, we would include a vast range of Llama-related web documents, but for demo purposes, we'll focus on official documents. For example, we can use the raw text from official web pages listed in [Getting started with Meta Llama](https://llama.meta.com/get-started/), excluding the FAQ page since some evaluation questions will come from there.
 
-We have two options to obtain the text data: using a local folder or web crawling. For the local folder option, we can download the desired documents in PDF, Text, or Markdown format to the "data" folder specified in the [raft.yaml](./raft.yaml) file.
+We have two options to obtain the text data: using a local folder or web crawling. For the local folder option, we can download the desired documents in PDF, Text, or Markdown format to the "data" folder specified in the [raft.yaml](./raft.yaml) file. Langchain DirectoryLoader will load files in that folder, but it may also ask us to install more package dependency if the files formats are not supported natively.
 
 Alternatively, we can create a sitemap XML file, similar to the example below, and put the file path in the [raft.yaml](./raft.yaml) file, so eventually a Langchain SitemapLoader can retrieve all the text from the web pages.
 

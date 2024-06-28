@@ -19,10 +19,12 @@ chardet
 openai
 typing-extensions==4.8.0
 tabulate
-aiofiles
 evaluate
 rouge_score
 pyyaml==6.0.1
 faiss-gpu
 unstructured[pdf]
 langchain_openai
+langchain
+langchain_community
+sentence_transformers
