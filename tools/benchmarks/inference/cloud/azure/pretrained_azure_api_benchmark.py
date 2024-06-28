@@ -11,7 +11,7 @@ import transformers
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Tuple, List
 
-# Predefined inputs
+# Predefined inputs - optional
 with open('input.jsonl') as input:
     prompt_data = json.load(input)
 
@@ -23,7 +23,7 @@ CONCURRENT_LEVELS = params["CONCURRENT_LEVELS"]
 # Threshold for tokens per second below which we deem the query to be slow
 THRESHOLD_TPS = params["THRESHOLD_TPS"] 
 # Default Llama 2 tokenizer, replace with your own tokenizer 
-TOKENIZER_PATH = params["TOKENIZER_PATH"]
+MODEL_PATH = params["MODEL_PATH"]
 RANDOM_PROMPT_LENGTH = params["RANDOM_PROMPT_LENGTH"]
 TEMPERATURE = params["TEMPERATURE"]
 TOP_P = params["TOP_P"]
@@ -32,8 +32,8 @@ MODEL_ENDPOINTS = params["MODEL_ENDPOINTS"]
 API_KEY = params["API_KEY"]
 
 
-# This tokenizer is downloaded from Azure model catalog for each specific models. The main purpose is to decode the reponses for token calculation
-tokenizer = transformers.AutoTokenizer.from_pretrained(TOKENIZER_PATH)
+# This tokenizer is downloaded from huggingface based on MODEL_PATH. Llama 3 use tiktoken tokenizer which is different from Llama 2.
+tokenizer = transformers.AutoTokenizer.from_pretrained(MODEL_PATH)
 
 # Select vocabulary that is longer than 2 tokens (closer to real words) and close to the English (not foolproof)
 vocab = [token for token in tokenizer.get_vocab().keys() if len(token) > 2 and all(ord(c) < 128 for c in token)]

@@ -10,6 +10,7 @@ import transformers
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Tuple, List
 
+# Add your own prompt in input.jsonl for testing.
 with open('input.jsonl') as input:
     prompt_data = json.load(input)
 
@@ -23,8 +24,7 @@ MAX_NEW_TOKEN = params["MAX_NEW_TOKEN"]
 CONCURRENT_LEVELS = params["CONCURRENT_LEVELS"]
 # Threshold for tokens per second below which we deem the query to be slow
 THRESHOLD_TPS = params["THRESHOLD_TPS"] 
-# Default Llama 2 tokenizer, replace with your own tokenizer 
-TOKENIZER_PATH = params["TOKENIZER_PATH"] 
+MODEL_PATH = params["MODEL_PATH"]
 TEMPERATURE = params["TEMPERATURE"]
 TOP_P = params["TOP_P"]
 # Model endpoint provided with API provider 
@@ -32,13 +32,11 @@ MODEL_ENDPOINTS = params["MODEL_ENDPOINTS"]
 API_KEY = params["API_KEY"]
 SYS_PROMPT = params["SYS_PROMPT"]
 
-
-# This tokenizer is downloaded from Azure model catalog for each specific models. The main purpose is to decode the reponses for token calculation
-tokenizer = transformers.AutoTokenizer.from_pretrained(TOKENIZER_PATH)
+# This tokenizer is downloaded from huggingface based on MODEL_PATH. Llama 3 use tiktoken tokenizer which is different from Llama 2.
+tokenizer = transformers.AutoTokenizer.from_pretrained(MODEL_PATH)
 
 num_token_input_prompt = len(tokenizer.encode(PROMPT))
 print(f"Number of token for input prompt: {num_token_input_prompt}")
-
 
 def generate_text() -> Tuple[int, int]:
 
@@ -49,7 +47,7 @@ def generate_text() -> Tuple[int, int]:
             "max_tokens": MAX_NEW_TOKEN,
             "temperature": TEMPERATURE,
             "top_p" : TOP_P,
-            "stream": "False"
+            "stream": False
     }
     body = str.encode(json.dumps(payload))
     url = MODEL_ENDPOINTS

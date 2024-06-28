@@ -13,13 +13,18 @@ To get started, there are certain steps we need to take to deploy the models:
 * Take a quick look on what is the [Azure AI Studio](https://learn.microsoft.com/en-us/azure/ai-studio/what-is-ai-studio?tabs=home) and navigate to the website from the link in the article
 * Follow the demos in the article to create a project and [resource](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal) group, or you can also follow the guide [here](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/deploy-models-llama?tabs=azure-studio)
 * Select Llama models from Model catalog
-* Deploy with "Pay-as-you-go"
+* Click the "Deploy" button
+* Select Serverless API with Azure AI Content Safety. Note that currently this API service is offered for Llama 2 pretrained model, chat model and Llama 3 instruct model
+* Select the project you created in previous step
+* Choose a deployment name then Go to deployment
 
 Once deployed successfully, you should be assigned for an API endpoint and a security key for inference.
 For more information, you should consult Azure's official documentation [here](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/deploy-models-llama?tabs=azure-studio) for model deployment and inference.
 
 Now, replace the endpoint url and API key in ```azure/parameters.json```. For parameter `MODEL_ENDPOINTS`, with chat models the suffix should be `v1/chat/completions` and with pretrained models the suffix should be `v1/completions`.
-Note that the API endpoint might implemented a rate limit for token generation in certain amount of time. If you encountered the error, you can try reduce `MAX_NEW_TOKEN` or start with smaller `CONCURRENT_LEVELs`.
+Note that the API endpoint might implemented a rate limit for token generation in certain amount of time. If you encountered the error, you can try reduce `MAX_NEW_TOKEN` or start with smaller `CONCURRENT_LEVELS`.
+
+For `MODEL_PATH`, copy the model path from Huggingface under meta-llama organization. For Llama 2, make sure you copy the path of the model with hf format. This model path is used to retrieve corresponding tokenizer for your model of choice. Llama 3 used a different tokenizer compare to Llama 2.
 
 Once everything configured, to run chat model benchmark:
 ```python chat_azure_api_benchmark.py```

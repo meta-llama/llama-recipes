@@ -18,7 +18,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.ai.contentsafety.models import AnalyzeTextOptions
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Dict, Tuple, List
+from typing import Tuple, List
 
 
 # Predefined inputs
