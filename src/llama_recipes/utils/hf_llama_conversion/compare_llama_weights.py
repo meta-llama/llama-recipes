@@ -28,23 +28,25 @@ def main() -> None:
         assert len(one) == len(
             two
         ), "shard should have the same length: {} != {}".format(len(one), len(two))
+        one = sorted(one.items(), key=lambda x: x[0])
+        two = sorted(two.items(), key=lambda x: x[0])
 
-        for _, (v, w) in enumerate(zip(one.items(), two.items())):
+        for _, (v, w) in enumerate(zip(one, two)):
             assert v[0] == w[0], "{} != {}".format(v[0], w[0])
             assert v[1].shape == w[1].shape, "tensor {} shape {} != {}".format(
                 v[0], v[1].shape, w[1].shape
             )
 
             delta = (v[1] - w[1]).abs().max().item()
-            deltas.append((i, v[0], delta))
+            deltas.append((i, v[0], delta, w[1].abs().mean().item()))
         del one
         del two
         gc.collect()
 
-    deltas = sorted(deltas, key=lambda x: x[-1], reverse=True)
+    deltas = sorted(deltas, key=lambda x: x[-2], reverse=True)
     print("Top 10 largest deltas:")
-    for i, k, v in deltas[:10]:
-        print(f"  shard {i} {k}: {v}")
+    for i, k, delta, value in deltas[:10]:
+        print(f"  shard {i} {k}: {delta} vs {value}")
 
 
 if __name__ == "__main__":
