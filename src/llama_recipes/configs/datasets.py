@@ -29,6 +29,6 @@ class alpaca_dataset:
 @dataclass
 class custom_dataset:
     dataset: str = "custom_dataset"
-    file: str = "examples/custom_dataset.py"
+    file: str = "recipes/quickstart/finetuning/datasets/custom_dataset.py"
     train_split: str = "train"
     test_split: str = "validation"
