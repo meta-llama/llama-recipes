@@ -1,8 +1,6 @@
-# Quickstart Agents
+# Quickstart Llama 3 Powered Agent Examples Ported from DeepLearning.ai Short Courses
 
-This folder shows how to use Llama 3 and popular open source frameworks (LangChain, LlamaIndex, AutoGen) to quickly build Llama powered agent apps.
-
-The following notebooks are ported from the agents short courses on [Deeplearning.ai](https://www.deeplearning.ai), all powered by Llama 3.
+The notebooks in this folder are ported from the 4 recent agent short courses on [Deeplearning.ai](https://www.deeplearning.ai) to use Llama 3 with open source frameworks (LangChain, LlamaIndex, AutoGen) to build agent apps.
 
 1. [Functions Tools and Agents with LangChain L1 Function Calling](Functions_Tools_and_Agents_with_LangChain_L1_Function_Calling.ipynb)
 
