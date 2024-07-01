@@ -4,5 +4,5 @@ This folder contains example scripts showcasing the use of Meta Llama with popul
 
 Each folder is maintained by the platform-owner. 
 
-[!NOTE]
-If you'd like to add your platform here, please open a new issue with details of your contribution.
+> [!NOTE]
+> If you'd like to add your platform here, please open a new issue with details of your contribution.
