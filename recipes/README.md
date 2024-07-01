@@ -8,4 +8,4 @@ This folder contains examples organized by topic:
 [use_cases](./use_cases)|Scripts showing common applications of Llama 3
 [3p_integrations](./3p_integrations)|Partner-owned folder showing Meta Llama 3 usage along with third-party tools 
 [responsible_ai](./responsible_ai)|Scripts to use PurpleLlama for safeguarding model outputs
-[experimental]|Meta Llama implementations of experimental LLM techniques
+[experimental](./experimental)|Meta Llama implementations of experimental LLM techniques
