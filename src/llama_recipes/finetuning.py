@@ -49,6 +49,10 @@ from llama_recipes.utils.train_utils import (
 )
 from accelerate.utils import is_xpu_available
 
+if is_xpu_available():
+    import intel_extension_for_pytorch
+    import oneccl_bindings_for_pytorch
+
 def setup_wandb(train_config, fsdp_config, **kwargs):
     try:
         import wandb
@@ -178,7 +182,7 @@ def main(**kwargs):
 
         device_id = 0
         if is_xpu_available():
-            device_id = torch.xpu.current_device()
+            device_id = torch.device(f"xpu:{local_rank}")
         elif torch.cuda.is_available():
             device_id = torch.cuda.current_device()
 
@@ -192,14 +196,15 @@ def main(**kwargs):
             device_id=device_id,
             limit_all_gathers=True,
             sync_module_states=train_config.low_cpu_fsdp,
-            param_init_fn=(lambda module: module.to_empty(device=torch.device("cuda"), recurse=False))
+            param_init_fn=lambda module: \
+                module.to_empty(device=torch.device("xpu") if is_xpu_available() else torch.device("cuda"), recurse=False)
             if train_config.low_cpu_fsdp and rank != 0 else None,
         )
         if fsdp_config.fsdp_activation_checkpointing:
             apply_fsdp_checkpointing(model)
     elif not train_config.quantization and not train_config.enable_fsdp:
         if is_xpu_available():
-            model.to("xpu:0")
+            model.to("xpu")
         elif torch.cuda.is_available():
             model.to("cuda")
 

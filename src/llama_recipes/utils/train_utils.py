@@ -19,12 +19,16 @@ from tqdm import tqdm
 from transformers import LlamaTokenizer
 import json
 
-
 from llama_recipes.model_checkpointing import save_model_checkpoint, save_model_and_optimizer_sharded, save_optimizer_checkpoint
 from llama_recipes.policies import fpSixteen,bfSixteen, get_llama_wrapper
 from llama_recipes.utils.memory_utils import MemoryTrace
 from accelerate.utils import is_xpu_available, is_ccl_available
 from llama_recipes.utils.flop_utils import FlopMeasure
+
+if is_xpu_available():
+    import intel_extension_for_pytorch
+    import oneccl_bindings_for_pytorch
+
 def set_tokenizer_params(tokenizer: LlamaTokenizer):
     tokenizer.pad_token_id = 0
     tokenizer.padding_side = "left"
@@ -89,13 +93,18 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
     if train_config.use_fp16 and train_config.enable_fsdp:
         scaler = ShardedGradScaler()
     elif train_config.use_fp16 and not train_config.enable_fsdp:
+        if is_xpu_available:
+          raise NotImplementedError("amp.GradScaler() is not supported on XPU backend")
         scaler = torch.cuda.amp.GradScaler()
     if train_config.enable_fsdp:
         world_size = int(os.environ["WORLD_SIZE"])
 
 
+    if is_xpu_available():
+        autocast = torch.xpu.amp.autocast if train_config.use_fp16 else nullcontext
+    else:
+        autocast = torch.cuda.amp.autocast if train_config.use_fp16 else nullcontext
 
-    autocast = torch.cuda.amp.autocast if train_config.use_fp16 else nullcontext
     train_prep = []
     train_loss = []
     val_prep = []
@@ -342,7 +351,10 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb
                 break
             for key in batch.keys():
                 if train_config.enable_fsdp:
-                    batch[key] = batch[key].to(local_rank)
+                    if is_xpu_available():
+                        batch[key] = batch[key].to(torch.device(f"xpu:{local_rank}"))
+                    else:
+                        batch[key] = batch[key].to(local_rank)
                 else:
                     if is_xpu_available():
                         batch[key] = batch[key].to('xpu:0')
@@ -435,7 +447,7 @@ def clear_gpu_cache(rank=None):
     if rank == 0:
         print(f"Clearing GPU cache for all ranks")
     if is_xpu_available():
-        torch.xpu_empty_cache()
+        torch.xpu.empty_cache()
     else:
         torch.cuda.empty_cache()
 
