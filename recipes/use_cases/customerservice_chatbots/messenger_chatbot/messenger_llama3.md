@@ -2,7 +2,7 @@
 
 This step-by-step tutorial shows the complete process of building a Llama-enabled Messenger chatbot. A demo video of using the iOS Messenger app to send a question to a Facebook business page and receive the Llama 3 generated answer is [here](https://drive.google.com/file/d/1B4ijFH4X3jEHZfkGdTPmdsgpUes_RNud/view).
 
-If you're interested in a Llama 3 enabled WhatsApp chatbot, see [here](../whatsapp_llama/whatsapp_llama3.md) for a tutorial.
+If you're interested in a Llama 3 enabled WhatsApp chatbot, see [here](../whatsapp_chatbot/whatsapp_llama3.md) for a tutorial.
 
 ## Overview
 
@@ -16,7 +16,7 @@ The diagram below shows the components and overall data flow of the Llama 3 enab
 
 1. A Facebook Page is required to send and receive messages using the Messenger Platform - see [here](https://www.facebook.com/business/help/461775097570076?id=939256796236247) for details about Facebook Pages and how to create a new page.
 
-2. If you have followed the [Llama WhatsApp chatbot tutorial](../whatsapp_llama/whatsapp_llama3.md), or if you already have a Meta developer account and a business app, then you can skip this step. Otherwise, you need to first [create a Meta developer account](https://developers.facebook.com/) and then [create a business app](https://developers.facebook.com/docs/development/create-an-app/).
+2. If you have followed the [Llama WhatsApp chatbot tutorial](../whatsapp_chatbot/whatsapp_llama3.md), or if you already have a Meta developer account and a business app, then you can skip this step. Otherwise, you need to first [create a Meta developer account](https://developers.facebook.com/) and then [create a business app](https://developers.facebook.com/docs/development/create-an-app/).
 
 3. Add the Messenger product to your business app by going to your business app's Dashboard, click "Add Product" and then select "Messenger".
 
