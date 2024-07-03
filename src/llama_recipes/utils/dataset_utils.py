@@ -10,7 +10,8 @@ import torch
 from llama_recipes.datasets import (
     get_grammar_dataset,
     get_alpaca_dataset,
-    get_samsum_dataset)
+    get_samsum_dataset,
+    get_llamaguard_toxicchat_dataset)
 
 
 def load_module_from_py_file(py_file: str) -> object:
@@ -47,13 +48,12 @@ def get_custom_dataset(dataset_config, tokenizer, split: str):
         print(f"It seems like the given method name ({func_name}) is not present in the dataset .py file ({module_path.as_posix()}).")
         raise e
 
-
 DATASET_PREPROC = {
     "alpaca_dataset": partial(get_alpaca_dataset),
     "grammar_dataset": get_grammar_dataset,
     "samsum_dataset": get_samsum_dataset,
     "custom_dataset": get_custom_dataset,
-    "llamaguard_dataset": get_custom_dataset,
+    "llamaguard_toxicchat_dataset": get_llamaguard_toxicchat_dataset,
 }
 
 

@@ -6,99 +6,90 @@
 import copy
 import datasets
 import itertools
-
+from llama_recipes.inference.prompt_format_utils import  LLAMA_GUARD_2_CATEGORY
 
 B_INST, E_INST = "[INST]", "[/INST]"
 
-def tokenize_dialog(dialog, tokenizer):
-    if tokenizer.vocab_size >= 128000:
-        dialog_tokens = tokenizer.apply_chat_template(dialog)
-        dialog_tokens = dialog_tokens[:-4] # Remove generation prompt <|start_header_id|>assistant<|end_header_id|>\n\n
-        eot_indices = [i for i,n in enumerate(dialog_tokens) if n == 128009]
-        labels = copy.copy(dialog_tokens)
-        last_idx = 0
-        for n, idx in enumerate(eot_indices):
-            if n % 2 == 1:
-                last_idx = idx
-            else:
-                labels[last_idx:idx+1] = [-100] * (idx-last_idx+1)
+def tokenize_prompt_and_labels(full_prompt, tokenizer):
+        prompt_tokens = tokenizer.encode(full_prompt)
+        combined_tokens = {
+            "input_ids": list(prompt_tokens),
+            "labels": list(prompt_tokens)
+        }
+        return dict(combined_tokens, attention_mask=[1]*len(combined_tokens["input_ids"]))
+    
 
-        dialog_tokens = [dialog_tokens]
-        labels_tokens = [labels]
-    else:
-        prompt_tokens = [tokenizer.encode(f"{tokenizer.bos_token}{B_INST} {(prompt['content']).strip()} {E_INST}", add_special_tokens=False) for prompt in dialog[::2]]
-        answer_tokens = [tokenizer.encode(f"{answer['content'].strip()} {tokenizer.eos_token}", add_special_tokens=False) for answer in dialog[1::2]]
-        dialog_tokens = list(itertools.chain.from_iterable(zip(prompt_tokens, answer_tokens)))
+from llama_recipes.data.llama_guard.finetuning_data_formatter import TrainingExample, Guidelines, Category, LlamaGuardPromptConfigs, LlamaGuardGenerationConfigs, ExplanationPosition, AugmentationConfigs, FormatterConfigs, create_formatted_finetuning_examples
+from datasets import Dataset, DatasetInfo
 
-        #Add labels, convert prompt token to -100 in order to ignore in loss function
-        labels_tokens = [len(c)*[-100,] if i % 2 == 0 else c for i,c in enumerate(dialog_tokens)]
+#TODO Convert to training using toxic chat categories so that this is not necessary
+def mapTcCategoriesToLGCategories(TcCategories):
+      return ["01"]
 
-    combined_tokens = {
-        "input_ids": list(itertools.chain(*(t for t in dialog_tokens))),
-        "labels": list(itertools.chain(*(t for t in labels_tokens))),
-    }
-
-    return dict(combined_tokens, attention_mask=[1]*len(combined_tokens["input_ids"]))
-
-
-def get_custom_dataset(dataset_config, tokenizer, split):
+def get_llamaguard_toxicchat_dataset(dataset_config, tokenizer, split):
     dataset = datasets.load_dataset("lmsys/toxic-chat", 'toxicchat0124', split=split)
 
+    guidelines = Guidelines(
+        categories=LLAMA_GUARD_2_CATEGORY,
+        category_code_prefix="O")
+    
+    # Setting up configs
+    llama_guard_prompt_configs = LlamaGuardPromptConfigs(
+        instructions_format_string="""[INST] Task: Check if there is unsafe content in 'User' messages in conversations according our safety policy with the below categories.
+
+    <BEGIN UNSAFE CONTENT CATEGORIES>
+    {guidelines}
+    <END UNSAFE CONTENT CATEGORIES>
+
+    <BEGIN CONVERSATION>
+
+    {conversation}
+
+    <END CONVERSATION>
+
+    Provide your safety assessment for $agent_type in the above conversation:
+    - First line must read 'safe' or 'unsafe'.
+    - If unsafe, a second line must include a comma-separated list of violated categories. [/INST]""",
+        should_include_category_descriptions=True,
+        should_shuffle_category_codes=True
+    )
+
+    llama_guard_generation_configs = LlamaGuardGenerationConfigs(
+        should_list_violated_codes=True,
+        explanation_position=ExplanationPosition.AFTER_DECISION
+    )
+
+    augmentation_configs = AugmentationConfigs(
+        should_add_examples_with_dropped_nonviolated_prompt_categories=False,
+        should_add_examples_with_dropped_violated_and_nonviolated_prompt_categories=False,
+        explanation_for_augmentation_with_dropped_violated_and_nonviolated_prompt_categories="Response is safe because any riskiness in it is related to categories we're not trying to detect."
+    )
+
+    formatter_configs = FormatterConfigs(
+        guidelines=guidelines,
+        llama_guard_prompt_configs=llama_guard_prompt_configs,
+        llama_guard_generation_configs=llama_guard_generation_configs,
+        augmentation_configs=augmentation_configs,
+        random_seed=42
+    )
+
+    dataset = dataset.map(lambda x: {"full_prompt": create_formatted_finetuning_examples(
+        [TrainingExample(
+            prompt=x["user_input"],
+            response=None,
+            violated_category_codes = mapTcCategoriesToLGCategories(x["openai_moderation"]),
+            label="safe" if x["toxicity"]==0 else "unsafe",
+            explanation="The response contains violating information."
+        )],
+        formatter_configs)[0]}, 
+        remove_columns=list(dataset.features))
+    
     print(dataset)
+    print(dataset[0])
 
-    # THIS FUNCTION NEEDS TO RETURN DATA IN LLLAMAGUARD FORMAT
+    dataset = dataset.map(lambda x: tokenize_prompt_and_labels(x["full_prompt"], tokenizer), remove_columns=list(dataset.features))
 
-    dataset = dataset.map(lambda sample: {
-        "message_id": sample["message_id"],
-        "parent_id": sample["parent_id"],
-        "text": sample["text"],
-        },
-        batched=True,
-        remove_columns=list(dataset.features),)
-
-    nodes = {}
-
-    messages = {}
-    root_ids = []
-
-    for data in dataset:
-        if data["parent_id"]:
-            nodes[data["parent_id"]] = nodes.get(data["parent_id"], []) + [data["message_id"]]
-        else:
-            root_ids.append(data["message_id"])
-        messages[data["message_id"]]=data["text"]
-
-    def follow(thread, current_id):
-        thread = copy.copy(thread) + [messages[current_id]]
-        if current_id in nodes:
-            new_threads = []
-            for next_id in nodes[current_id]:
-                new_threads += follow(thread, next_id)
-            return new_threads
-        else:
-            return [thread]
-
-    def get_threads_from_root(root_id):
-        all_threads = []
-        thread = [messages[root_id]]
-        for cid in nodes[root_id]:
-            all_threads += follow(thread, cid)
-        return all_threads
-
-    dataset = dataset.filter(lambda x: x["message_id"] in root_ids)
-    dataset = dataset.map(lambda x: {"thread": get_threads_from_root(x["message_id"])}, remove_columns=list(dataset.features))
-    dataset = dataset.map(lambda x: {"thread": [i for row in x["thread"] for i in row]}, batched=True)
-
-    def to_dialog(thread):
-        dialog = []
-        for i, content in enumerate(thread):
-            dialog.append({
-                "role": "user" if i % 2 == 0 else "assistant",
-                "content": content,
-            })
-        return {"dialog": dialog}
-
-    dataset = dataset.map(lambda x: to_dialog(x["thread"]), remove_columns=list(dataset.features))
-    dataset = dataset.map(lambda x: tokenize_dialog(x["dialog"], tokenizer), remove_columns=list(dataset.features))
+    print(dataset)
+    print(dataset[0])
 
     return dataset

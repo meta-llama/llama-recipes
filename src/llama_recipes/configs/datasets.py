@@ -34,8 +34,7 @@ class custom_dataset:
     test_split: str = "validation"
 
 @dataclass
-class llamaguard_dataset:
-    dataset: str = "custom_dataset"
-    file: str = "" # This should be specified elsewhere
+class llamaguard_toxicchat_dataset:
+    dataset: str = "llamaguard_toxicchat_dataset"
     train_split: str = "train"
-    test_split: str = "validation"
+    test_split: str = "test"
