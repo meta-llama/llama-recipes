@@ -1,0 +1,9 @@
+groq
+sentence-transformers
+langchain_community
+scikit-learn
+numpy
+duckdb
+pyyaml
+sqlparse
+tabulate

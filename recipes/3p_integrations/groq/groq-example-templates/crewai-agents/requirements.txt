@@ -1,0 +1,3 @@
+crewai
+langchain_groq
+pandas

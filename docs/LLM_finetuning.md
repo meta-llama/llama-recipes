@@ -35,9 +35,9 @@ Full parameter fine-tuning has its own advantages, in this method there are mult
 You can also keep most of the layers frozen and only fine-tune a few layers. There are many different techniques to choose from to freeze/unfreeze layers based on different criteria.
 
 <div style="display: flex;">
-    <img src="./images/feature-based_FN.png" alt="Image 1" width="250" />
-    <img src="./images/feature-based_FN_2.png" alt="Image 2" width="250" />
-    <img src="./images/full-param-FN.png" alt="Image 3" width="250" />
+    <img src="./img/feature_based_fn.png" alt="Image 1" width="250" />
+    <img src="./img/feature_based_fn_2.png" alt="Image 2" width="250" />
+    <img src="./img/full_param_fn.png" alt="Image 3" width="250" />
 </div>
 
 
