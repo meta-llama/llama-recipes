@@ -1351,3 +1351,8 @@ Weaviate
 MediaGen
 SDXL
 SVD
+Agentic
+AutoGen
+DeepLearning
+Deeplearning
+Llamaindex
