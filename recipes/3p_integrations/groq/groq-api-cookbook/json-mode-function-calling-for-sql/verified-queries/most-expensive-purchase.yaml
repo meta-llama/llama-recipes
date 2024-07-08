@@ -1,0 +1,9 @@
+description: Employee with the most expensive purchase
+sql: |
+  SELECT employees.name AS employee_name,
+        MAX(amount) AS max_purchase_amount
+  FROM purchases.csv AS purchases
+  JOIN employees.csv AS employees ON purchases.employee_id = employees.employee_id
+  GROUP BY employees.name
+  ORDER BY max_purchase_amount DESC
+  LIMIT 1

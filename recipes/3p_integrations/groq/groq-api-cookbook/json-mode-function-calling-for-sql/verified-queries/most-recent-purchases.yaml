@@ -1,0 +1,11 @@
+description: Five most recent purchases
+sql: |
+  SELECT 
+         purchases.purchase_date,
+         purchases.product_name,
+         purchases.amount,
+         employees.name
+  FROM purchases.csv AS purchases
+  JOIN employees.csv AS employees ON purchases.employee_id = employees.employee_id
+  ORDER BY purchases.purchase_date DESC
+  LIMIT 5;

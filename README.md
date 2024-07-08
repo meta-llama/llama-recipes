@@ -136,14 +136,9 @@ Contains examples are organized in folders by topic:
 | Subfolder | Description |
 |---|---|
 [quickstart](./recipes/quickstart) | The "Hello World" of using Llama, start here if you are new to using Llama.
-[finetuning](./recipes/finetuning)|Scripts to finetune Llama on single-GPU and multi-GPU setups
-[inference](./recipes/inference)|Scripts to deploy Llama for inference locally and using model servers
 [use_cases](./recipes/use_cases)|Scripts showing common applications of Meta Llama3
+[3p_integrations](./recipes/3p_integrations)|Partner owned folder showing common applications of Meta Llama3
 [responsible_ai](./recipes/responsible_ai)|Scripts to use PurpleLlama for safeguarding model outputs
-[llama_api_providers](./recipes/llama_api_providers)|Scripts to run inference on Llama via hosted endpoints
-[benchmarks](./recipes/benchmarks)|Scripts to benchmark Llama models inference on various backends
-[code_llama](./recipes/code_llama)|Scripts to run inference with the Code Llama models
-[evaluation](./recipes/evaluation)|Scripts to evaluate fine-tuned Llama models using `lm-evaluation-harness` from `EleutherAI`
 
 ### `src/`
 
