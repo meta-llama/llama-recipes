@@ -6,7 +6,6 @@ import copy
 from datasets import load_dataset
 import itertools
 
-B_INST, E_INST = "[INST]", "[/INST]"
 # check system prompt token seq or user prompt token seq is in the current token list
 def check_header(targets,seq):
     for i in range(len(seq)-3):
