@@ -7,7 +7,7 @@ import torch
 from transformers import BitsAndBytesConfig
 
 @dataclass
-class quantizatio_config:
+class quantization_config:
     quant_type: str  # "int4" or "int8"
     compute_dtype: torch.dtype
     use_double_quant: bool = False
