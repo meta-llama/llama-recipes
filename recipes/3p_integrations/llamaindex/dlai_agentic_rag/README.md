@@ -2,7 +2,7 @@
 
 The folder here containts the Llama 3 ported notebooks of the DLAI short course [Building Agentic RAG with Llamaindex](https://www.deeplearning.ai/short-courses/building-agentic-rag-with-llamaindex/).
 
-1. [Building Agentic RAG with Llamaindex L1 Router Engine](../../../quickstart/agents/dlai/Building_Agentic_RAG_with_Llamaindex_L1_Router_Engine.ipynb)
+1. [Building Agentic RAG with Llamaindex L1 Router Engine](../../../quickstart/agents/dlai/Building_Agentic_RAG_with_Llamaindex_L1_Router_Engine.ipynb) Note this lesson 1 notebook is located in the `quickstart` folder and only notebooks for lessons 2-4 are located here.
 
 2. [Building Agentic RAG with Llamaindex L2 Tool Calling](Building_Agentic_RAG_with_Llamaindex_L2_Tool_Calling.ipynb)
 
