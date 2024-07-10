@@ -1352,6 +1352,11 @@ MediaGen
 SDXL
 SVD
 QLORA
+Agentic
+AutoGen
+DeepLearning
+Deeplearning
+Llamaindex
 KV
 KVs
 XSUM
@@ -1388,3 +1393,10 @@ LlamaChat
 chatbot's
 ConversationBufferWindowMemory
 chatbot's
+Lamini
+lamini
+nba
+sqlite
+customerservice
+fn
+ExecuTorch

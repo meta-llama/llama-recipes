@@ -11,7 +11,7 @@ HEADER = """# Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.\n\n"""
 
 #Files in black list must be relative to main repo folder
-BLACKLIST = ["eval/open_llm_leaderboard/hellaswag_utils.py"]
+BLACKLIST = ["tools/benchmarks/llm_eval_harness/open_llm_leaderboard/hellaswag_utils.py"]
 
 if __name__ == "__main__":
     for ext in ["*.py", "*.sh"]:
