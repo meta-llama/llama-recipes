@@ -101,7 +101,7 @@ def main(**kwargs):
             wandb_run = setup_wandb(train_config, fsdp_config, **kwargs)
     
     #setting quantization configs        
-    quant_config = quantizatio_config(
+    quant_config = quantization_config(
         quant_type=train_config.quantization,
         compute_dtype=torch.bfloat16,
         use_double_quant=True,
