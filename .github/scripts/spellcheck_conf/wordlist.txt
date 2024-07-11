@@ -1351,6 +1351,7 @@ Weaviate
 MediaGen
 SDXL
 SVD
+QLORA
 Agentic
 AutoGen
 DeepLearning
@@ -1399,6 +1400,8 @@ sqlite
 customerservice
 fn
 ExecuTorch
+nf
+quant
 DLAI
 agentic
 containts

@@ -2,7 +2,7 @@
 <!-- markdown-link-check-disable -->
 Meta Llama Guard is a language model that provides input and output guardrails for LLM inference. For more details and model cards, please visit the main repository for each model, [Meta Llama Guard](https://github.com/meta-llama/PurpleLlama/tree/main/Llama-Guard) and Meta [Llama Guard 2](https://github.com/meta-llama/PurpleLlama/tree/main/Llama-Guard2).
 
-This folder contains an example file to run inference with a locally hosted model, either using the Hugging Face Hub or a local path. 
+This folder contains an example file to run inference with a locally hosted model, either using the Hugging Face Hub or a local path.
 
 ## Requirements
 1. Access to Llama guard model weights on Hugging Face. To get access, follow the steps described [here](https://github.com/facebookresearch/PurpleLlama/tree/main/Llama-Guard#download)
@@ -10,7 +10,7 @@ This folder contains an example file to run inference with a locally hosted mode
 
 
 ## Llama Guard inference script
-For testing, you can add User or User/Agent interactions into the prompts list and the run the script to verify the results. When the conversation has one or more Agent responses, it's considered of type agent. 
+For testing, you can add User or User/Agent interactions into the prompts list and the run the script to verify the results. When the conversation has one or more Agent responses, it's considered of type agent.
 
 
 ```
@@ -66,7 +66,4 @@ In this case, the default categories are applied by the tokenizer, using the `ap
 
 Use this command for testing with a quantized Llama model, modifying the values accordingly:
 
-`python examples/inference.py --model_name <path_to_regular_llama_model> --prompt_file <path_to_prompt_file> --quantization --enable_llamaguard_content_safety`
-
-
-
+`python examples/inference.py --model_name <path_to_regular_llama_model> --prompt_file <path_to_prompt_file> --quantization 8bit --enable_llamaguard_content_safety`

@@ -17,10 +17,11 @@ To run the examples, make sure to install the llama-recipes package (See [README
 
 Get access to a machine with one GPU or if using a multi-GPU machine please make sure to only make one of them visible using `export CUDA_VISIBLE_DEVICES=GPU:id` and run the following. It runs by default with `samsum_dataset` for summarization application.
 
+**NOTE** To run the fine-tuning with `QLORA`, make sure to set `--peft_method lora` and `--quantization int4`.
 
 ```bash
 
-python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization --use_fp16 --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization 8bit --use_fp16 --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 ```
 The args used in the command above are:
@@ -51,16 +52,16 @@ to run with each of the datasets set the `dataset` flag in the command as shown 
 ```bash
 # grammer_dataset
 
-python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization  --dataset grammar_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization 8bit --dataset grammar_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 # alpaca_dataset
 
-python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization  --dataset alpaca_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization 8bit --dataset alpaca_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 
 # samsum_dataset
 
-python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization  --dataset samsum_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization 8bit --dataset samsum_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 ```
 

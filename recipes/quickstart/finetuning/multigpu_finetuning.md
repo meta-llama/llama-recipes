@@ -18,6 +18,14 @@ We will also need 2 packages:
 ## How to run it
 Get access to a machine with multiple GPUs (in this case we tested with 4 A100 and A10s).
 
+### With FSDP + QLORA
+
+This has been tested on 4 H100s GPUs.
+
+```bash
+ FSDP_CPU_RAM_EFFICIENT_LOADING=1 ACCELERATE_USE_FSDP=1 torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp  --quantization int4 --model_name /path_of_model_folder/70B  --mixed_precision False --low_cpu_fsdp --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model
+```
+
 ### With FSDP + PEFT
 
 <details open>

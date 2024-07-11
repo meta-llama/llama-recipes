@@ -35,7 +35,7 @@ class train_config:
     output_dir: str = "PATH/to/save/PEFT/model"
     freeze_layers: bool = False
     num_freeze_layers: int = 1
-    quantization: bool = False
+    quantization: str = None
     one_gpu: bool = False
     save_model: bool = True
     dist_checkpoint_root_folder: str="PATH/to/save/FSDP/model" # will be used if using FSDP
