@@ -173,7 +173,7 @@ def main(
                 )
             ],
             title="Meta Llama3 Playground",
-            description="https://github.com/facebookresearch/llama-recipes",
+            description="https://github.com/meta-llama/llama-recipes",
         ).queue().launch(server_name="0.0.0.0", share=share_gradio)
 
 
