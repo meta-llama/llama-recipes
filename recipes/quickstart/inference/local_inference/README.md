@@ -27,8 +27,8 @@ samsum_prompt.txt
 ...
 ```
 
-**Note**
-Currently pad token by default in [HuggingFace Tokenizer is `None`](https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/tokenization_llama.py#L110). We add the padding token as a special token to the tokenizer, which in this case requires to resize the token_embeddings as shown below:
+**Note on Llama version < 3.1**
+The default padding token in [HuggingFace Tokenizer is `None`](https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/tokenization_llama.py#L110). To use padding the padding token needs to be added as a special token to the tokenizer, which in this case requires to resize the token_embeddings as shown below:
 
 ```python
 tokenizer.add_special_tokens(
@@ -39,8 +39,7 @@ tokenizer.add_special_tokens(
     )
 model.resize_token_embeddings(model.config.vocab_size + 1)
 ```
-Padding would be required for batch inference. In this this [example](inference.py), batch size = 1 so essentially padding is not required. However,We added the code pointer as an example in case of batch inference.
-
+Padding would be required for batched inference. In this [example](inference.py), batch size = 1 so essentially padding is not required. However, we added the code pointer as an example in case of batch inference. For Llama version 3.1 use the special token `<|finetune_right_pad_id|> (128004)` for padding.
 
 ## Chat completion
 The inference folder also includes a chat completion example, that adds built-in safety features in fine-tuned models to the prompt tokens. To run the example:

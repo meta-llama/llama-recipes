@@ -20,7 +20,7 @@ from transformers import AutoTokenizer
 def main(
     model_name,
     peft_model: str = None,
-    quantization: bool = False,
+    quantization: str = None, # Options: 4bit, 8bit
     max_new_tokens=100,  # The maximum numbers of tokens to generate
     prompt_file: str = None,
     seed: int = 42,  # seed value for reproducibility
@@ -48,7 +48,7 @@ def main(
         torch.cuda.manual_seed(seed)
     torch.manual_seed(seed)
 
-    model = load_model(model_name, quantization, use_fast_kernels)
+    model = load_model(model_name, quantization, use_fast_kernels, **kwargs)
     if peft_model:
         model = load_peft_model(model, peft_model)
 
