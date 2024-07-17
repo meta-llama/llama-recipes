@@ -11,12 +11,12 @@ Utilities for loading the PromptGuard model and evaluating text for jailbreaks a
 """
 
 
-def load_model_and_tokenizer(model_name='meta-llama/PromptGuard'):
+def load_model_and_tokenizer(model_name='meta-llama/Prompt-Guard-86M'):
     """
     Load the PromptGuard model from Hugging Face or a local model.
     
     Args:
-        model_name (str): The name of the model to load. Default is 'meta-llama/PromptGuard'.
+        model_name (str): The name of the model to load. Default is 'meta-llama/Prompt-Guard-86M'.
         
     Returns:
         transformers.PreTrainedModel: The loaded model.
