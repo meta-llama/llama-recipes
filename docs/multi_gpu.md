@@ -6,12 +6,11 @@ To run fine-tuning on multi-GPUs, we will  make use of two packages:
 
 2. [FSDP](https://pytorch.org/tutorials/intermediate/FSDP_adavnced_tutorial.html) which helps us parallelize the training over multiple GPUs. [More details](LLM_finetuning.md/#2-full-partial-parameter-finetuning).
 
-Given the combination of PEFT and FSDP, we would be able to fine tune a Meta Llama 3 8B model on multiple GPUs in one node or multi-node.
+Given the combination of PEFT and FSDP, we would be able to fine tune a Meta Llama 8B model on multiple GPUs in one node.
+For big models like 405B we will need to fine-tune in a multi-node setup even if 4bit quantization is enabled.
 
 ## Requirements
 To run the examples, make sure to install the llama-recipes package and clone the github repository in order to use the provided [`finetuning.py`](../recipes/quickstart/finetuning/finetuning.py) script with torchrun (See [README.md](../README.md) for details).
-
-**Please note that the llama_recipes package will install PyTorch 2.0.1 version, in case you want to run FSDP + PEFT, please make sure to install PyTorch nightlies.**
 
 ## How to run it
 
@@ -61,7 +60,7 @@ torchrun --nnodes 1 --nproc_per_node 8  recipes/quickstart/finetuning/finetuning
 This has been tested on 4 H100s GPUs.
 
 ```bash
- FSDP_CPU_RAM_EFFICIENT_LOADING=1 ACCELERATE_USE_FSDP=1 torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp  --quantization int4 --model_name /path_of_model_folder/70B  --mixed_precision False --low_cpu_fsdp --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model
+ FSDP_CPU_RAM_EFFICIENT_LOADING=1 ACCELERATE_USE_FSDP=1 torchrun --nnodes 1 --nproc_per_node 4  finetuning.py --enable_fsdp  --quantization 4bit --model_name /path_of_model_folder/70B  --mixed_precision False --low_cpu_fsdp --use_peft --peft_method lora --output_dir Path/to/save/PEFT/model
 ```
 
 ### Fine-tuning using FSDP on 70B Model
@@ -84,6 +83,22 @@ sbatch recipes/quickstart/finetuning/multi_node.slurm
 # Change the num nodes and GPU per nodes in the script before running.
 
 ```
+
+To fine-tune the Meta Llama 405B model with LoRA on 32xH100, 80 GB GPUs we need to combine 4bit quantization (QLoRA) and FSDP.
+We can achieve this by adding the following environment variables to the slurm script (before the srun command in the bottom).
+
+```bash
+export FSDP_CPU_RAM_EFFICIENT_LOADING=1
+export ACCELERATE_USE_FSDP=1 
+```
+
+Then we need to replace the bottom srun command with the following:
+
+```bash
+srun  torchrun --nproc_per_node 8 --rdzv_id $RANDOM --rdzv_backend c10d --rdzv_endpoint $head_node_ip:29500 ./finetuning.py  --enable_fsdp --use_peft --peft_method lora --quantization 4bit  --quantization_config.quant_type nf4 --mixed_precision False --low_cpu_fsdp
+```
+
+Do not forget to adujust the number of nodes, ntasks and gpus-per-task in the top.
 
 ## How to run with different datasets?
 
