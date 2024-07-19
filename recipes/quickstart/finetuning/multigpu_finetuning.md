@@ -93,7 +93,7 @@ Then we need to replace the bottom srun command with the following:
 srun  torchrun --nproc_per_node 8 --rdzv_id $RANDOM --rdzv_backend c10d --rdzv_endpoint $head_node_ip:29500 ./finetuning.py  --enable_fsdp --use_peft --peft_method lora --quantization 4bit  --quantization_config.quant_type nf4 --mixed_precision False --low_cpu_fsdp
 ```
 
-Do not forget to adujust the number of nodes, ntasks and gpus-per-task in the top.
+Do not forget to adjust the number of nodes, ntasks and gpus-per-task in the top.
 
 ## Running with different datasets
 Currently 3 open source datasets are supported that can be found in [Datasets config file](../../../src/llama_recipes/configs/datasets.py). You can also use your custom dataset (more info [here](./datasets/README.md)).

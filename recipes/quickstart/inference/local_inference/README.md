@@ -85,5 +85,5 @@ python inference.py --model_name <training_config.output_dir> --prompt_file <tes
 
 ```
 
-## Inference on large modles like Meta Llama 405B
-To run the Meta Llama 405B variant without quantization we need to ue a multi-node setup for inference. The llama-recipes inference script currently does not allow multi-node inference. To run this model you can use vLLM with pipeline and tensor parallelism as showed in [this example](../../../3p_integrations/vllm/README.md).
+## Inference on large models like Meta Llama 405B
+To run the Meta Llama 405B variant without quantization we need to use a multi-node setup for inference. The llama-recipes inference script currently does not allow multi-node inference. To run this model you can use vLLM with pipeline and tensor parallelism as showed in [this example](../../../3p_integrations/vllm/README.md).
