@@ -1,6 +1,6 @@
 ## LLM Fine-Tuning
 
-Here we discuss fine-tuning Meta Llama 3 with a couple of different recipes. We will cover two scenarios here:
+Here we discuss fine-tuning Meta Llama with a couple of different recipes. We will cover two scenarios here:
 
 
 ## 1. **Parameter Efficient Model Fine-Tuning**
@@ -18,6 +18,7 @@ These methods will address three aspects:
 
 HF [PEFT](https://github.com/huggingface/peft) library provides an easy way of using these methods which we make use of here. Please read more [here](https://huggingface.co/blog/peft).
 
+For large models like Meta Llama 405B LoRA fine-tuning still requires a lot of memory. To decrease the amount of memory needed for fine-tuning we can apply quantization like 8bit or 4bit (QLoRA) quantization.
 
 
 ## 2. **Full/ Partial Parameter Fine-Tuning**
