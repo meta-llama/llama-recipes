@@ -60,7 +60,7 @@ def main(
 
         input = tokenizer([formatted_prompt], return_tensors="pt").to("cuda")
         prompt_len = input["input_ids"].shape[-1]
-        output = model.generate(**input, max_new_tokens=100, pad_token_id=0, eos_token_id=128009)
+        output = model.generate(**input, max_new_tokens=100, pad_token_id=0)
         results = tokenizer.decode(output[0][prompt_len:], skip_special_tokens=True)
        
         
