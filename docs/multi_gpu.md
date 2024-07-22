@@ -83,23 +83,6 @@ sbatch recipes/quickstart/finetuning/multi_node.slurm
 # Change the num nodes and GPU per nodes in the script before running.
 
 ```
-### Fine-tuning using FSDP on 405B Model
-
-To fine-tune the Meta Llama 405B model with LoRA on 32xH100, 80 GB GPUs we need to combine 4bit quantization (QLoRA) and FSDP.
-We can achieve this by adding the following environment variables to the slurm script (before the srun command in the bottom).
-
-```bash
-export FSDP_CPU_RAM_EFFICIENT_LOADING=1
-export ACCELERATE_USE_FSDP=1 
-```
-
-Then we need to replace the bottom srun command with the following:
-
-```bash
-srun  torchrun --nproc_per_node 8 --rdzv_id $RANDOM --rdzv_backend c10d --rdzv_endpoint $head_node_ip:29500 ./finetuning.py  --enable_fsdp --use_peft --peft_method lora --quantization 4bit  --quantization_config.quant_type nf4 --mixed_precision False --low_cpu_fsdp
-```
-
-Do not forget to adjust the number of nodes, ntasks and gpus-per-task in the top.
 
 ## How to run with different datasets?
 

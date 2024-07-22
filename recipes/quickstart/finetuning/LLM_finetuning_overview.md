@@ -18,9 +18,6 @@ These methods will address three aspects:
 
 HF [PEFT](https://github.com/huggingface/peft) library provides an easy way of using these methods which we make use of here. Please read more [here](https://huggingface.co/blog/peft).
 
-For large models like Meta Llama 405B LoRA fine-tuning still requires a lot of memory. To decrease the amount of memory needed for fine-tuning we can apply quantization like 8bit or 4bit (QLoRA) quantization.
-
-
 ## 2. **Full/ Partial Parameter Fine-Tuning**
 
 Full parameter fine-tuning has its own advantages, in this method there are multiple strategies that can help:
