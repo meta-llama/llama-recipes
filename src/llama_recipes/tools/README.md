@@ -7,7 +7,7 @@ This is the reverse conversion for `convert_llama_weights_to_hf.py` script from 
 - Copy file params.json from the official llama download into that directory.
 - Run the conversion script. `model-path` can be a Hugging Face hub model or a local hf model directory.
 ```
-python -m llama_recipes.tools.convert_hf_weights_to_llama --model-path meta-llama/Meta-Llama-3-70B-Instruct --output-dir test70B --model-size 70B
+python -m llama_recipes.tools.convert_hf_weights_to_llama --model-path meta-llama/Meta-Llama-3.1-70B-Instruct --output-dir test70B --model-size 70B
 ```
 
 ## Step 1: Run inference
