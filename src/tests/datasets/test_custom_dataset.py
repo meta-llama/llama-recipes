@@ -11,7 +11,7 @@ EXPECTED_RESULTS={
         "example_1": "[INST] Who made Berlin [/INST] dunno",
         "example_2": "[INST] Quiero preparar una pizza de pepperoni, puedes darme los pasos para hacerla? [/INST] Claro!",
     },
-    "meta-llama/Meta-Llama-3-8B":{
+    "meta-llama/Meta-Llama-3.1-8B":{
         "example_1": "<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n\nWho made Berlin<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\ndunno<|eot_id|><|end_of_text|>",
         "example_2": "<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n\nHow to start learning guitar and become a master at it?",
     },

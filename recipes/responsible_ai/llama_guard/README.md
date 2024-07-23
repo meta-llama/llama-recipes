@@ -1,6 +1,6 @@
 # Meta Llama Guard demo
 <!-- markdown-link-check-disable -->
-Meta Llama Guard is a language model that provides input and output guardrails for LLM inference. For more details and model cards, please visit the main repository for each model, [Meta Llama Guard](https://github.com/meta-llama/PurpleLlama/tree/main/Llama-Guard) and Meta [Llama Guard 2](https://github.com/meta-llama/PurpleLlama/tree/main/Llama-Guard2).
+Meta Llama Guard is a language model that provides input and output guardrails for LLM inference. For more details and model cards, please visit the [PurpleLlama](https://github.com/meta-llama/PurpleLlama) repository.
 
 This folder contains an example file to run inference with a locally hosted model, either using the Hugging Face Hub or a local path.
 
@@ -55,9 +55,9 @@ This is the output:
 
 To run it with a local model, you can use the `model_id` param in the inference script:
 
-`python recipes/responsible_ai/llama_guard/inference.py --model_id=/home/ubuntu/models/llama3/llama_guard_2-hf/ --llama_guard_version=LLAMA_GUARD_2`
+`python recipes/responsible_ai/llama_guard/inference.py --model_id=/home/ubuntu/models/llama3/Llama-Guard-3-8B/ --llama_guard_version=LLAMA_GUARD_3`
 
-Note: Make sure to also add the llama_guard_version if when it does not match the default, the script allows you to run the prompt format from Meta Llama Guard 1 on Meta Llama Guard 2
+Note: Make sure to also add the llama_guard_version; by default it uses LLAMA_GUARD_3
 
 ## Inference Safety Checker
 When running the regular inference script with prompts, Meta Llama Guard will be used as a safety checker on the user prompt and the model output. If both are safe, the result will be shown, else a message with the error will be shown, with the word unsafe and a comma separated list of categories infringed. Meta Llama Guard is always loaded quantized using Hugging Face Transformers library with bitsandbytes.
@@ -67,3 +67,6 @@ In this case, the default categories are applied by the tokenizer, using the `ap
 Use this command for testing with a quantized Llama model, modifying the values accordingly:
 
 `python examples/inference.py --model_name <path_to_regular_llama_model> --prompt_file <path_to_prompt_file> --quantization 8bit --enable_llamaguard_content_safety`
+
+## Llama Guard 3 Finetuning & Customization
+The safety categories in Llama Guard 3 can be tuned for specific application needs. Existing categories can be removed and new categories can be added to the taxonomy. The [Llama Guard Customization](./llama_guard_customization_via_prompting_and_fine_tuning.ipynb) notebook walks through the process.

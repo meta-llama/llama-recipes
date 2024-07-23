@@ -1,18 +1,21 @@
 # Llama Recipes: Examples to get started using the Llama models from Meta
 <!-- markdown-link-check-disable -->
-The 'llama-recipes' repository is a companion to the [Meta Llama 3](https://github.com/meta-llama/llama3) models. The goal of this repository is to provide a scalable library for fine-tuning Meta Llama models, along with some example scripts and notebooks to quickly get started with using the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Meta Llama and other tools in the LLM ecosystem. The examples here showcase how to run Meta Llama locally, in the cloud, and on-prem. [Meta Llama 2](https://github.com/meta-llama/llama) is also supported in this repository. We highly recommend everyone to utilize [Meta Llama 3](https://github.com/meta-llama/llama3) due to its enhanced capabilities.
+The 'llama-recipes' repository is a companion to the [Meta Llama](https://github.com/meta-llama/llama-models) models. We support the latest version, [Llama 3.1](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/MODEL_CARD.md), in this repository. The goal is to provide a scalable library for fine-tuning Meta Llama models, along with some example scripts and notebooks to quickly get started with using the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Llama and other tools in the LLM ecosystem. The examples here showcase how to run Llama locally, in the cloud, and on-prem. 
 
 <!-- markdown-link-check-enable -->
 > [!IMPORTANT]
-> Meta Llama 3 has a new prompt template and special tokens (based on the tiktoken tokenizer).
+> Meta Llama 3.1 has a new prompt template and special tokens.
 > | Token | Description |
 > |---|---|
-> `<\|begin_of_text\|>` | This is equivalent to the BOS token. |
-> `<\|end_of_text\|>` | This is equivalent to the EOS token. For multiturn-conversations it's usually unused. Instead, every message is terminated with `<\|eot_id\|>` instead.|
-> `<\|eot_id\|>` | This token signifies the end of the message in a turn i.e. the end of a single message by a system, user or assistant role as shown below.|
-> `<\|start_header_id\|>{role}<\|end_header_id\|>` | These tokens enclose the role for a particular message. The possible roles can be: system, user, assistant. |
+> `<\|begin_of_text\|>` | Specifies the start of the prompt. |
+> `<\|eot_id\|>` | This token signifies the end of a turn i.e. the end of the model's interaction either with the user or tool executor. |
+> `<\|eom_id\|>` | End of Message. A message represents a possible stopping point where the model can inform the execution environment that a tool call needs to be made. |
+> `<\|python_tag\|>` | A special tag used in the model’s response to signify a tool call. |
+> `<\|finetune_right_pad_id\|>` | Used for padding text sequences in a batch to the same length. |
+> `<\|start_header_id\|>{role}<\|end_header_id\|>` | These tokens enclose the role for a particular message. The possible roles can be: system, user, assistant and ipython. |
+> `<\|end_of_text\|>` | This is equivalent to the EOS token. For multiturn-conversations it's usually unused, this token is expected to be generated only by the base models. |
 >
-> A multiturn-conversation with Meta Llama 3 follows this prompt template:
+> A multiturn-conversation with Meta Llama 3.1 that includes tool-calling follows this structure:
 > ```
 > <|begin_of_text|><|start_header_id|>system<|end_header_id|>
 >
@@ -20,13 +23,16 @@ The 'llama-recipes' repository is a companion to the [Meta Llama 3](https://gith
 >
 > {{ user_message_1 }}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 >
-> {{ model_answer_1 }}<|eot_id|><|start_header_id|>user<|end_header_id|>
+> <|python_tag|>{{ model_tool_call_1 }}<|eom_id|><|start_header_id|>ipython<|end_header_id|>
 >
-> {{ user_message_2 }}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+> {{ tool_response }}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+>
+> {{model_response_based_on_tool_response}}<|eot_id|>
 > ```
 > Each message gets trailed by an `<|eot_id|>` token before a new header is started, signaling a role change.
 >
-> More details on the new tokenizer and prompt template can be found [here](https://llama.meta.com/docs/model-cards-and-prompt-formats/meta-llama-3#special-tokens-used-with-meta-llama-3).
+> More details on the new tokenizer and prompt template can be found [here](https://llama.meta.com/docs/model-cards-and-prompt-formats/llama3_1). 
+
 >
 > [!NOTE]
 > The llama-recipes repository was recently refactored to promote a better developer experience of using the examples. Some files have been moved to new locations. The `src/` folder has NOT been modified, so the functionality of this repo and package is not impacted.
@@ -139,6 +145,7 @@ Contains examples are organized in folders by topic:
 [use_cases](./recipes/use_cases)|Scripts showing common applications of Meta Llama3
 [3p_integrations](./recipes/3p_integrations)|Partner owned folder showing common applications of Meta Llama3
 [responsible_ai](./recipes/responsible_ai)|Scripts to use PurpleLlama for safeguarding model outputs
+[experimental](./recipes/experimental)|Meta Llama implementations of experimental LLM techniques
 
 ### `src/`
 
@@ -160,7 +167,9 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 ## License
 <!-- markdown-link-check-disable -->
 
-See the License file for Meta Llama 3 [here](https://llama.meta.com/llama3/license/) and Acceptable Use Policy [here](https://llama.meta.com/llama3/use-policy/)
+See the License file for Meta Llama 3.1 [here](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/LICENSE) and Acceptable Use Policy [here](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/USE_POLICY.md)
 
-See the License file for Meta Llama 2 [here](https://llama.meta.com/llama2/license/) and Acceptable Use Policy [here](https://llama.meta.com/llama2/use-policy/)
+See the License file for Meta Llama 3 [here](https://github.com/meta-llama/llama-models/blob/main/models/llama3/LICENSE) and Acceptable Use Policy [here](https://github.com/meta-llama/llama-models/blob/main/models/llama3/USE_POLICY.md)
+
+See the License file for Meta Llama 2 [here](https://github.com/meta-llama/llama-models/blob/main/models/llama2/LICENSE) and Acceptable Use Policy [here](https://github.com/meta-llama/llama-models/blob/main/models/llama2/USE_POLICY.md)
 <!-- markdown-link-check-enable -->

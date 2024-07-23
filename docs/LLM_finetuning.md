@@ -1,6 +1,6 @@
 ## LLM Fine-Tuning
 
-Here we discuss fine-tuning Meta Llama 3 with a couple of different recipes. We will cover two scenarios here:
+Here we discuss fine-tuning Meta Llama with a couple of different recipes. We will cover two scenarios here:
 
 
 ## 1. **Parameter Efficient Model Fine-Tuning**
@@ -17,8 +17,6 @@ These methods will address three aspects:
 - **Catastrophic forgetting** — these methods also help with forgetting the first task that can happen in fine-tuning.
 
 HF [PEFT](https://github.com/huggingface/peft) library provides an easy way of using these methods which we make use of here. Please read more [here](https://huggingface.co/blog/peft).
-
-
 
 ## 2. **Full/ Partial Parameter Fine-Tuning**
 

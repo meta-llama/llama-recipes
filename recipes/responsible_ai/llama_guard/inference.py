@@ -14,8 +14,8 @@ class AgentType(Enum):
     USER = "User"
 
 def main(
-    model_id: str = "meta-llama/LlamaGuard-7b",
-    llama_guard_version: LlamaGuardVersion = LlamaGuardVersion.LLAMA_GUARD_1
+    model_id: str = "meta-llama/Llama-Guard-3-8B",
+    llama_guard_version: str = "LLAMA_GUARD_3"
 ):
     """
     Entry point for Llama Guard inference sample script.

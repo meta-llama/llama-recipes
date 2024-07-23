@@ -1406,3 +1406,15 @@ DLAI
 agentic
 containts
 dlai
+Prerequirements
+tp
+QLoRA
+ntasks
+srun
+xH
+unquantized
+eom
+ipython
+CPUs
+modelUpgradeExample
+guardrailing

@@ -27,8 +27,8 @@ samsum_prompt.txt
 ...
 ```
 
-**Note**
-Currently pad token by default in [HuggingFace Tokenizer is `None`](https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/tokenization_llama.py#L110). We add the padding token as a special token to the tokenizer, which in this case requires to resize the token_embeddings as shown below:
+**Note on Llama version < 3.1**
+The default padding token in [HuggingFace Tokenizer is `None`](https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/tokenization_llama.py#L110). To use padding the padding token needs to be added as a special token to the tokenizer, which in this case requires to resize the token_embeddings as shown below:
 
 ```python
 tokenizer.add_special_tokens(
@@ -39,8 +39,7 @@ tokenizer.add_special_tokens(
     )
 model.resize_token_embeddings(model.config.vocab_size + 1)
 ```
-Padding would be required for batch inference. In this this [example](inference.py), batch size = 1 so essentially padding is not required. However,We added the code pointer as an example in case of batch inference.
-
+Padding would be required for batched inference. In this [example](inference.py), batch size = 1 so essentially padding is not required. However, we added the code pointer as an example in case of batch inference. For Llama version 3.1 use the special token `<|finetune_right_pad_id|> (128004)` for padding.
 
 ## Chat completion
 The inference folder also includes a chat completion example, that adds built-in safety features in fine-tuned models to the prompt tokens. To run the example:
@@ -85,3 +84,7 @@ Then run inference using:
 python inference.py --model_name <training_config.output_dir> --prompt_file <test_prompt_file>
 
 ```
+
+## Inference on large models like Meta Llama 405B
+The FP8 quantized variants of Meta Llama (i.e. meta-llama/Meta-Llama-3.1-405B-FP8 and meta-llama/Meta-Llama-3.1-405B-Instruct-FP8) can be executed on a single node with 8x80GB H100 using the scripts located in this folder.
+To run the unquantized Meta Llama 405B variants (i.e. meta-llama/Meta-Llama-3.1-405B and meta-llama/Meta-Llama-3.1-405B-Instruct) we need to use a multi-node setup for inference. The llama-recipes inference script currently does not allow multi-node inference. To run this model you can use vLLM with pipeline and tensor parallelism as showed in [this example](../../../3p_integrations/vllm/README.md).
