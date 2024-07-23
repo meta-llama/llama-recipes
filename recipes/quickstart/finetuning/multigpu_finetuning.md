@@ -68,7 +68,32 @@ If you are running full parameter fine-tuning on the 70B model, you can enable `
 torchrun --nnodes 1 --nproc_per_node 8 finetuning.py --enable_fsdp --low_cpu_fsdp --fsdp_config.pure_bf16 --model_name /path_of_model_folder/70B --batch_size_training 1 --dist_checkpoint_root_folder model_checkpoints --dist_checkpoint_folder fine-tuned
 ```
 
+**Multi GPU multi node**:
 
+Here we use a slurm script to schedule a job with slurm over multiple nodes.
+
+```bash
+
+sbatch recipes/quickstart/finetuning/multi_node.slurm
+# Change the num nodes and GPU per nodes in the script before running.
+
+```
+
+To fine-tune the Meta Llama 405B model with LoRA on 32xH100, 80 GB GPUs we need to combine 4bit quantization (QLoRA) and FSDP.
+We can achieve this by adding the following environment variables to the slurm script (before the srun command in the bottom).
+
+```bash
+export FSDP_CPU_RAM_EFFICIENT_LOADING=1
+export ACCELERATE_USE_FSDP=1 
+```
+
+Then we need to replace the bottom srun command with the following:
+
+```bash
+srun  torchrun --nproc_per_node 8 --rdzv_id $RANDOM --rdzv_backend c10d --rdzv_endpoint $head_node_ip:29500 ./finetuning.py  --enable_fsdp --use_peft --peft_method lora --quantization 4bit  --quantization_config.quant_type nf4 --mixed_precision False --low_cpu_fsdp
+```
+
+Do not forget to adjust the number of nodes, ntasks and gpus-per-task in the top.
 
 ## Running with different datasets
 Currently 3 open source datasets are supported that can be found in [Datasets config file](../../../src/llama_recipes/configs/datasets.py). You can also use your custom dataset (more info [here](./datasets/README.md)).
