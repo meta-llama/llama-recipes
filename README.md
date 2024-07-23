@@ -145,7 +145,7 @@ Contains examples are organized in folders by topic:
 [use_cases](./recipes/use_cases)|Scripts showing common applications of Meta Llama3
 [3p_integrations](./recipes/3p_integrations)|Partner owned folder showing common applications of Meta Llama3
 [responsible_ai](./recipes/responsible_ai)|Scripts to use PurpleLlama for safeguarding model outputs
-[experimental](./experimental)|Meta Llama implementations of experimental LLM techniques
+[experimental](./recipes/experimental)|Meta Llama implementations of experimental LLM techniques
 
 ### `src/`
 
