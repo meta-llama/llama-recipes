@@ -1,6 +1,6 @@
 # Meta Llama Guard
 
-Meta Llama Guard models provide input and output guardrails for LLM inference. For more details, please visit the main [repository](https://github.com/facebookresearch/PurpleLlama/).
+Meta Llama Guard models provide input and output guardrails for LLM inference. For more details, please visit the main [repository](https://github.com/meta-llama/PurpleLlama/).
 
 **Note** Please find the right model on HF side [here](https://huggingface.co/meta-llama/Llama-Guard-3-8B).
 

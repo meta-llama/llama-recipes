@@ -69,4 +69,4 @@ Use this command for testing with a quantized Llama model, modifying the values 
 `python examples/inference.py --model_name <path_to_regular_llama_model> --prompt_file <path_to_prompt_file> --quantization 8bit --enable_llamaguard_content_safety`
 
 ## Llama Guard 3 Finetuning & Customization
-The safety categories in Llama Guard 3 can be tuned for specific application needs. Existing categories can be removed and new categories can be added to the taxonomy. The [Llama Guard Customization](./llama_guard_customization_via_prompting_changes_and_fine_tuning.ipynb) notebook walks through the process.
+The safety categories in Llama Guard 3 can be tuned for specific application needs. Existing categories can be removed and new categories can be added to the taxonomy. The [Llama Guard Customization](./llama_guard_customization_via_prompting_and_fine_tuning.ipynb) notebook walks through the process.
