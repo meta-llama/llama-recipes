@@ -1413,3 +1413,5 @@ ntasks
 srun
 xH
 unquantized
+eom
+ipython

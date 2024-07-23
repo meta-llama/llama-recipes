@@ -16,7 +16,7 @@ def parse_arguments():
     parser.add_argument(
         "--sql-model-name",
         type=str,
-        default="meta-llama/Meta-Llama-3-8B-Instruct",
+        default="meta-llama/Meta-Llama-3.1-8B-Instruct",
         help="The model to use for text2sql",
         required=False,
     )

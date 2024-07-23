@@ -160,7 +160,7 @@ class LlamaGuardSafetyChecker(object):
         from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
         from llama_recipes.inference.prompt_format_utils import build_default_prompt, create_conversation, LlamaGuardVersion
 
-        model_id = "meta-llama/LlamaGuard-7b"
+        model_id = "meta-llama/Llama-Guard-3-8B"
 
         quantization_config = BitsAndBytesConfig(load_in_8bit=True)
 
