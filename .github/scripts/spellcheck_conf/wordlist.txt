@@ -1406,3 +1406,5 @@ DLAI
 agentic
 containts
 dlai
+eom
+ipython
