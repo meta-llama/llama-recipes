@@ -89,7 +89,6 @@ def main(
 
         batch = tokenizer(
             user_prompt,
-            padding="max_length",
             truncation=True,
             max_length=max_padding_length,
             return_tensors="pt",
