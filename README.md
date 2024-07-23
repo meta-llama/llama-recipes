@@ -1,6 +1,6 @@
 # Llama Recipes: Examples to get started using the Llama models from Meta
 <!-- markdown-link-check-disable -->
-The 'llama-recipes' repository is a companion to the [Meta Llama 3](https://github.com/meta-llama/llama3) models. The goal of this repository is to provide a scalable library for fine-tuning Meta Llama models, along with some example scripts and notebooks to quickly get started with using the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Meta Llama and other tools in the LLM ecosystem. The examples here showcase how to run Meta Llama locally, in the cloud, and on-prem. [Meta Llama 2](https://github.com/meta-llama/llama) is also supported in this repository. We highly recommend everyone to utilize [Meta Llama 3](https://github.com/meta-llama/llama3) due to its enhanced capabilities.
+The 'llama-recipes' repository is a companion to the [Meta Llama](https://github.com/meta-llama/llama-models) models. The goal of this repository is to provide a scalable library for fine-tuning Meta Llama models, along with some example scripts and notebooks to quickly get started with using the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Meta Llama and other tools in the LLM ecosystem. The examples here showcase how to run Meta Llama locally, in the cloud, and on-prem. [Meta Llama 2](https://github.com/meta-llama/llama-models/tree/main/models/llama2) is also supported in this repository. We highly recommend everyone to utilize [Meta Llama 3.1](https://github.com/meta-llama/llama3/tree/main/models/llama3_1) due to its enhanced capabilities.
 
 <!-- markdown-link-check-enable -->
 > [!IMPORTANT]
@@ -145,6 +145,7 @@ Contains examples are organized in folders by topic:
 [use_cases](./recipes/use_cases)|Scripts showing common applications of Meta Llama3
 [3p_integrations](./recipes/3p_integrations)|Partner owned folder showing common applications of Meta Llama3
 [responsible_ai](./recipes/responsible_ai)|Scripts to use PurpleLlama for safeguarding model outputs
+[experimental](./experimental)|Meta Llama implementations of experimental LLM techniques
 
 ### `src/`
 
@@ -166,7 +167,9 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 ## License
 <!-- markdown-link-check-disable -->
 
-See the License file for Meta Llama 3 [here](https://llama.meta.com/llama3/license/) and Acceptable Use Policy [here](https://llama.meta.com/llama3/use-policy/)
+See the License file for Meta Llama 3.1 [here](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/LICENSE) and Acceptable Use Policy [here](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/USE_POLICY.md)
 
-See the License file for Meta Llama 2 [here](https://llama.meta.com/llama2/license/) and Acceptable Use Policy [here](https://llama.meta.com/llama2/use-policy/)
+See the License file for Meta Llama 3 [here](https://github.com/meta-llama/llama-models/blob/main/models/llama3/LICENSE) and Acceptable Use Policy [here](https://github.com/meta-llama/llama-models/blob/main/models/llama3/USE_POLICY.md)
+
+See the License file for Meta Llama 2 [here](https://github.com/meta-llama/llama-models/blob/main/models/llama2/LICENSE) and Acceptable Use Policy [here](https://github.com/meta-llama/llama-models/blob/main/models/llama2/USE_POLICY.md)
 <!-- markdown-link-check-enable -->
