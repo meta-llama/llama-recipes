@@ -1400,6 +1400,19 @@ sqlite
 customerservice
 fn
 ExecuTorch
+LLMScore
+RecursiveCharacterTextSplitter
+TPD
+TPM
+Tianjun
+Zhang
+distractor
+distractors
+frac
+numRefusal
+totalQA
+DirectoryLoader
+SitemapLoader
 nf
 quant
 DLAI
@@ -1418,3 +1431,4 @@ ipython
 CPUs
 modelUpgradeExample
 guardrailing
+
