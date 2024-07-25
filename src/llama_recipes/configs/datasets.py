@@ -25,11 +25,16 @@ class alpaca_dataset:
     test_split: str = "val"
     data_path: str = "src/llama_recipes/datasets/alpaca_data.json"
 
-
 @dataclass
 class custom_dataset:
     dataset: str = "custom_dataset"
-    file: str = "recipes/finetuning/datasets/custom_dataset.py"
+    file: str = "recipes/quickstart/finetuning/datasets/custom_dataset.py"
     train_split: str = "train"
     test_split: str = "validation"
     data_path: str = ""
+    
+@dataclass
+class llamaguard_toxicchat_dataset:
+    dataset: str = "llamaguard_toxicchat_dataset"
+    train_split: str = "train"
+    test_split: str = "test"

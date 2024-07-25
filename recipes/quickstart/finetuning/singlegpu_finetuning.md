@@ -15,14 +15,17 @@ To run fine-tuning on a single GPU, we will make use of two packages:
 
 ## How to run it?
 
+**NOTE** To run the fine-tuning with `QLORA`, make sure to set `--peft_method lora` and `--quantization 4bit --quantization_config.quant_type nf4`.
+
+
 ```bash
-python finetuning.py  --use_peft --peft_method lora --quantization --use_fp16 --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+FSDP_CPU_RAM_EFFICIENT_LOADING=1 python finetuning.py  --use_peft --peft_method lora --quantization 8bit --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 ```
 The args used in the command above are:
 
 * `--use_peft` boolean flag to enable PEFT methods in the script
 * `--peft_method` to specify the PEFT method, here we use `lora` other options are `llama_adapter`, `prefix`.
-* `--quantization` boolean flag to enable int8 quantization
+* `--quantization` string flag to enable 8bit or 4bit quantization
 
 > [!NOTE]
 > In case you are using a multi-GPU machine please make sure to only make one of them visible using `export CUDA_VISIBLE_DEVICES=GPU:id`.
@@ -48,16 +51,16 @@ to run with each of the datasets set the `dataset` flag in the command as shown 
 ```bash
 # grammar_dataset
 
-python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset grammar_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m finetuning.py  --use_peft --peft_method lora --quantization 8bit --dataset grammar_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 # alpaca_dataset
 
-python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset alpaca_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m finetuning.py  --use_peft --peft_method lora --quantization 8bit  --dataset alpaca_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 
 # samsum_dataset
 
-python -m finetuning.py  --use_peft --peft_method lora --quantization  --dataset samsum_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m finetuning.py  --use_peft --peft_method lora --quantization 8bit  --dataset samsum_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 ```
 

@@ -17,8 +17,8 @@ For example, we have an instance from Azure that has 8xA100 80G GPUs, and we wan
 
 Here are examples for deploying 2x70B chat models over 8 GPUs with vLLM.
 ```
-CUDA_VISIBLE_DEVICES=0,1,2,3 python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3-70B-Instruct --tensor-parallel-size 4 --disable-log-requests --port 8000
-CUDA_VISIBLE_DEVICES=4,5,6,7 python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3-70B-Instruct --tensor-parallel-size 4 --disable-log-requests --port 8001
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3.1-70B-Instruct --tensor-parallel-size 4 --disable-log-requests --port 8000
+CUDA_VISIBLE_DEVICES=4,5,6,7 python -m vllm.entrypoints.openai.api_server  --model meta-llama/Meta-Llama-3.1-70B-Instruct --tensor-parallel-size 4 --disable-log-requests --port 8001
 ```
 Once you have finished deployment, you can use the command below to run benchmark scripts in a separate terminal.
 

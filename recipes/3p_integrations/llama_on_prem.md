@@ -8,7 +8,7 @@ We'll use the Amazon EC2 instance running Ubuntu with an A10G 24GB GPU as an exa
 
 The Colab notebook to connect via LangChain with Llama 3 hosted as the vLLM and TGI API services is [here](https://colab.research.google.com/drive/1rYWLdgTGIU1yCHmRpAOB2D-84fPzmOJg), also shown in the sections below.
 
-This tutorial assumes that you you have been granted access to the Meta Llama 3 on Hugging Face - you can open a Hugging Face Meta model page [here](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) to confirm that you see "Gated model You have been granted access to this model"; if you see "You need to agree to share your contact information to access this model", simply complete and submit the form in the page.
+This tutorial assumes that you you have been granted access to the Meta Llama 3 on Hugging Face - you can open a Hugging Face Meta model page [here](https://huggingface.co/meta-llama/Meta-Llama-3.1-8B-Instruct) to confirm that you see "Gated model You have been granted access to this model"; if you see "You need to agree to share your contact information to access this model", simply complete and submit the form in the page.
 
 You'll also need your Hugging Face access token which you can get at your Settings page [here](https://huggingface.co/settings/tokens).
 
@@ -33,7 +33,7 @@ There are two ways to deploy Llama 3 via vLLM, as a general API server or an Ope
 Run the command below to deploy vLLM as a general Llama 3 service:
 
 ```
-python -m vllm.entrypoints.api_server --host 0.0.0.0 --port 5000 --model meta-llama/Meta-Llama-3-8B-Instruct
+python -m vllm.entrypoints.api_server --host 0.0.0.0 --port 5000 --model meta-llama/Meta-Llama-3.1-8B-Instruct
 ```
 
 Then on another terminal you can run:
@@ -68,13 +68,13 @@ Also, if you have multiple GPUs, you can add the `--tensor-parallel-size` argume
 git clone https://github.com/vllm-project/vllm
 cd vllm/vllm/entrypoints
 conda activate llama3
-python api_server.py --host 0.0.0.0 --port 5000 --model meta-llama/Meta-Llama-3-8B-Instruct --tensor-parallel-size 4
+python api_server.py --host 0.0.0.0 --port 5000 --model meta-llama/Meta-Llama-3.1-8B-Instruct --tensor-parallel-size 4
 ```
 
 With multiple GPUs, you can also run replica of models as long as your model size can fit into targeted GPU memory. For example, if you have two A10G with 24 GB memory, you can run two Llama 3 8B models at the same time. This can be done by launching two api servers each targeting specific CUDA cores on different ports:
-`CUDA_VISIBLE_DEVICES=0 python api_server.py --host 0.0.0.0 --port 5000  --model meta-llama/Meta-Llama-3-8B-Instruct`
+`CUDA_VISIBLE_DEVICES=0 python api_server.py --host 0.0.0.0 --port 5000  --model meta-llama/Meta-Llama-3.1-8B-Instruct`
 and
-`CUDA_VISIBLE_DEVICES=1 python api_server.py --host 0.0.0.0 --port 5001  --model meta-llama/Meta-Llama-3-8B-Instruct`
+`CUDA_VISIBLE_DEVICES=1 python api_server.py --host 0.0.0.0 --port 5001  --model meta-llama/Meta-Llama-3.1-8B-Instruct`
 The benefit would be that you can balance incoming requests to both models, reaching higher batch size processing for a trade-off of generation latency.
 
 
@@ -83,14 +83,14 @@ The benefit would be that you can balance incoming requests to both models, reac
 You can also deploy the vLLM hosted Llama 3 as an OpenAI-Compatible service to easily replace code using OpenAI API. First, run the command below:
 
 ```
-python -m vllm.entrypoints.openai.api_server --host 0.0.0.0 --port 5000 --model meta-llama/Meta-Llama-3-8B-Instruct
+python -m vllm.entrypoints.openai.api_server --host 0.0.0.0 --port 5000 --model meta-llama/Meta-Llama-3.1-8B-Instruct
 ```
 
 Then on another terminal, run:
 
 ```
 curl http://localhost:5000/v1/completions -H "Content-Type: application/json" -d '{
-        "model": "meta-llama/Meta-Llama-3-8B-Instruct",
+        "model": "meta-llama/Meta-Llama-3.1-8B-Instruct",
         "prompt": "Who wrote the book Innovators dilemma?",
         "max_tokens": 300,
         "temperature": 0
@@ -118,7 +118,7 @@ from langchain.llms import VLLMOpenAI
 llm = VLLMOpenAI(
     openai_api_key="EMPTY",
     openai_api_base="http://<vllm_server_ip_address>:5000/v1",
-    model_name="meta-llama/Meta-Llama-3-8B-Instruct",
+    model_name="meta-llama/Meta-Llama-3.1-8B-Instruct",
 )
 
 print(llm("Who wrote the book godfather?"))
@@ -136,7 +136,7 @@ You can now use the Llama 3 instance `llm` created this way in any of the demo a
 The easiest way to deploy Llama 3 with TGI is using its official docker image. First, replace `<your_hugging_face_access_token>` and set the three required shell variables (you may replace the `model` value above with another Llama 3 model):
 
 ```
-model=meta-llama/Meta-Llama-3-8B-Instruct
+model=meta-llama/Meta-Llama-3.1-8B-Instruct
 volume=$PWD/data
 token=<your_hugging_face_access_token>
 ```

@@ -4,6 +4,7 @@
 # from accelerate import init_empty_weights, load_checkpoint_and_dispatch
 
 import fire
+import json
 import os
 import sys
 
@@ -18,7 +19,7 @@ from accelerate.utils import is_xpu_available
 def main(
     model_name,
     peft_model: str=None,
-    quantization: bool=False,
+    quantization: str = None, # Options: 4bit, 8bit
     max_new_tokens =256, #The maximum numbers of tokens to generate
     min_new_tokens:int=0, #The minimum numbers of tokens to generate
     prompt_file: str=None,
@@ -47,33 +48,32 @@ def main(
 
     elif not sys.stdin.isatty():
         dialogs = "\n".join(sys.stdin.readlines())
+        try:
+            dialogs = json.loads(dialogs)
+        except:
+            print("Could not parse json from stdin. Please provide a json file with the user prompts. Exiting.")
+            sys.exit(1)
     else:
         print("No user prompt provided. Exiting.")
         sys.exit(1)
 
     print(f"User dialogs:\n{dialogs}")
     print("\n==================================\n")
-
-
+    
     # Set the seeds for reproducibility
     if is_xpu_available():
         torch.xpu.manual_seed(seed)
     else:
         torch.cuda.manual_seed(seed)
     torch.manual_seed(seed)
-    model = load_model(model_name, quantization, use_fast_kernels)
+
+    model = load_model(model_name, quantization, use_fast_kernels, **kwargs)
     if peft_model:
         model = load_peft_model(model, peft_model)
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    tokenizer.add_special_tokens(
-        {
 
-            "pad_token": "<PAD>",
-        }
-    )
-
-    chats = tokenizer.apply_chat_template(dialogs)
+    chats = [tokenizer.apply_chat_template(dialog) for dialog in dialogs]
 
     with torch.no_grad():
         for idx, chat in enumerate(chats):
@@ -99,12 +99,14 @@ def main(
                 sys.exit(1)  # Exit the program with an error status
             tokens= torch.tensor(chat).long()
             tokens= tokens.unsqueeze(0)
+            attention_mask = torch.ones_like(tokens)
             if is_xpu_available():
                 tokens= tokens.to("xpu:0")
             else:
                 tokens= tokens.to("cuda:0")
             outputs = model.generate(
                 input_ids=tokens,
+                attention_mask=attention_mask,
                 max_new_tokens=max_new_tokens,
                 do_sample=do_sample,
                 top_p=top_p,

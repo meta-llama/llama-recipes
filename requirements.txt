@@ -8,7 +8,7 @@ black[jupyter]
 datasets
 fire
 peft
-transformers>=4.40.0
+transformers>=4.43.1
 sentencepiece
 py7zr
 scipy
@@ -28,3 +28,4 @@ langchain_openai
 langchain
 langchain_community
 sentence_transformers
+codeshield

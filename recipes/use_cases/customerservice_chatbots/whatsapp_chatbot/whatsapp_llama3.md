@@ -2,7 +2,7 @@
 
 This step-by-step tutorial shows the complete process of building a Llama 3 enabled WhatsApp chatbot. A demo video of using the iOS WhatsApp to send a question to a test phone number and receive the Llama 3 generated answer is [here](https://drive.google.com/file/d/1fZDaOsvyE1yrNGETV-e0SvL14BYeAI6R/view).
 
-If you're interested in a Llama 3 enabled Messenger chatbot, see [here](../messenger_llama/messenger_llama3.md) for a tutorial.
+If you're interested in a Llama 3 enabled Messenger chatbot, see [here](../messenger_chatbot/messenger_llama3.md) for a tutorial.
 
 ## Overview
 
