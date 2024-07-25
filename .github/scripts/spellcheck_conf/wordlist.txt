@@ -1405,3 +1405,5 @@ distractors
 frac
 numRefusal
 totalQA
+DirectoryLoader
+SitemapLoader

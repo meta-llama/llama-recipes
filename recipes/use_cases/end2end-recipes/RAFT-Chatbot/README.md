@@ -238,6 +238,6 @@ python recipes/inference/local_inference/inference.py --model_name raft-8b
 
 For more details,please check [local_inference recipe](../../../quickstart/inference/local_inference/README.md)
 
-## Acknowledgements
+## Acknowledgement
 
 Finally, we would like to extend special thanks to Tianjun Zhang, the first author of the [RAFT paper](https://arxiv.org/pdf/2403.10131), for collaborating with us on this tutorial and providing valuable guidance throughout our experiments. Our code is also partially inspired by the [RAFT section in Gorilla github](https://github.com/ShishirPatil/gorilla/tree/main/raft).
