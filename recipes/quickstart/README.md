@@ -7,23 +7,3 @@ If you are new to developing with Meta Llama models, this is where you should st
 * The [inference](./inference/) folder contains scripts to deploy Llama for inference on server and mobile. See also [3p_integrations/vllm](../3p_integrations/vllm/) and [3p_integrations/tgi](../3p_integrations/tgi/) for hosting Llama on open-source model servers.
 * The [RAG](./RAG/) folder contains a simple Retrieval-Augmented Generation application using Llama.
 * The [finetuning](./finetuning/) folder contains resources to help you finetune Llama on your custom datasets, for both single- and multi-GPU setups. The scripts use the native llama-recipes finetuning code found in [finetuning.py](../../src/llama_recipes/finetuning.py) which supports these features:
-
-| Feature                                        |   |
-| ---------------------------------------------- | - |
-| HF support for finetuning                      | ✅ |
-| Deferred initialization ( meta init)           | ✅ |
-| HF support for inference                       | ✅ |
-| Low CPU mode for multi GPU                     | ✅ |
-| Mixed precision                                | ✅ |
-| Single node quantization                       | ✅ |
-| Flash attention                                | ✅ |
-| PEFT                                           | ✅ |
-| Activation checkpointing FSDP                  | ✅ |
-| Hybrid Sharded Data Parallel (HSDP)            | ✅ |
-| Dataset packing & padding                      | ✅ |
-| BF16 Optimizer ( Pure BF16)                    | ✅ |
-| Profiling & MFU tracking                       | ✅ |
-| Gradient accumulation                          | ✅ |
-| CPU offloading                                 | ✅ |
-| FSDP checkpoint conversion to HF for inference | ✅ |
-| W&B experiment tracker                         | ✅ |
