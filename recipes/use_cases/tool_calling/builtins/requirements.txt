@@ -1,0 +1,5 @@
+pillow
+jupyter
+openai
+brave-search
+wolframalpha
