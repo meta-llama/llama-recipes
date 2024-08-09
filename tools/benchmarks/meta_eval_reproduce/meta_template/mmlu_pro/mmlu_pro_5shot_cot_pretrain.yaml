@@ -1,9 +1,9 @@
+task: meta_mmlu_pro_pretrain
 dataset_path: meta-llama/Meta-Llama-3.1-8B-evals
 dataset_name: Meta-Llama-3.1-8B-evals__mmlu_pro__details
-output_type: generate_until
-task: meta_mmlu_pro_pretrain
-process_docs: !function utils.process_docs
 test_split: latest
+output_type: generate_until
+process_docs: !function utils.process_docs
 doc_to_text: !function utils.doc_to_text
 doc_to_target: gold
 filter_list:
@@ -14,6 +14,7 @@ filter_list:
       - function: "take_first"
 generation_kwargs:
   until: "\n\nQ: "
+  do_sample: false
   temperature: 0
   max_gen_toks: 512
 num_fewshot: 0
