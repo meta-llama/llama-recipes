@@ -1,9 +1,6 @@
 dataset_path: parquet
-dataset_name: null
 dataset_kwargs:
-  data_files:
-    train: /home/kaiwu/work/llama-recipes/tools/benchmarks/meta_eval_reproduce/work_dir/joined_math.parquet
-  trust_remote_code: true
+  data_files: ./work_dir/joined_math.parquet
 task: meta_math_hard
 process_docs: !function utils.process_docs
 output_type: generate_until
@@ -22,5 +19,3 @@ metric_list:
     higher_is_better: true
 metadata:
   version: 1.0
-dataset_kwargs:
-  trust_remote_code: true

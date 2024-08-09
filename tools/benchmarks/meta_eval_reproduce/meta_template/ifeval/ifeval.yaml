@@ -1,7 +1,7 @@
 task: meta_ifeval
-dataset_path: json
+dataset_path: parquet
 dataset_kwargs:
-  data_files: ../joined_ifeval.json
+  data_files: ./work_dir/joined_ifeval.parquet
 output_type: generate_until
 test_split: train
 num_fewshot: 0
