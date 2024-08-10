@@ -12,7 +12,6 @@ def process_docs(dataset: datasets.Dataset) -> datasets.Dataset:
         out_doc = {
             "problem": doc["input_question"],
             "gold": doc["input_correct_responses"][0],
-            "choices": list(doc["input_choice_list"])
         }
         return out_doc
     dataset = dataset.select_columns(["input_question", "input_correct_responses", "input_final_prompts", "is_correct","input_question_hash","input_choice_list","output_prediction_text"])
