@@ -32,15 +32,16 @@ def process_docs(dataset: datasets.Dataset) -> datasets.Dataset:
             "meta_target": doc["input_correct_responses"]
         }
         return out_doc
-    #dataset = dataset.select_columns(["input_question", "input_correct_responses", "input_final_prompts", "is_correct","output_prediction_text"])
-    dataset = dataset.rename_column("is_correct","previously_is_correct")
     return dataset.map(_process_doc)
 
 
 def process_results(doc: dict, results: List[str]) -> Dict[str, int]:
     candidates = results[0]
-
-    unnormalized_answer = remove_boxed(last_boxed_only_string(candidates))
+    last_boxed_string = last_boxed_only_string(candidates)
+    if not last_boxed_string:
+        # No boxed string found, so we can't evaluate
+        return {"exact_match": 0}
+    unnormalized_answer = remove_boxed(last_boxed_string)
     answer = normalize_final_answer(unnormalized_answer)
 
     if answer.strip() == doc["answer"].strip() or is_equiv(answer, doc["answer"]):
