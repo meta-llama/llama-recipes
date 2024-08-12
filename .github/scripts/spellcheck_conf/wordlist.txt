@@ -1443,3 +1443,6 @@ ifeval
 lighteval
 sqrt
 wis
+evals
+mmlu
+parsers

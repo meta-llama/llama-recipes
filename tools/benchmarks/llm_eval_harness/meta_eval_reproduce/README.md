@@ -1,5 +1,5 @@
 
-# Reproduce Meta 3.1 Evaluation Metrics Using LM-Evaluation-Harness
+# Reproducing Meta 3.1 Evaluation Metrics Using LM-Evaluation-Harness
 
 As Meta Llama models gain popularity, evaluating these models has become increasingly important. We have released all the evaluation details for Meta-Llama 3.1 models as datasets in the [3.1 evals Huggingface collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f). This tutorial demonstrates how to reproduce metrics similar to our reported numbers using the [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/main) library and our prompts from the 3.1 evals datasets on selected tasks.
 
@@ -8,14 +8,20 @@ As Meta Llama models gain popularity, evaluating these models has become increas
 1. **This tutorial is not the official implementation** of Meta Llama evaluation. It is based on public third-party libraries, and the implementation may differ slightly from our internal evaluation, leading to minor differences in the reproduced numbers.
 2. **Model Compatibility**: This tutorial is specifically for Llama 3 based models, as our prompts include Meta Llama 3 special tokens (e.g., `<|start_header_id|>user<|end_header_id|`). It will not work with models that are not based on Llama 3.
 
-## Tutorial
 
-With those important notes in mind, we will begin our tutorial on how to reproduce meta 3.1 evals metrics using lm-evaluation-harness here.
+### Huggingface setups
 
-### Accessing Datasets
+In order to install correct lm-evaluation-harness version, please check the [Reproducibility section](https://huggingface.co/docs/leaderboards/open_llm_leaderboard/about#reproducibility) in Huggingface 🤗 Open LLM Leaderboard v2 About page. To add the VLLM dependency, we can do following:
+
+```
+git clone git@github.com:huggingface/lm-evaluation-harness.git
+cd lm-evaluation-harness
+git checkout adding_all_changess
+pip install -e .[math,ifeval,sentencepiece,vllm]
+```
 
 To access our [3.1 evals Huggingface collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f), you must:
-- Log in to the Huggingface website and follow the instructions and agree to the terms to our 3.1 evals.
+- Log in to the Huggingface website and click the 3.1 evals dataset pages and agree to the terms.
 - Follow the [Huggingface authentication instructions](https://huggingface.co/docs/huggingface_hub/en/quick-start#authentication) to gain read access for your machine.
 
 It is recommended to read the dataset card to understand the meaning of each column and use the viewer feature in the Huggingface dataset to view our dataset, such as this [MMLU-Pro](https://huggingface.co/datasets/meta-llama/Meta-Llama-3.1-8B-Instruct-evals/viewer/Meta-Llama-3.1-8B-Instruct-evals__mmlu_pro__details?row=0). It is important to have some basic understanding of our dataset format and content before proceeding.
@@ -25,7 +31,7 @@ It is recommended to read the dataset card to understand the meaning of each col
 Given the extensive number of tasks available (12 for pretrained models and 30 for instruct models), this tutorial will focus on tasks that overlap with the popular Huggingface 🤗 [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard), such as BBH and MMLU-Pro for pretrained models, and Math-Hard, IFeval, GPQA, and MMLU-Pro for instruct models. This tutorial serves as an example to demonstrate the reproduction process. The implementation will be based on the Huggingface 🤗 [leaderboard implementation](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard) and make necessary modifications to use our eval prompts and reproduce our reported metrics in [Meta Llama website](https://llama.meta.com/).
 
 
-**NOTE**: There are many differences in terms of the eval configurations and prompts between this tutorial implementation and Huggingface 🤗 [leaderboard implementation](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard), eg, we use Chain-of-Thought(COT) prompts while Huggingface leaderboard does not, so the result numbers can not be apple to apple compared.
+**NOTE**: There are many differences in terms of the eval configurations and prompts between this tutorial implementation and Huggingface 🤗 [leaderboard implementation](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard). For example, we use Chain-of-Thought(COT) prompts while Huggingface leaderboard does not, so the result numbers can not be apple to apple compared.
 
 ### Create task yaml
 
@@ -157,7 +163,3 @@ or it is expected as stated in [this comment](https://github.com/vllm-project/vl
 ## Acknowledgement
 
 This tutorial is inspired by [leaderboard tasks implementation on the lm_evaluation_harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard) created by Huggingface 🤗 [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) team.
-
-## Conclusion
-
-This tutorial provides a detailed guide on how to reproduce the Meta Llama 3.1 evaluation metrics using the lm-evaluation-harness and our 3.1 evals datasets. By following the steps outlined, users can replicate our evaluation process for specific tasks and compare their results with our reported metrics. While slight variations in results are expected due to differences in implementation and model behavior, this guide aims to provide a transparent and reproducible method for evaluating Meta Llama 3 models.
