@@ -1,24 +1,29 @@
-# Reproduce meta 3.1 evals metrics using lm-evaluation-harness
 
-As Meta Llama models become more popular, model evaluation has become a important and serious topic. We released all the evaluation details for all Meta-Llama 3.1 models as datasets in the [3.1 evals Huggingface collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f). This tutorial aims to use 3rd party library [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/main) reproduce metrics that are similar to our reported numbers using our prompts in the 3.1 evals datasets on some tasks.
+# Reproduce Meta 3.1 Evaluation Metrics Using LM-Evaluation-Harness
+
+As Meta Llama models gain popularity, evaluating these models has become increasingly important. We have released all the evaluation details for Meta-Llama 3.1 models as datasets in the [3.1 evals Huggingface collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f). This tutorial demonstrates how to reproduce metrics similar to our reported numbers using the [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/main) library and our prompts from the 3.1 evals datasets on selected tasks.
 
 ## Important Notes
 
-1. This tutorial is not the offical implementation of Meta Llama evaluation. It is created based on public third party libraries and this implementation is not exactly the same as our internal evaluation implementation, so there is normal that the reproduced numbers are slightly different.
-2. This tutorial is intended to be used on Llama 3 based models as our prompts contain Meta Llama 3 special tokens, such as `|start_header_id|>user<|end_header_id|>`. Our code will not work with any model that is not Llama 3 based.
-
+1. **This tutorial is not the official implementation** of Meta Llama evaluation. It is based on public third-party libraries, and the implementation may differ slightly from our internal evaluation, leading to minor differences in the reproduced numbers.
+2. **Model Compatibility**: This tutorial is specifically for Llama 3 based models, as our prompts include Meta Llama 3 special tokens (e.g., `<|start_header_id|>user<|end_header_id|`). It will not work with models that are not based on Llama 3.
 
 ## Tutorial
 
 With those important notes in mind, we will begin our tutorial on how to reproduce meta 3.1 evals metrics using lm-evaluation-harness here.
 
-### Datasets
+### Accessing Datasets
 
-In order to gain access to our [3.1 evals Huggingface collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f), you must login to Huggingface website, follow the instructions and agree to the terms. Then follow [Huggingface authentication instruction](https://huggingface.co/docs/huggingface_hub/en/quick-start#authentication) to gain read acces for your machine. It is recommended to read the dataset card to understand the meaning of each column and use the viewer feature in the Huggingface dataset to view our dataset, such as this [MMLU-Pro](https://huggingface.co/datasets/meta-llama/Meta-Llama-3.1-8B-Instruct-evals/viewer/Meta-Llama-3.1-8B-Instruct-evals__mmlu_pro__details?row=0). It is important to have some basic understanding of our dataset format and content before going to the following sections.
+To access our [3.1 evals Huggingface collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f), you must:
+- Log in to the Huggingface website and follow the instructions and agree to the terms to our 3.1 evals.
+- Follow the [Huggingface authentication instructions](https://huggingface.co/docs/huggingface_hub/en/quick-start#authentication) to gain read access for your machine.
 
-### Tasks selections
+It is recommended to read the dataset card to understand the meaning of each column and use the viewer feature in the Huggingface dataset to view our dataset, such as this [MMLU-Pro](https://huggingface.co/datasets/meta-llama/Meta-Llama-3.1-8B-Instruct-evals/viewer/Meta-Llama-3.1-8B-Instruct-evals__mmlu_pro__details?row=0). It is important to have some basic understanding of our dataset format and content before proceeding.
 
-In 3.1 evals, overall there are 12 evaluation task details on the pretrained models and 30 evaluation tasks details on the instruct models, so it is very challenging to reproduce all of them this time. We will select the tasks that overlaps with the popular Huggingface 🤗 [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard), namely BBH, MMLU-Pro tasks for pretrained models and Math-Hard, IFeval, GPQA, MMLU-Pro tasks for instruct models, as an example to demonstrate the way to reproduce our metrics so hopefully people can follow our example to create the tasks of their interests in the future. This tutorial implementation will be based on the Huggingface 🤗 [leaderboard implementation](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard) and make nessary modifications to use our eval prompts and reproduce our reported metric.
+### Task Selection
+
+Given the extensive number of tasks available (12 for pretrained models and 30 for instruct models), this tutorial will focus on tasks that overlap with the popular Huggingface 🤗 [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard), such as BBH and MMLU-Pro for pretrained models, and Math-Hard, IFeval, GPQA, and MMLU-Pro for instruct models. This tutorial serves as an example to demonstrate the reproduction process. The implementation will be based on the Huggingface 🤗 [leaderboard implementation](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard) and make nessary modifications to use our eval prompts and reproduce our reported metrics in [Meta Llama website](https://llama.meta.com/).
+
 
 **NOTE**: There are many differences in terms of the eval configurations and prompts between this tutorial implementation and Huggingface 🤗 [leaderboard implementation](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard), eg, we use Chain-of-Thought(COT) prompts while Huggingface leaderboard did not, so the result numbers can not be apple to apple compared.
 
@@ -49,11 +54,12 @@ process_docs: !function utils.process_docs
 doc_to_text: !function utils.doc_to_text
 doc_to_target: gold
 ```
-`process_docs` section is used to define the preprocess function for our datasets. In this case, we uses the `process_docs` python function that is defined in [utils.py](./meta_template/mmlu_pro/utils.py). This function will take the original dataset and output a processed dataset that has a out_doc, which contains `problem` which is the input question, `gold` which is the ground truth. We also renamed the `is_correct` column to `previously_is_correct` to allow detailed comparison for the difference of each sample between previously reported score and the reproduced score. You must use eval dataset and model with same parameters and same model type to get a vaild comparison.
 
-`doc_to_text` section is used to define the prompts. In the MMLU-Pro case, the `input_final_prompts` column alway contains a list of a prompt, so we just use a python function that returns input_final_prompts[0].
+- `process_docs` : Defines the preprocess function for our datasets. In this case, we uses the `process_docs` python function that is defined in [utils.py](./meta_template/mmlu_pro/utils.py). This function will take the original dataset and output a processed dataset that has a out_doc, which contains `problem` which is the input question, `gold` which is the ground truth. We also renamed the `is_correct` column to `previously_is_correct` to allow detailed comparison for the difference of each sample between previously reported score and the reproduced score. You must use eval dataset and model with same parameters and same model type to get a vaild comparison.
 
-`doc_to_target` section is used to define the ground truth, and in the MMLU-Pro case, it is the `gold`, which comes from input_correct_responses[0].
+-  `doc_to_text`: Defines the prompts. In the MMLU-Pro case, the `input_final_prompts` column alway contains a list of a prompt, so we just use a python function that returns input_final_prompts[0].
+
+- `doc_to_target` Defines the ground truth, which in the MMLU-Pro case, is the `gold` that derived from input_correct_responses[0].
 
 **3.Define task type and parser**
 
@@ -101,11 +107,9 @@ Once we have the yaml created, we can run the tasks using `lm-eval` CLI and use 
 
 By default, for the generative tasks, the `lm-eval --model_args="{...}" --batch_size=auto` command will use Huggingface inference solution that uses a static batch method with [left padding](https://github.com/EleutherAI/lm-evaluation-harness/blob/8ad598dfd305ece8c6c05062044442d207279a97/lm_eval/models/huggingface.py#L773) using [EOS_token](https://huggingface.co/datasets/open-llm-leaderboard/meta-llama__Meta-Llama-3.1-8B-Instruct-details/blob/main/llhf__Meta-Llama-3.1-8B-Instruct/results_2024-07-19T10-53-21.449243.json#L2558) for Llama models. While our internal evaluation will load python original checkpoints and hanlde individual genearation request asynchronously without any padding. To simulate this, we will use VLLM inference solution to do dynamic batching without any padding.
 
-**NOTE**: Since our prompts in the evals dataset has already included all the special tokens required by instruct model, such as `|start_header_id|>user<|end_header_id|>`, we will not use `--apply_chat_template` argument anymore. However, we need to use `add_bos_token=True` flag to add the BOS_token back during VLLM inference, as the BOS_token is removed by default in [this PR](https://github.com/EleutherAI/lm-evaluation-harness/pull/1465).
+**NOTE**: Since our prompts in the evals dataset has already included all the special tokens required by instruct model, such as `|start_header_id|>user<|end_header_id|>`, we will not use `--apply_chat_template` argument for instruct models anymore. However, we need to use `add_bos_token=True` flag to add the BOS_token back during VLLM inference, as the BOS_token is removed by default in [this PR](https://github.com/EleutherAI/lm-evaluation-harness/pull/1465).
 
-We create [eval_config.yaml](./eval_config.yaml) to store all the arguments and hyperparamters. Remember to change the `tensor_parallel_size` to 2 or more to load the 70B models and change the `data_parallel_size` accordingly so that `tensor_parallel_size X data_parallel_size` is the number of GPUs. Please read the comments inside this yaml for detailed explainations on other parameters. Then we can run a [meta_eval.py](meta_eval.py) that reads the configuration from [eval_config.yaml](./eval_config.yaml), copies everything in the template folder to a working folder `work_dir`, makes modification to those templates accordingly, prepares dataset if needed, run specifid tasks and save the eval results to default `eval_results` folder.
-
-**NOTE**: The [meta_eval.py](meta_eval.py) will hardcode the seed to 42 as stated in our eval_config column. Please do not change this seed config.
+We create [eval_config.yaml](./eval_config.yaml) to store all the arguments and hyperparamters. Remember to adjust the `tensor_parallel_size` to 2 or more to load the 70B models and change the `data_parallel_size` accordingly so that `tensor_parallel_size X data_parallel_size` is the number of GPUs. Please read the comments inside this yaml for detailed explainations on other parameters. Then we can run a [meta_eval.py](meta_eval.py) that reads the configuration from [eval_config.yaml](./eval_config.yaml), copies everything in the template folder to a working folder `work_dir`, makes modification to those templates accordingly, prepares dataset if needed, run specifid tasks and save the eval results to default `eval_results` folder.
 
 To run the [meta_eval.py](meta_eval.py), we can do:
 
@@ -113,20 +117,20 @@ To run the [meta_eval.py](meta_eval.py), we can do:
 python meta_eval.py --config_path ./eval_config.yaml
 ```
 
-This will load the default [eval_config.yaml] config and run a `meta_instruct` group tasks that includes `meta_ifeval`, `meta_math_hard`, `meta_gpqa` and `meta_mmlu_pro_instruct` tasks for `meta-llama/Meta-Llama-3.1-8B-Instruct` model using `meta-llama/Meta-Llama-3.1-8B-Instruct-evals` dataset.
+This will load the default [eval_config.yaml](./eval_config.yaml) config and run a `meta_instruct` group tasks that includes `meta_ifeval`, `meta_math_hard`, `meta_gpqa` and `meta_mmlu_pro_instruct` tasks for `meta-llama/Meta-Llama-3.1-8B-Instruct` model using `meta-llama/Meta-Llama-3.1-8B-Instruct-evals` dataset.
 
 **NOTE**: For `meta_math_hard` tasks, some of our internal math ground truth has been converted to scientific notation, eg `6\sqrt{7}` has been converted to `1.59e+1` which will be later handled by our internal math evaluation functions. As the lm-evaluation-harness [math evalution utils.py](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/lm_eval/tasks/leaderboard/math/utils.py) can not fully handle those convertion, we will use the original ground truth from the original dataset [lighteval/MATH-Hard](https://huggingface.co/datasets/lighteval/MATH-Hard) by joining the tables on the input questions. The `get_math_data` function in the [prepare_datasets.py](./prepare_dataset.py) will handle this step and produce a local parquet dataset file.
 
-Moreover, we have modified this [math_hard/utils.py](./meta_template/math_hard/utils.py) to address two problems:
+Moreover, we have modified this [math_hard/utils.py](./meta_template/math_hard/utils.py) to address two issues:
 
-1. This python script only [use a regex "Final Answer: The final answer is(.*?). I hope it is correct."](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/lm_eval/tasks/leaderboard/math/utils.py#L192) to grep the final answer, because this format is shown in the previous 4 shot examples prompts. However, our MATH Hard task is using 0 shot COT prompts that ask model to put the final answer into this string format `Therefore, the final answer is: $\\boxed{answer}$. I hope it is correct.` which can not be captured by previous regex expression, so we will use `\\box{}` to parse the final answer instead.
+1. This python script only use [a regular expression "Final Answer: The final answer is(.*?). I hope it is correct."](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/lm_eval/tasks/leaderboard/math/utils.py#L192) to get the final answer, because this format is shown in the previous 4 shot examples prompts. However, our MATH Hard task is using 0 shot COT prompts that ask model to put the final answer into this string format `Therefore, the final answer is: $\\boxed{answer}$. I hope it is correct.` which can not be captured by previous regular expression, so we will use `\\box{}` to parse the final answer instead.
 
-2. The [is_equiv(x1: str, x2: str)](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/lm_eval/tasks/leaderboard/math/utils.py#L144) function can not parse 78 ground truth, so all those questions will be marked as wrong. We has raise a issue #TODO about this problem and will add a string equality check statement before going to is_equiv() function as a temporial solution.
+2. The [is_equiv(x1: str, x2: str)](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/lm_eval/tasks/leaderboard/math/utils.py#L144) function failed parse 78 ground truth, as we noticed some error logs like `[utils.py:158] couldn't parse one of [0,1) or [0,1)`, so all those questions will be marked as wrong. We will raise a issue about this problem and will add a string equality check statement before going to is_equiv() function for now as a temporial solution.
 
 
 **NOTE**: For `meta_ifeval` tasks, we have to use the original configs, such as `instruction_id_list`, `kwargs`, from [wis-k/instruction-following-eval](https://huggingface.co/datasets/wis-k/instruction-following-eval) in order to use [lm-evaluation-harness IFeval evaluation](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard/ifeval). We will perform similar join back method using `get_ifeval_data` function in the [prepare_datasets.py](./prepare_dataset.py) to get a local parquet dataset file.
 
-## Results and discussions
+## Results
 
 Here is the comparison between our reported numbers and the reproduced numbers in this tutorial:
 
@@ -153,3 +157,7 @@ From the table above, we can see that most of our reported results are very clos
 ## Acknowledgement
 
 This tutorial is inspired by [leaderboard tasks implementation on the lm_evaluation_harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard) created by Huggingface 🤗 [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) team.
+
+## Conclusion
+
+This tutorial provides a detailed guide on how to reproduce the Meta Llama 3.1 evaluation metrics using the lm-evaluation-harness and our 3.1 evals dataseta. By following the steps outlined, users can replicate our evaluation process for specific tasks and compare their results with our reported metrics. While slight variations in results are expected due to differences in implementation and model behavior, this guide aims to provide a transparent and reproducible method for evaluating Meta Llama 3 models.
