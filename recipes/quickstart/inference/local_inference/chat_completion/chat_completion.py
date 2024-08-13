@@ -20,7 +20,7 @@ def main(
     model_name,
     peft_model: str=None,
     quantization: str = None, # Options: 4bit, 8bit
-    max_new_tokens =256, #The maximum numbers of tokens to generate
+    max_new_tokens =1024, #The maximum numbers of tokens to generate
     min_new_tokens:int=0, #The minimum numbers of tokens to generate
     prompt_file: str=None,
     seed: int=42, #seed value for reproducibility
@@ -68,6 +68,7 @@ def main(
     torch.manual_seed(seed)
 
     model = load_model(model_name, quantization, use_fast_kernels, **kwargs)
+    print("Loaded model!")
     if peft_model:
         model = load_peft_model(model, peft_model)
 
@@ -77,26 +78,26 @@ def main(
 
     with torch.no_grad():
         for idx, chat in enumerate(chats):
-            safety_checker = get_safety_checker(enable_azure_content_safety,
-                                        enable_sensitive_topics,
-                                        enable_saleforce_content_safety,
-                                        enable_llamaguard_content_safety,
-                                        )
+            # safety_checker = get_safety_checker(enable_azure_content_safety,
+            #                            enable_sensitive_topics,
+            #                            enable_saleforce_content_safety,
+            #                            enable_llamaguard_content_safety,
+            #                            )
             # Safety check of the user prompt
-            safety_results = [check(dialogs[idx][0]["content"]) for check in safety_checker]
-            are_safe = all([r[1] for r in safety_results])
-            if are_safe:
-                print(f"User prompt deemed safe.")
-                print("User prompt:\n", dialogs[idx][0]["content"])
-                print("\n==================================\n")
-            else:
-                print("User prompt deemed unsafe.")
-                for method, is_safe, report in safety_results:
-                    if not is_safe:
-                        print(method)
-                        print(report)
-                print("Skipping the inferece as the prompt is not safe.")
-                sys.exit(1)  # Exit the program with an error status
+            # safety_results = [check(dialogs[idx][0]["content"]) for check in safety_checker]
+            # are_safe = all([r[1] for r in safety_results])
+            if True: # are_safe:
+               # print(f"User prompt deemed safe.")
+               print("Running inference on the following prompt:\n", str(dialogs[idx]))
+               print("\n==================================\n")
+            # else:
+            #    print("User prompt deemed unsafe.")
+            #    for method, is_safe, report in safety_results:
+            #        if not is_safe:
+            #            print(method)
+            #            print(report)
+            #    print("Skipping the inferece as the prompt is not safe.")
+            #    sys.exit(1)  # Exit the program with an error status
             tokens= torch.tensor(chat).long()
             tokens= tokens.unsqueeze(0)
             attention_mask = torch.ones_like(tokens)
@@ -118,22 +119,24 @@ def main(
                 **kwargs
             )
 
-            output_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+            output_text = tokenizer.decode(outputs[0], skip_special_tokens=False) ### True
+            print("Inference complete")
+            print()
 
             # Safety check of the model output
-            safety_results = [check(output_text) for check in safety_checker]
-            are_safe = all([r[1] for r in safety_results])
-            if are_safe:
-                print("User input and model output deemed safe.")
-                print(f"Model output:\n{output_text}")
+            # safety_results = [check(output_text) for check in safety_checker]
+            # are_safe = all([r[1] for r in safety_results])
+            if True: # are_safe:
+                # print("User input and model output deemed safe.")
+                print(f"Full output:\n{output_text}")
                 print("\n==================================\n")
 
-            else:
-                print("Model output deemed unsafe.")
-                for method, is_safe, report in safety_results:
-                    if not is_safe:
-                        print(method)
-                        print(report)
+            # else:
+            #    print("Model output deemed unsafe.")
+            #    for method, is_safe, report in safety_results:
+            #        if not is_safe:
+            #            print(method)
+            #            print(report)
 
 
 

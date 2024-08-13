@@ -197,7 +197,8 @@ def main(**kwargs):
             model.to("cuda")
 
     dataset_config = generate_dataset_config(train_config, kwargs)
-
+    print("Dataset Config: ", dataset_config)
+    
      # Load and preprocess the dataset for training and validation
     dataset_train = get_preprocessed_dataset(
         tokenizer,

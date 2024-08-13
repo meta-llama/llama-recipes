@@ -3,3 +3,7 @@ __pycache__
 .ipynb_checkpoints
 wandb/
 artifacts/
+*.out
+*model_checkpoints/
+*lenv/
+*dataenv/
