@@ -1,7 +1,7 @@
 # Extending Llama to a new language
 Authored by : Sarvam team
 In this recipe, we will see how to add a new language to the Llama family of models. The steps are quite general and can be easily adapted to other models as well. Using this recipe, you should be able to replicate the findings of [OpenHathi](https://huggingface.co/sarvamai/OpenHathi-7B-Hi-v0.1-Base).
-Please read more about OpenHathi [here](https://www.sarvam.ai/blog/announcing-openhathi-series)
+Please read more about OpenHathi [here](https://web.archive.org/web/20240418103408/https://www.sarvam.ai/blog/announcing-openhathi-series)
 ## Data
 The original OpenHathi model uses a combination of [Sangraha](https://huggingface.co/datasets/ai4bharat/sangraha) and Wikipedia as its primary data sources. If the reader is interested in using these sources, they would also have to preprocess the data: clean, filter, and deduplicate. See [Setu](https://github.com/AI4Bharat/setu) for an easy way to do this at scale.
 
