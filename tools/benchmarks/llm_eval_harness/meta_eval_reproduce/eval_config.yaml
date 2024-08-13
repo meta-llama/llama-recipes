@@ -1,4 +1,4 @@
-model_name: "meta-llama/Meta-Llama-3.1-Instruct-8B" # The name of the model to evaluate. This must be a valid Meta Llama 3 based model name in the HuggingFace model hub."
+model_name: "meta-llama/Meta-Llama-3.1-8B-Instruct" # The name of the model to evaluate. This must be a valid Meta Llama 3 based model name in the HuggingFace model hub."
 
 evals_dataset: "meta-llama/Meta-Llama-3.1-8B-Instruct-evals" # The name of the 3.1 evals dataset to evaluate, please make sure this eval dataset corresponds to the model loaded. This must be a valid Meta Llama 3.1 evals dataset name in the Llama 3.1 Evals collection.
 # Must be one of the following ["meta-llama/Meta-Llama-3.1-8B-Instruct-evals","meta-llama/Meta-Llama-3.1-70B-Instruct-evals","meta-llama/Meta-Llama-3.1-405B-Instruct-evals","meta-llama/Meta-Llama-3.1-8B-evals","meta-llama/Meta-Llama-3.1-70B-evals","meta-llama/Meta-Llama-3.1-405B-evals"]
@@ -19,7 +19,7 @@ batch_size: "auto" # Batch size, can be 'auto', 'auto:N', or an integer. It is s
 output_path: "eval_results" # the output folder to store all the eval results and samples.
 
 #limit: 12 # Limit number of examples per task, set 'null' to run all.
-limit: null # Limit number of examples per task.
+limit: null # Limit number of examples per task, set 'null' to run all.
 
 verbosity: "INFO" #Logging level: CRITICAL, ERROR, WARNING, INFO, DEBUG.
 
