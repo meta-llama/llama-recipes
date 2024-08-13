@@ -11,7 +11,7 @@ As Meta Llama models gain popularity, evaluating these models has become increas
 
 ### Huggingface setups
 
-In order to install correct lm-evaluation-harness version, please check the [Reproducibility section](https://huggingface.co/docs/leaderboards/open_llm_leaderboard/about#reproducibility) in Huggingface 🤗 Open LLM Leaderboard v2 About page. To add the VLLM dependency, we can do following:
+In order to install correct lm-evaluation-harness version, please check the [reproducibility section](https://huggingface.co/docs/leaderboards/open_llm_leaderboard/about#reproducibility) in Huggingface 🤗 Open LLM Leaderboard v2 About page. To add the VLLM dependency, we can do following:
 
 ```
 git clone git@github.com:huggingface/lm-evaluation-harness.git
@@ -24,7 +24,7 @@ To access our [3.1 evals Huggingface collection](https://huggingface.co/collecti
 - Log in to the Huggingface website and click the 3.1 evals dataset pages and agree to the terms.
 - Follow the [Huggingface authentication instructions](https://huggingface.co/docs/huggingface_hub/en/quick-start#authentication) to gain read access for your machine.
 
-It is recommended to read the dataset card to understand the meaning of each column and use the viewer feature in the Huggingface dataset to view our dataset, such as this [MMLU-Pro](https://huggingface.co/datasets/meta-llama/Meta-Llama-3.1-8B-Instruct-evals/viewer/Meta-Llama-3.1-8B-Instruct-evals__mmlu_pro__details?row=0). It is important to have some basic understanding of our dataset format and content before proceeding.
+It is recommended to read the dataset card to understand the meaning of each column and use the viewer feature in the Huggingface dataset to view our dataset. It is important to have some basic understanding of our dataset format and content before proceeding.
 
 ### Task Selection
 
@@ -111,7 +111,7 @@ Once we have the yaml created, we can run the tasks using `lm-eval` CLI and use 
 
 **Padding**
 
-By default, for the generative tasks, the `lm-eval --model_args="{...}" --batch_size=auto` command will use Huggingface inference solution that uses a static batch method with [left padding](https://github.com/EleutherAI/lm-evaluation-harness/blob/8ad598dfd305ece8c6c05062044442d207279a97/lm_eval/models/huggingface.py#L773) using [EOS_token](https://huggingface.co/datasets/open-llm-leaderboard/meta-llama__Meta-Llama-3.1-8B-Instruct-details/blob/main/llhf__Meta-Llama-3.1-8B-Instruct/results_2024-07-19T10-53-21.449243.json#L2558) for Llama models. While our internal evaluation will load python original checkpoints and handle individual generation request asynchronously without any padding. To simulate this, we will use VLLM inference solution to do dynamic batching without any padding.
+By default, for the generative tasks, the `lm-eval --model_args="{...}" --batch_size=auto` command will use Huggingface inference solution that uses a static batch method with [left padding](https://github.com/EleutherAI/lm-evaluation-harness/blob/8ad598dfd305ece8c6c05062044442d207279a97/lm_eval/models/huggingface.py#L773) using EOS_token for Llama models. While our internal evaluation will load python original checkpoints and handle individual generation request asynchronously without any padding. To simulate this, we will use VLLM inference solution to do dynamic batching without any padding.
 
 **NOTE**: Since our prompts in the evals dataset has already included all the special tokens required by instruct model, such as `|start_header_id|>user<|end_header_id|>`, we will not use `--apply_chat_template` argument for instruct models anymore. However, we need to use `add_bos_token=True` flag to add the BOS_token back during VLLM inference, as the BOS_token is removed by default in [this PR](https://github.com/EleutherAI/lm-evaluation-harness/pull/1465).
 
@@ -125,7 +125,7 @@ python meta_eval.py --config_path ./eval_config.yaml
 
 This will load the default [eval_config.yaml](./eval_config.yaml) config and run a `meta_instruct` group tasks that includes `meta_ifeval`, `meta_math_hard`, `meta_gpqa` and `meta_mmlu_pro_instruct` tasks for `meta-llama/Meta-Llama-3.1-8B-Instruct` model using `meta-llama/Meta-Llama-3.1-8B-Instruct-evals` dataset.
 
-**NOTE**: For `meta_math_hard` tasks, some of our internal math ground truth has been converted to scientific notation, eg. `6\sqrt{7}` has been converted to `1.59e+1` which will be later handled by our internal math evaluation functions. As the lm-evaluation-harness [math evaluation utils.py](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/lm_eval/tasks/leaderboard/math/utils.py) can not fully handle those conversion, we will use the original ground truth from the original dataset [lighteval/MATH-Hard](https://huggingface.co/datasets/lighteval/MATH-Hard) by joining the tables on the input questions. The `get_math_data` function in the [prepare_datasets.py](./prepare_dataset.py) will handle this step and produce a local parquet dataset file.
+**NOTE**: For `meta_math_hard` tasks, some of our internal math ground truth has been converted to scientific notation, e.g. `6\sqrt{7}` has been converted to `1.59e+1`, which will be later handled by our internal math evaluation functions. As the lm-evaluation-harness [math evaluation utils.py](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/lm_eval/tasks/leaderboard/math/utils.py) can not fully handle those conversion, we will use the original ground truth from the original dataset [lighteval/MATH-Hard](https://huggingface.co/datasets/lighteval/MATH-Hard) by joining the tables on the input questions. The `get_math_data` function in the [prepare_datasets.py](./prepare_dataset.py) will handle this step and produce a local parquet dataset file.
 
 Moreover, we have modified this [math_hard/utils.py](./meta_template/math_hard/utils.py) to address two issues:
 
