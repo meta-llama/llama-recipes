@@ -11,8 +11,8 @@ class train_config:
     enable_fsdp: bool=False
     low_cpu_fsdp: bool=False
     run_validation: bool=True
-    batch_size_training: int=4
-    batching_strategy: str="packing" #alternative: padding
+    batch_size_training: int=1
+    batching_strategy: str="padding" #alternative: packing
     context_length: int=4096
     gradient_accumulation_steps: int=1
     gradient_clipping: bool = False
@@ -28,7 +28,7 @@ class train_config:
     use_fp16: bool=False
     mixed_precision: bool=True
     val_batch_size: int=1
-    dataset = "samsum_dataset"
+    dataset = "paulg_dataset"
     peft_method: str = "lora" # None, llama_adapter (Caution: llama_adapter is currently not supported with FSDP)
     use_peft: bool=False
     from_peft_checkpoint: str="" # if not empty and use_peft=True, will load the peft checkpoint and resume the fine-tuning on that checkpoint

@@ -12,6 +12,12 @@ class samsum_dataset:
 
 
 @dataclass
+class paulg_dataset:
+    dataset: str =  "paulg_dataset"
+    train_split: str = "train"
+    test_split: str = "validation"
+
+@dataclass
 class grammar_dataset:
     dataset: str = "grammar_dataset"
     train_split: str = "src/llama_recipes/datasets/grammar_dataset/gtrain_10k.csv"
