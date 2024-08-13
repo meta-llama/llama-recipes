@@ -156,7 +156,7 @@ Moreover, we have modified this [math_hard/utils.py](./meta_template/math_hard/u
 2. The [is_equiv(x1: str, x2: str)](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/lm_eval/tasks/leaderboard/math/utils.py#L144) function failed parse 78 ground truth, as we noticed some error logs like `[utils.py:158] couldn't parse one of [0,1) or [0,1)`, so all those questions will be marked as wrong. We will raise a issue about this problem and will add a string equality check statement before going to is_equiv() function for now as a temporal solution.
 
 
-**NOTE**: For `meta_ifeval` tasks, we have to use the original configs, such as `instruction_id_list`, `kwargs`, from [wis-k/instruction-following-eval](https://huggingface.co/datasets/wis-k/instruction-following-eval) in order to use [lm-evaluation-harness IFeval evaluation](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard/ifeval). We will perform similar join back method using `get_ifeval_data` function in the [prepare_datasets.py](./prepare_dataset.py) to get a local parquet dataset file.
+**NOTE**: For `meta_ifeval` tasks, we have to use the original configs, such as `instruction_id_list`, `kwargs`, from [wis-k/instruction-following-eval](https://huggingface.co/datasets/wis-k/instruction-following-eval) in order to use [lm-evaluation-harness IFeval evaluation](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard/ifeval). We will perform similar join back method using `get_ifeval_data` function in the [prepare_meta_eval.py](./prepare_meta_eval.py) to get a local parquet dataset file.
 
 ## Results
 
