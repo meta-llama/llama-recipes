@@ -6,7 +6,7 @@ As Meta Llama models gain popularity, evaluating these models has become increas
 ## Important Notes
 
 1. **This tutorial is not the official implementation** of Meta Llama evaluation. It is based on public third-party libraries, and the implementation may differ slightly from our internal evaluation, leading to minor differences in the reproduced numbers.
-2. **Model Compatibility**: This tutorial is specifically for Llama 3 based models, as our prompts include Meta Llama 3 special tokens (e.g., `<|start_header_id|>user<|end_header_id|`). It will not work with models that are not based on Llama 3.
+2. **Model Compatibility**: This tutorial is specifically for Llama 3 based models, as our prompts include Meta Llama 3 special tokens, e.g. `<|start_header_id|>user<|end_header_id|`. It will not work with models that are not based on Llama 3.
 
 
 ### Huggingface setups
@@ -65,7 +65,7 @@ test_split: latest
 
 **Note**: Remember to change the eval dataset name according to the model type and DO NOT use pretrained evals dataset on instruct models or vice versa.
 
-**2.Configure for preprocessing, prompts and ground truth**
+**2.Configure preprocessing, prompts and ground truth**
 
 Here is the example yaml snippet in the MMLU-Pro that handles dataset preprocess, prompts and ground truth.
 
