@@ -41,7 +41,7 @@ There are 3 major differences in terms of the eval configurations and prompts be
 
 - **Prompts**: We use Chain-of-Thought(COT) prompts while Huggingface leaderboard does not,
 - **Task type**: For MMLU-Pro, BBH, GPQA tasks, we ask the model to generate response and score the parsed answer from generated response, while Huggingface leaderboard evaluation is comparing log likelihood of all label words, such as [ (A),(B),(C),(D) ].
-- **Inference**: We use internal LLM inference solution that loads pytorch checkpoints and do not use padding, while Huggingface leaderboard uses Huggingface format model and sometimes will use padding depanding on the tasks type and batch size.
+- **Inference**: We use internal LLM inference solution that loads pytorch checkpoints and do not use padding, while Huggingface leaderboard uses Huggingface format model and sometimes will use padding depending on the tasks type and batch size.
 
 Given those differences, our reproduced number can not be apple to apple compared to the numbers in the Huggingface 🤗 [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard), even if the task names are the same.
 
@@ -147,7 +147,7 @@ lm_eval --model vllm --model_args pretrained=meta-llama/Meta-Llama-3.1-8B-Instru
 
 Then just copy this command back to your terminal and run it to get our reproduced result, saved into `eval_results` folder by default.
 
-**NOTE**: For `meta_math_hard` tasks, some of our internal math ground truth has been converted to scientific notation, e.g. `6\sqrt{7}` has been converted to `1.59e+1`, which will be later handled by our internal math evaluation functions. As the lm-evaluation-harness [math evaluation utils.py](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/lm_eval/tasks/leaderboard/math/utils.py) can not fully handle those conversion, we will use the original ground truth from the original dataset [lighteval/MATH-Hard](https://huggingface.co/datasets/lighteval/MATH-Hard) by joining the tables on the input questions. The `get_math_data` function in the [prepare_datasets.py](./prepare_dataset.py) will handle this step and produce a local parquet dataset file.
+**NOTE**: For `meta_math_hard` tasks, some of our internal math ground truth has been converted to scientific notation, e.g. `6\sqrt{7}` has been converted to `1.59e+1`, which will be later handled by our internal math evaluation functions. As the lm-evaluation-harness [math evaluation utils.py](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/lm_eval/tasks/leaderboard/math/utils.py) can not fully handle those conversion, we will use the original ground truth from the original dataset [lighteval/MATH-Hard](https://huggingface.co/datasets/lighteval/MATH-Hard) by joining the tables on the input questions. The `get_math_data` function in the [prepare_meta_eval.py](./prepare_meta_eval.py) will handle this step and produce a local parquet dataset file.
 
 Moreover, we have modified this [math_hard/utils.py](./meta_template/math_hard/utils.py) to address two issues:
 
@@ -178,7 +178,7 @@ Here is the comparison between our reported numbers and the reproduced numbers i
 
 From the table above, we can see that most of our reproduced results are very close to our reported number in the [Meta Llama website](https://llama.meta.com/).
 
-**NOTE**: In the [Meta Llama website](https://llama.meta.com/), we reported the `macro_avg` metric, which is the average of all subtask's average score, for `MMLU-Pro `task, but here we are reproducing the `micro_avg` metric, which is the average score for all the individual samples, and those `micro_avg`  numbers can be found in the [eval_details.md](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/eval_details.md#mmlu-pro).
+**NOTE**: In the [Meta Llama website](https://llama.meta.com/), we reported the `macro_avg` metric, which is the average of all subtask average score, for `MMLU-Pro `task, but here we are reproducing the `micro_avg` metric, which is the average score for all the individual samples, and those `micro_avg`  numbers can be found in the [eval_details.md](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/eval_details.md#mmlu-pro).
 
 **NOTE**: The reproduced numbers may be slightly different, as we observed around ±0.01 differences between each reproduce run because the latest VLLM inference is not very deterministic even with temperature=0. This behavior maybe related [this issue](https://github.com/vllm-project/vllm/issues/5404).
 or it is expected as stated in [this comment](https://github.com/vllm-project/vllm/issues/4112#issuecomment-2071115725)
