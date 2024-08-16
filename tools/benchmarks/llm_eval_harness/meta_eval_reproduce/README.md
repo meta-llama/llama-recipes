@@ -188,3 +188,4 @@ or it is expected due to 16-bits inference as stated in [this comment](https://g
 ## Acknowledgement
 
 This tutorial is inspired by [leaderboard tasks implementation on the lm_evaluation_harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard) created by Hugging Face [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) team.
+We also extend our gratitude to the [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness) github repo from [EleutherAI](https://www.eleuther.ai/).
