@@ -6,7 +6,7 @@ As Meta Llama models gain popularity, evaluating these models has become increas
 ## Important Notes
 
 1. **This tutorial is not the official implementation** of Meta Llama evaluation. It is based on public third-party libraries, and the implementation may differ slightly from our internal evaluation, leading to minor differences in the reproduced numbers.
-2. **Model Compatibility**: This tutorial is specifically for Llama 3 based models, as our prompts include Meta Llama 3 special tokens, e.g. `<|start_header_id|>user<|end_header_id|`. It will not work with models that are not based on Llama 3.
+2. **Model Compatibility**: This tutorial is specifically for Llama 3 based models, as our prompts include Meta Llama 3 special tokens, e.g. `<|start_header_id|>user<|end_header_id|>`. It will not work with models that are not based on Llama 3.
 
 
 ### Hugging Face setups
@@ -39,12 +39,12 @@ Here, we aim to reproduce the Meta reported benchmark numbers on the aforementio
 
 There are 4 major differences in terms of the eval configurations and prompts between this tutorial implementation and Hugging Face [leaderboard implementation](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard).
 
-- **Prompts**: We use Chain-of-Thought(COT) prompts while Hugging Face leaderboard does not. The prompts that define the output format are also sometime different.
+- **Prompts**: We use Chain-of-Thought(COT) prompts while Hugging Face leaderboard does not. The prompts that define the output format are also different.
 - **Task type**: For MMLU-Pro, BBH, GPQA tasks, we ask the model to generate response and score the parsed answer from generated response, while Hugging Face leaderboard evaluation is comparing log likelihood of all label words, such as [ (A),(B),(C),(D) ].
-- **Parsers**: For generative tasks, where the final answer needs to be parsed before scoring, the parser functions can be different between ours and Hugging Face leaderboard evaluation, as our prompts that define the model output format are sometime designed differently.
+- **Parsers**: For generative tasks, where the final answer needs to be parsed before scoring, the parser functions can be different between ours and Hugging Face leaderboard evaluation, as our prompts that define the model output format are designed differently.
 - **Inference**: We use internal LLM inference solution that loads pytorch checkpoints and do not use padding, while Hugging Face leaderboard uses Hugging Face format model and sometimes will use padding depending on the tasks type and batch size.
 
-Given those differences, our reproduced number can not be apple to apple compared to the numbers in the Hugging Face [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard), even if the task names are the same.
+Given those differences, our reproduced number can not be compared to the numbers in the Hugging Face [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard), even if the task names are the same.
 
 ### Create task config
 
@@ -60,6 +60,8 @@ dataset_path: meta-llama/Meta-Llama-3.1-8B-Instruct-evals
 dataset_name: Meta-Llama-3.1-8B-Instruct-evals__mmlu_pro__details
 test_split: latest
 ```
+
+If you want to run evaluation on 70B-Instruct, then it is recommended to change the `dataset_path` and  `dataset_name` from 8B to 70B, even though 70B-instruct and 8B-instruct share the same prompts, the `is_correct` column, which can be used to get the difference between current reproduced result and the reported results for each sample, is different.
 
 **Note**: Config files for Meta-Llama-3.1-8B-Instruct are already provided in each task subfolder under [meta_template folder](./meta_template/). Remember to change the eval dataset name according to the model type and DO NOT use pretrained evals dataset on instruct models or vice versa.
 
