@@ -2,11 +2,12 @@
 # This software may be used and distributed according to the terms of the Llama 3 Community License Agreement.
 
 import argparse
-import errno, shutil
+import errno
+import shutil
 import glob
 import os
 from pathlib import Path
-
+import nltk
 import yaml
 from datasets import Dataset, load_dataset
 
@@ -51,7 +52,7 @@ def get_ifeval_data(model_name, output_dir):
         ]
     )
     joined.rename_column("output_prediction_text", "previous_output_prediction_text")
-    joined.to_parquet(output_dir + f"/joined_ifeval.parquet")
+    joined.to_parquet(output_dir + "/joined_ifeval.parquet")
 
 
 # get the math_hard data from the evals dataset and join it with the original math_hard dataset
@@ -94,7 +95,7 @@ def get_math_data(model_name, output_dir):
         "output_prediction_text", "previous_output_prediction_text"
     )
 
-    joined.to_parquet(output_dir + f"/joined_math.parquet")
+    joined.to_parquet(output_dir + "/joined_math.parquet")
 
 
 # get the question from the ifeval dataset
@@ -137,6 +138,8 @@ def change_yaml(args, base_name):
 
 # copy the files and change the yaml file to use the correct model name
 def copy_and_prepare(args):
+    # nltk punkt_tab package is needed
+    nltk.download('punkt_tab')
     if not os.path.exists(args.work_dir):
         # Copy the all files, including yaml files and python files, from template folder to the work folder
 
