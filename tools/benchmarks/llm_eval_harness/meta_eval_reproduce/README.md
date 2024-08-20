@@ -69,21 +69,21 @@ data_parallel_size: 4 # The VLLM argument that speicify the data parallel size f
 
 ```
 
-Change `model_name` to the model name you want to eval on and change the `evals_dataset` according to the model type and parameters.  Remember to adjust the `tensor_parallel_size` to 2 or more to load the 70B models and change the `data_parallel_size` accordingly so that `tensor_parallel_size * data_parallel_size` is the number of GPUs you have. Please read the comments inside this yaml for detailed explanations on other parameters.
+  Change `model_name` to the model name you want to eval on and change the `evals_dataset` according to the model type and parameters.  Remember to adjust the `tensor_parallel_size` to 2 or more to load the 70B models and change the `data_parallel_size` accordingly so that `tensor_parallel_size * data_parallel_size` is the number of GPUs you have. Please read the comments inside this yaml for detailed explanations on other parameters.
 
 2. We already included all the related eval task yaml and python files in the [meta_template](./meta_template/) folder, which defines all the task implementation. You do not need to change those manually, we will use [prepare_meta_eval.py](./prepare_meta_eval.py) to automatically change them later.
 
 3. Then we can run a [prepare_meta_eval.py](./prepare_meta_eval.py) that reads the configuration from [eval_config.yaml](./eval_config.yaml), copies everything in the template folder to a working folder `work_dir`, makes modification to those templates accordingly, prepares dataset if needed and print out the CLI command to run the `lm_eval`.
 
-To run the [prepare_meta_eval.py](./prepare_meta_eval.py), we can do:
+  To run the [prepare_meta_eval.py](./prepare_meta_eval.py), we can do:
 
 ```
 python prepare_meta_eval.py --config_path ./eval_config.yaml
 ```
 
-By default,this will load the default [eval_config.yaml](./eval_config.yaml) config and print out a CLI command to run `meta_instruct` group tasks,  which includes `meta_ifeval`, `meta_math_hard`, `meta_gpqa` and `meta_mmlu_pro_instruct`, for `meta-llama/Meta-Llama-3.1-8B-Instruct` model using `meta-llama/Meta-Llama-3.1-8B-Instruct-evals` dataset using `lm_eval`.
+  By default,this will load the default [eval_config.yaml](./eval_config.yaml) config and print out a CLI command to run `meta_instruct` group tasks,  which includes `meta_ifeval`, `meta_math_hard`, `meta_gpqa` and `meta_mmlu_pro_instruct`, for `meta-llama/Meta-Llama-3.1-8B-Instruct` model using `meta-llama/Meta-Llama-3.1-8B-Instruct-evals` dataset using `lm_eval`.
 
-An example output from [prepare_meta_eval.py](./prepare_meta_eval.py) looks like this:
+  An example output from [prepare_meta_eval.py](./prepare_meta_eval.py) looks like this:
 
 ```
 lm_eval --model vllm --model_args pretrained=meta-llama/Meta-Llama-3.1-8B-Instruct,tensor_parallel_size=1,dtype=auto,gpu_memory_utilization=0.9,data_parallel_size=4,max_model_len=8192,add_bos_token=True,seed=42 --tasks meta_instruct --batch_size auto --output_path eval_results --include_path ./work_dir --seed 42  --log_samples
@@ -91,7 +91,7 @@ lm_eval --model vllm --model_args pretrained=meta-llama/Meta-Llama-3.1-8B-Instru
 
 4. Then just copy the command printed from [prepare_meta_eval.py](./prepare_meta_eval.py) back to your terminal and run it to get our reproduced result, saved into `eval_results` folder by default.
 
-**NOTE**: As for `--model vllm`, here we will use VLLM inference instead of Hugging Face inference because of the padding issue. By default, for the generative tasks, the `lm-eval --model_args="{...}" --batch_size=auto` command will use Hugging Face inference solution that uses a static batch method with [left padding](https://github.com/EleutherAI/lm-evaluation-harness/blob/8ad598dfd305ece8c6c05062044442d207279a97/lm_eval/models/huggingface.py#L773) using EOS_token for Llama models. While our internal evaluation will load python original checkpoints and handle individual generation request asynchronously without any padding. To simulate this, we will use VLLM inference solution to do dynamic batching without any padding.
+**NOTE**: As for `--model vllm`, here we will use VLLM inference instead of Hugging Face inference because of the padding issue. By default, for the generative tasks, the `lm-eval --model_args="{...}" --batch_size=auto` command will use Hugging Face inference solution that uses a static batch method with [left padding](https://github.com/EleutherAI/lm-evaluation-harness/blob/8ad598dfd305ece8c6c05062044442d207279a97/lm_eval/models/huggingface.py#L773) using EOS_token for Llama models, but our internal evaluation will load python original checkpoints and handle individual generation request asynchronously without any padding. To simulate this, we will use VLLM inference solution to do dynamic batching without any padding.
 
 **NOTE**: As for `add_bos_token=True`, since our prompts in the evals dataset has already included all the special tokens required by instruct model, such as `<|start_header_id|>user<|end_header_id|>`, we will not use `--apply_chat_template` argument for instruct models anymore. However, we need to use `add_bos_token=True` flag to add the BOS_token back during VLLM inference, as the BOS_token is removed by default in [this PR](https://github.com/EleutherAI/lm-evaluation-harness/pull/1465).
 
@@ -109,7 +109,7 @@ Moreover, we have modified this [math_hard/utils.py](./meta_template/math_hard/u
 
 ### Yaml Config Deep Dive
 
-Here, we will use MMLU-Pro as a example to show the steps to create a yaml config with detailed explanations, so that people can follow this example to create other tasks configurations if they want. For more information, please read lm-evaluation-harness [new task guide](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/docs/new_task_guide.md)
+Here, we will use MMLU-Pro as a example to show the steps to create a yaml config with detailed explanations, so that people can follow this example to create other tasks configurations if they want. For more information, please read lm-evaluation-harness [new task guide](https://github.com/EleutherAI/lm-evaluation-harness/blob/main/docs/new_task_guide.md).
 
 **1.Define the config to load datasets**
 
@@ -157,7 +157,7 @@ filter_list:
 ```
 Since the MMLU-Pro task uses a 5-shot Chain-of-Thought(COT) prompts and the prompts are designed with explicitly instruction: "Your response should end with \"The best answer is [the_answer_letter].\" where the [the_answer_letter] is a letter from the provided choices.",  we will use a simple and intuitive regex expression `best answer is ([A-Z])` to parse the model response and take the last appearance as the final answer and this final answer will be scored based on the ground truth `gold` using exact match method.
 
-**Define generation and metric config**
+**4.Define generation and metric config**
 
 Then we need to define the generation and metric config, which looks like this:
 ```yaml
