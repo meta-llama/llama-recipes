@@ -23,13 +23,18 @@ Given those differences, our reproduced number can not be compared to the number
 
 ## Environment setups
 
-Please install our llama-recipe repo and lm-evaluation-harness by following:
+Please install our lm-evaluation-harness and llama-recipe repo by following:
 
 ```
-pip install llama-recipes
-git clone https://github.com/EleutherAI/lm-evaluation-harness
+git clone git@github.com:EleutherAI/lm-evaluation-harness.git
 cd lm-evaluation-harness
 pip install -e .[math,ifeval,sentencepiece,vllm]
+cd ../
+git clone git@github.com:meta-llama/llama-recipes.git
+cd llama-recipes
+pip install -U pip setuptools
+pip install -e .
+cd tools/benchmarks/llm_eval_harness/meta_eval_reproduce
 ```
 
 To access our [3.1 evals Hugging Face collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f), you must:
@@ -50,7 +55,7 @@ Here, we aim to reproduce the Meta reported benchmark numbers on the aforementio
 
 ### Run eval tasks
 
-1. We create [eval_config.yaml](./eval_config.yaml) to store all the arguments and hyperparameters. This is the main config file you need to change and part of eval_config.yaml looks like this:
+1. We created [eval_config.yaml](./eval_config.yaml) to store all the arguments and hyperparameters. This is the main config file you need to change if you want to eval other models, and a part of eval_config.yaml looks like this:
 
 ```yaml
 model_name: "meta-llama/Meta-Llama-3.1-8B-Instruct" # The name of the model to evaluate. This must be a valid Meta Llama 3 based model name in the HuggingFace model hub."
@@ -71,9 +76,9 @@ data_parallel_size: 4 # The VLLM argument that speicify the data parallel size f
 
   Change `model_name` to the model name you want to eval on and change the `evals_dataset` according to the model type and parameters.  Remember to adjust the `tensor_parallel_size` to 2 or more to load the 70B models and change the `data_parallel_size` accordingly so that `tensor_parallel_size * data_parallel_size` is the number of GPUs you have. Please read the comments inside this yaml for detailed explanations on other parameters.
 
-2. We already included all the related eval task yaml and python files in the [meta_template](./meta_template/) folder, which defines all the task implementation. You do not need to change those manually, we will use [prepare_meta_eval.py](./prepare_meta_eval.py) to automatically change them later.
+2. We already included all the related eval task yaml and python files in the [meta_template](./meta_template/) folder, which define all the task implementation. You do not need to change those manually, we will use [prepare_meta_eval.py](./prepare_meta_eval.py) to automatically change them later.
 
-3. Then we can run a [prepare_meta_eval.py](./prepare_meta_eval.py) that reads the configuration from [eval_config.yaml](./eval_config.yaml), copies everything in the template folder to a working folder `work_dir`, makes modification to those templates accordingly, prepares dataset if needed and print out the CLI command to run the `lm_eval`.
+3. Then we can run [prepare_meta_eval.py](./prepare_meta_eval.py) that reads the configuration from [eval_config.yaml](./eval_config.yaml), copies everything in the template folder to a working folder `work_dir`, makes modification to those templates accordingly, prepares dataset if needed and prints out the CLI command to run the `lm_eval`.
 
   To run the [prepare_meta_eval.py](./prepare_meta_eval.py), we can do:
 
@@ -81,7 +86,7 @@ data_parallel_size: 4 # The VLLM argument that speicify the data parallel size f
 python prepare_meta_eval.py --config_path ./eval_config.yaml
 ```
 
-  By default,this will load the default [eval_config.yaml](./eval_config.yaml) config and print out a CLI command to run `meta_instruct` group tasks,  which includes `meta_ifeval`, `meta_math_hard`, `meta_gpqa` and `meta_mmlu_pro_instruct`, for `meta-llama/Meta-Llama-3.1-8B-Instruct` model using `meta-llama/Meta-Llama-3.1-8B-Instruct-evals` dataset using `lm_eval`.
+  By default,this will load the default [eval_config.yaml](./eval_config.yaml) config and print out a CLI command to run `meta_instruct` group tasks,  which includes `meta_ifeval`, `meta_math_hard`, `meta_gpqa` and `meta_mmlu_pro_instruct`, for `meta-llama/Meta-Llama-3.1-8B-Instruct` model using `meta-llama/Meta-Llama-3.1-8B-Instruct-evals` dataset and `lm_eval`.
 
   An example output from [prepare_meta_eval.py](./prepare_meta_eval.py) looks like this:
 
@@ -89,7 +94,7 @@ python prepare_meta_eval.py --config_path ./eval_config.yaml
 lm_eval --model vllm --model_args pretrained=meta-llama/Meta-Llama-3.1-8B-Instruct,tensor_parallel_size=1,dtype=auto,gpu_memory_utilization=0.9,data_parallel_size=4,max_model_len=8192,add_bos_token=True,seed=42 --tasks meta_instruct --batch_size auto --output_path eval_results --include_path ./work_dir --seed 42  --log_samples
 ```
 
-4. Then just copy the command printed from [prepare_meta_eval.py](./prepare_meta_eval.py) back to your terminal and run it to get our reproduced result, saved into `eval_results` folder by default.
+4. Then just copy the `lm_eval` command printed by [prepare_meta_eval.py](./prepare_meta_eval.py) back to your terminal and run it to get our reproduced result, which will be saved into `eval_results` folder by default.
 
 **NOTE**: As for `--model vllm`, here we will use VLLM inference instead of Hugging Face inference because of the padding issue. By default, for the generative tasks, the `lm-eval --model_args="{...}" --batch_size=auto` command will use Hugging Face inference solution that uses a static batch method with [left padding](https://github.com/EleutherAI/lm-evaluation-harness/blob/8ad598dfd305ece8c6c05062044442d207279a97/lm_eval/models/huggingface.py#L773) using EOS_token for Llama models, but our internal evaluation will load python original checkpoints and handle individual generation request asynchronously without any padding. To simulate this, we will use VLLM inference solution to do dynamic batching without any padding.
 
