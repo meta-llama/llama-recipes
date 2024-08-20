@@ -26,11 +26,7 @@ Given those differences, our reproduced number can not be compared to the number
 Please install our lm-evaluation-harness and llama-recipe repo by following:
 
 ```
-git clone git@github.com:EleutherAI/lm-evaluation-harness.git
-cd lm-evaluation-harness
-git checkout a4987bba6e9e9b3f22bd3a6c1ecf0abd04fd5622
-pip install -e .[math,ifeval,sentencepiece,vllm]
-cd ../
+pip install lm-eval[math,ifeval,sentencepiece,vllm]==0.4.3
 git clone git@github.com:meta-llama/llama-recipes.git
 cd llama-recipes
 pip install -U pip setuptools
@@ -204,7 +200,7 @@ Here is the comparison between our reported numbers and the reproduced numbers i
 
 From the table above, we can see that most of our reproduced results are very close to our reported number in the [Meta Llama website](https://llama.meta.com/).
 
-**NOTE**: We used the average of `inst_level_strict_acc,none` and `prompt_level_strict_acc,none` to get the final number for `IFeval` as stated [here](https://huggingface.co/docs/leaderboards/open_llm_leaderboard/about#task-evaluations-and-parameters)
+**NOTE**: We used the average of `inst_level_strict_acc,none` and `prompt_level_strict_acc,none` to get the final number for `IFeval` as stated [here](https://huggingface.co/docs/leaderboards/open_llm_leaderboard/about#task-evaluations-and-parameters).
 
 **NOTE**: In the [Meta Llama website](https://llama.meta.com/), we reported the `macro_avg` metric, which is the average of all subtask average score, for `MMLU-Pro `task, but here we are reproducing the `micro_avg` metric, which is the average score for all the individual samples, and those `micro_avg`  numbers can be found in the [eval_details.md](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/eval_details.md#mmlu-pro).
 
