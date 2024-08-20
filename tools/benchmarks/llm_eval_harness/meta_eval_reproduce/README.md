@@ -23,7 +23,7 @@ Given those differences, our reproduced number can not be compared to the number
 
 ## Environment setups
 
-Please install our lm-evaluation-harness and llama-recipe repo by following:
+Please install lm-evaluation-harness and our llama-recipe repo by following:
 
 ```
 pip install lm-eval[math,ifeval,sentencepiece,vllm]==0.4.3
@@ -83,7 +83,7 @@ data_parallel_size: 4 # The VLLM argument that speicify the data parallel size f
 python prepare_meta_eval.py --config_path ./eval_config.yaml
 ```
 
-  By default,this will load the default [eval_config.yaml](./eval_config.yaml) config and print out a CLI command to run `meta_instruct` group tasks,  which includes `meta_ifeval`, `meta_math_hard`, `meta_gpqa` and `meta_mmlu_pro_instruct`, for `meta-llama/Meta-Llama-3.1-8B-Instruct` model using `meta-llama/Meta-Llama-3.1-8B-Instruct-evals` dataset and `lm_eval`.
+  This script will load the default [eval_config.yaml](./eval_config.yaml) config and print out a `lm_eval` command to run `meta_instruct` group tasks,  which includes `meta_ifeval`, `meta_math_hard`, `meta_gpqa` and `meta_mmlu_pro_instruct`, for `meta-llama/Meta-Llama-3.1-8B-Instruct` model using `meta-llama/Meta-Llama-3.1-8B-Instruct-evals` dataset.
 
   An example output from [prepare_meta_eval.py](./prepare_meta_eval.py) looks like this:
 
