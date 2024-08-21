@@ -9,7 +9,7 @@ As Meta Llama models gain popularity, evaluating these models has become increas
 1. **This recipe is not the official implementation** of Meta Llama evaluation. It is based on public third-party libraries, as this implementation is not mirroring Meta Llama evaluation, this may lead to minor differences in the reproduced numbers.
 2. **Model Compatibility**: This tutorial is specifically for Llama 3 based models, as our prompts include Meta Llama 3 special tokens, e.g. `<|start_header_id|>user<|end_header_id|>`. It will not work with models that are not based on Llama 3.
 
-### Differences between our evaluation and Hugging Face leaderboard evaluation
+## Insights from Our Evaluation Process
 
 There are 4 major differences in terms of the eval configurations and prompting methods between this implementation and Hugging Face [leaderboard implementation](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard).
 
@@ -17,7 +17,8 @@ There are 4 major differences in terms of the eval configurations and prompting 
 - **Metric calculation**: For MMLU-Pro, BBH, GPQA tasks, we ask the model to generate response and score the parsed answer from generated response, while Hugging Face leaderboard evaluation is comparing log likelihood of all label words, such as [ (A),(B),(C),(D) ].
 - **Parsers**: For generative tasks, where the final answer needs to be parsed before scoring, the parser functions can be different between ours and Hugging Face leaderboard evaluation, as our prompts that define the model output format are designed differently.
 - **Inference**: We use internal LLM inference solution that loads pytorch checkpoints and do not use padding, while Hugging Face leaderboard uses Hugging Face format model and sometimes will use padding depending on the tasks type and batch size.
-- ** Tasks**  We run benchmarks on BBH and MMLU-Pro only for pretrained models and Math-Hard, IFeval, GPQA, only for pretrained models.
+- **Tasks**  We run benchmarks on BBH and MMLU-Pro only for pretrained models and Math-Hard, IFeval, GPQA, only for pretrained models.
+
 Given those differences, our reproduced number can not be compared to the numbers in the Hugging Face [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard), even if the task names are the same.
 
 ## Environment setups
