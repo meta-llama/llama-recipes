@@ -1,7 +1,7 @@
 
 # Reproducing Meta 3.1 Evaluation Metrics Using LM-Evaluation-Harness
 
-As Meta Llama models gain popularity, evaluating these models has become increasingly important. We have released all the evaluation details for Meta-Llama 3.1 models as datasets in the [3.1 evals Hugging Face collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f). This tutorial demonstrates how to reproduce metrics similar to our reported numbers using the [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/main) library and our prompts from the 3.1 evals datasets on selected tasks.
+As Meta Llama models gain popularity, evaluating these models has become increasingly important. We have released all the evaluation details for Meta-Llama 3.1 models as datasets in the [3.1 evals Hugging Face collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f). This recipe demonstrates how to closely reproduce the Llama 3.1 reported benchmark numbers using the [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/main) library and our prompts from the 3.1 evals datasets on selected tasks.
 
 ## Disclaimer
 
