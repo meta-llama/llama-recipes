@@ -6,7 +6,7 @@ As Meta Llama models gain popularity, evaluating these models has become increas
 ## Disclaimer
 
 
-1. **This tutorial is not the official implementation** of Meta Llama evaluation. It is based on public third-party libraries, and the implementation may differ slightly from our internal evaluation, leading to minor differences in the reproduced numbers.
+1. **This recipe is not the official implementation** of Meta Llama evaluation. It is based on public third-party libraries, as this implementation is not mirroring Meta Llama evaluation, this may lead to minor differences in the reproduced numbers.
 2. **Model Compatibility**: This tutorial is specifically for Llama 3 based models, as our prompts include Meta Llama 3 special tokens, e.g. `<|start_header_id|>user<|end_header_id|>`. It will not work with models that are not based on Llama 3.
 
 ### Differences between our evaluation and Hugging Face leaderboard evaluation
