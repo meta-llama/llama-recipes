@@ -62,6 +62,10 @@ There has been an study from [IBM on efficient benchmarking of LLMs](https://arx
 python eval.py --model hf --model_args pretrained=meta-llama/Meta-Llama-3.1-8B,dtype="float",peft=../peft_output --tasks hellaswag --num_fewshot 10  --device cuda:0 --batch_size 8 --limit 100
 ```
 
+### Reproducing Meta 3.1 Evaluation Metrics Using LM-Evaluation-Harness
+
+[meta_eval_reproduce](./meta_eval_reproduce/) folder provides a detailed guide on how to reproduce the Meta Llama 3.1 evaluation metrics reported in our [Meta Llama website](https://llama.meta.com/) using the [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/main) and our [3.1 evals Huggingface collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f). By following the steps outlined, users can replicate a evaluation process that is similar to Meta's, for specific tasks and compare their results with our reported metrics. While slight variations in results are expected due to differences in implementation and model behavior, we aim to provide a transparent and reproducible method for evaluating Meta Llama 3 models using third party library. Please check the [README.md](./meta_eval_reproduce/README.md) for more details.
+
 ### Reproducing Hugging Face Open-LLM-Leaderboard
 
 Here, we provided a list of tasks from `Open-LLM-Leaderboard` which can be used by passing `--open-llm-leaderboard-tasks` instead of `tasks` to the `eval.py`.
