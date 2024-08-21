@@ -26,6 +26,7 @@ from torch.distributed.checkpoint.default_planner import (
 )
 
 
+from torch.distributed.checkpoint.state_dict import get_model_state_dict, StateDictOptions
 from torch.distributed.fsdp.fully_sharded_data_parallel import StateDictType
 import torch.distributed._shard.checkpoint as dist_cp
 import torch.distributed as dist
@@ -265,3 +266,11 @@ def load_sharded_model_single_gpu(model,model_path):
     
     print(f"Sharded state checkpoint loaded from {model_path}")
     return model
+
+def save_peft_checkpoint(model, model_path):
+    """save_pretrained peft model"""
+
+    options = StateDictOptions(full_state_dict=True, cpu_offload=True)
+
+    state_dict = get_model_state_dict(model, options=options)
+    model.save_pretrained(model_path, state_dict=state_dict)

@@ -8,7 +8,9 @@ import datasets
 
 
 def get_preprocessed_samsum(dataset_config, tokenizer, split):
-    dataset = datasets.load_dataset("samsum", split=split)
+    if not hasattr(dataset_config, "trust_remote_code") or not dataset_config.trust_remote_code:
+        raise ValueError("The repository for samsum contains custom code which must be executed to correctly load the dataset. You can inspect the repository content at https://hf.co/datasets/samsum. To activate `trust_remote_code` option use this config: --samsum_dataset.trust_remote_code=True")
+    dataset = datasets.load_dataset("samsum", split=split, trust_remote_code=dataset_config.trust_remote_code)
 
     prompt = (
         f"Summarize this dialog:\n{{dialog}}\n---\nSummary:\n"

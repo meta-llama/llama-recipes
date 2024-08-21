@@ -1,0 +1,30 @@
+**Date:** March 28, 2024
+
+**Patient:** Carlos Rodriguez, 48 years old
+
+**MRN:** 00893247
+
+**Chief Complaint:** "I'm feeling overwhelmed and can't seem to catch my breath."
+
+**History of Present Illness:** The patient, a 48-year-old single individual, presents with chronic stress, anxiety, and episodes of shortness of breath, attributing some issues to excessive drinking. Overwhelmed by recent job loss, housing instability, and a language barrier, these factors exacerbate their sense of isolation.
+
+**Past Medical History:** Hypertension, Generalized Anxiety Disorder
+
+**Social History:**
+After losing their job six months ago, the patient has faced significant challenges in finding new employment, exacerbated by a language barrier that complicates interviews and interactions. The resulting financial strain led to losing their apartment, and they are now staying temporarily with a friend in an unsafe area. This precarious living situation and limited ability to communicate have deepened their feelings of isolation. The patient mentioned, "It's hard when you can't fully express what you're going through." Public transportation is their only means of travel, which often adds to their stress, especially when language issues arise. Currently uninsured due to job loss, patient has dealt with food insecurity and worries about the costs of medication and medical care, having skipped their last visit due to the cost.
+
+**Review of Systems:** Positive for anxiety, shortness of breath, occasional dizziness. Notes increased alcohol consumption as a stress relief. Denies chest pain or fever.
+
+**Physical Examination:**
+- General: Appears anxious and shows signs of chronic fatigue.
+- Vitals: BP 150/90, HR 85, Temp 98.6°F, Resp 20/min
+
+**Assessment/Plan:**
+- Refer to a social worker for assistance with housing, job search support, especially programs offering language support, and help applying for health insurance.
+- Prescribe medication to manage hypertension and anxiety, providing samples to mitigate cost concerns.
+- Address alcohol use and recommend counseling services for substance use and stress management.
+- Schedule follow-up appointments at a reduced rate through the clinic's assistance program, ensuring language support is available.
+- Connect the patient with community resources for food security and bilingual social support groups.
+- Follow-up in 2 weeks to reassess the condition and effectiveness of the social support interventions.
+
+**Comments:** The patient's situation is complicated by financial issues, housing instability, and significant social challenges, including a language barrier and unhealthy coping mechanisms. A comprehensive and culturally sensitive approach is essential to address the multifaceted aspects of their care.

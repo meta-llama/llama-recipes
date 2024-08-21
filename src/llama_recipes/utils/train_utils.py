@@ -6,7 +6,6 @@ import time
 import yaml
 from contextlib import nullcontext
 from pathlib import Path
-from pkg_resources import packaging
 from datetime import datetime
 import contextlib
 
@@ -21,7 +20,7 @@ from transformers import LlamaTokenizer
 import json
 
 
-from llama_recipes.model_checkpointing import save_model_checkpoint, save_model_and_optimizer_sharded, save_optimizer_checkpoint
+from llama_recipes.model_checkpointing import save_model_checkpoint, save_model_and_optimizer_sharded, save_optimizer_checkpoint, save_peft_checkpoint
 from llama_recipes.policies import fpSixteen,bfSixteen, get_llama_wrapper
 from llama_recipes.utils.memory_utils import MemoryTrace
 from accelerate.utils import is_xpu_available, is_ccl_available
@@ -236,7 +235,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                             print(f"we are about to save the PEFT modules")
                     else:
                         print(f"we are about to save the PEFT modules")
-                    model.save_pretrained(train_config.output_dir)
+                    save_peft_checkpoint(model, train_config.output_dir)
                     if train_config.enable_fsdp:
                         if rank==0:
                             print(f"PEFT modules are saved in {train_config.output_dir} directory")
@@ -474,7 +473,7 @@ def get_policies(cfg, rank):
     verify_bfloat_support = ((
     torch.version.cuda
     and torch.cuda.is_bf16_supported()
-    and packaging.version.parse(torch.version.cuda).release >= (11, 0)
+    and torch.version.cuda >= "11.0"
     and dist.is_nccl_available()
     and nccl.version() >= (2, 10)
     ) or

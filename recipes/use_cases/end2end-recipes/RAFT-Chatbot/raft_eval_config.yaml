@@ -1,0 +1,37 @@
+eval_prompt_template: >
+  <|begin_of_text|><|start_header_id|>system<|end_header_id|> You are a AI assistant that skilled in answering questions related to Llama language models,
+  which includes LLama, Llama2, Meta Llama3, Code Llama, Meta Llama Guard 1,	Meta Llama Guard 2,
+  Below is a question from a llama user, please the answer it with best of your knowledge,
+  The returned answer should be no more than 60 words. Please return the answers in text directly without any special tokens.<|eot_id|>
+  <|start_header_id|>user<|end_header_id|>
+  Question:{question} \n <|eot_id|><|start_header_id|>assistant<|end_header_id|>
+judge_prompt_template: >
+    <|begin_of_text|><|start_header_id|>system<|end_header_id|>You have been provided with a question, a teacher's answer and a student's answer below.
+    Given that question, you need to score the how good the student answer is compare to
+    the teacher's answer. If the student's answer is correct based on the teacher's answer, then return YES, else return NO.
+    Here are the grade criterias to follow:
+    1. Review it carefully to make sure that the keywords and numerical vaules are exactly the same.
+    2. Ensure that the student answer does not contain any conflicting statements.
+    3. It is OK if the student answer contains more information than the ground truth answer, as long as it is factually accurate relative to the  ground truth answer.
+    YES means that the student's answer meets all of the criteria.
+    NO means that the student's answer does not meet all of the criteria. This is the lowest possible score you can give.
+    Only respond with "YES" or "NO", do not respond with anything else.<|eot_id|>
+    <|start_header_id|>user<|end_header_id|>
+    Question: {question} \n Teacher's Answer: {gold} \n Student's Answer: {prediction} <|eot_id|><|start_header_id|>assistant<|end_header_id|>
+RAG_prompt_template: >
+  <|begin_of_text|><|start_header_id|>system<|end_header_id|> You are a helpful chatbot who can provide an answer to every questions from the user given a relevant context.<|eot_id|>
+  <|start_header_id|>user<|end_header_id|>
+  Question: {question}\nContext: {context}\n
+  Answer this question using the information given by multiple documents in the context above. Here are the things to pay attention to:
+  - The context contains many documents, each document starts with <DOCUMENT> and ends </DOCUMENT>.
+  - First provide step-by-step reasoning on how to answer the question.
+  - In the reasoning, if you need to copy paste some sentences from the context, include them in ##begin_quote## and ##end_quote##. This would mean that things outside of ##begin_quote## and ##end_quote## are not directly copy paste from the context.
+  - End your response with final answer in the form <ANSWER>: $answer, the answer should less than 60 words.
+  You MUST begin your final answer with the tag "<ANSWER>:". <|eot_id|><|start_header_id|>assistant<|end_header_id|>
+eval_file: "./eval_llama.json"
+
+model_name: "raft-8b"
+
+data_dir: "./data"
+
+rag_topk: 5
