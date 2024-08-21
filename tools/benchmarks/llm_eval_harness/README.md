@@ -8,7 +8,7 @@ Llama-Recipe make use of `lm-evaluation-harness` for evaluating our fine-tuned M
 - Over 60 standard academic benchmarks for LLMs, with hundreds of subtasks and variants implemented.
 - Support for models loaded via [transformers](https://github.com/huggingface/transformers/) (including quantization via [AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)), [GPT-NeoX](https://github.com/EleutherAI/gpt-neox), and [Megatron-DeepSpeed](https://github.com/microsoft/Megatron-DeepSpeed/), with a flexible tokenization-agnostic interface.
 - Support for fast and memory-efficient inference with [vLLM](https://github.com/vllm-project/vllm).
-- Support for commercial APIs including [OpenAI](https://openai.com), and [TextSynth](https://textsynth.com/).
+- Support for commercial APIs including OpenAI and TextSynth.
 - Support for evaluation on adapters (e.g. LoRA) supported in [HuggingFace's PEFT library](https://github.com/huggingface/peft).
 - Support for local models and benchmarks.
 - Evaluation with publicly available prompts ensures reproducibility and comparability between papers.
