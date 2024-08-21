@@ -71,9 +71,9 @@ You can also find full task list [here](https://github.com/EleutherAI/lm-evaluat
 
 ### Multi-GPU Evaluation with Hugging Face `accelerate`
 
-We support three main ways of using Hugging Face's [accelerate 🚀](https://github.com/huggingface/accelerate) library for multi-GPU evaluation.
+`lm-evaluation-harness` support three main ways of using Hugging Face's [accelerate 🚀](https://github.com/huggingface/accelerate) library for multi-GPU evaluation.
 
-To perform *data-parallel evaluation* (where each GPU loads a **separate full copy** of the model), we leverage the `accelerate` launcher as follows:
+To perform *data-parallel evaluation* (where each GPU loads a **separate full copy** of the model), `lm-evaluation-harness` leverage the `accelerate` launcher as follows:
 
 ```bash
 accelerate launch -m lm_eval --model hf \
@@ -100,7 +100,7 @@ lm_eval --model hf \
 
 This means that your model's weights will be split across all available GPUs.
 
-For more advanced users or even larger models, we allow for the following arguments when `parallelize=True` as well:
+For more advanced users or even larger models, `lm-evaluation-harness` allows for the following arguments when `parallelize=True` as well:
 - `device_map_option`: How to split model weights across available GPUs. defaults to "auto".
 - `max_memory_per_gpu`: the max GPU memory to use per GPU in loading the model.
 - `max_cpu_memory`: the max amount of CPU memory to use when offloading the model weights to RAM.
@@ -121,7 +121,7 @@ To learn more about model parallelism and how to use it with the `accelerate` li
 
 ### Tensor + Data Parallel and Optimized Inference with `vLLM`
 
-We also support vLLM for faster inference on [supported model types](https://docs.vllm.ai/en/latest/models/supported_models.html), especially faster when splitting a model across multiple GPUs. For single-GPU or multi-GPU — tensor parallel, data parallel, or a combination of both — inference, for example:
+`lm-evaluation-harness` also support vLLM for faster inference on [supported model types](https://docs.vllm.ai/en/latest/models/supported_models.html), especially faster when splitting a model across multiple GPUs. For single-GPU or multi-GPU — tensor parallel, data parallel, or a combination of both — inference, for example:
 
 ```bash
 lm_eval --model vllm \
@@ -131,10 +131,10 @@ lm_eval --model vllm \
 ```
 To use vllm, do `pip install lm_eval[vllm]`. For a full list of supported vLLM configurations, please reference our [vLLM integration](https://github.com/EleutherAI/lm-evaluation-harness/blob/e74ec966556253fbe3d8ecba9de675c77c075bce/lm_eval/models/vllm_causallms.py) and the vLLM documentation.
 
-vLLM occasionally differs in output from Huggingface. We treat Huggingface as the reference implementation, and provide a script for checking the validity of vllm results against HF.
+vLLM occasionally differs in output from Huggingface. `lm-evaluation-harness` treat Huggingface as the reference implementation, and it provides a script for checking the validity of vllm results against HF.
 
 > [!Tip]
-> For fastest performance, we recommend using `--batch_size auto` for vLLM whenever possible, to leverage its continuous batching functionality!
+> For fastest performance, `lm-evaluation-harness` recommend using `--batch_size auto` for vLLM whenever possible, to leverage its continuous batching functionality!
 
 > [!Tip]
 > Passing `max_model_len=4096` or some other reasonable default to vLLM through model args may cause speedups or prevent out-of-memory errors when trying to use auto batch size, such as for Mistral-7B-v0.1 which defaults to a maximum length of 32k.
@@ -151,8 +151,8 @@ In the HF leaderboard v2, the [LLMs are evaluated on 6 benchmarks](https://huggi
 
 - **IFEval**: [IFEval](https://arxiv.org/abs/2311.07911) is a dataset designed to test a model’s ability to follow explicit instructions, such as “include keyword x” or “use format y.” The focus is on the model’s adherence to formatting instructions rather than the content generated, allowing for the use of strict and rigorous metrics.
 - **BBH (Big Bench Hard)**: [BBH](https://arxiv.org/abs/2210.09261) is a subset of 23 challenging tasks from the BigBench dataset to evaluate language models. The tasks use objective metrics, are highly difficult, and have sufficient sample sizes for statistical significance. They include multistep arithmetic, algorithmic reasoning (e.g., boolean expressions, SVG shapes), language understanding (e.g., sarcasm detection, name disambiguation), and world knowledge. BBH performance correlates well with human preferences, providing valuable insights into model capabilities.
-- **MATH**:  [MATH](https://arxiv.org/abs/2103.03874) is a compilation of high-school level competition problems gathered from several sources, formatted consistently using Latex for equations and asymptote for figures. Generations must fit a very specific output format. We keep only level 5 MATH questions and call it MATH Level 5.
-- **GPQA (Graduate-Level Google-Proof Q&A Benchmark)**: [GPQA](https://arxiv.org/abs/2311.12022) is a highly challenging knowledge dataset with questions crafted by PhD-level domain experts in fields like biology, physics, and chemistry. These questions are designed to be difficult for laypersons but relatively easy for experts. The dataset has undergone multiple rounds of validation to ensure both difficulty and factual accuracy. Access to GPQA is restricted through gating mechanisms to minimize the risk of data contamination. Consequently, we do not provide plain text examples from this dataset, as requested by the authors.
+- **MATH**:  [MATH](https://arxiv.org/abs/2103.03874) is a compilation of high-school level competition problems gathered from several sources, formatted consistently using Latex for equations and asymptote for figures. Generations must fit a very specific output format. HuggingFace Open-LLM-Leaderboard v2 keeps only level 5 MATH questions and call it MATH Level 5.
+- **GPQA (Graduate-Level Google-Proof Q&A Benchmark)**: [GPQA](https://arxiv.org/abs/2311.12022) is a highly challenging knowledge dataset with questions crafted by PhD-level domain experts in fields like biology, physics, and chemistry. These questions are designed to be difficult for laypersons but relatively easy for experts. The dataset has undergone multiple rounds of validation to ensure both difficulty and factual accuracy. Access to GPQA is restricted through gating mechanisms to minimize the risk of data contamination. Consequently, HuggingFace Open-LLM-Leaderboard v2 does not provide plain text examples from this dataset, as requested by the authors.
 - **MuSR (Multistep Soft Reasoning)**: [MuSR](https://arxiv.org/abs/2310.16049) is a new dataset consisting of algorithmically generated complex problems, each around 1,000 words in length. The problems include murder mysteries, object placement questions, and team allocation optimizations. Solving these problems requires models to integrate reasoning with long-range context parsing. Few models achieve better than random performance on this dataset.
 - **MMLU-PRO (Massive Multitask Language Understanding - Professional)**: [MMLU-Pro](https://arxiv.org/abs/2406.01574) is a refined version of the MMLU dataset, which has been a standard for multiple-choice knowledge assessment. Recent research identified issues with the original MMLU, such as noisy data (some unanswerable questions) and decreasing difficulty due to advances in model capabilities and increased data contamination. MMLU-Pro addresses these issues by presenting models with 10 choices instead of 4, requiring reasoning on more questions, and undergoing expert review to reduce noise. As a result, MMLU-Pro is of higher quality and currently more challenging than the original.
 
