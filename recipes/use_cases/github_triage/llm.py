@@ -7,7 +7,8 @@ import json
 from openai import OpenAI
 import groq
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
 CFG = yaml.safe_load(open("config.yaml", "r"))
 
 class LlamaVLLM():
@@ -47,7 +48,7 @@ class LlamaGroq():
     def __init__(self, key, model_id):
         self.model_id = model_id
         self.client = groq.Groq(api_key=key)
-        print(f"Using Groq:{self.model_id} for inference")
+        logger.debug(f"Using Groq:{self.model_id} for inference")
 
     def chat(
         self, 
@@ -78,13 +79,13 @@ class LlamaGroq():
                 output = completion.choices[0].message.content
                 break
             except groq.RateLimitError as e:
-                wait = response.headers['X-Ratelimit-Reset']
+                wait = e.response.headers['X-Ratelimit-Reset']
                 response = e.response
                 print(e)
-                print(f"waiting for {wait} to prevent ratelimiting")
+                print(f"[groq] waiting for {wait} to prevent ratelimiting")
                 time.sleep(wait)
-            except:
-                print(f"inference failed for input: {inputs}")
+            except Exception as e:
+                logger.error(f"INFERENCE FAILED with Error: {e.response.status_code}! for input:\n{inputs[-1]['content'][:300]}")
 
         return output
 
@@ -107,7 +108,6 @@ def run_llm_inference(
     Returns:
     - Union[str, List[str]]: The response(s) from the LLM.
     """
-    log.info(f"[run_llm_inference] {prompt_name}")
     
     # initialize appropriate LLM accessor
     if CFG['model']['use'] == 'vllm':
@@ -116,6 +116,8 @@ def run_llm_inference(
         LLM = LlamaGroq(**CFG['model']['groq'])
     else:
         raise ValueError("Invalid model type in config.yaml")
+    
+    logger.debug(f"Running `{prompt_name}` inference with {CFG['model']['use']}")
     
     _batch = True
     if isinstance(inputs, str):
@@ -150,7 +152,7 @@ def run_llm_inference(
                     responses_json.append(json.loads(r, strict=False))
                     continue
                 except json.JSONDecodeError:
-                    log.error(f"Error decoding JSON: {r}")
+                    logger.error(f"Error decoding JSON: {r}")
             responses_json.append(None)
         responses = responses_json
 

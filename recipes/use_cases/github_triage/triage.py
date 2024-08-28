@@ -1,3 +1,4 @@
+import logging
 import os
 from typing import Optional, Tuple, Dict
 import pandas as pd
@@ -8,9 +9,12 @@ from utils import fetch_repo_issues, validate_df_values
 from plots import draw_all_plots
 from pdf_report import create_report_pdf
 
+logging.basicConfig(level=logging.INFO, filename='log.txt', format='%(asctime)s [%(levelname)-5.5s] %(message)s')
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
+
 def generate_issue_annotations(
-    issues_df: pd.DataFrame,
-    save_folder: Optional[str] = None
+    issues_df: pd.DataFrame
 ) -> Tuple[pd.DataFrame, Dict[str, int]]:
     """
     Get the annotations for the given issues.
@@ -64,6 +68,8 @@ def generate_issue_annotations(
         }
         return themes, theme_count
 
+    logger.info(f"Generating annotations for {len(issues_df)}")
+    
     discussions = issues_df["discussion"].tolist()
     metadata = run_llm_inference(
         "parse_issue",
@@ -83,10 +89,7 @@ def generate_issue_annotations(
 
     themes, theme_count = _categorize_issues(issues_metadata_df)
     issues_metadata_df["themes"] = themes
-    
-    if save_folder:
-        save_df(issues_metadata_df, save_folder, 'annotated_issues')
-        
+
     return issues_metadata_df, theme_count
 
 
@@ -111,7 +114,8 @@ def generate_executive_reports(
     Returns:
     - Tuple[pd.DataFrame, pd.DataFrame]: A tuple containing the challenges DataFrame and the overview DataFrame.
     """
-
+    logger.info(f"Generating high-level summaries from annotations...")
+    
     report = {
         "repo_name": repo_name,
         "start_date": start_date,
@@ -181,6 +185,8 @@ def generate_executive_reports(
             overview_df[f"{col}_{k}"] = v
 
     overview_df = pd.DataFrame(overview_df)
+    
+    logger.info(f"Identifying key-challenges faced by users...")
 
     challenges_df = {k: report[k] for k in ["repo_name", "start_date", "end_date"]}
     challenges_df["key_challenge"] = [
@@ -198,18 +204,7 @@ def generate_executive_reports(
     challenges_df = pd.DataFrame(challenges_df)
 
     return challenges_df, overview_df
-
-
-def create_report(repo_name, start_date, end_date, challenges, overview, out_folder):
-    
-    # generate pdf report
-    challenges = validate_df_values(challenges)
-    overview = validate_df_values(overview)
-    exec_summary = overview['executive_summary'].iloc[0]
-    open_qs = overview['open_questions'].iloc[0]
-    key_challenges_data = challenges[['key_challenge', 'possible_causes', 'remediations', 'affected_issues']].to_dict('records')
-    create_report_pdf(repo_name, start_date, end_date, key_challenges_data, exec_summary, open_qs, out_folder)
-       
+   
    
 def main(repo_name, start_date, end_date):
     out_folder = f'output/{repo_name}/{start_date}_{end_date}'
@@ -220,14 +215,14 @@ def main(repo_name, start_date, end_date):
     
     # Generate annotations and metadata
     annotated_issues, theme_counts = generate_issue_annotations(issues_df)
+    # Validate and save generated data
+    annotated_issues = validate_df_values(annotated_issues, out_folder, 'annotated_issues')
     
     # Generate high-level analysis
     challenges, overview = generate_executive_reports(annotated_issues, theme_counts, repo_name, start_date, end_date)
-    
     # Validate and save generated data
-    annotated_issues = validate_df_values(annotated_issues)
-    challenges = validate_df_values(challenges)
-    overview = validate_df_values(overview)
+    challenges = validate_df_values(challenges, out_folder, 'challenges')
+    overview = validate_df_values(overview, out_folder, 'overview')
     
     # Create graphs and charts
     plot_folder = out_folder + "/plots"
@@ -240,7 +235,6 @@ def main(repo_name, start_date, end_date):
     key_challenges_data = challenges[['key_challenge', 'possible_causes', 'remediations', 'affected_issues']].to_dict('records')
     create_report_pdf(repo_name, start_date, end_date, key_challenges_data, exec_summary, open_qs, out_folder)
     
-
 
 if __name__ == "__main__":
     fire.Fire(main)

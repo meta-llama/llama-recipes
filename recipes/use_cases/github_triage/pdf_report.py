@@ -1,6 +1,10 @@
 from fpdf import FPDF
 import os
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
 
 class ReportPDF(FPDF):
     def __init__(self, repository_name, start_date, end_date):
@@ -38,7 +42,12 @@ class ReportPDF(FPDF):
         self.cell(0, 10, "Possible Causes", 0, 0, 'L')
         self.ln(5)
         self.set_font('Arial', '', 10)
-        for x in challenge_data['possible_causes']:
+
+        x_list = challenge_data['possible_causes']
+        if isinstance(x_list, str):
+            x_list = x_list.split(',')
+
+        for x in x_list:
             self.cell(0, 10, "* " + x, 0, 0, 'L')
             self.ln(5)
         self.ln(3)
@@ -48,7 +57,12 @@ class ReportPDF(FPDF):
         self.cell(0, 10, "Remediations", 0, 0, 'L')
         self.ln(5)
         self.set_font('Arial', '', 10)
-        for x in challenge_data['remediations']:
+
+        x_list = challenge_data['remediations']
+        if isinstance(x_list, str):
+            x_list = x_list.split(',')
+
+        for x in x_list:
             self.cell(0, 10, "* " + x, 0, 0, 'L')
             self.ln(5)
         self.ln(3)
@@ -56,9 +70,15 @@ class ReportPDF(FPDF):
         # affected issues
         self.set_font('Arial', 'B', 10)
         self.cell(30, 10, f"Affected issues: ", 0, 0, 'L')
-        for iss in challenge_data['affected_issues']:
+        
+        x_list = challenge_data['affected_issues']
+        if isinstance(x_list, str):
+            x_list = x_list.split(',')
+            
+        for iss in x_list:
             self.set_text_color(0,0,255)
-            self.cell(8, 10, str(iss), 0, 0, 'L', link=f"https://github.com/{self.repo}/issues/{iss}")
+            self.cell(12, 10, str(iss), 0, 0, 'L', link=f"https://github.com/{self.repo}/issues/{iss}")
+            
         self.set_text_color(0,0,0)
         self.ln(15)
 
@@ -75,6 +95,10 @@ class ReportPDF(FPDF):
         self.cell(0, 8, 'Open Questions', 'B', 0, 'L')
         self.ln(10)
         self.set_font('Arial', '', 10)
+
+        if isinstance(open_questions, str):
+            open_questions = open_questions.split(',')
+                    
         for qq in open_questions:
             self.multi_cell(0, 5, "* " + qq, 0, 0, 'L')
             self.ln(5)
@@ -87,6 +111,9 @@ class ReportPDF(FPDF):
         for path in plot_paths:
             if os.path.exists(path):
                 self.add_plot(path)
+            else:
+                self.set_font('Arial', 'BI', 10)
+                self.cell(0, 8, '< Plot not found, make sure you have push-acces to this repo >', 0, 0)
         self.ln(10)
             
     def add_plot(self, img):
@@ -96,6 +123,9 @@ class ReportPDF(FPDF):
     
     
 def create_report_pdf(repo_name, start_date, end_date, key_challenges_data, executive_summary, open_questions, out_folder):#, image1, image2):
+    out_path = f'{out_folder}/report.pdf'
+    logger.info(f"Creating PDF report at {out_path}")
+    
     pdf = ReportPDF(repo_name, start_date, end_date)
     pdf.add_page()
     pdf.exec_summary(executive_summary)
@@ -107,5 +137,5 @@ def create_report_pdf(repo_name, start_date, end_date, key_challenges_data, exec
     pdf.add_graphs_section("Traffic in the last 2 weeks", [f'{out_folder}/plots/{x}.png' for x in ['views_clones','resources', 'referrers']])
     pdf.add_page()
     pdf.add_graphs_section("New issues in the last 2 weeks", [f'{out_folder}/plots/{x}.png' for x in ['themes', 'severity', 'sentiment', 'expertise']])
-    pdf.output(f'{out_folder}/report.pdf', 'F')
+    pdf.output(out_path, 'F')
 

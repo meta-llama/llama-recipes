@@ -1,16 +1,20 @@
 import requests
 import yaml
 import pandas as pd
+import logging
 
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
 
 CFG = yaml.safe_load(open("config.yaml", "r"))
 
 
 def fetch_github_endpoint(url):
     headers = {
-        "Authorization": f"Bearer {CFG['tokens']['github']}",
+        "Authorization": f"Bearer {CFG['github_token']}",
         "Content-Type": "application/json"
     }
+    logger.debug(f"Requesting url: {url}")
     response = requests.get(url, headers=headers, timeout=10)
     return response
 
@@ -27,13 +31,12 @@ def fetch_repo_issues(repo, start_date=None, end_date=None):
     url = f"https://api.github.com/search/issues?per_page=100&sort=created&order=asc&q=repo:{repo}+is:issue{time_filter}"
 
     samples = []
-    print(f"[{repo}/issues] Fetching page: ", end=" ", flush=True)
+    logger.info(f"Fetching issues on {repo} from {start_date} to {end_date}")
 
     while True:
         response = fetch_github_endpoint(url)
-
+        
         if response.status_code == 200:
-            print(". ", end=" ", flush=True)
             issues = response.json()['items']
             for issue in issues:
                 if issue['body'] is None:
@@ -58,9 +61,9 @@ def fetch_repo_issues(repo, start_date=None, end_date=None):
             else:
                 break
         else:
-            print(f"Error: {response.status_code}")
-            break
-
+            raise Exception(f"Fetching issues failed with Error: {response.status_code}")
+        print()
+        
     rows = [{
         "repo_name": repo,
         "number": d['number'],
@@ -70,6 +73,8 @@ def fetch_repo_issues(repo, start_date=None, end_date=None):
         "created_at": d["created_at"],
         "discussion": d['discussion'],
     } for d in samples]
+    
+    logger.info(f"Fetched {len(samples)} issues on {repo} from {start_date} to {end_date}")
     
     return pd.DataFrame(rows)
 
@@ -88,10 +93,12 @@ def fetch_repo_stats(repo):
 
 def validate_df_values(df, out_folder=None, name=None):
     df.columns = df.columns.str.lower().str.replace(" ", "_").str.replace("-", "_")
-    for c in df.columns:
-        x = df[c].iloc[0]
-        if isinstance(x, str) and '[' in x:
-            df[c] = df[c].apply(lambda x: eval(x))
+    # for c in df.columns:
+    #     x = df[c].iloc[0]
+    #     if isinstance(x, str) and '[' in x:
+    #         df[c] = df[c].apply(lambda x: eval(x))
     if out_folder is not None:
-        df.to_csv(f"{out_folder}/{name}.csv", index=False)
+        path = f"{out_folder}/{name}.csv"
+        df.to_csv(path, index=False)
+        logger.info(f"Data saved to {path}")
     return df

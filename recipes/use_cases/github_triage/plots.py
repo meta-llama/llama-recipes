@@ -2,7 +2,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import plotly.graph_objects as go
 from utils import fetch_github_endpoint
+import logging
 
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
 
 def plot_views_clones(repo_name, out_folder):
     def json_to_df(json_data, key):
@@ -124,7 +127,6 @@ def plot_themes(df, out_folder):
     plt.figure(figsize=(10, 6))
     plt.barh(data['Theme'], data['Count'])
     plt.xlabel('Count', fontsize=18)
-    # plt.ylabel('Theme', fontsize=18)
     plt.title('Themes', fontsize=24)
     plt.tight_layout()
     plt.savefig(f'{out_folder}/themes.png', dpi=120)
@@ -164,11 +166,13 @@ def issue_activity_sankey(df, out_folder):
 def draw_all_plots(repo_name, out_folder, overview):
     func1 = [plot_views_clones, plot_high_traffic_resources, plot_high_traffic_referrers, plot_commit_activity]
     func2 = [plot_user_expertise, plot_severity, plot_sentiment, plot_themes, issue_activity_sankey]
+    logger.info("Plotting traffic trends...")
     for func in func1:
         try:
             func(repo_name, out_folder)
         except:
             print(f"Github fetch failed for {func}. Make sure you have push-access to {repo_name}!")
+    logger.info("Plotting issue trends...")
     for func in func2:
         func(overview, out_folder)
     

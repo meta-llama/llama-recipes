@@ -1,10 +1,8 @@
-tokens:
-  github: <github token>
+github_token: <github token>
 model:
   use: groq
   vllm:
       endpoint: "http://localhost:8000/v1"
-      key: token
       model_id: "meta-llama/Meta-Llama-3.1-70B-Instruct"
   groq:
       key: <groq token>
@@ -12,7 +10,7 @@ model:
 
 prompts:
   parse_issue:
-    system: You are an expert open-source maintainer of an AI open source project. Given some discussion threads, you must respond with a report in JSON. Your response should only contain English, and you may translate if you can.
+    system: You are an expert maintainer of an open source project. Given some discussion threads, you must respond with a report in JSON. Your response should only contain English, and you may translate if you can.
     json_schema: '{
         "type": "object",
         "properties": {
@@ -60,7 +58,7 @@ prompts:
         "required": ["summary", "possible_causes", "remediations", "component", "sentiment", "issue_type", "severity", "op_expertise"]
       }'
   assign_category:
-    system: "You are the lead maintainer of an AI open source project. Given a list of issues, generate a JSON that categorizes the issues by common themes. For every theme include a description and cite the relevant issue numbers. All issues must be categorized into at least one theme. Some themes you should use if applicable: Cloud Compute, Installation and Environment, Model Loading, Model Fine-tuning and Training, Model Conversion, Model Inference, Distributed Training and Multi-GPU, Performance and Optimization, Quantization and Mixed Precision, Documentation, CUDA Compatibility, Model Evaluation and Benchmarking, Miscellaneous, Invalid."
+    system: "You are the lead maintainer of an open source project. Given a list of issues, generate a JSON that categorizes the issues by common themes. For every theme include a description and cite the relevant issue numbers. All issues must be categorized into at least one theme."
     json_schema: '{
         "type": "object",
         "properties": {
