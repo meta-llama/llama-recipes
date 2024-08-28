@@ -152,7 +152,7 @@ def save_fsdp_model_checkpoint_full(
         )
         save_dir = Path.cwd() / folder_name
         save_dir.mkdir(parents=True, exist_ok=True)
-        save_name = cfg.model_name + "-" + str(epoch) + ".pt"
+        save_name = cfg.model_name.replace("/","--") + "-" + str(epoch) + ".pt"
         save_full_path = str(save_dir) + "/" + save_name
 
         # save model
@@ -281,7 +281,7 @@ def save_model_checkpoint(model, output_dir):
     
     output_file = Path(output_dir) / "model.pt"
     
-    state_dict = model.state_dir()
+    state_dict = model.state_dict()
     
     torch.save(state_dict, output_file)
     
