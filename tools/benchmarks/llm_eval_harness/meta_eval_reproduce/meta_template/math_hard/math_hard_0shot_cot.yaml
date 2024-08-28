@@ -1,0 +1,21 @@
+dataset_path: parquet
+dataset_kwargs:
+  data_files: ./work_dir/joined_math.parquet
+task: meta_math_hard
+process_docs: !function utils.process_docs
+output_type: generate_until
+test_split: train
+doc_to_text:  !function utils.doc_to_text
+process_results: !function utils.process_results
+doc_to_target: answer
+generation_kwargs:
+  until: []
+  do_sample: false
+  temperature: 0
+  max_gen_toks: 5120
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 1.0
