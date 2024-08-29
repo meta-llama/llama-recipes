@@ -271,9 +271,12 @@ def save_peft_checkpoint(model, model_path):
     """save_pretrained peft model"""
 
     options = StateDictOptions(full_state_dict=True, cpu_offload=True)
-
-    state_dict = get_model_state_dict(model, options=options)
-    model.save_pretrained(model_path, state_dict=state_dict)
+    
+    if isinstance(model, FSDP):
+        state_dict = get_model_state_dict(model, options=options)
+        model.save_pretrained(model_path, state_dict=state_dict)
+    else:
+        model.save_pretrained(model_path)
     
     
 def save_model_checkpoint(model, output_dir):
