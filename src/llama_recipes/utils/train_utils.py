@@ -358,7 +358,7 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb
             # Ensure no gradients are computed for this scope to save memory
             with torch.no_grad():
                 # Forward pass and compute loss
-                outputs = model(**batch)
+                outputs = model(**batch,use_cache=False)
                 loss = outputs.loss
                 if train_config.save_metrics:
                     val_step_loss.append(loss.detach().float().item())
