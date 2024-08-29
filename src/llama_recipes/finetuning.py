@@ -22,6 +22,11 @@ from transformers import (
     BitsAndBytesConfig,
     LlamaForCausalLM,
     LlamaConfig,
+    AutoConfig, 
+    AutoModel,
+    LlavaNextForConditionalGeneration,
+    LlavaNextProcessor
+
 )
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
 
@@ -116,11 +121,11 @@ def main(**kwargs):
         bnb_config = quant_config.create_bnb_config(train_config.quantization)
 
     # Load the pre-trained model and setup its configuration
-    use_cache = False if train_config.enable_fsdp else None
-    model = LlamaForCausalLM.from_pretrained(
+    #use_cache = False if train_config.enable_fsdp else None
+    model = LlavaNextForConditionalGeneration.from_pretrained(
         train_config.model_name,
         quantization_config=bnb_config,
-        use_cache=use_cache,
+    #    use_cache=use_cache,
         attn_implementation="sdpa" if train_config.use_fast_kernels else None,
         device_map="auto" if train_config.quantization and not train_config.enable_fsdp else None,
         torch_dtype=torch.float16 if train_config.use_fp16 else torch.bfloat16,
@@ -129,7 +134,8 @@ def main(**kwargs):
     # Load the tokenizer and add special tokens
     tokenizer = AutoTokenizer.from_pretrained(train_config.model_name if train_config.tokenizer_name is None else train_config.tokenizer_name)
     tokenizer.pad_token_id = tokenizer.eos_token_id
-
+    processor = LlavaNextProcessor.from_pretrained(train_config.model_name if train_config.tokenizer_name is None else train_config.tokenizer_name)
+    processor.tokenizer.padding_side='right'
     # If there is a mismatch between tokenizer vocab size and embedding matrix,
     # throw a warning and then expand the embedding matrix
     if len(tokenizer) > model.get_input_embeddings().weight.shape[0]:
@@ -200,7 +206,7 @@ def main(**kwargs):
 
      # Load and preprocess the dataset for training and validation
     dataset_train = get_preprocessed_dataset(
-        tokenizer,
+        processor,
         dataset_config,
         split="train",
     )
@@ -208,7 +214,7 @@ def main(**kwargs):
         print(f"--> Training Set Length = {len(dataset_train)}")
 
     dataset_val = get_preprocessed_dataset(
-        tokenizer,
+        processor,
         dataset_config,
         split="test",
     )
@@ -219,7 +225,7 @@ def main(**kwargs):
         dataset_train = ConcatDataset(dataset_train, chunk_size=train_config.context_length)
 
     train_dl_kwargs = get_dataloader_kwargs(train_config, dataset_train, tokenizer, "train")
-
+    print("length of dataset_train", len(dataset_train))
     # Create DataLoaders for the training and validation dataset
     train_dataloader = torch.utils.data.DataLoader(
         dataset_train,
@@ -227,6 +233,7 @@ def main(**kwargs):
         pin_memory=True,
         **train_dl_kwargs,
     )
+    print(f"--> Num of Training Set Batches loaded = {len(train_dataloader)}")
 
     eval_dataloader = None
     if train_config.run_validation:
@@ -241,6 +248,7 @@ def main(**kwargs):
             pin_memory=True,
             **val_dl_kwargs,
         )
+        print(f"--> Num of Validation Set Batches loaded = {len(eval_dataloader)}")
         if len(eval_dataloader) == 0:
             raise ValueError("The eval set size is too small for dataloader to load even one batch. Please increase the size of eval set.")
         else:
