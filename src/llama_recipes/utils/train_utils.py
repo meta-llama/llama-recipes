@@ -243,8 +243,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         print(f"PEFT modules are saved in {train_config.output_dir} directory")
 
                 else:
-                    if not train_config.use_peft and fsdp_config.checkpoint_type == StateDictType.FULL_STATE_DICT:
-
+                    if not train_config.use_peft and (fsdp_config is None or fsdp_config.checkpoint_type == StateDictType.FULL_STATE_DICT):
                         save_model_checkpoint(
                             model, optimizer, rank, train_config, epoch=epoch
                         )
