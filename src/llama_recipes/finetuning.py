@@ -37,6 +37,7 @@ from llama_recipes.utils.config_utils import (
     generate_peft_config,
     generate_dataset_config,
     get_dataloader_kwargs,
+    check_fsdp_config,
 )
 from llama_recipes.utils.dataset_utils import get_preprocessed_dataset
 
@@ -162,6 +163,8 @@ def main(**kwargs):
 
     #setting up FSDP if enable_fsdp is enabled
     if train_config.enable_fsdp:
+        check_fsdp_config(fsdp_config)
+        
         if not train_config.use_peft and train_config.freeze_layers:
             freeze_transformer_layers(model, train_config.num_freeze_layers)
 

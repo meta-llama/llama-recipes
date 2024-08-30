@@ -5,6 +5,7 @@ import inspect
 from dataclasses import asdict
 
 import torch.distributed as dist
+from torch.distributed.fsdp.fully_sharded_data_parallel import StateDictType
 from torch.utils.data import DistributedSampler
 from peft import (
     LoraConfig,
@@ -106,3 +107,18 @@ def get_dataloader_kwargs(train_config, dataset, tokenizer, mode):
             raise ValueError(f"Unknown batching strategy: {train_config.batching_strategy}")
 
         return kwargs
+
+
+def check_fsdp_config(fsdp_config):
+    VALID_TYPES = (StateDictType.SHARDED_STATE_DICT, StateDictType.FULL_STATE_DICT)
+    if isinstance(fsdp_config.checkpoint_type, str):
+        str_to_obj = {
+            "StateDictType.SHARDED_STATE_DICT": StateDictType.SHARDED_STATE_DICT,
+            "StateDictType.FULL_STATE_DICT": StateDictType.FULL_STATE_DICT,
+        }
+        if fsdp_config.checkpoint_type in str_to_obj:
+            fsdp_config.checkpoint_type = str_to_obj[fsdp_config.checkpoint_type]
+        
+    if not fsdp_config.checkpoint_type in VALID_TYPES:
+        raise ValueError(f"Invalid checkpoint_type {fsdp_config.checkpoint_type}")
+    

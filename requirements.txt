@@ -22,7 +22,7 @@ tabulate
 evaluate
 rouge_score
 pyyaml==6.0.1
-faiss-gpu
+faiss-gpu; python_version < '3.11'
 unstructured[pdf]
 langchain_openai
 langchain
