@@ -479,9 +479,11 @@ def get_policies(cfg, rank):
 
 
     verify_bfloat_support = ((
-    torch.version.cuda
+    # torch.version.cuda
+    torch.version.hip
     and torch.cuda.is_bf16_supported()
-    and torch.version.cuda >= "11.0"
+    # and torch.version.cuda >= "11.0"
+    and torch.version.hip >= "6.1"
     and dist.is_nccl_available()
     and nccl.version() >= (2, 10)
     ) or
