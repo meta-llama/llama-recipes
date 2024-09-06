@@ -41,8 +41,7 @@ from llama_recipes.utils.config_utils import (
 )
 from llama_recipes.utils.dataset_utils import get_preprocessed_dataset
 
-from llama_recipes.utils.fsdp_utils import hsdp_device_mesh
-from llama_recipes.utils.train_utils import (
+from llama_recipes.utils import (
     train,
     freeze_transformer_layers,
     setup,
@@ -50,6 +49,7 @@ from llama_recipes.utils.train_utils import (
     clear_gpu_cache,
     print_model_size,
     get_policies,
+    hsdp_device_mesh,
 )
 from accelerate.utils import is_xpu_available
 from warnings import warn
