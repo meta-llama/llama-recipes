@@ -124,7 +124,7 @@ def main(**kwargs):
         use_cache=use_cache,
         attn_implementation="sdpa" if train_config.use_fast_kernels else None,
         device_map="auto" if train_config.quantization and not train_config.enable_fsdp else None,
-        torch_dtype=torch.float16 if train_config.use_fp16 else torch.bfloat16,
+        torch_dtype=torch.float16 if train_config.use_fp16 else "auto",
     )
 
     # Load the tokenizer and add special tokens
