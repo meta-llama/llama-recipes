@@ -60,7 +60,7 @@ def tokenize_dialog(dialog, images, processor):
     # pixel_values =  batch["pixel_values"],
     # image_sizes = batch["image_sizes"]
 #    print("combined_tokens",combined_tokens[image_sizes])
-
+    
     return combined_tokens
 def image_tokenize(sample, processor):
     processor.tokenizer.padding_side = "right" # during training, one always uses padding on the right
