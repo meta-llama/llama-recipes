@@ -68,7 +68,7 @@ def generate_issue_annotations(
         }
         return themes, theme_count
 
-    logger.info(f"Generating annotations for {len(issues_df)}")
+    logger.info(f"Generating annotations for {len(issues_df)} issues")
     
     discussions = issues_df["discussion"].tolist()
     metadata = run_llm_inference(

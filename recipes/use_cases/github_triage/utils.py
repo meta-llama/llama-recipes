@@ -31,7 +31,6 @@ def fetch_repo_issues(repo, start_date=None, end_date=None):
     url = f"https://api.github.com/search/issues?per_page=100&sort=created&order=asc&q=repo:{repo}+is:issue{time_filter}"
 
     samples = []
-    logger.info(f"Fetching issues on {repo} from {start_date} to {end_date}")
 
     while True:
         response = fetch_github_endpoint(url)
@@ -61,8 +60,7 @@ def fetch_repo_issues(repo, start_date=None, end_date=None):
             else:
                 break
         else:
-            raise Exception(f"Fetching issues failed with Error: {response.status_code}")
-        print()
+            raise Exception(f"Fetching issues failed with Error: {response.status_code} on url {url}")
         
     rows = [{
         "repo_name": repo,
@@ -93,10 +91,6 @@ def fetch_repo_stats(repo):
 
 def validate_df_values(df, out_folder=None, name=None):
     df.columns = df.columns.str.lower().str.replace(" ", "_").str.replace("-", "_")
-    # for c in df.columns:
-    #     x = df[c].iloc[0]
-    #     if isinstance(x, str) and '[' in x:
-    #         df[c] = df[c].apply(lambda x: eval(x))
     if out_folder is not None:
         path = f"{out_folder}/{name}.csv"
         df.to_csv(path, index=False)

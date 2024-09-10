@@ -4,6 +4,7 @@ import yaml
 import time
 import json
 
+from tqdm import tqdm
 from openai import OpenAI
 import groq
 
@@ -37,7 +38,7 @@ class LlamaVLLM():
             )
             output = response.choices[0].message
         except Exception as e:
-            log.error(
+            logger.error(
                 f"FAILED to generate inference for input {inputs}\nError: {str(e)}"
             )
             output = None
@@ -85,7 +86,8 @@ class LlamaGroq():
                 print(f"[groq] waiting for {wait} to prevent ratelimiting")
                 time.sleep(wait)
             except Exception as e:
-                logger.error(f"INFERENCE FAILED with Error: {e.response.status_code}! for input:\n{inputs[-1]['content'][:300]}")
+                logger.error(f"INFERENCE FAILED with Error: {e.response.status_code} for input:\n{inputs[-1]['content'][:300]}")
+                break
 
         return output
 
@@ -141,7 +143,8 @@ def run_llm_inference(
         )
 
     responses = [
-        LLM.chat(i, generation_kwargs, guided_decode_json_schema) for i in inputs
+        LLM.chat(i, generation_kwargs, guided_decode_json_schema) 
+        for i in tqdm(inputs, desc=f"Inference[{prompt_name}]")
     ]
 
     if guided_decode_json_schema is not None:
