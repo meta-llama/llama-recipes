@@ -132,12 +132,7 @@ def test_tokenize_dialog(tokenizer, monkeypatch, setup_tokenizer, llama_version)
     ]
 
     result = tokenize_dialog(dialog, tokenizer)
-    print(f"{tokenizer.encode('system')=}")
-    print(f"{tokenizer.encode('user')=}")
-    print(f"{tokenizer.encode('assistant')=}")
-    print(f"{tokenizer.decode(result['input_ids'])=}")
-    print(f"{result['labels']=}")
-
+    
     if "Llama-2" in llama_version:
         assert result["labels"][:12] == [-100] * 12
         assert result["labels"][17:28] == [-100] * 11
