@@ -139,5 +139,5 @@ def test_tokenize_dialog(tokenizer, monkeypatch, setup_tokenizer, llama_version)
         assert result["labels"].count(-100) == 11 + 12
     else:
         assert result["labels"][:38] == [-100] * 38
-        assert result["labels"][42:54] == [-100] * 12
-        assert result["labels"].count(-100) == 38 + 12
+        assert result["labels"][43:54] == [-100] * 11
+        assert result["labels"].count(-100) == 38 + 11
