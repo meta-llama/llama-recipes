@@ -273,6 +273,8 @@ def main(**kwargs):
             dataset_val = ConcatDataset(dataset_val, chunk_size=train_config.context_length)
 
         val_dl_kwargs = get_dataloader_kwargs(train_config, dataset_val, dataset_processer, "val")
+        if custom_data_collator:
+            val_dl_kwargs["collate_fn"] = custom_data_collator
 
         eval_dataloader = torch.utils.data.DataLoader(
             dataset_val,

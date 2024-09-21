@@ -146,16 +146,12 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                             else:
                                 batch[key] = batch[key].to(local_rank)
                         else:
-
                             if is_xpu_available():
                                 batch[key] = batch[key].to('xpu:0')
-                            else:
+                            elif torch.cuda.is_available():
                                 batch[key] = batch[key].to('cuda:0')
                     with autocast():
                         assert(next(model.parameters()).device == batch['input_ids'].device)
-                        #print("batch: ", batch)
-                        pixel_values = batch['pixel_values']
-                        print("pixel_values.shape input",pixel_values.shape)
                         loss = model(**batch).loss
                     loss = loss / gradient_accumulation_steps
                     #print("loss",loss)
