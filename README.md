@@ -1,6 +1,6 @@
 # Llama Recipes: Examples to get started using the Llama models from Meta
 <!-- markdown-link-check-disable -->
-The 'llama-recipes' repository is a companion to the [Meta Llama](https://github.com/meta-llama/llama-models) models. We support the latest version, [Llama 3.1](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/MODEL_CARD.md), in this repository. The goal is to provide a scalable library for fine-tuning Meta Llama models, along with some example scripts and notebooks to quickly get started with using the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Llama and other tools in the LLM ecosystem. The examples here showcase how to run Llama locally, in the cloud, and on-prem. 
+The 'llama-recipes' repository is a companion to the [Meta Llama](https://github.com/meta-llama/llama-models) models. We support the latest version, [Llama 3.1](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/MODEL_CARD.md), in this repository. The goal is to provide a scalable library for fine-tuning Meta Llama models, along with some example scripts and notebooks to quickly get started with using the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Llama and other tools in the LLM ecosystem. The examples here showcase how to run Llama locally, in the cloud, and on-prem.
 
 <!-- markdown-link-check-enable -->
 > [!IMPORTANT]
@@ -31,7 +31,7 @@ The 'llama-recipes' repository is a companion to the [Meta Llama](https://github
 > ```
 > Each message gets trailed by an `<|eot_id|>` token before a new header is started, signaling a role change.
 >
-> More details on the new tokenizer and prompt template can be found [here](https://llama.meta.com/docs/model-cards-and-prompt-formats/llama3_1). 
+> More details on the new tokenizer and prompt template can be found [here](https://llama.meta.com/docs/model-cards-and-prompt-formats/llama3_1).
 
 >
 > [!NOTE]
@@ -55,6 +55,7 @@ The 'llama-recipes' repository is a companion to the [Meta Llama](https://github
   - [Repository Organization](#repository-organization)
     - [`recipes/`](#recipes)
     - [`src/`](#src)
+  - [Supported Features](#supported-features)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -145,7 +146,7 @@ Contains examples are organized in folders by topic:
 [use_cases](./recipes/use_cases)|Scripts showing common applications of Meta Llama3
 [3p_integrations](./recipes/3p_integrations)|Partner owned folder showing common applications of Meta Llama3
 [responsible_ai](./recipes/responsible_ai)|Scripts to use PurpleLlama for safeguarding model outputs
-[experimental](./experimental)|Meta Llama implementations of experimental LLM techniques
+[experimental](./recipes/experimental)|Meta Llama implementations of experimental LLM techniques
 
 ### `src/`
 
@@ -158,6 +159,30 @@ Contains modules which support the example recipes:
 | [model_checkpointing](src/llama_recipes/model_checkpointing/) | Contains FSDP checkpoint handlers. |
 | [policies](src/llama_recipes/policies/) | Contains FSDP scripts to provide different policies, such as mixed precision, transformer wrapping policy and activation checkpointing along with any precision optimizer (used for running FSDP with pure bf16 mode). |
 | [utils](src/llama_recipes/utils/) | Utility files for:<br/> - `train_utils.py` provides training/eval loop and more train utils.<br/> - `dataset_utils.py` to get preprocessed datasets.<br/> - `config_utils.py` to override the configs received from CLI.<br/> - `fsdp_utils.py` provides FSDP  wrapping policy for PEFT methods.<br/> - `memory_utils.py` context manager to track different memory stats in train loop. |
+
+
+## Supported Features
+The recipes and modules in this repository support the following features:
+
+| Feature                                        |   |
+| ---------------------------------------------- | - |
+| HF support for inference                       | ✅ |
+| HF support for finetuning                      | ✅ |
+| PEFT                                           | ✅ |
+| Deferred initialization ( meta init)           | ✅ |
+| Low CPU mode for multi GPU                     | ✅ |
+| Mixed precision                                | ✅ |
+| Single node quantization                       | ✅ |
+| Flash attention                                | ✅ |
+| Activation checkpointing FSDP                  | ✅ |
+| Hybrid Sharded Data Parallel (HSDP)            | ✅ |
+| Dataset packing & padding                      | ✅ |
+| BF16 Optimizer (Pure BF16)                     | ✅ |
+| Profiling & MFU tracking                       | ✅ |
+| Gradient accumulation                          | ✅ |
+| CPU offloading                                 | ✅ |
+| FSDP checkpoint conversion to HF for inference | ✅ |
+| W&B experiment tracker                         | ✅ |
 
 
 ## Contributing

@@ -1,0 +1,32 @@
+task: meta_ifeval
+dataset_path: parquet
+dataset_kwargs:
+  data_files: ./work_dir/joined_ifeval.parquet
+output_type: generate_until
+test_split: train
+num_fewshot: 0
+doc_to_text: prompt
+doc_to_target: 0
+generation_kwargs:
+  until: []
+  do_sample: false
+  temperature: 0.0
+  max_gen_toks: 1280
+process_results: !function utils.process_results
+metric_list:
+  - metric: prompt_level_strict_acc
+    aggregation: mean
+    higher_is_better: true
+  - metric: inst_level_strict_acc
+    aggregation: !function utils.agg_inst_level_acc
+    higher_is_better: true
+  - metric: prompt_level_loose_acc
+    aggregation: mean
+    higher_is_better: true
+  - metric: inst_level_loose_acc
+    aggregation: !function utils.agg_inst_level_acc
+    higher_is_better: true
+metadata:
+  version: 2.0
+fewshot_config:
+  sampler: first_n

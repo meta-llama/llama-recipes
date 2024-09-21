@@ -8,7 +8,7 @@ black[jupyter]
 datasets
 fire
 peft
-transformers>=4.43.0
+transformers>=4.43.1
 sentencepiece
 py7zr
 scipy
@@ -19,4 +19,13 @@ chardet
 openai
 typing-extensions==4.8.0
 tabulate
+evaluate
+rouge_score
+pyyaml==6.0.1
+faiss-gpu; python_version < '3.11'
+unstructured[pdf]
+langchain_openai
+langchain
+langchain_community
+sentence_transformers
 codeshield
