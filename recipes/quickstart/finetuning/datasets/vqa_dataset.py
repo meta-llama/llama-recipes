@@ -5,6 +5,7 @@
 import copy
 from datasets import load_dataset
 import itertools
+import torch
 # check system prompt token seq or user prompt token seq is in the current token list
 def check_header(targets,seq):
     for i in range(len(seq)-3):
@@ -20,13 +21,8 @@ def tokenize_dialog(dialog, images, processor):
     # If vocab size is above 128000, use the chat template to generate the tokens as it is from Llama 3 family models
     text_prompt = processor.apply_chat_template(dialog)
     #print("text_prompt",text_prompt)
-    batch = processor(images=images, text=text_prompt)
-    dialog_tokens = batch["input_ids"].tolist()[0]
-    #print("dialog_tokens",dialog_tokens)
-    #print("dialog_tokens",dialog_tokens)
-    attention_mask = batch["attention_mask"].tolist()[0]
-    #print("attention_mask",attention_mask)
-    labels = copy.copy(dialog_tokens)
+    batch = processor(images=images, text=text_prompt,padding = True, return_tensors="pt")    
+    labels = copy.copy(batch["input_ids"].tolist()[0])
     eot_indices = [i for i,n in enumerate(labels) if n == 128009]
     last_idx = 0
     # system prompt header "<|start_header_id|>system<|end_header_id|>" has been tokenized to [128006, 9125, 128007]
@@ -43,17 +39,26 @@ def tokenize_dialog(dialog, images, processor):
     assistant_header_seq = [128006, 78191, 128007]
     labels = replace_target(assistant_header_seq,labels)
     #print("labels",labels)
+    # print("pixel_values .shape",batch["pixel_values"].shape)
+    # print("batch_size, num_concurrent_media, num_tiles, num_channels, height, width = pixel_values.shape")
 
-
-    combined_tokens = {
-        # "input_ids": list(itertools.chain(*(t for t in dialog_tokens))),
-        # "labels": list(itertools.chain(*(t for t in labels_tokens))),
-        "input_ids": dialog_tokens,
-        "labels": labels,
-        "attention_mask": [1]*len(dialog_tokens),
-        "pixel_values": batch["pixel_values"].tolist()[0],
-        "image_sizes": batch["image_sizes"].tolist()[0]
-    }
+    batch["labels"] = torch.tensor(labels)
+    #pixel_values .shape torch.Size([1, 1, 4, 3, 560, 560])
+    batch["pixel_values"] = torch.squeeze(batch["pixel_values"], 1)
+    # pixel_values .shape torch.Size([1, 4, 3, 560, 560])
+    print("pixel_values .shape",batch["pixel_values"].shape)
+    # exit()
+    # combined_tokens = {
+    #     # "input_ids": list(itertools.chain(*(t for t in dialog_tokens))),
+    #     # "labels": list(itertools.chain(*(t for t in labels_tokens))),
+    #     "input_ids": dialog_tokens,
+    #     "labels": labels,
+    #     "attention_mask": [1]*len(dialog_tokens),
+    #     "pixel_values": batch["pixel_values"],
+    #     "aspect_ratio_ids": batch["aspect_ratio_ids"],
+    #     "aspect_ratio_mask": batch["aspect_ratio_mask"],
+    #     "cross_attention_mask": batch["cross_attention_mask"]
+    # }
     # input_ids =  list(itertools.chain(*(t for t in dialog_tokens))),
     # labels = list(itertools.chain(*(t for t in labels_tokens))),
     # attention_mask = [1]*len(list(itertools.chain(*(t for t in dialog_tokens)))),
@@ -61,7 +66,7 @@ def tokenize_dialog(dialog, images, processor):
     # image_sizes = batch["image_sizes"]
 #    print("combined_tokens",combined_tokens[image_sizes])
     
-    return combined_tokens
+    return batch
 def image_tokenize(sample, processor):
     processor.tokenizer.padding_side = "right" # during training, one always uses padding on the right
     images,sample_text = sample["images"],sample["messages"]

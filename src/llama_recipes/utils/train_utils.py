@@ -154,6 +154,8 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                     with autocast():
                         assert(next(model.parameters()).device == batch['input_ids'].device)
                         #print("batch: ", batch)
+                        pixel_values = batch['pixel_values']
+                        print("pixel_values.shape input",pixel_values.shape)
                         loss = model(**batch).loss
                     loss = loss / gradient_accumulation_steps
                     #print("loss",loss)
