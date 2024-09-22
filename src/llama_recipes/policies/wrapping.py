@@ -4,6 +4,8 @@
 import functools
 
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
+from transformers.models.clip.modeling_clip import CLIPEncoder, CLIPEncoderLayer
+
 from torch.distributed.fsdp.wrap import (
     transformer_auto_wrap_policy,
     size_based_auto_wrap_policy,
@@ -27,6 +29,7 @@ def get_llama_wrapper():
         transformer_auto_wrap_policy,
         transformer_layer_cls={
             LlamaDecoderLayer,
+            CLIPEncoderLayer
         },
     )
 

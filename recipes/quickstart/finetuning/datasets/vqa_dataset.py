@@ -39,9 +39,13 @@ def tokenize_dialogs(dialogs, images, processor):
                 labels[last_idx:idx+1] = [-100] * (idx-last_idx+1)
             else:
                 last_idx = idx+1
-            # Lastly mask all the assistant header prompt <|start_header_id|>assistant<|end_header_id|>, which has been tokenized to [128006, 78191, 128007]
+            #  Mask all the assistant header prompt <|start_header_id|>assistant<|end_header_id|>, which has been tokenized to [128006, 78191, 128007]
         assistant_header_seq = [128006, 78191, 128007]
         labels = replace_target(assistant_header_seq,labels)
+        # Mask the padding token and image token 128256 
+        for i in range(len(labels)):
+            if labels[i] == processor.tokenizer.pad_token_id or labels[i] == 128256: #  128256 is image token index
+                labels[i] = -100
         label_list.append(labels)
     batch["labels"] = torch.tensor(label_list)
     tokenizer_length = len(processor.tokenizer)
