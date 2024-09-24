@@ -32,7 +32,7 @@ The 'llama-recipes' repository is a companion to the [Meta Llama](https://github
       - [Install with pip](#install-with-pip)
       - [Install with optional dependencies](#install-with-optional-dependencies)
       - [Install from source](#install-from-source)
-    - [Getting the Meta Llama models](#getting-the-meta-llama-models)
+    - [Getting the Llama models](#getting-the-llama-models)
       - [Model conversion to Hugging Face](#model-conversion-to-hugging-face)
   - [Repository Organization](#repository-organization)
     - [`recipes/`](#recipes)
@@ -95,23 +95,21 @@ pip install -e .[tests,auditnlg,vllm]
 ```
 
 
-### Getting the Meta Llama models
-You can find Meta Llama models on Hugging Face hub [here](https://huggingface.co/meta-llama), **where models with `hf` in the name are already converted to Hugging Face checkpoints so no further conversion is needed**. The conversion step below is only for original model weights from Meta that are hosted on Hugging Face model hub as well.
+### Getting the Llama models
+You can find Llama models on Hugging Face hub [here](https://huggingface.co/meta-llama), **where models with `hf` in the name are already converted to Hugging Face checkpoints so no further conversion is needed**. The conversion step below is only for original model weights from Meta that are hosted on Hugging Face model hub as well.
 
 #### Model conversion to Hugging Face
-The recipes and notebooks in this folder are using the Meta Llama model definition provided by Hugging Face's transformers library.
-
-Given that the original checkpoint resides under models/7B you can install all requirements and convert the checkpoint with:
+If you have the model checkpoints downloaded from the Meta website, you can convert it to the Hugging Face format with:
 
 ```bash
 ## Install Hugging Face Transformers from source
-pip freeze | grep transformers ## verify it is version 4.31.0 or higher
+pip freeze | grep transformers ## verify it is version 4.45.0 or higher
 
 git clone git@github.com:huggingface/transformers.git
 cd transformers
 pip install protobuf
 python src/transformers/models/llama/convert_llama_weights_to_hf.py \
-   --input_dir /path/to/downloaded/llama/weights --model_size 7B --output_dir /output/path
+   --input_dir /path/to/downloaded/llama/weights --model_size 3B --output_dir /output/path
 ```
 
 
