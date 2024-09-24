@@ -1451,3 +1451,6 @@ openhathi
 sarvam
 subtask
 acc
+OCRVQA
+OCRVQADataCollator
+ocrvqa

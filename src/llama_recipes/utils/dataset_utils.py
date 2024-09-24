@@ -4,7 +4,7 @@
 import torch
 
 from llama_recipes.data.concatenator import ConcatDataset
-from llama_recipes.datasets import DATASET_PREPROC, get_custom_dataset
+from llama_recipes.datasets import DATASET_PREPROC, DATALOADER_COLLATE_FUNC
 from llama_recipes.utils.config_utils import get_dataloader_kwargs
 
 
@@ -27,6 +27,16 @@ def get_preprocessed_dataset(
         get_split(),
     )
 
+def get_custom_data_collator(
+    dataset_processer, dataset_config
+) -> torch.utils.data.Dataset:
+    if not dataset_config.dataset in DATALOADER_COLLATE_FUNC:
+        return None
+
+    return DATALOADER_COLLATE_FUNC[dataset_config.dataset](
+        dataset_processer,
+        dataset_config
+    )
 
 def get_dataloader(tokenizer, dataset_config, train_config, split: str = "train"):
     dataset = get_preprocessed_dataset(tokenizer, dataset_config, split)
