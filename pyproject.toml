@@ -24,6 +24,7 @@ dynamic = ["dependencies"]
 vllm = ["vllm"]
 tests = ["pytest-mock"]
 auditnlg = ["auditnlg"]
+langchain = ["langchain_openai", "langchain", "langchain_community"]
 
 [project.urls]
 "Homepage" = "https://github.com/facebookresearch/llama-recipes/"
