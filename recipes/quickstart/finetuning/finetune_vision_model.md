@@ -1,5 +1,7 @@
 ## Fine-Tuning Meta Llama Multi Modal Models recipe
-This recipe steps you through how to finetune a Llama 3.2 vision model on the VQA task using the [OCRVQA](https://huggingface.co/datasets/HuggingFaceM4/the_cauldron/viewer/ocrvqa?row=0) dataset.
+This recipe steps you through how to finetune a Llama 3.2 vision model on the OCR VQA task using the [OCRVQA](https://huggingface.co/datasets/HuggingFaceM4/the_cauldron/viewer/ocrvqa?row=0) dataset.
+
+**Disclaimer** As our vision models already have a very good OCR ability, here we just use the OCRVQA dataset to demonstrate the steps needed for fine-tuning our vision models.
 
 ### Fine-tuning steps
 
@@ -20,7 +22,7 @@ For **LoRA finetuning with FSDP**, we can run the following code:
 
 For more details about the finetuning configurations, please read the [finetuning readme](./README.md).
 
-### How to use custom dataset to fine-tune vision model
+### How to use a custom dataset to fine-tune vision model
 
 In order to use a custom dataset, please follow the steps below:
 

@@ -19,9 +19,7 @@ def replace_target(target,seq):
             seq[i],seq[i+1],seq[i+2] = -100,-100,-100
     return seq
 def tokenize_dialogs(dialogs, images, processor):
-    # If vocab size is above 128000, use the chat template to generate the tokens as it is from Llama 3 family models
     text_prompt = processor.apply_chat_template(dialogs)
-    #print("text_prompt",text_prompt)
     batch = processor(images=images, text=text_prompt,padding = True, return_tensors="pt")
     label_list = []
     for i in range(len(batch["input_ids"])):
