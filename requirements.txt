@@ -14,7 +14,6 @@ py7zr
 scipy
 optimum
 matplotlib
-gradio
 chardet
 openai
 typing-extensions==4.8.0
@@ -24,8 +23,5 @@ rouge_score
 pyyaml==6.0.1
 faiss-gpu; python_version < '3.11'
 unstructured[pdf]
-langchain_openai
-langchain
-langchain_community
 sentence_transformers
 codeshield
