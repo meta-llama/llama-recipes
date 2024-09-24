@@ -2,16 +2,12 @@
 <!-- markdown-link-check-disable -->
 Meta Llama Guard is a language model that provides input and output guardrails for LLM inference. For more details and model cards, please visit the [PurpleLlama](https://github.com/meta-llama/PurpleLlama) repository.
 
-This notebook shows how to load the models with the transformers library and how to customize the categories.
+This [notebook](Llama-Guard-3-MultiModal_inference.ipynb) shows how to load the models with the transformers library and how to customize the categories.
 
 ## Requirements
 1. Access to Llama guard model weights on Hugging Face. To get access, follow the steps described in the top of the model card in [Hugging Face](https://huggingface.co/meta-llama/Llama-Guard-3-1B)
 2. Llama recipes package and it's dependencies [installed](https://github.com/meta-llama/llama-recipes?tab=readme-ov-file#installing)
 3. Pillow package installed
-
-
-## Llama Guard inference script
-To test the new models, follow this [notebook]().
 
 ## Inference Safety Checker
 When running the regular inference script with prompts, Meta Llama Guard will be used as a safety checker on the user prompt and the model output. If both are safe, the result will be shown, else a message with the error will be shown, with the word unsafe and a comma separated list of categories infringed. Meta Llama Guard is always loaded quantized using Hugging Face Transformers library with bitsandbytes.
