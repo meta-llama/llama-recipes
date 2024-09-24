@@ -22,6 +22,7 @@ from torch.distributed.fsdp.wrap import (
 from torch.distributed.fsdp.fully_sharded_data_parallel import CPUOffload
 from torch.optim.lr_scheduler import StepLR
 from transformers import (
+    AutoConfig,
     AutoTokenizer,
     BitsAndBytesConfig,
     LlamaForCausalLM,
@@ -125,7 +126,8 @@ def main(**kwargs):
 
     # Load the pre-trained model and setup its configuration
     use_cache = False if train_config.enable_fsdp else None
-    if "11B" in train_config.model_name or "90B" in train_config.model_name:
+    config = AutoConfig.from_pretrained(train_config.model_name)
+    if config.model_type == "mllama":
         is_vision = True
         model = MllamaForConditionalGeneration.from_pretrained(
         train_config.model_name,
@@ -136,7 +138,7 @@ def main(**kwargs):
     )
         processor = AutoProcessor.from_pretrained(train_config.model_name if train_config.tokenizer_name is None else train_config.tokenizer_name)
         processor.tokenizer.padding_side='right'
-    else:
+    elif config.model_type == "llama":
         is_vision = False
         model = LlamaForCausalLM.from_pretrained(
             train_config.model_name,
@@ -146,7 +148,8 @@ def main(**kwargs):
             device_map="auto" if train_config.quantization and not train_config.enable_fsdp else None,
             torch_dtype=torch.float16 if train_config.use_fp16 else torch.bfloat16,
         )
-    print(model)
+    else:
+        raise ValueError(f"Model type {config.model_type} is not supported. Please use llama or mllama model.")
     # Load the tokenizer and add special tokens
     tokenizer = AutoTokenizer.from_pretrained(train_config.model_name if train_config.tokenizer_name is None else train_config.tokenizer_name)
     tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -190,7 +193,6 @@ def main(**kwargs):
 
         mixed_precision_policy, wrapping_policy = get_policies(fsdp_config, rank)
         my_auto_wrapping_policy = fsdp_auto_wrap_policy(model, [LlamaDecoderLayer,MllamaSelfAttentionDecoderLayer,MllamaSelfAttentionDecoderLayer,MllamaVisionEncoderLayer])
-        print("FSDP is enabled",my_auto_wrapping_policy)
         device_id = 0
         if is_xpu_available():
             device_id = torch.xpu.current_device()
@@ -218,8 +220,6 @@ def main(**kwargs):
             model.to("xpu:0")
         elif torch.cuda.is_available():
             model.to("cuda")
-    print("-------------------")
-    print("FSDP model", model)
     dataset_config = generate_dataset_config(train_config, kwargs)
     if is_vision:
         dataset_processer = processor
@@ -306,8 +306,6 @@ def main(**kwargs):
             weight_decay=train_config.weight_decay,
         )
     scheduler = StepLR(optimizer, step_size=1, gamma=train_config.gamma)
-    # Start the training process
-   
     results = train(
         model,
         train_dataloader,

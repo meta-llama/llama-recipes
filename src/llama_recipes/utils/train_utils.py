@@ -132,7 +132,6 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
             with profile(train_config,local_rank) as profile_context:
                 for step, batch in enumerate(train_dataloader):
                     total_train_steps += 1
-                    #print("batch: ", batch)
                     # stop when the maximum number of training steps is reached
                     if train_config.max_train_step > 0 and total_train_steps > train_config.max_train_step:
                         max_steps_reached = True
@@ -151,10 +150,8 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                             elif torch.cuda.is_available():
                                 batch[key] = batch[key].to('cuda:0')
                     with autocast():
-                        assert(next(model.parameters()).device == batch['input_ids'].device)
                         loss = model(**batch).loss
                     loss = loss / gradient_accumulation_steps
-                    #print("loss",loss)
                     if train_config.save_metrics:
                         train_step_loss.append(loss.detach().float().item())
                         train_step_perplexity.append(float(torch.exp(loss.detach().float())))
@@ -175,7 +172,6 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                             pbar.update(1)
                     else:
                         # regular backpropagation when fp16 is not used
-                        #print("loss123",loss)
                         loss.backward()
                         if (step + 1) % gradient_accumulation_steps == 0 or step == len(train_dataloader) - 1:
                             if train_config.gradient_clipping and train_config.gradient_clipping_threshold > 0.0:
@@ -364,7 +360,8 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb
             # Ensure no gradients are computed for this scope to save memory
             with torch.no_grad():
                 # Forward pass and compute loss
-                outputs = model(**batch,use_cache=False)
+                #outputs = model(**batch,use_cache=False)
+                outputs = model(**batch)
                 loss = outputs.loss
                 if train_config.save_metrics:
                     val_step_loss.append(loss.detach().float().item())
