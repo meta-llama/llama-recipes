@@ -14,7 +14,6 @@ from peft import (
 )
 from transformers import default_data_collator
 from transformers.data import DataCollatorForSeq2Seq
-from functools import partial
 
 from llama_recipes.configs import datasets, lora_config, llama_adapter_config, prefix_config, train_config
 from llama_recipes.data.sampler import LengthBasedBatchSampler, DistributedLengthBasedBatchSampler

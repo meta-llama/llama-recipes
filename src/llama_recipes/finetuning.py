@@ -14,11 +14,6 @@ from torch.distributed.fsdp import (
     FullyShardedDataParallel as FSDP,
     ShardingStrategy
 )
-from torch.distributed.fsdp.wrap import (
-    always_wrap_policy,
-    ModuleWrapPolicy,
-    transformer_auto_wrap_policy,
-)
 from torch.distributed.fsdp.fully_sharded_data_parallel import CPUOffload
 from torch.optim.lr_scheduler import StepLR
 from transformers import (
@@ -26,7 +21,6 @@ from transformers import (
     AutoTokenizer,
     BitsAndBytesConfig,
     LlamaForCausalLM,
-    LlamaConfig,
     AutoProcessor, 
     MllamaForConditionalGeneration
 )
@@ -152,7 +146,8 @@ def main(**kwargs):
         raise ValueError(f"Model type {config.model_type} is not supported. Please use llama or mllama model.")
     # Load the tokenizer and add special tokens
     tokenizer = AutoTokenizer.from_pretrained(train_config.model_name if train_config.tokenizer_name is None else train_config.tokenizer_name)
-    tokenizer.pad_token_id = tokenizer.eos_token_id
+    if not tokenizer.pad_token_id: 
+        tokenizer.pad_token_id = tokenizer.eos_token_id
         
     # If there is a mismatch between tokenizer vocab size and embedding matrix,
     # throw a warning and then expand the embedding matrix
