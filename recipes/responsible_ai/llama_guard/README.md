@@ -2,7 +2,7 @@
 <!-- markdown-link-check-disable -->
 Meta Llama Guard is a language model that provides input and output guardrails for LLM inference. For more details and model cards, please visit the [PurpleLlama](https://github.com/meta-llama/PurpleLlama) repository.
 
-This [notebook](Llama-Guard-3-MultiModal_inference.ipynb) shows how to load the models with the transformers library and how to customize the categories.
+This [notebook](llama_guard_text_&_vision_inference.ipynb) shows how to load the models with the transformers library and how to customize the categories.
 
 ## Requirements
 1. Access to Llama guard model weights on Hugging Face. To get access, follow the steps described in the top of the model card in [Hugging Face](https://huggingface.co/meta-llama/Llama-Guard-3-1B)
