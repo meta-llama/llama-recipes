@@ -10,5 +10,3 @@ The [Purple Llama](https://github.com/meta-llama/PurpleLlama/) project provides 
 
 
 
-### Running on hosted APIs
-The notebooks [input_output_guardrails.ipynb](./input_output_guardrails_with_llama.ipynb),  [Purple_Llama_Anyscale](Purple_Llama_Anyscale.ipynb) & [Purple_Llama_OctoAI](Purple_Llama_OctoAI.ipynb) contain examples for running Meta Llama Guard on cloud hosted endpoints.
