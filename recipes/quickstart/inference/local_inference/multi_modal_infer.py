@@ -5,16 +5,19 @@ from PIL import Image as PIL_Image
 import torch
 from transformers import MllamaForConditionalGeneration, MllamaProcessor
 
+
 # Constants
 DEFAULT_MODEL = "meta-llama/Llama-3.2-11B-Vision-Instruct"
 
-def load_model_and_processor(model_name: str):
+
+def load_model_and_processor(model_name: str, hf_token: str):
     """
     Load the model and processor based on the 11B or 90B model.
     """
-    model = MllamaForConditionalGeneration.from_pretrained(model_name, device_map="auto", torch_dtype=torch.bfloat16)
-    processor = MllamaProcessor.from_pretrained(model_name)
+    model = MllamaForConditionalGeneration.from_pretrained(model_name, device_map="auto", torch_dtype=torch.bfloat16, token=hf_token)
+    processor = MllamaProcessor.from_pretrained(model_name, token=hf_token)
     return model, processor
+
 
 def process_image(image_path: str) -> PIL_Image.Image:
     """
@@ -25,6 +28,7 @@ def process_image(image_path: str) -> PIL_Image.Image:
         sys.exit(1)
     with open(image_path, "rb") as f:
         return PIL_Image.open(f).convert("RGB")
+
 
 def generate_text_from_image(model, processor, image, prompt_text: str, temperature: float, top_p: float):
     """
@@ -38,22 +42,25 @@ def generate_text_from_image(model, processor, image, prompt_text: str, temperat
     output = model.generate(**inputs, temperature=temperature, top_p=top_p, max_new_tokens=512)
     return processor.decode(output[0])[len(prompt):]
 
-def main(image_path: str, prompt_text: str, temperature: float, top_p: float, model_name: str):
+
+def main(image_path: str, prompt_text: str, temperature: float, top_p: float, model_name: str, hf_token: str):
     """
     Call all the functions. 
     """
-    model, processor = load_model_and_processor(model_name)
+    model, processor = load_model_and_processor(model_name, hf_token)
     image = process_image(image_path)
     result = generate_text_from_image(model, processor, image, prompt_text, temperature, top_p)
     print("Generated Text: " + result)
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate text from an image and prompt using the 3.2 MM Llama model.")
-    parser.add_argument("image_path", type=str, help="Path to the image file")
-    parser.add_argument("prompt_text", type=str, help="Prompt text to describe the image")
+    parser.add_argument("--image_path", type=str, help="Path to the image file")
+    parser.add_argument("--prompt_text", type=str, help="Prompt text to describe the image")
     parser.add_argument("--temperature", type=float, default=0.7, help="Temperature for generation (default: 0.7)")
     parser.add_argument("--top_p", type=float, default=0.9, help="Top p for generation (default: 0.9)")
     parser.add_argument("--model_name", type=str, default=DEFAULT_MODEL, help=f"Model name (default: '{DEFAULT_MODEL}')")
+    parser.add_argument("--hf_token", type=str, required=True, help="Hugging Face token for authentication")
 
     args = parser.parse_args()
-    main(args.image_path, args.prompt_text, args.temperature, args.top_p, args.model_name)
+    main(args.image_path, args.prompt_text, args.temperature, args.top_p, args.model_name, args.hf_token)
