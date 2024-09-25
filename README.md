@@ -76,6 +76,10 @@ To use the sensitive topics safety checker install with:
 ```
 pip install llama-recipes[auditnlg]
 ```
+Some recipes require the presence of langchain. To install the packages follow the recipe description or install with:
+```
+pip install llama-recipes[langchain]
+```
 Optional dependencies can also be combines with [option1,option2].
 
 #### Install from source
