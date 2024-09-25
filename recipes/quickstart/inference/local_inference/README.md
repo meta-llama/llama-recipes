@@ -4,7 +4,7 @@ For Multi-Modal inference we have added [multi_modal_infer.py](multi_modal_infer
 
 The way to run this would be
 ```
-python multi_modal_infer.py --image_path "../responsible_ai/resources/dog.jpg" --input_prompt "Describe this image" --temperature 0.5 --top_p 0.8 --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct"
+python multi_modal_infer.py --image_path "../../responsible_ai/resources/dog.jpg" --input_prompt "Describe this image" --temperature 0.5 --top_p 0.8 --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct"
 ```
 
 For local inference we have provided an [inference script](inference.py). Depending on the type of finetuning performed during training the [inference script](inference.py) takes different arguments.
