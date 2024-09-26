@@ -2,21 +2,17 @@
 <!-- markdown-link-check-disable -->
 The 'llama-recipes' repository is a companion to the [Meta Llama](https://github.com/meta-llama/llama-models) models. We support the latest version, [Llama 3.2 Vision](https://github.com/meta-llama/llama-models/blob/main/models/llama3_2/MODEL_CARD_VISION.md) and [Llama 3.2 Text](https://github.com/meta-llama/llama-models/blob/main/models/llama3_2/MODEL_CARD.md), in this repository. This repository contains example scripts and notebooks to get started with the models in a variety of use-cases, including fine-tuning for domain adaptation and building LLM-based applications with Llama and other tools in the LLM ecosystem. The examples here use Llama locally, in the cloud, and on-prem.
 
+> [!TIP]
+> Get started with Llama 3.2 with these new recipes:
+> * [Finetune Llama 3.2 Vision](https://github.com/meta-llama/llama-recipes/blob/main/recipes/quickstart/finetuning/finetune_vision_model.md)
+> * [Multimodal Inference with Llama 3.2 Vision](https://github.com/meta-llama/llama-recipes/blob/main/recipes/quickstart/inference/local_inference/README.md#multimodal-inference)
+> * [Inference on Llama Guard 1B + Multimodal inference on Llama Guard 11B-Vision](https://github.com/meta-llama/llama-recipes/blob/main/recipes/responsible_ai/llama_guard/llama_guard_text_and_vision_inference.ipynb)
+
+
 <!-- markdown-link-check-enable -->
-> [!IMPORTANT]
+> [!NOTE]
 > Llama 3.2 follows the same prompt template as Llama 3.1, with a new special token `<|image|>` representing the input image for the multimodal models.
 > 
-> | Token | Description |
-> |---|---|
-> `<\|begin_of_text\|>` | Specifies the start of the prompt. |
-> `<\|image\|>` | Represents the image tokens passed as an input to Llama. |
-> `<\|eot_id\|>` | This token signifies the end of a turn i.e. the end of the model's interaction either with the user or tool executor. |
-> `<\|eom_id\|>` | End of Message. A message represents a possible stopping point where the model can inform the execution environment that a tool call needs to be made. |
-> `<\|python_tag\|>` | A special tag used in the model’s response to signify a tool call. |
-> `<\|finetune_right_pad_id\|>` | Used for padding text sequences in a batch to the same length. |
-> `<\|start_header_id\|>{role}<\|end_header_id\|>` | These tokens enclose the role for a particular message. The possible roles can be: system, user, assistant and ipython. |
-> `<\|end_of_text\|>` | This is equivalent to the EOS token. For multiturn-conversations it's usually unused, this token is expected to be generated only by the base models. |
->
 > More details on the prompt templates for image reasoning, tool-calling and code interpreter can be found [on the documentation website](https://llama.meta.com/docs/model-cards-and-prompt-formats/llama3_2).
 
 
