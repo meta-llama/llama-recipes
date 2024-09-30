@@ -38,7 +38,7 @@ def generate_text_from_image(model, processor, image, prompt_text: str, temperat
         {"role": "user", "content": [{"type": "image"}, {"type": "text", "text": prompt_text}]}
     ]
     prompt = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
-    inputs = processor(prompt, image, return_tensors="pt").to(model.device)
+    inputs = processor(image, prompt, return_tensors="pt").to(model.device)
     output = model.generate(**inputs, temperature=temperature, top_p=top_p, max_new_tokens=512)
     return processor.decode(output[0])[len(prompt):]
 
