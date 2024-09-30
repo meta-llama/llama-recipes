@@ -1,3 +1,6 @@
+## [Automatic Triaging of Github Repositories](./github_triage/walkthrough.ipynb): Use Llama to automatically triage issues in an OSS repository and generate insights to improve community experience
+This tool utilizes an off-the-shelf Llama model to analyze, generate insights, and create a report for better understanding of the state of a repository. It serves as a reference implementation for using Llama to develop custom reporting and data analytics applications.
+
 ## [VideoSummary](video_summary.ipynb): Ask Llama 3 to Summarize a Long YouTube Video (using Replicate or [OctoAI](../3p_integrations/octoai/video_summary.ipynb))
 This demo app uses Llama 3 to return a text summary of a YouTube video. It shows how to retrieve the caption of a YouTube video and how to ask Llama to summarize the content in different ways, from the simplest naive way that works for short text to more advanced methods of using LangChain's map_reduce and refine to overcome the 8K context length limit of Llama 3.
 
