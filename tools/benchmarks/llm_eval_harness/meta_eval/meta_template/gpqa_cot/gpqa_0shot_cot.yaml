@@ -1,5 +1,5 @@
-dataset_path: meta-llama/Meta-Llama-3.1-8B-Instruct-evals
-dataset_name: Meta-Llama-3.1-8B-Instruct-evals__gpqa__details
+dataset_path: meta-llama/Llama-3.1-8B-Instruct-evals
+dataset_name: Llama-3.1-8B-Instruct-evals__gpqa__details
 task: meta_gpqa
 output_type: generate_until
 process_docs: !function utils.process_docs

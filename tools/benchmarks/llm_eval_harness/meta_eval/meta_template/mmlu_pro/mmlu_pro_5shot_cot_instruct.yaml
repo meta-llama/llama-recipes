@@ -1,6 +1,6 @@
 task: meta_mmlu_pro_instruct
-dataset_path: meta-llama/Meta-Llama-3.1-8B-Instruct-evals
-dataset_name: Meta-Llama-3.1-8B-Instruct-evals__mmlu_pro__details
+dataset_path: meta-llama/Llama-3.1-8B-Instruct-evals
+dataset_name: Llama-3.1-8B-Instruct-evals__mmlu_pro__details
 test_split: latest
 output_type: generate_until
 process_docs: !function utils.process_docs

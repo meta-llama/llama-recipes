@@ -1,7 +1,7 @@
-model_name: "meta-llama/Meta-Llama-3.1-8B-Instruct" # The name of the model to evaluate. This must be a valid Meta Llama 3 based model name in the HuggingFace model hub."
+model_name: "meta-llama/Llama-3.1-8B-Instruct" # The name of the model to evaluate. This must be a valid Meta Llama 3 based model name in the HuggingFace model hub."
 
-evals_dataset: "meta-llama/Meta-Llama-3.1-8B-Instruct-evals" # The name of the 3.1 evals dataset to evaluate, please make sure this eval dataset corresponds to the model loaded. This must be a valid Meta Llama 3.1 evals dataset name in the Llama 3.1 Evals collection.
-# Must be one of the following ["meta-llama/Meta-Llama-3.1-8B-Instruct-evals","meta-llama/Meta-Llama-3.1-70B-Instruct-evals","meta-llama/Meta-Llama-3.1-405B-Instruct-evals","meta-llama/Meta-Llama-3.1-8B-evals","meta-llama/Meta-Llama-3.1-70B-evals","meta-llama/Meta-Llama-3.1-405B-evals"]
+evals_dataset: "meta-llama/Llama-3.1-8B-Instruct-evals" # The name of the 3.1 evals dataset to evaluate, please make sure this eval dataset corresponds to the model loaded. This must be a valid Meta Llama 3.1 evals dataset name in the Llama 3.1 Evals collection.
+# Must be one of the following ["meta-llama/Llama-3.1-8B-Instruct-evals","meta-llama/Llama-3.1-70B-Instruct-evals","meta-llama/Llama-3.1-405B-Instruct-evals","meta-llama/Llama-3.1-8B-evals","meta-llama/Llama-3.1-70B-evals","meta-llama/Llama-3.1-405B-evals"]
 
 tasks: "meta_instruct" # Available tasks for instruct model: "meta_math_hard", "meta_gpqa", "meta_mmlu_pro_instruct", "meta_ifeval"; or just use "meta_instruct" to run all of them.
 # Available tasks for pretrain model: "meta_bbh", "meta_mmlu_pro_pretrain"; or just use "meta_pretrain" to run all of them.

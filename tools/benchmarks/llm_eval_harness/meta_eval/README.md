@@ -1,13 +1,13 @@
 
 # Calculating Meta 3.1 Evaluation Metrics Using LM-Evaluation-Harness
 
-As Meta Llama models gain popularity, evaluating these models has become increasingly important. We have released all the evaluation details for Meta-Llama 3.1 models as datasets in the [3.1 evals Hugging Face collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f). This recipe demonstrates how to calculate the Llama 3.1 reported benchmark numbers using the [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/main) library and our prompts from the 3.1 evals datasets on selected tasks.
+As Llama models gain popularity, evaluating these models has become increasingly important. We have released all the evaluation details for Llama 3.1 models as datasets in the [3.1 evals Hugging Face collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f). This recipe demonstrates how to calculate the Llama 3.1 reported benchmark numbers using the [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/main) library and our prompts from the 3.1 evals datasets on selected tasks.
 
 ## Disclaimer
 
 
-1. **This recipe is not the official implementation** of Meta Llama evaluation. It is based on public third-party libraries, as this implementation is not mirroring Meta Llama evaluation, this may lead to minor differences in the produced numbers.
-2. **Model Compatibility**: This tutorial is specifically for Llama 3 based models, as our prompts include Meta Llama 3 special tokens, e.g. `<|start_header_id|>user<|end_header_id|>`. It will not work with models that are not based on Llama 3.
+1. **This recipe is not the official implementation** of Llama evaluation. It is based on public third-party libraries, as this implementation is not mirroring Llama evaluation, this may lead to minor differences in the produced numbers.
+2. **Model Compatibility**: This tutorial is specifically for Llama 3 based models, as our prompts include Llama 3 special tokens, e.g. `<|start_header_id|>user<|end_header_id|>`. It will not work with models that are not based on Llama 3.
 
 ## Insights from Our Evaluation Process
 
@@ -55,10 +55,10 @@ Here, we aim to get the benchmark numbers on the aforementioned tasks using Hugg
 1. We created [eval_config.yaml](./eval_config.yaml) to store all the arguments and hyperparameters. This is the main config file you need to change if you want to eval other models, and a part of eval_config.yaml looks like this:
 
 ```yaml
-model_name: "meta-llama/Meta-Llama-3.1-8B-Instruct" # The name of the model to evaluate. This must be a valid Meta Llama 3 based model name in the HuggingFace model hub."
+model_name: "meta-llama/Llama-3.1-8B-Instruct" # The name of the model to evaluate. This must be a valid Llama 3 based model name in the HuggingFace model hub."
 
-evals_dataset: "meta-llama/Meta-Llama-3.1-8B-Instruct-evals" # The name of the 3.1 evals dataset to evaluate, please make sure this eval dataset corresponds to the model loaded. This must be a valid Meta Llama 3.1 evals dataset name in the Llama 3.1 Evals collection.
-# Must be one of the following ["meta-llama/Meta-Llama-3.1-8B-Instruct-evals","meta-llama/Meta-Llama-3.1-70B-Instruct-evals","meta-llama/Meta-Llama-3.1-405B-Instruct-evals","meta-llama/Meta-Llama-3.1-8B-evals","meta-llama/Meta-Llama-3.1-70B-evals","meta-llama/Meta-Llama-3.1-405B-evals"]
+evals_dataset: "meta-llama/Llama-3.1-8B-Instruct-evals" # The name of the 3.1 evals dataset to evaluate, please make sure this eval dataset corresponds to the model loaded. This must be a valid Llama 3.1 evals dataset name in the Llama 3.1 Evals collection.
+# Must be one of the following ["meta-llama/Llama-3.1-8B-Instruct-evals","meta-llama/Llama-3.1-70B-Instruct-evals","meta-llama/Llama-3.1-405B-Instruct-evals","meta-llama/Llama-3.1-8B-evals","meta-llama/Llama-3.1-70B-evals","meta-llama/Llama-3.1-405B-evals"]
 
 tasks: "meta_instruct" # Available tasks for instruct model: "meta_math_hard", "meta_gpqa", "meta_mmlu_pro_instruct", "meta_ifeval"; or just use "meta_instruct" to run all of them.
 # Available tasks for pretrain model: "meta_bbh", "meta_mmlu_pro_pretrain"; or just use "meta_pretrain" to run all of them.
@@ -83,12 +83,12 @@ data_parallel_size: 4 # The VLLM argument that speicify the data parallel size f
 python prepare_meta_eval.py --config_path ./eval_config.yaml
 ```
 
-  This script will load the default [eval_config.yaml](./eval_config.yaml) config and print out a `lm_eval` command to run `meta_instruct` group tasks,  which includes `meta_ifeval`, `meta_math_hard`, `meta_gpqa` and `meta_mmlu_pro_instruct`, for `meta-llama/Meta-Llama-3.1-8B-Instruct` model using `meta-llama/Meta-Llama-3.1-8B-Instruct-evals` dataset.
+  This script will load the default [eval_config.yaml](./eval_config.yaml) config and print out a `lm_eval` command to run `meta_instruct` group tasks,  which includes `meta_ifeval`, `meta_math_hard`, `meta_gpqa` and `meta_mmlu_pro_instruct`, for `meta-llama/Llama-3.1-8B-Instruct` model using `meta-llama/Llama-3.1-8B-Instruct-evals` dataset.
 
   An example output from [prepare_meta_eval.py](./prepare_meta_eval.py) looks like this:
 
 ```
-lm_eval --model vllm --model_args pretrained=meta-llama/Meta-Llama-3.1-8B-Instruct,tensor_parallel_size=1,dtype=auto,gpu_memory_utilization=0.9,data_parallel_size=4,max_model_len=8192,add_bos_token=True,seed=42 --tasks meta_instruct --batch_size auto --output_path eval_results --include_path ./work_dir --seed 42  --log_samples
+lm_eval --model vllm --model_args pretrained=meta-llama/Llama-3.1-8B-Instruct,tensor_parallel_size=1,dtype=auto,gpu_memory_utilization=0.9,data_parallel_size=4,max_model_len=8192,add_bos_token=True,seed=42 --tasks meta_instruct --batch_size auto --output_path eval_results --include_path ./work_dir --seed 42  --log_samples
 ```
 
 4. Then just copy the `lm_eval` command printed by [prepare_meta_eval.py](./prepare_meta_eval.py) back to your terminal and run it to get the result, which will be saved into `eval_results` folder by default.
@@ -119,14 +119,14 @@ We can use our 3.1 evals dataset as the source dataset and the corresponding sub
 
 ```yaml
 task: meta_mmlu_pro_instruct
-dataset_path: meta-llama/Meta-Llama-3.1-8B-Instruct-evals
-dataset_name: Meta-Llama-3.1-8B-Instruct-evals__mmlu_pro__details
+dataset_path: meta-llama/Llama-3.1-8B-Instruct-evals
+dataset_name: Llama-3.1-8B-Instruct-evals__mmlu_pro__details
 test_split: latest
 ```
 
 If you want to run evaluation on 70B-Instruct, then it is recommended to change the `dataset_path` and  `dataset_name` from 8B to 70B, even though 70B-instruct and 8B-instruct share the same prompts, the `is_correct` column, which can be used to get the difference between current result and the reported results for each sample, is different.
 
-**Note**: Config files for Meta-Llama-3.1-8B-Instruct are already provided in each task subfolder under [meta_template folder](./meta_template/). Remember to change the eval dataset name according to the model type and DO NOT use pretrained evals dataset on instruct models or vice versa.
+**Note**: Config files for Llama-3.1-8B-Instruct are already provided in each task subfolder under [meta_template folder](./meta_template/). Remember to change the eval dataset name according to the model type and DO NOT use pretrained evals dataset on instruct models or vice versa.
 
 **2.Configure preprocessing, prompts and ground truth**
 
@@ -180,29 +180,9 @@ Here we set the `num_fewshot` to 0 as our prompts have already been converted to
 
 **NOTE**: While we tried our best to create the template files, those configs and functions are created based on public third-party library and are not exactly the same as our internal implementation, so there is a chance that the eval numbers are slightly different.
 
-## Results
-
-Here is the comparison between our reported numbers and the eval numbers in this tutorial:
-
-| Model                        | MATH_HARD | GPQA_RAW | MMLU_PRO_RAW | IFeval  |
-|------------------------------|-----------|----------|--------------|---------|
-| 3.1 8B-Instruct(reported)    | 0.254     | 0.328    | 0.47         | 0.804   |
-| 3.1 8B-Instruct(this)        | 0.2424    | 0.3259   | 0.4675       | 0.7782  |
-| 3.1 70B-Instruct(reported)   | 0.438     | 0.467    | 0.651        | 0.875   |
-| 3.1 70B-Instruct(this)       | 0.4388    | 0.4799   | 0.6475       | 0.848   |
-
-| Model                  | BBH_RAW | MMLU_PRO_RAW |
-|------------------------|---------|--------------|
-| 3.1 8B(reported)       | 0.642   | 0.356        |
-| 3.1 8B(this)           | 0.6515  | 0.3572       |
-| 3.1 70B(reported)      | 0.816   | 0.52         |
-| 3.1 70B(this)          | 0.8191  | 0.5225       |
-
-From the table above, we can see that most of our results calculated from this recipe are very close to our reported number in the [Meta Llama website](https://llama.meta.com/).
-
 **NOTE**: We used the average of `inst_level_strict_acc,none` and `prompt_level_strict_acc,none` to get the final number for `IFeval` as stated [here](https://huggingface.co/docs/leaderboards/open_llm_leaderboard/about#task-evaluations-and-parameters).
 
-**NOTE**: In the [Meta Llama website](https://llama.meta.com/), we reported the `macro_avg` metric, which is the average of all subtask average score, for `MMLU-Pro `task, but here we are calculating the `micro_avg` metric, which is the average score for all the individual samples, and those `micro_avg`  numbers can be found in the [eval_details.md](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/eval_details.md#mmlu-pro).
+**NOTE**: In the [Llama website](https://llama.com/), we reported the `macro_avg` metric, which is the average of all subtask average score, for `MMLU-Pro `task, but here we are calculating the `micro_avg` metric, which is the average score for all the individual samples, and those `micro_avg`  numbers can be found in the [eval_details.md](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/eval_details.md#mmlu-pro).
 
 **NOTE**: The eval numbers may be slightly different, as we observed around ±0.01 differences between each evaluation run because the latest VLLM inference is not very deterministic even with temperature=0. This behavior maybe related [this issue](https://github.com/vllm-project/vllm/issues/5404).
 or it is expected due to 16-bits inference as stated in [this comment](https://github.com/huggingface/transformers/issues/25420#issuecomment-1775317535) and [this comment](https://github.com/vllm-project/vllm/issues/4112#issuecomment-2071115725).
