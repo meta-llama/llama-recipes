@@ -40,7 +40,7 @@ pip install -e .
 To run evaluation for Hugging Face `Llama3.1 8B` model  on a single GPU please run the following,
 
 ```bash
-lm_eval --model hf --model_args pretrained=meta-llama/Meta-Llama-3.1-8B --tasks hellaswag --device cuda:0   --batch_size 8
+lm_eval --model hf --model_args pretrained=meta-llama/Llama-3.1-8B --tasks hellaswag --device cuda:0   --batch_size 8
 
 ```
 Tasks can be extended by using `,` between them for example `--tasks hellaswag,arc`.
@@ -52,7 +52,7 @@ To set the number of shots you can use `--num_fewshot` to set the number for few
 In case you have fine-tuned your model using PEFT you can set the PATH to the PEFT checkpoints using PEFT as part of model_args as shown below:
 
 ```bash
-lm_eval --model hf --model_args pretrained=meta-llama/Meta-Llama-3.1-8B, dtype="float",peft=../peft_output --tasks hellaswag --num_fewshot 10  --device cuda:0 --batch_size 8
+lm_eval --model hf --model_args pretrained=meta-llama/Llama-3.1-8B, dtype="float",peft=../peft_output --tasks hellaswag --num_fewshot 10  --device cuda:0 --batch_size 8
 ```
 
 ### Limit the number of examples in benchmarks
@@ -60,7 +60,7 @@ lm_eval --model hf --model_args pretrained=meta-llama/Meta-Llama-3.1-8B, dtype="
 There has been an study from [IBM on efficient benchmarking of LLMs](https://arxiv.org/pdf/2308.11696.pdf), with main take a way that to identify if a model is performing poorly, benchmarking on wider range of tasks is more important than the number example in each task. This means you could run the evaluation harness with fewer number of example to have initial decision if the performance got worse from the base line. To limit the number of example here, it can be set using `--limit` flag with actual desired number. But for the full assessment you would need to run the full evaluation. Please read more in the paper linked above.
 
 ```bash
-lm_eval --model hf --model_args pretrained=meta-llama/Meta-Llama-3.1-8B,dtype="float",peft=../peft_output --tasks hellaswag --num_fewshot 10  --device cuda:0 --batch_size 8 --limit 100
+lm_eval --model hf --model_args pretrained=meta-llama/Llama-3.1-8B,dtype="float",peft=../peft_output --tasks hellaswag --num_fewshot 10  --device cuda:0 --batch_size 8 --limit 100
 ```
 
 ### Customized Llama Model
@@ -77,7 +77,7 @@ To perform *data-parallel evaluation* (where each GPU loads a **separate full co
 
 ```bash
 accelerate launch -m lm_eval --model hf \
-    --model_args pretrained=meta-llama/Meta-Llama-3.1-8B \
+    --model_args pretrained=meta-llama/Llama-3.1-8B \
     --tasks lambada_openai,arc_easy \
     --batch_size 16
 ```
@@ -94,7 +94,7 @@ In this setting, run the library *outside the `accelerate` launcher*, but passin
 ```
 lm_eval --model hf \
     --tasks lambada_openai,arc_easy \
-    --model_args pretrained=meta-llama/Meta-Llama-3.1-70B,parallelize=True \
+    --model_args pretrained=meta-llama/Llama-3.1-70B,parallelize=True \
     --batch_size 16
 ```
 
@@ -111,7 +111,7 @@ There is also an option to run with tensor parallel and data parallel together. 
 ```
 accelerate launch --multi_gpu --num_processes {nb_of_copies_of_your_model} \
     -m lm_eval --model hf \
-    --model_args pretrained=meta-llama/Meta-Llama-3.1-70B \
+    --model_args pretrained=meta-llama/Llama-3.1-70B \
     --tasks lambada_openai,arc_easy \
     --model_args parallelize=True \
     --batch_size 16
@@ -158,20 +158,20 @@ In the HF leaderboard v2, the [LLMs are evaluated on 6 benchmarks](https://huggi
 
 In order to install correct lm-evaluation-harness version, please check the Huggingface 🤗 Open LLM Leaderboard v2 [reproducibility section](https://huggingface.co/docs/leaderboards/open_llm_leaderboard/about#reproducibility).
 
-To run a leaderboard evaluation for `Meta-Llama-3.1-8B`, we can run the following:
+To run a leaderboard evaluation for `Llama-3.1-8B`, we can run the following:
 
 ```bash
-accelerate launch -m lm_eval --model_args pretrained=meta-llama/Meta-Llama-3.1-8B,dtype=bfloat16  --log_samples --output_path eval_results --tasks leaderboard  --batch_size 4
+accelerate launch -m lm_eval --model_args pretrained=meta-llama/Llama-3.1-8B,dtype=bfloat16  --log_samples --output_path eval_results --tasks leaderboard  --batch_size 4
 ```
 
-Similarly to run a leaderboard evaluation for `Meta-Llama-3.1-8B-Instruct`, we can run the following, using `--apply_chat_template --fewshot_as_multiturn`:
+Similarly to run a leaderboard evaluation for `Llama-3.1-8B-Instruct`, we can run the following, using `--apply_chat_template --fewshot_as_multiturn`:
 
 ```bash
-accelerate launch -m lm_eval --model_args pretrained=meta-llama/Meta-Llama-3.1-8B-Instruct,dtype=bfloat16  --log_samples --output_path eval_results --tasks leaderboard  --batch_size 4 --apply_chat_template --fewshot_as_multiturn
+accelerate launch -m lm_eval --model_args pretrained=meta-llama/Llama-3.1-8B-Instruct,dtype=bfloat16  --log_samples --output_path eval_results --tasks leaderboard  --batch_size 4 --apply_chat_template --fewshot_as_multiturn
 ```
 
-As for 70B models, it is required to run tensor parallelism as it can not fit into 1 GPU, therefore we can run the following for `Meta-Llama-3.1-70B-Instruct`:
+As for 70B models, it is required to run tensor parallelism as it can not fit into 1 GPU, therefore we can run the following for `Llama-3.1-70B-Instruct`:
 
 ```bash
-lm_eval --model hf --batch_size 4 --model_args pretrained=meta-llama/Meta-Llama-3.1-70B-Instruct,parallelize=True --tasks leaderboard --log_samples --output_path eval_results --apply_chat_template --fewshot_as_multiturn
+lm_eval --model hf --batch_size 4 --model_args pretrained=meta-llama/Llama-3.1-70B-Instruct,parallelize=True --tasks leaderboard --log_samples --output_path eval_results --apply_chat_template --fewshot_as_multiturn
 ```

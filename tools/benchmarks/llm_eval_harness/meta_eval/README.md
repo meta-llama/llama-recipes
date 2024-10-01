@@ -6,7 +6,7 @@ As Llama models gain popularity, evaluating these models has become increasingly
 ## Disclaimer
 
 
-1. **This recipe is not the official implementation** of Llama evaluation. It is based on public third-party libraries, as this implementation is not mirroring Llama evaluation, this may lead to minor differences in the produced numbers.
+1. **This recipe is not the official implementation** of Llama evaluation. Since our internal eval repo isn't public, we want to provide this recipe as an aid for anyone who want to use the datasets we released. It is based on public third-party libraries, as this implementation is not mirroring Llama evaluation, therefore this may lead to minor differences in the produced numbers.
 2. **Model Compatibility**: This tutorial is specifically for Llama 3 based models, as our prompts include Llama 3 special tokens, e.g. `<|start_header_id|>user<|end_header_id|>`. It will not work with models that are not based on Llama 3.
 
 ## Insights from Our Evaluation Process
