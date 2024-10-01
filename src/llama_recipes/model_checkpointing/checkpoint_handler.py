@@ -123,7 +123,7 @@ def save_model_and_optimizer_sharded(model, rank, cfg,optim=None):
         print(
             f"Checkpoint Time = {t1-t0:.4f}\n"
         )
-def save_model_checkpoint(
+def save_fsdp_model_checkpoint_full(
     model,
     optimizer,
     rank,
@@ -152,7 +152,7 @@ def save_model_checkpoint(
         )
         save_dir = Path.cwd() / folder_name
         save_dir.mkdir(parents=True, exist_ok=True)
-        save_name = cfg.model_name + "-" + str(epoch) + ".pt"
+        save_name = cfg.model_name.replace("/","--") + "-" + str(epoch) + ".pt"
         save_full_path = str(save_dir) + "/" + save_name
 
         # save model
@@ -271,6 +271,20 @@ def save_peft_checkpoint(model, model_path):
     """save_pretrained peft model"""
 
     options = StateDictOptions(full_state_dict=True, cpu_offload=True)
-
-    state_dict = get_model_state_dict(model, options=options)
-    model.save_pretrained(model_path, state_dict=state_dict)
+    
+    if isinstance(model, FSDP):
+        state_dict = get_model_state_dict(model, options=options)
+        model.save_pretrained(model_path, state_dict=state_dict)
+    else:
+        model.save_pretrained(model_path)
+    
+    
+def save_model_checkpoint(model, output_dir):
+    """save model when not peft and on single device"""
+    
+    output_file = Path(output_dir) / "model.pt"
+    
+    state_dict = model.state_dict()
+    
+    torch.save(state_dict, output_file)
+    

@@ -1,0 +1,6 @@
+kaleido
+plotly
+openai
+groq
+fpdf
+plotly

@@ -1,63 +1,11 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
-import importlib
-from functools import partial
-from pathlib import Path
-
 import torch
 
-from llama_recipes.datasets import (
-    get_grammar_dataset,
-    get_alpaca_dataset,
-    get_samsum_dataset,
-    get_llamaguard_toxicchat_dataset,
-)
-
-
-def load_module_from_py_file(py_file: str) -> object:
-    """
-    This method loads a module from a py file which is not in the Python path
-    """
-    module_name = Path(py_file).name
-    loader = importlib.machinery.SourceFileLoader(module_name, py_file)
-    spec = importlib.util.spec_from_loader(module_name, loader)
-    module = importlib.util.module_from_spec(spec)
-
-    loader.exec_module(module)
-
-    return module
-
-
-def get_custom_dataset(dataset_config, tokenizer, split: str):
-    if ":" in dataset_config.file:
-        module_path, func_name = dataset_config.file.split(":")
-    else:
-        module_path, func_name = dataset_config.file, "get_custom_dataset"
-
-    if not module_path.endswith(".py"):
-        raise ValueError(f"Dataset file {module_path} is not a .py file.")
-
-    module_path = Path(module_path)
-    if not module_path.is_file():
-        raise FileNotFoundError(f"Dataset py file {module_path.as_posix()} does not exist or is not a file.")
-
-    module = load_module_from_py_file(module_path.as_posix())
-    try:
-        return getattr(module, func_name)(dataset_config, tokenizer, split)
-    except AttributeError as e:
-        print(f"It seems like the given method name ({func_name}) is not present in the dataset .py file ({module_path.as_posix()}).")
-        raise e
-
-
-DATASET_PREPROC = {
-    "alpaca_dataset": partial(get_alpaca_dataset),
-    "grammar_dataset": get_grammar_dataset,
-    "samsum_dataset": get_samsum_dataset,
-    "custom_dataset": get_custom_dataset,
-    "llamaguard_toxicchat_dataset": get_llamaguard_toxicchat_dataset,
-
-}
+from llama_recipes.data.concatenator import ConcatDataset
+from llama_recipes.datasets import DATASET_PREPROC, DATALOADER_COLLATE_FUNC
+from llama_recipes.utils.config_utils import get_dataloader_kwargs
 
 
 def get_preprocessed_dataset(
@@ -78,3 +26,31 @@ def get_preprocessed_dataset(
         tokenizer,
         get_split(),
     )
+
+def get_custom_data_collator(
+    dataset_processer, dataset_config
+) -> torch.utils.data.Dataset:
+    if not dataset_config.dataset in DATALOADER_COLLATE_FUNC:
+        return None
+
+    return DATALOADER_COLLATE_FUNC[dataset_config.dataset](
+        dataset_processer,
+        dataset_config
+    )
+
+def get_dataloader(tokenizer, dataset_config, train_config, split: str = "train"):
+    dataset = get_preprocessed_dataset(tokenizer, dataset_config, split)
+    dl_kwargs = get_dataloader_kwargs(train_config, dataset, tokenizer, split)
+    
+    if split == "train" and train_config.batching_strategy == "packing":
+        dataset = ConcatDataset(dataset, chunk_size=train_config.context_length)
+
+    # Create data loader
+    dataloader = torch.utils.data.DataLoader(
+        dataset,
+        num_workers=train_config.num_workers_dataloader,
+        pin_memory=True,
+        **dl_kwargs,
+    )
+    return dataloader
+    

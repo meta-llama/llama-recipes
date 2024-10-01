@@ -1,0 +1,144 @@
+github_token: <github token>
+model:
+  use: groq
+  vllm:
+      endpoint: "http://localhost:8000/v1"
+      model_id: "meta-llama/Meta-Llama-3.1-70B-Instruct"
+  groq:
+      key: <groq token>
+      model_id: llama-3.1-70b-versatile
+
+prompts:
+  parse_issue:
+    system: You are an expert maintainer of an open source project. Given some discussion threads, you must respond with a report in JSON. Your response should only contain English, and you may translate if you can.
+    json_schema: '{
+        "type": "object",
+        "properties": {
+          "summary": {
+            "description": "Summary of the issue and discussion along with any details about platform or tooling.",
+            "type": "string"
+          },
+          "possible_causes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "remediations": {
+            "description": "How we can improve the code or documentation to prevent this issue.",
+            "type": "array",
+            "maxItems": 2,
+            "items": {
+              "type": "string"
+            }
+          },
+          "component": {
+            "description": "The specific module or component affected by the issue",
+            "type": "string"
+          },
+          "sentiment": {
+            "type": "string",
+            "enum": ["positive", "negative", "neutral"]
+          },
+          "issue_type": {
+            "description": "Any issue not related to LLMs, Llama or code in this repository should be marked as \"invalid\"",
+            "type": "string",
+            "enum": ["bug_report", "feature_request", "documentation", "installation", "discussion", "invalid"]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "major", "minor", "trivial"]
+          },
+          "op_expertise": {
+            "description": "Assess the reporters level of expertise.",
+            "type": "string",
+            "enum": ["beginner", "intermediate", "advanced"]
+          }
+        },
+        "required": ["summary", "possible_causes", "remediations", "component", "sentiment", "issue_type", "severity", "op_expertise"]
+      }'
+  assign_category:
+    system: "You are the lead maintainer of an open source project. Given a list of issues, generate a JSON that categorizes the issues by common themes. For every theme include a description and cite the relevant issue numbers. All issues must be categorized into at least one theme."
+    json_schema: '{
+        "type": "object",
+        "properties": {
+          "report": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "theme": {
+                  "description": "key theme identified from the issues",
+                  "type": "string",
+                  "enum": ["Cloud Compute", "Installation and Environment", "Model Loading", "Model Fine-tuning and Training", "Model Conversion", "Model Inference", "Distributed Training and Multi-GPU", "Performance and Optimization", "Quantization and Mixed Precision", "Documentation", "CUDA Compatibility", "Model Evaluation and Benchmarking", "Miscellaneous", "Invalid"]
+                },
+                "description": {
+                  "type": "string"
+                },
+                "related_issues": {
+                  "description": "Issue numbers related to this theme",
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              },
+              "required": ["theme", "description", "related_issues"]
+            }
+          }
+        },
+        "required": ["report"]
+      }'
+  get_overview:
+    system: You are not only an experienced Open Source maintainer, but also an expert at paraphrasing raw data into clear succinct reports. Draft a concise report about the issues in this open source repository. Include an executive summary that provides an overview of the challenges faced, any open questions or decisions to be made, or actions that we can take. Group issues together if they ladder up to the same overall challenge, summarize the challenges and include any actionable resolutions we can take (more information in the \"remediations\" sections). Use your experience and judgement to ignore issues that are clearly unrelated to the open source project. Ensure the output is in JSON.
+    json_schema: '{
+        "type": "object",
+        "properties": {
+          "executive_summary": {
+            "description": "An executive summary of the analysis",
+            "type": "string"
+          },
+          "open_questions": {
+            "description": "Any open questions or decisions that the product team needs to make in light of these issues",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "issue_analysis": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key_challenge": {
+                  "description": "A description of the challenge reported in these issues",
+                  "type": "string"
+                },
+                "affected_issues": {
+                  "description": "A list of issues that are related to this challenge",
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                "possible_causes": {
+                  "description": "A list of possible causes or reasons for this challenge to occur",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "remediations": {
+                  "description": "Steps we can take to address this challenge",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": ["key_challenge", "affected_issues", "possible_causes", "remediations"]
+            }
+          }
+        },
+        "required": ["issue_analysis", "open_questions", "actions", "executive_summary"]
+      }'
