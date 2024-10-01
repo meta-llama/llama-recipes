@@ -16,12 +16,12 @@ from datasets import Dataset, load_dataset
 def get_ifeval_data(model_name, output_dir):
     print(f"preparing the ifeval data using {model_name}'s evals dataset")
     if model_name not in [
-        "Meta-Llama-3.1-8B-Instruct",
-        "Meta-Llama-3.1-70B-Instruct",
-        "Meta-Llama-3.1-405B-Instruct",
+        "Llama-3.1-8B-Instruct",
+        "Llama-3.1-70B-Instruct",
+        "Llama-3.1-405B-Instruct",
     ]:
         raise ValueError(
-            "Only Meta-Llama-3.1-8B-Instruct, Meta-Llama-3.1-70B-Instruct, Meta-Llama-3.1-405B-Instruct models are supported for IFEval"
+            "Only Llama-3.1-8B-Instruct, Llama-3.1-70B-Instruct, Llama-3.1-405B-Instruct models are supported for IFEval"
         )
     original_dataset_name = "wis-k/instruction-following-eval"
     meta_dataset_name = f"meta-llama/{model_name}-evals"
@@ -59,12 +59,12 @@ def get_ifeval_data(model_name, output_dir):
 def get_math_data(model_name, output_dir):
     print(f"preparing the math data using {model_name}'s evals dataset")
     if model_name not in [
-        "Meta-Llama-3.1-8B-Instruct",
-        "Meta-Llama-3.1-70B-Instruct",
-        "Meta-Llama-3.1-405B-Instruct",
+        "Llama-3.1-8B-Instruct",
+        "Llama-3.1-70B-Instruct",
+        "Llama-3.1-405B-Instruct",
     ]:
         raise ValueError(
-            "Only Meta-Llama-3.1-8B-Instruct, Meta-Llama-3.1-70B-Instruct, Meta-Llama-3.1-405B-Instruct models are supported for MATH_hard"
+            "Only Llama-3.1-8B-Instruct, Llama-3.1-70B-Instruct, Llama-3.1-405B-Instruct models are supported for MATH_hard"
         )
     original_dataset_name = "lighteval/MATH-Hard"
     meta_dataset_name = f"meta-llama/{model_name}-evals"
@@ -130,7 +130,7 @@ def change_yaml(args, base_name):
         with open(output_path, "w") as output:
             for line in lines:
                 output.write(
-                    line.replace("Meta-Llama-3.1-8B", base_name).replace(
+                    line.replace("Llama-3.1-8B", base_name).replace(
                         "WORK_DIR", str(yaml_dir)
                     )
                 )
@@ -208,12 +208,12 @@ if __name__ == "__main__":
     if not os.path.exists(args.template_dir):
         raise ValueError("The template_dir does not exist, please check the path")
     if args.evals_dataset not in [
-        "meta-llama/Meta-Llama-3.1-8B-Instruct-evals",
-        "meta-llama/Meta-Llama-3.1-70B-Instruct-evals",
-        "meta-llama/Meta-Llama-3.1-405B-Instruct-evals",
-        "meta-llama/Meta-Llama-3.1-8B-evals",
-        "meta-llama/Meta-Llama-3.1-70B-evals",
-        "meta-llama/Meta-Llama-3.1-405B-evals",
+        "meta-llama/Llama-3.1-8B-Instruct-evals",
+        "meta-llama/Llama-3.1-70B-Instruct-evals",
+        "meta-llama/Llama-3.1-405B-Instruct-evals",
+        "meta-llama/Llama-3.1-8B-evals",
+        "meta-llama/Llama-3.1-70B-evals",
+        "meta-llama/Llama-3.1-405B-evals",
     ]:
         raise ValueError(
             "The evals dataset is not valid, please double check the name, must use the name in the Llama 3.1 Evals collection"
