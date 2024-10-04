@@ -1,3 +1,10 @@
+# ## Evaluating HumanEval Results using Modal Sandboxes
+# This script will take generated results and evaluate them.
+# We use Modal Sandboxes to safely evaluate LLM-generated results.
+#
+# Run it with:
+#    modal run eval
+
 from pathlib import Path
 
 import modal

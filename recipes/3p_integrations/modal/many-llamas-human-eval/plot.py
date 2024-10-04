@@ -1,3 +1,9 @@
+# ## Plotting HumanEval Results
+# This script will calculate pass@k and fail@k for our experiment and plot them.
+#
+# Run it with:
+#    modal run plot
+
 import io
 import json
 from pathlib import Path
