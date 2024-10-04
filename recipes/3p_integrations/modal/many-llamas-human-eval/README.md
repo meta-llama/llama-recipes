@@ -1,20 +1,18 @@
-See `rune2e.sh` for info on how to run the experiment.
-
-# Many Llamas Human Eval
+# Many-Llamas Human-Eval
 
 In this directory, we run an experiment answering the question:
 
 *If we run enough Llama models in parallel, can they outperform GPT-4o on HumanEval?*
 
-It seeks to increase model performance not by scaling parameters, but by scaling compute time.
+It seeks to increase model performance not through scaling parameters, but by scaling compute time.
 
 ### Technical Blog
 
-This experiment has been built and run by the team at [Modal](https://modal.com), and is described in the following blog post:
+This experiment built by the team at [Modal](https://modal.com), and is described in the following blog post:
 
 [Beat GPT-4o at Python by searching with 100 dumb LLaMAs](https://modal.com/blog/llama-human-eval)
 
-The experiment has since been adapted to use the [Llama 3.2 3B Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) model, and run end-to-end using the Modal serverless platform.
+The experiment has since been upgraded to use the [Llama 3.2 3B Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) model, and runnable end-to-end using the Modal serverless platform.
 
 ## Run it yourself
 
@@ -33,6 +31,12 @@ modal setup
 That's all!
 
 This CLI will execute your modal apps, which build and run containers on the cloud, on your GPU of choice.
+
+### HuggingFace Pull Access
+
+To download the model, you'll first need to accept the [Llama 3.2 License](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) on HuggingFace and be approved for access.
+
+Then, create a [modal secret](https://modal.com/secrets) named `huggingface`, to which you'll add your HF_TOKEN as an environment variable.
 
 ### Run The Experiment
 
@@ -58,7 +62,10 @@ The resulting plots of the evals will be saved locally to:
 
 `/tmp/plot-pass-k.jpeg` shows pass@k for the Llama 3.2 3B Instruct model vs pass@1 for GPT-4o. 
 
+![plot-pass-k](https://github.com/user-attachments/assets/11e9dc6e-4322-4d44-b928-4ed7c4ce8262)
+
 You'll see that at 100 generations, the Llama model is able to perform on-par with GPT-4o. At higher scale, the Llama model will outperform GPT-4o.
 
 `/tmp/plot-fail-k.jpeg` shows fail@k across a log-scale, showing smooth scaling of this method.
 
+![plot-fail-k](https://github.com/user-attachments/assets/7286e4ff-5090-4288-bd62-8a078c6dc5a1)
