@@ -1,10 +1,16 @@
 # Local Inference
 
 ## Multimodal Inference
+Please upgrade the `llama-recipes`, `transformers`, and `accelerate` packages to their latest versions for inferencing with LLaMA 3.2 models using the following command:
+
+```bash
+pip install --upgrade llama-recipes transformers accelerate
+```
+
 For Multi-Modal inference we have added [multi_modal_infer.py](multi_modal_infer.py) which uses the transformers library
 
 The way to run this would be
-```
+```bash
 python multi_modal_infer.py --image_path "./resources/image.jpg" --prompt_text "Describe this image" --temperature 0.5 --top_p 0.8 --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct"
 ```
 
