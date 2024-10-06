@@ -96,6 +96,14 @@ python inference.py --model_name <training_config.output_dir> --prompt_file <tes
 
 ```
 
+Note: if you want to convert llama vision models, set the `multimodal` argument to True, and inference using [multimodal inference](../../../../recipes/quickstart/inference/local_inference/README.md#multimodal-inference).
+```bash
+# convert finetuned model
+python -m llama_recipes.inference.checkpoint_converter_fsdp_hf --fsdp_checkpoint_path  PATH/to/FSDP/Checkpoints --consolidated_model_path PATH/to/save/checkpoints --HF_model_path_or_name PATH/or/HF/model_name --multimodal True
+# multimodal inference
+python multi_modal_infer.py --image_path "./resources/image.jpg" --prompt_text "Describe this image" --temperature 0.5 --top_p 0.8 --model_name PATH/to/save/checkpoints
+```
+
 ## Inference on large models like Meta Llama 405B
 The FP8 quantized variants of Meta Llama (i.e. meta-llama/Meta-Llama-3.1-405B-FP8 and meta-llama/Meta-Llama-3.1-405B-Instruct-FP8) can be executed on a single node with 8x80GB H100 using the scripts located in this folder.
 To run the unquantized Meta Llama 405B variants (i.e. meta-llama/Meta-Llama-3.1-405B and meta-llama/Meta-Llama-3.1-405B-Instruct) we need to use a multi-node setup for inference. The llama-recipes inference script currently does not allow multi-node inference. To run this model you can use vLLM with pipeline and tensor parallelism as showed in [this example](../../../3p_integrations/vllm/README.md).
