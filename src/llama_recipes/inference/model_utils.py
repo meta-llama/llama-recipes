@@ -4,7 +4,7 @@
 from llama_recipes.utils.config_utils import update_config
 from llama_recipes.configs import quantization_config  as QUANT_CONFIG
 from peft import PeftModel
-from transformers import AutoModelForCausalLM, LlamaForCausalLM, LlamaConfig
+from transformers import AutoModelForCausalLM, LlamaForCausalLM, LlamaConfig, MllamaForConditionalGeneration, MllamaConfig
 from warnings import warn
 
 # Function to load the main model for text generation
@@ -41,9 +41,11 @@ def load_peft_model(model, peft_model):
     return peft_model
 
 # Loading the model from config to load FSDP checkpoints into that
-def load_llama_from_config(config_path):
-    model_config = LlamaConfig.from_pretrained(config_path) 
-    model = LlamaForCausalLM(config=model_config)
+def load_llama_from_config(config_path, multimodal):
+    if multimodal:
+        model_config = MllamaConfig.from_pretrained(config_path)
+        model = MllamaForConditionalGeneration(config=model_config)
+    else:
+        model_config = LlamaConfig.from_pretrained(config_path) 
+        model = LlamaForCausalLM(config=model_config)
     return model
-    
-    

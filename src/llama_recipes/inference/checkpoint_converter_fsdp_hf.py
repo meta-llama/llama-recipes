@@ -25,7 +25,8 @@ from model_checkpointing import load_sharded_model_single_gpu
 def main(
     fsdp_checkpoint_path="", # Path to FSDP Sharded model checkpoints
     consolidated_model_path="", # Path to save the HF converted model checkpoints
-    HF_model_path_or_name="" # Path/ name of the HF model that include config.json and tokenizer_config.json (e.g. meta-llama/Llama-2-7b-chat-hf)
+    HF_model_path_or_name="", # Path/ name of the HF model that include config.json and tokenizer_config.json (e.g. meta-llama/Llama-2-7b-chat-hf)
+    multimodal=False # Use MllamaConfig for llama 3.2 vision models
     ):
     
     try:
@@ -50,7 +51,7 @@ def main(
         
         
     #load the HF model definition from config
-    model_def = load_llama_from_config(HF_model_path_or_name)
+    model_def = load_llama_from_config(HF_model_path_or_name, multimodal)
     print("model is loaded from config")
     #load the FSDP sharded checkpoints into the model
     model = load_sharded_model_single_gpu(model_def, fsdp_checkpoint_path)
