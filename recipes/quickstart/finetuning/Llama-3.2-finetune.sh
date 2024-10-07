@@ -1,0 +1,46 @@
+export OMP_NUM_THREADS=8
+torchrun --nnodes 1 --nproc_per_node 8 recipes/quickstart/finetuning/finetuning.py \
+    --enable_fsdp \
+    --lr 1e-5 \
+    --num_epochs 1 \
+    --batch_size_training 1 \
+    --model_name meta-llama/Llama-3.2-11B-Vision-Instruct \
+    --dist_checkpoint_root_folder ./finetuned_model \
+    --dist_checkpoint_folder fine-tuned \
+    --use_fast_kernels True \
+    --dataset "custom_dataset" \
+    --custom_dataset.test_split "test" \
+    --custom_dataset.file "/home/myles/llama-recipes/recipes/quickstart/finetuning/datasets/json_dataset.py" \
+    --run_validation True \
+    --batching_strategy padding \
+    --use_wandb True \
+    --gradient_accumulation_steps 2 \
+    --checkpoint_interval 500 \
+    --max_checkpoints_to_keep 2 \
+    --context_length 4096 \
+    --gradient_clipping False \
+    --gradient_clipping_threshold 1.0 \
+    --max_train_step 0 \
+    --max_eval_step 0 \
+    --num_workers_dataloader 1 \
+    --weight_decay 0.0 \
+    --gamma 0.85 \
+    --seed 42 \
+    --use_fp16 False \
+    --mixed_precision True \
+    --val_batch_size 1 \
+    --peft_method "lora" \
+    --use_peft False \
+    --from_peft_checkpoint "" \
+    --output_dir "./finetuned_model/PEFT/model" \
+    --freeze_layers False \
+    --num_freeze_layers 1 \
+    --quantization None \
+    --one_gpu False \
+    --save_model True \
+    --save_optimizer True \
+    --save_metrics True \
+    --flop_counter False \
+    --flop_counter_start 3 \
+    --use_profiler False \
+    --profiler_dir "./finetuned_model/profiler/results"
