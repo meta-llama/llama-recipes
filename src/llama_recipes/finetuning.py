@@ -77,6 +77,10 @@ def main(**kwargs):
     # Update the configuration for the training and sharding process
     train_config, fsdp_config = TRAIN_CONFIG(), FSDP_CONFIG()
     update_config((train_config, fsdp_config), **kwargs)
+    
+    # Add the checkpointing parameters to train_config
+    train_config.checkpoint_interval = kwargs.get('checkpoint_interval', 1000)
+    train_config.max_checkpoints_to_keep = kwargs.get('max_checkpoints_to_keep', 5)
     # Set the seeds for reproducibility
     if is_xpu_available():
         torch.xpu.manual_seed(train_config.seed)
@@ -321,6 +325,8 @@ def main(**kwargs):
         local_rank if train_config.enable_fsdp else None,
         rank if train_config.enable_fsdp else None,
         wandb_run,
+        checkpoint_interval=train_config.checkpoint_interval,
+        max_checkpoints_to_keep=train_config.max_checkpoints_to_keep,
     )
     if not train_config.enable_fsdp or rank==0:
         [print(f'Key: {k}, Value: {v}') for k, v in results.items()]
