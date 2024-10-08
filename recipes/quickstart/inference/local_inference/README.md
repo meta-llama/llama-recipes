@@ -28,10 +28,10 @@ For multi-modal inferencing using Gradio UI we have added [multi_modal_infer_Gra
 ---
 
 The way to run this would be:
-- export the hugging-face token to the environment using `export hf_token=<your hf-token>` with proper access to llama 3.2 vision models, then run the command given below
+- Ensure having proper access to llama 3.2 vision models, then run the command given below
 
 ```
-python multi_modal_infer_Gradio_UI.py
+python multi_modal_infer_Gradio_UI.py --hf_token <your hf_token here>
 ```
 
 ## Text-only Inference
