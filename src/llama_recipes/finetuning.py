@@ -43,8 +43,7 @@ from llama_recipes.utils.config_utils import (
 )
 from llama_recipes.utils.dataset_utils import get_preprocessed_dataset,get_custom_data_collator
 
-from llama_recipes.utils.fsdp_utils import hsdp_device_mesh
-from llama_recipes.utils.train_utils import (
+from llama_recipes.utils import (
     train,
     freeze_transformer_layers,
     setup,
@@ -52,6 +51,7 @@ from llama_recipes.utils.train_utils import (
     clear_gpu_cache,
     print_model_size,
     get_policies,
+    hsdp_device_mesh,
 )
 from accelerate.utils import is_xpu_available
 from warnings import warn
@@ -128,7 +128,7 @@ def main(**kwargs):
         quantization_config=bnb_config,
         attn_implementation="sdpa" if train_config.use_fast_kernels else None,
         device_map="auto" if train_config.quantization and not train_config.enable_fsdp else None,
-        torch_dtype=torch.float16 if train_config.use_fp16 else torch.bfloat16,
+        torch_dtype=torch.float16 if train_config.use_fp16 else "auto",
     )
         processor = AutoProcessor.from_pretrained(train_config.model_name if train_config.tokenizer_name is None else train_config.tokenizer_name)
         processor.tokenizer.padding_side='right'
