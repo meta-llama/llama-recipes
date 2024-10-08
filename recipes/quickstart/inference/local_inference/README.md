@@ -20,7 +20,7 @@ For multi-modal inferencing using Gradio UI we have added [multi_modal_infer_Gra
      ```
 
 2. **Run the Gradio Interface**:
-   - Execute the following command to start the Gradio UI for multi-modal inference:
+   - Execute the following command to start the gradio UI for multi-modal inference:
      ```
      python multi_modal_infer_Gradio_UI.py
      ```
