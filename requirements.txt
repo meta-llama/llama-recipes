@@ -25,3 +25,4 @@ faiss-gpu; python_version < '3.11'
 unstructured[pdf]
 sentence_transformers
 codeshield
+gradio
