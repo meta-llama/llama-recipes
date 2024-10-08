@@ -8,11 +8,10 @@ The way to run this would be
 python multi_modal_infer.py --image_path "./resources/image.jpg" --prompt_text "Describe this image" --temperature 0.5 --top_p 0.8 --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct"
 ```
 ---
-## Multi-modal Inferencing Using Gradio UI for inferencing
-For multi-modal inferencing using Gradio UI we have added [multi_modal_infer_Gradio_UI.py](multi_modal_infer_Gradio_UI.py) which used Gradio and transformers library.
+## Multi-modal Inferencing Using gradio UI for inferencing
+For multi-modal inferencing using gradio UI we have added [multi_modal_infer_Gradio_UI.py](multi_modal_infer_Gradio_UI.py) which used gradio and transformers library.
 
 ### Steps to Run
-
 
 The way to run this would be:
 - Ensure having proper access to llama 3.2 vision models, then run the command given below
