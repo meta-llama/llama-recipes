@@ -7,6 +7,32 @@ The way to run this would be
 ```
 python multi_modal_infer.py --image_path "./resources/image.jpg" --prompt_text "Describe this image" --temperature 0.5 --top_p 0.8 --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct"
 ```
+---
+## Multi-modal Inferencing Using Gradio UI for inferencing
+For multi-modal inferencing using Gradio UI we have added [multi_modal_infer_Gradio_UI.py](multi_modal_infer_Gradio_UI.py) which used Gradio and transformers library.
+
+### Steps to Run
+
+1. **Set Up Hugging Face Token**:
+   - Export your Hugging Face token with proper access to the Llama 3.2 vision models:
+     ```
+     export hf_token=<your-hf-token>
+     ```
+
+2. **Run the Gradio Interface**:
+   - Execute the following command to start the Gradio UI for multi-modal inference:
+     ```
+     python multi_modal_infer_Gradio_UI.py
+     ```
+
+---
+
+The way to run this would be:
+- export the hugging-face token to the environment using `export hf_token=<your hf-token>` with proper access to llama 3.2 vision models, then run the command given below
+
+```
+python multi_modal_infer_Gradio_UI.py
+```
 
 ## Text-only Inference
 For local inference we have provided an [inference script](inference.py). Depending on the type of finetuning performed during training the [inference script](inference.py) takes different arguments.
