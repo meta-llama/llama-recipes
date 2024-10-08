@@ -13,19 +13,6 @@ For multi-modal inferencing using Gradio UI we have added [multi_modal_infer_Gra
 
 ### Steps to Run
 
-1. **Set Up Hugging Face Token**:
-   - Export your Hugging Face token with proper access to the Llama 3.2 vision models:
-     ```
-     export hf_token=<your-hf-token>
-     ```
-
-2. **Run the Gradio Interface**:
-   - Execute the following command to start the gradio UI for multi-modal inference:
-     ```
-     python multi_modal_infer_Gradio_UI.py
-     ```
-
----
 
 The way to run this would be:
 - Ensure having proper access to llama 3.2 vision models, then run the command given below
