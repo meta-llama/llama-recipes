@@ -12,9 +12,9 @@ locals {
 
 // new VM
 resource "crusoe_compute_instance" "vllm_vm" {
-  name     = "vllm-valid"
+  name     = "vllm-example"
   type     = "l40s-48gb.8x"
-  location = "us-east1-a"
+  location = "us-southcentral1-a"
 
   # specify the base image
   image = "ubuntu22.04-nvidia-slurm:12.4"
@@ -31,9 +31,9 @@ resource "crusoe_compute_instance" "vllm_vm" {
 }
 
 resource "crusoe_storage_disk" "vllm_data_disk" {
-  name     = "vllm-valid-disk"
+  name     = "vllm-example-disk"
   size     = "256GiB"
-  location = "us-east1-a"
+  location = "us-southcentral1-a"
 }
 
 output "instance_public_ip" {
