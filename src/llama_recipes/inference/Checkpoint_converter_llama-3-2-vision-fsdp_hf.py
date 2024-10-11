@@ -22,7 +22,7 @@ def main(
     use_bfloat16 (bool): Flag to convert the model to bfloat16 precision during the process.
 
     Example:
-        python3 convert_fsdp_to_hf.py \
+        python3 Checkpoint_converter_llama-3-2-vision-fsdp_hf.py \
             --fsdp_checkpoint_path /path/to/fsdp/checkpoints \
             --consolidated_model_path /path/to/save/hf_model \
             --HF_model_path_or_name meta-llama/Llama-3.2-11B-Vision-Instruct \
