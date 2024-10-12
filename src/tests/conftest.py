@@ -13,6 +13,11 @@ def llama_version(request):
     return request.param
 
 
+@pytest.fixture(params=["mllama", "llama"])
+def model_type(request):
+    return request.param
+
+
 @pytest.fixture(scope="module")
 def llama_tokenizer(request):
     return {k: AutoTokenizer.from_pretrained(k) for k in LLAMA_VERSIONS}
