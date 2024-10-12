@@ -37,7 +37,7 @@ def check_padded_entry(batch, tokenizer):
 @pytest.mark.skip_missing_tokenizer
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.AutoTokenizer')
-@patch('llama_recipes.finetuning.AutoModel.from_pretrained')
+@patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
 @patch('llama_recipes.finetuning.optim.AdamW')
 @patch('llama_recipes.finetuning.StepLR')
 def test_custom_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker, setup_tokenizer, llama_version):
@@ -97,7 +97,7 @@ def test_custom_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker,
 
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.AutoConfig.from_pretrained')
-@patch('llama_recipes.finetuning.AutoModel.from_pretrained')
+@patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
 @patch('llama_recipes.finetuning.AutoTokenizer.from_pretrained')
 @patch('llama_recipes.finetuning.optim.AdamW')
 @patch('llama_recipes.finetuning.StepLR')

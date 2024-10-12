@@ -13,7 +13,7 @@ DATA_DIR = Path(__file__).parents[2] / "llama_recipes/datasets/grammar_dataset/"
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.AutoTokenizer')
 @patch('llama_recipes.finetuning.AutoConfig.from_pretrained')
-@patch('llama_recipes.finetuning.AutoModel.from_pretrained')
+@patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
 @patch('llama_recipes.finetuning.optim.AdamW')
 @patch('llama_recipes.finetuning.StepLR')
 def test_grammar_dataset(step_lr, optimizer, get_model, get_config, tokenizer, train, setup_tokenizer, llama_version):
