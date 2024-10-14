@@ -20,7 +20,6 @@ class FakeTokenizer(object):
         self.padding_side = "left"
 
     def __call__(self, *args, **kwargs):
-        print(f"{kwargs=}")
         ids = self.encode(*args, **kwargs)
         return {"input_ids": ids}
 

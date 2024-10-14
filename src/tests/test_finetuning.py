@@ -246,8 +246,6 @@ def test_finetuning_weight_decay(
     args, kwargs = train.call_args
     optimizer = args[4]
 
-    print(optimizer.state_dict())
-
     assert isinstance(optimizer, AdamW)
     assert optimizer.state_dict()["param_groups"][0]["weight_decay"] == approx(0.01)
 
