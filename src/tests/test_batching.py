@@ -25,6 +25,7 @@ EXPECTED_SAMPLE_NUMBER ={
     }
 }
 
+@pytest.mark.skip_missing_tokenizer
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.AutoTokenizer')
 @patch("llama_recipes.finetuning.AutoConfig.from_pretrained")
@@ -90,6 +91,7 @@ def test_packing(
         assert batch["attention_mask"][0].size(0) == 4096
 
 
+@pytest.mark.skip_missing_tokenizer
 @patch("llama_recipes.finetuning.torch.cuda.is_available")
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.AutoTokenizer')
