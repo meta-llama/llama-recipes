@@ -5,11 +5,19 @@ import pytest
 from dataclasses import dataclass
 from functools import partial
 from unittest.mock import patch
+from datasets import load_dataset
 
 @dataclass
 class Config:
     model_type: str = "llama"
 
+try:
+    load_dataset("Samsung/samsum")
+    SAMSUM_UNAVAILABLE = False
+except ValueError:
+    SAMSUM_UNAVAILABLE = True
+
+@pytest.mark.skipif(SAMSUM_UNAVAILABLE, reason="Samsum dataset is unavailable")
 @pytest.mark.skip_missing_tokenizer
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.AutoTokenizer')
