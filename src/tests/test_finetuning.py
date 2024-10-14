@@ -107,46 +107,6 @@ def test_finetuning(
         assert model.return_value.to.call_count == 0
 
 
-# @patch("llama_recipes.finetuning.torch.cuda.is_available")
-# @patch("llama_recipes.finetuning.train")
-# @patch("llama_recipes.finetuning.LlamaForCausalLM.from_pretrained")
-# @patch("llama_recipes.finetuning.AutoTokenizer.from_pretrained")
-# @patch("llama_recipes.finetuning.get_preprocessed_dataset")
-# @patch("llama_recipes.finetuning.generate_peft_config")
-# @patch("llama_recipes.finetuning.get_peft_model")
-# @patch("llama_recipes.finetuning.optim.AdamW")
-# @patch("llama_recipes.finetuning.StepLR")
-# @pytest.mark.parametrize("cuda_is_available", [True, False])
-# def test_finetuning_peft_lora(
-#     step_lr,
-#     optimizer,
-#     get_peft_model,
-#     gen_peft_config,
-#     get_dataset,
-#     tokenizer,
-#     get_model,
-#     train,
-#     cuda,
-#     cuda_is_available,
-# ):
-#     kwargs = {"use_peft": True}
-
-#     get_dataset.return_value = get_fake_dataset()
-#     cuda.return_value = cuda_is_available
-
-#     get_model.return_value.get_input_embeddings.return_value.weight.shape = [0]
-
-#     main(**kwargs)
-
-#     if cuda_is_available:
-#         assert get_peft_model.return_value.to.call_count == 1
-#         assert get_peft_model.return_value.to.call_args.args[0] == "cuda"
-#     else:
-#         assert get_peft_model.return_value.to.call_count == 0
-
-    
-
-
 @patch("llama_recipes.finetuning.get_peft_model")
 @patch("llama_recipes.finetuning.setup")
 @patch("llama_recipes.finetuning.train")
