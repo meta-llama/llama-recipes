@@ -2,6 +2,7 @@
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
 import pytest
+from contextlib import nullcontext
 from unittest.mock import patch
 
 from transformers import LlamaTokenizer
@@ -133,13 +134,16 @@ def test_tokenize_dialog(tokenizer, monkeypatch, setup_tokenizer, llama_version)
         {"role":"assistant", "content":"Romans"},
     ]
 
-    result = tokenize_dialog(dialog, tokenizer)
+    c = pytest.raises(AttributeError) if llama_version == "fake_llama" else nullcontext()
+
+    with c:
+        result = tokenize_dialog(dialog, tokenizer)
     
     if "Llama-2" in llama_version:
         assert result["labels"][:12] == [-100] * 12
         assert result["labels"][17:28] == [-100] * 11
         assert result["labels"].count(-100) == 11 + 12
-    else:
+    elif "Llama-3" in llama_version:
         assert result["labels"][:38] == [-100] * 38
         assert result["labels"][43:54] == [-100] * 11
         assert result["labels"].count(-100) == 38 + 11

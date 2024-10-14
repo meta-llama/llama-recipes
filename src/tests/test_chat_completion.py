@@ -52,8 +52,8 @@ def _format_tokens_llama3(dialogs, tokenizer):
 def test_chat_completion(
     load_model, tokenizer, setup_tokenizer, llama_tokenizer, llama_version
 ):
-    if "Llama-2" in llama_version:
-        pytest.skip("skipping test for Llama-2")
+    if "Llama-2" in llama_version or llama_version == "fake_llama":
+        pytest.skip(f"skipping test for {llama_version}")
 
     from chat_completion import main
 

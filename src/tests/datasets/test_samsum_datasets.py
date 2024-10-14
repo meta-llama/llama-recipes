@@ -2,20 +2,42 @@
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
 import pytest
+from dataclasses import dataclass
 from functools import partial
 from unittest.mock import patch
+
+@dataclass
+class Config:
+    model_type: str = "llama"
 
 @pytest.mark.skip_missing_tokenizer
 @patch('llama_recipes.finetuning.train')
 @patch('llama_recipes.finetuning.AutoTokenizer')
+@patch("llama_recipes.finetuning.AutoConfig.from_pretrained")
+@patch("llama_recipes.finetuning.AutoProcessor")
+@patch("llama_recipes.finetuning.MllamaForConditionalGeneration.from_pretrained")
 @patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
 @patch('llama_recipes.finetuning.optim.AdamW')
 @patch('llama_recipes.finetuning.StepLR')
-def test_samsum_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker, setup_tokenizer, llama_version):
+def test_samsum_dataset(
+    step_lr,
+    optimizer,
+    get_model,
+    get_mmodel,
+    processor,
+    get_config,
+    tokenizer,
+    train,
+    mocker,
+    setup_tokenizer,
+    llama_version,
+    ):
     from llama_recipes.finetuning import main
 
     setup_tokenizer(tokenizer)
     get_model.return_value.get_input_embeddings.return_value.weight.shape = [32000 if "Llama-2" in llama_version else 128256]
+    get_mmodel.return_value.get_input_embeddings.return_value.weight.shape = [0]
+    get_config.return_value = Config()
 
     BATCH_SIZE = 8
     kwargs = {
