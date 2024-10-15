@@ -3,12 +3,6 @@ on:
   pull_request:
     branches:
       - 'main'
-    paths:
-      - 'src/llama_recipes/configs/*.py'
-      - 'src/llama_recipes/utils/*.py'
-      - 'src/llama_recipes/datasets/*.py'
-      - 'src/llama_recipes/data/*.py'
-      - 'src/llama_recipes/*.py'
 
   # triggers workflow manually for debugging purposes.
   workflow_dispatch:
