@@ -1,5 +1,6 @@
 import importlib
 from pathlib import Path
+from transformers import DataCollatorForSeq2Seq
 
 def load_module_from_py_file(py_file: str) -> object:
     """
@@ -55,3 +56,13 @@ def get_data_collator(dataset_processer,dataset_config):
         print(f"Can not find the custom data_collator in the dataset.py file ({module_path.as_posix()}).")
         print("Using the default data_collator instead.")
         return None
+
+class NoLabelDataCollatorForSeq2Seq(DataCollatorForSeq2Seq):
+    def __call__(self, batch):
+        batch = super().__call__(batch)
+        if "labels" in batch:
+            del batch["labels"]
+        return batch
+
+def custom_collator_no_labels(dataset_processer, dataset_config):
+    return NoLabelDataCollatorForSeq2Seq(dataset_processer)

@@ -54,7 +54,9 @@ from llama_recipes.utils.train_utils import (
     get_policies,
 )
 from accelerate.utils import is_xpu_available
-from warnings import warn
+from warnings import warn, simplefilter
+
+simplefilter(action='ignore', category=FutureWarning)
 
 def setup_wandb(train_config, fsdp_config, **kwargs):
     try:
@@ -167,7 +169,7 @@ def main(**kwargs):
         # Load the pre-trained peft model checkpoint and setup its configuration
         if train_config.from_peft_checkpoint:
             model = PeftModel.from_pretrained(model, train_config.from_peft_checkpoint, is_trainable=True)
-            peft_config = model.peft_config()
+            peft_config = model.peft_config['default']
         # Generate the peft config and start fine-tuning from original model
         else:
             peft_config = generate_peft_config(train_config, kwargs)
@@ -295,7 +297,7 @@ def main(**kwargs):
     if fsdp_config.pure_bf16 and fsdp_config.optimizer == "anyprecision":
         optimizer = AnyPrecisionAdamW(
             model.parameters(),
-            lr=train_config.lr,
+            lr= train_config.lr,
             momentum_dtype=torch.bfloat16,
             variance_dtype=torch.bfloat16,
             use_kahan_summation=False,

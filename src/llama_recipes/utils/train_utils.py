@@ -15,6 +15,7 @@ import torch.cuda.nccl as nccl
 import torch.distributed as dist
 from torch.distributed.fsdp import StateDictType
 from torch.distributed.fsdp.sharded_grad_scaler import ShardedGradScaler
+import torch.nn.functional as F
 from tqdm import tqdm
 from transformers import LlamaTokenizer
 import json
@@ -65,6 +66,62 @@ def profile(cfg, local_rank=None):
     else:
         torch_profiler = contextlib.nullcontext()
         yield None
+
+def ordinal_emd(
+    list_1: torch.Tensor,
+    list_2: torch.Tensor,
+    ordinal_value: torch.Tensor,
+) -> torch.Tensor:
+    """
+    Measure Wasserstein distance between two ordinal distributions using PyTorch.
+    Credits to Suhong for modifying original emd function to work with PyTorch tensors.
+    Joseph made some correction after it.
+    """
+
+    # Ensure all inputs are tensors
+    if not isinstance(list_1, torch.Tensor):
+        list_1 = torch.tensor(list_1, dtype=torch.float32)
+    if not isinstance(list_2, torch.Tensor):
+        list_2 = torch.tensor(list_2, dtype=torch.float32)
+    if not isinstance(ordinal_value, torch.Tensor):
+        ordinal_value = torch.tensor(ordinal_value, dtype=torch.float32)
+
+    # Ensure same length
+    min_length = min(list_1.shape[0], list_2.shape[0], ordinal_value.shape[0])
+    list_1 = list_1[:min_length]
+    list_2 = list_2[:min_length]
+    ordinal_value = ordinal_value[:min_length]
+
+    # Normalize the distributions
+    list_1 = list_1 / list_1.sum()
+    list_2 = list_2 / list_2.sum()
+
+    # Check if ordinal_value has variation
+    if torch.max(ordinal_value) == torch.min(ordinal_value):
+        # return torch.tensor(float('nan'))
+        return torch.tensor(0.0) # modification: just return nan
+
+    # Sort ordinal_value and corresponding lists
+    sorted_indices = torch.argsort(ordinal_value)
+    ordinal_value = ordinal_value[sorted_indices]
+    list_1 = list_1[sorted_indices]
+    list_2 = list_2[sorted_indices]
+
+    # Compute cumulative distributions
+    cum_dist_1 = torch.cumsum(list_1, dim=0)
+    cum_dist_2 = torch.cumsum(list_2, dim=0)
+
+    # Compute differences and delta ordinal values
+    diff = torch.abs(cum_dist_1[:-1] - cum_dist_2[:-1])
+    delta_ordinal = ordinal_value[1:] - ordinal_value[:-1]
+
+    # Compute EMD
+    emd = torch.sum(diff * delta_ordinal)
+
+    # Normalize EMD
+    emd = emd / (torch.max(ordinal_value) - torch.min(ordinal_value))
+
+    return emd
 
 
 def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None, wandb_run=None):
@@ -130,6 +187,9 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
             total_length = len(train_dataloader)//gradient_accumulation_steps
             pbar = tqdm(colour="blue", desc=f"Training Epoch: {epoch+1}", total=total_length, dynamic_ncols=True)
             with profile(train_config,local_rank) as profile_context:
+
+                evaluation_freq = 4 # run evaluation every evaluation_freq steps
+
                 for step, batch in enumerate(train_dataloader):
                     total_train_steps += 1
                     # stop when the maximum number of training steps is reached
@@ -150,7 +210,45 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                             elif torch.cuda.is_available():
                                 batch[key] = batch[key].to('cuda:0')
                     with autocast():
-                        loss = model(**batch).loss
+
+                        device = torch.device("cuda")
+                        # Joseph's modification # TODO: [Joseph/Suhong] - need to make this more generic
+                        label_to_token_id = [319,350,315,360,382,383,402,379,306,435] # hacky solution for llama-2 tokenizer
+                        # this is each token_id (ex. 319, 350, 315, ...) respresents token ' A', ' B', ' C', ...
+
+                        outputs = model(
+                            input_ids = batch['input_ids'],
+                            attention_mask = batch['attention_mask'],
+                        ) # forward path
+                        logits = outputs.logits.float().contiguous() # shape = batch_size * max(seq_length) * vocab_size
+                        batch_size, _, _ = logits.shape
+                        probs = F.softmax(logits, dim=-1)
+                        target_token_prob = probs[torch.arange(batch_size), batch['target_token_position']-1 , :]
+                        # -1 coming from that logits at position i is logit for next token (i+1-th)
+
+                        target_token_prob = target_token_prob[:, label_to_token_id] # shape = batch_size * max_options
+                        target_token_prob /= target_token_prob.sum(dim=-1, keepdim=True)
+
+                        # calculate ce loss
+                        resp_dist = batch['response_distribution'].float() # shape = batch_size * max_options
+                        ce_loss = -torch.sum(resp_dist * torch.log(target_token_prob + 1e-8), dim=-1)
+                        ce_loss_mean = ce_loss.mean().detach().float()
+                        # calculate wd loss
+                        ordinal_info = batch['ordinal_info'].float()
+                        wd_loss_list = []
+                        for data_idx in range(batch_size):
+                            emd_value = ordinal_emd(resp_dist[data_idx], target_token_prob[data_idx], ordinal_info[data_idx])
+                            wd_loss_list.append(emd_value.to(device))
+                        wd_loss = torch.stack(wd_loss_list)
+                        wd_loss_mean = wd_loss.mean().detach().float()
+                        # save loss
+                        if train_config.loss_function_type == 'ce':
+                            loss = ce_loss.mean()
+                        elif train_config.loss_function_type == 'wd':
+                            loss = wd_loss.mean()
+                        else:
+                            raise ValueError(f"Unknown loss function type: {train_config.loss_function_type}")
+
                     loss = loss / gradient_accumulation_steps
                     if train_config.save_metrics:
                         train_step_loss.append(loss.detach().float().item())
@@ -192,6 +290,9 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                                 'train/epoch': epoch + 1,
                                 'train/step': epoch * len(train_dataloader) + step,
                                 'train/loss': loss.detach().float(),
+                                'train/learning_rate': optimizer.param_groups[0]['lr'],
+                                'train/ce_loss': ce_loss_mean,
+                                'train/wd_loss': wd_loss_mean,
                             })
 
                     pbar.set_description(f"Training Epoch: {epoch+1}/{train_config.num_epochs}, step {step}/{len(train_dataloader)} completed (loss: {loss.detach().float()})")
@@ -199,6 +300,10 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                     if train_config.save_metrics:
                         save_to_json(metrics_filename, train_step_loss, train_loss, train_step_perplexity, train_prep, val_step_loss, val_loss, val_step_perplexity, val_prep)
                 pbar.close()
+
+                # run evaluation every evaluation_freq steps
+                if train_config.run_validation and (step+1) % evaluation_freq == 0:
+                    pass # TODO: IMPLEMENT FREQUENT EVALAUTION IN LLAMA_RECIPES (ALONG WITH TEST EVALUATION)
 
         epoch_end_time = time.perf_counter()-epoch_start_time
         epoch_times.append(epoch_end_time)
@@ -344,6 +449,8 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb
     val_step_loss = []
     val_step_perplexity = []
     eval_loss = 0.0  # Initialize evaluation loss
+    eval_ce_loss = 0.0
+    eval_wd_loss = 0.0
     total_eval_steps = 0
     with MemoryTrace() as memtrace:
         for step, batch in enumerate(tqdm(eval_dataloader,colour="green", desc="evaluating Epoch", dynamic_ncols=True)):
@@ -363,9 +470,45 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb
                         batch[key] = batch[key].to('cuda:0')
             # Ensure no gradients are computed for this scope to save memory
             with torch.no_grad():
-                # Forward pass and compute loss
-                outputs = model(**batch)
-                loss = outputs.loss
+
+                device = torch.device("cuda")
+                # Joseph's modification # TODO: [Joseph/Suhong] - need to make this more generic
+                label_to_token_id = [319,350,315,360,382,383,402,379,306,435] # hacky solution for llama-2 tokenizer
+
+                # this is each token_id (ex. 319, 350, 315, ...) respresents token ' A', ' B', ' C', ...
+                outputs = model(
+                    input_ids = batch['input_ids'],
+                    attention_mask = batch['attention_mask'],
+                ) # forward path
+                logits = outputs.logits.float().contiguous() # shape = batch_size * max(seq_length) * vocab_size
+                batch_size, _, _ = logits.shape
+                probs = F.softmax(logits, dim=-1)
+                target_token_prob = probs[torch.arange(batch_size), batch['target_token_position']-1 , :]
+
+                # -1 coming from that logits at position i is logit for next token (i+1-th)
+                target_token_prob = target_token_prob[:, label_to_token_id]
+                target_token_prob /= target_token_prob.sum(dim=-1, keepdim=True)
+
+                resp_dist = batch['response_distribution'].float() # shape = batch_size * max_options
+                # cross-entropy loss
+                ce_loss = -torch.sum(resp_dist * torch.log(target_token_prob + 1e-8), dim=-1)
+                # Wasserstein distance loss
+                ordinal_info = batch['ordinal_info'].float()
+                wd_loss_list = []
+                for data_idx in range(batch_size):
+                    emd_value = ordinal_emd(resp_dist[data_idx], target_token_prob[data_idx], ordinal_info[data_idx])
+                    wd_loss_list.append(emd_value.to(device))
+                wd_loss = torch.stack(wd_loss_list)
+
+                eval_ce_loss += ce_loss.mean().detach().float()
+                eval_wd_loss += wd_loss.mean().detach().float()
+                if train_config.loss_function_type == 'ce':
+                    loss = ce_loss.mean()
+                elif train_config.loss_function_type == 'wd':
+                    loss = wd_loss.mean()
+                else:
+                    raise ValueError(f"Unknown loss function type: {train_config.loss_function_type}")
+
                 if train_config.save_metrics:
                     val_step_loss.append(loss.detach().float().item())
                     val_step_perplexity.append(float(torch.exp(loss.detach().float())))
@@ -380,13 +523,21 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb
     # If there's more than one CUDA device, reduce evaluation loss across all devices
     if is_xpu_available() and (torch.xpu.device_count() > 1 and train_config.enable_fsdp):
         dist.all_reduce(eval_loss, op=dist.ReduceOp.SUM)
+        dist.all_reduce(eval_ce_loss, op=dist.ReduceOp.SUM)
+        dist.all_reduce(eval_wd_loss, op=dist.ReduceOp.SUM)
     if torch.cuda.device_count() > 1 and train_config.enable_fsdp:
         dist.all_reduce(eval_loss, op=dist.ReduceOp.SUM)
+        dist.all_reduce(eval_ce_loss, op=dist.ReduceOp.SUM)
+        dist.all_reduce(eval_wd_loss, op=dist.ReduceOp.SUM)
 
     # Compute average loss and perplexity
     eval_epoch_loss = eval_loss / len(eval_dataloader)
+    eval_epoch_ce_loss = eval_ce_loss / len(eval_dataloader)
+    eval_epoch_wd_loss = eval_wd_loss / len(eval_dataloader)
     if train_config.enable_fsdp:
         eval_epoch_loss = eval_epoch_loss/world_size
+        eval_epoch_ce_loss = eval_epoch_ce_loss/world_size
+        eval_epoch_wd_loss = eval_epoch_wd_loss/world_size
     eval_ppl = torch.exp(eval_epoch_loss)
 
     # Print evaluation metrics
@@ -400,6 +551,8 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb
         wandb_run.log({
                         'eval/perplexity': eval_ppl,
                         'eval/loss': eval_epoch_loss,
+                        'eval/ce_loss': eval_epoch_ce_loss,
+                        'eval/wd_loss': eval_epoch_wd_loss
                     }, commit=False)
 
     return eval_ppl, eval_epoch_loss, val_step_loss, val_step_perplexity

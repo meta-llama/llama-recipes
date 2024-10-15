@@ -6,10 +6,11 @@ from dataclasses import dataclass, field
 
 @dataclass
 class wandb_config:
-    project: str = 'llama_recipes' # wandb project name
-    entity: Optional[str] = None # wandb entity name
+    project: str = 'steerable-pluralism' # wandb project name
+    entity: Optional[str] = 'ucb-steerable-pluralism' # wandb entity name
     job_type: Optional[str] = None
     tags: Optional[List[str]] = None
     group: Optional[str] = None
     notes: Optional[str] = None
     mode: Optional[str] = None
+    name: Optional[str] = None
