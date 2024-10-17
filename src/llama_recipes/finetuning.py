@@ -289,7 +289,7 @@ def main(**kwargs):
         )
         print(f"--> Num of Validation Set Batches loaded = {len(eval_dataloader)}")
         if len(eval_dataloader) == 0:
-            raise ValueError("The eval set size is too small for dataloader to load even one batch. Please increase the size of eval set.")
+            raise ValueError(f"The eval set size is too small for dataloader to load even one batch. Please increase the size of eval set. ({len(eval_dataloader)=})")
         else:
             print(f"--> Num of Validation Set Batches loaded = {len(eval_dataloader)}")
 
