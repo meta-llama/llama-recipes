@@ -2,7 +2,7 @@
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
 # For dataset details visit: https://huggingface.co/datasets/samsum
-
+import os
 import ast
 import json
 import datasets
@@ -27,13 +27,15 @@ def get_preprocessed_opinionqa(dataset_config, tokenizer, split, save = True, de
             "labels": [-100] * len(prompt) + answer,
             }
         return sample
+    
+    preprocessed_file_dir = split.split(".csv")[0] + "_preprocessed.json"
 
-    try: # if preprocessed file exists
+    if os.path.exists(preprocessed_file_dir): # if preprocessed file exists
         print("preprocessed file exists.")
         with open(split.split(".csv")[0] + "_preprocessed.json", 'r') as f:
             dataset_dict = json.load(f)
             dataset = datasets.Dataset.from_dict(dataset_dict)
-    except:
+    else:
         dataset = datasets.load_dataset(
             'csv', 
             data_files = split
@@ -84,12 +86,14 @@ def get_preprocessed_opinionqa_ce_or_wd_loss(dataset_config, tokenizer, split, s
             sample["ordinal_info"] = ordinal_info
         return sample
 
-    try: # if preprocessed file exists
+    preprocessed_file_dir = split.split(".csv")[0] + "_preprocessed.json"
+
+    if os.path.exists(preprocessed_file_dir): # if preprocessed file exists
         with open(split.split(".csv")[0] + "_preprocessed.json", 'r') as f:
             print("preprocessed file exists.")
             dataset_dict = json.load(f)
             dataset = datasets.Dataset.from_dict(dataset_dict)
-    except:
+    else: # if preprocessed file does not exist, preprocess the dataset
         dataset = datasets.load_dataset(
             'csv', 
             data_files = split
