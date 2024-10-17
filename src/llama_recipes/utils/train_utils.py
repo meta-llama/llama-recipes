@@ -124,7 +124,7 @@ def ordinal_emd(
     return emd
 
 
-def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None, wandb_run=None):
+def train(model, train_dataloader,eval_dataloader, test_dataloader, tokenizer, optimizer, lr_scheduler, gradient_accumulation_steps, train_config, fsdp_config=None, local_rank=None, rank=None, wandb_run=None):
     """
     Trains the model on the given dataloader
 
@@ -139,6 +139,8 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         train_config: The training configuration
         eval_dataloader: The dataloader containing the eval data
         tokenizer: tokenizer used in the eval for decoding the predicitons
+        test_dataloader: The dataloader containing the test data
+        wandb_run: The wandb run object for logging
 
     Returns: results dictionary containing average training and validation perplexity and loss
     """
@@ -166,6 +168,8 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         train_step_loss = []
         val_step_loss = []
         val_step_perplexity = []
+        test_step_loss = []
+        test_step_perplexity = []
 
     epoch_times = []
     checkpoint_times = []
@@ -335,6 +339,11 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
         
         checkpoint_start_time = time.perf_counter()
         if should_save_model:
+            if train_config.run_test:
+                test_ppl, test_epoch_loss, temp_test_loss, temp_test_prep = evaluation(model, train_config, test_dataloader, local_rank, tokenizer, wandb_run, mode="test")
+                if train_config.save_metrics:
+                    test_step_loss.extend(temp_test_loss)
+                    test_step_perplexity.extend(temp_test_prep)
             if train_config.enable_fsdp:
                 dist.barrier()
             if train_config.use_peft:
@@ -430,7 +439,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
 
     return results
 
-def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb_run):
+def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb_run, mode="eval"):
     """
     Evaluates the model on the given dataloader
 
@@ -499,6 +508,8 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb
                     emd_value = ordinal_emd(resp_dist[data_idx], target_token_prob[data_idx], ordinal_info[data_idx])
                     wd_loss_list.append(emd_value.to(device))
                 wd_loss = torch.stack(wd_loss_list)
+                non_zero_idx = wd_loss != 0
+                wd_loss = wd_loss[non_zero_idx]
 
                 eval_ce_loss += ce_loss.mean().detach().float()
                 eval_wd_loss += wd_loss.mean().detach().float()
@@ -549,10 +560,10 @@ def evaluation(model,train_config, eval_dataloader, local_rank, tokenizer, wandb
 
     if wandb_run:
         wandb_run.log({
-                        'eval/perplexity': eval_ppl,
-                        'eval/loss': eval_epoch_loss,
-                        'eval/ce_loss': eval_epoch_ce_loss,
-                        'eval/wd_loss': eval_epoch_wd_loss
+                        f'{mode}/perplexity': eval_ppl,
+                        f'{mode}/loss': eval_epoch_loss,
+                        f'{mode}/ce_loss': eval_epoch_ce_loss,
+                        f'{mode}/wd_loss': eval_epoch_wd_loss
                     }, commit=False)
 
     return eval_ppl, eval_epoch_loss, val_step_loss, val_step_perplexity

@@ -243,8 +243,15 @@ def main(**kwargs):
     dataset_val = get_preprocessed_dataset(
         dataset_processer,
         dataset_config,
+        split="valid",
+    )
+
+    dataset_test = get_preprocessed_dataset(
+        dataset_processer,
+        dataset_config,
         split="test",
     )
+
     if not train_config.enable_fsdp or rank == 0:
         print(f"--> Validation Set Length = {len(dataset_val)}")
 
@@ -293,6 +300,24 @@ def main(**kwargs):
         else:
             print(f"--> Num of Validation Set Batches loaded = {len(eval_dataloader)}")
 
+    test_dataloader = None
+    if train_config.run_test:
+        test_dl_kwargs = get_dataloader_kwargs(train_config, dataset_test, dataset_processer, "test")
+        if custom_data_collator:
+            test_dl_kwargs["collate_fn"] = custom_data_collator
+
+        test_dataloader = torch.utils.data.DataLoader(
+            dataset_test,
+            num_workers=train_config.num_workers_dataloader,
+            pin_memory=True,
+            **test_dl_kwargs,
+        )
+        print(f"--> Num of Test Set Batches loaded = {len(test_dataloader)}")
+        if len(test_dataloader) == 0:
+            raise ValueError("The test set size is too small for dataloader to load even one batch. Please increase the size of test set.")
+        else:
+            print(f"--> Num of Test Set Batches loaded = {len(test_dataloader)}")
+
     # Initialize the optimizer and learning rate scheduler
     if fsdp_config.pure_bf16 and fsdp_config.optimizer == "anyprecision":
         optimizer = AnyPrecisionAdamW(
@@ -314,6 +339,7 @@ def main(**kwargs):
         model,
         train_dataloader,
         eval_dataloader,
+        test_dataloader,
         tokenizer,
         optimizer,
         scheduler,
