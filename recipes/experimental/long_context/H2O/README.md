@@ -36,7 +36,7 @@ Expected results on XSUM (Rouge-2 score, the higher the better) from the above s
 
 ### One Demo on Streaming to "Infinite" Context Length
 
-The following example demonstrates the generation process of "infinite" sequence length. We use MT-Bench data and generate the context sample-by-sample. The KV Cache will keep the KV pairs from the previous samples while maintain a fixed size. Results can be found on [Demo](https://allenz.work/?p=11) (Video 1).
+The following example demonstrates the generation process of "infinite" sequence length. We use MT-Bench data and generate the context sample-by-sample. The KV Cache will keep the KV pairs from the previous samples while maintain a fixed size.
 
 ```
 # run with full cache
