@@ -13,7 +13,7 @@ List of models and libraries used in the showcase:
 - [Llama-3.2-11B-Vision-Instruct](https://www.llama.com/docs/how-to-guides/vision-capabilities/) Model
 - [Lance-db for vector database](https://lancedb.com)
 - [This]() Kaggle dataset for building our work
-- [HF Dataset](https://huggingface.co/datasets/Sanyam/MM-Demo) Since output of the model can be non-deterministic everytime we run, we will use the uploaded dataset to give a universal experience
+- [HF Dataset](https://huggingface.co/datasets/Sanyam/MM-Demo) Since output of the model can be non-deterministic every time we run, we will use the uploaded dataset to give a universal experience
 - [Transformers for 11B model](https://github.com/huggingface/transformers) 
 - [Gradio for Demo](https://github.com/gradio-app/gradio)
 - [Together API for demo](https://www.together.ai)
