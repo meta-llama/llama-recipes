@@ -8,7 +8,7 @@
 
 ## Resources used: 
 
-Credit and Thanks to List of models and libraries used in the showcase:
+Credit and Thanks to List of models and resources used in the showcase:
 
 Firstly, thanks to the author here for providing this dataset on which we base our excercise []()
 
