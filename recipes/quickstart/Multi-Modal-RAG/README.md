@@ -14,12 +14,15 @@ List of models and libraries used in the showcase:
 - [Lance-db for vector database](https://lancedb.com)
 - [This]() Kaggle dataset for building our work
 - [HF Dataset](https://huggingface.co/datasets/Sanyam/MM-Demo) Since output of the model can be non-deterministic everytime we run, we will use the uploaded dataset to give a universal experience
+- [Transformers for 11B model](https://github.com/huggingface/transformers) 
+- [Gradio for Demo](https://github.com/gradio-app/gradio)
+- [Together API for demo](https://www.together.ai)
 
 ## Detailed Outline 
 
 Here's the detailed outline:
 
-Step 1: Data Prep and Synthetic Labeling:
+### Step 1: Data Prep and Synthetic Labeling:
 
 The dataset consists of 5000 images with some classification.
 
@@ -36,6 +39,35 @@ Second Half consists of Labelling the dataset. We are bound by an interesting co
 
 After running the script on the entire dataset, we have more data cleaning to perform:
 
-- Step 2: Cleaning up Synthetic Labels and preparing the dataset
-- Step 3: Notebook 3: MM-RAG using lance-db to validate idea
-- Step 4: Gradio App using Together API for Llama-3.2-11B and Lance-db for RAG
+### Step 2: Cleaning up Synthetic Labels and preparing the dataset:
+
+Even after our lengthy (apart from other things) prompt, the model still hallucinates categories and label-we need to address this
+
+- Re-balance the dataset by mapping correct categories
+- Fix Descriptions so that we can create a CSV
+
+Now, we are ready to try our vector db pipeline:
+
+### Step 3: Notebook 3: MM-RAG using lance-db to validate idea
+
+With the cleaned descriptions and dataset, we can now store these in a vector-db
+
+You will note that we are not using the categorisation from our model-this is by design to show how RAG can simplify a lot of things. 
+
+- We create embeddings using the text description of our clothes
+- Use 11-B model to describe the uploaded image
+- Try to find similar or complimentary images based on the upload
+
+We try the approach with different retrieval methods.
+
+
+### Step 4: Gradio App using Together API for Llama-3.2-11B and Lance-db for RAG
+
+Finally, we can bring this all together in a Gradio App. 
+
+Task: We can futher improve the description prompt. You will notice sometimes the description starts with the title of the cloth which causes in retrival of "similar" clothes instead of "complementary" items
+
+- Upload an image
+- 11B model describes the image
+- We retrieve complementary clothes to wear based on the description
+- You can keep the loop going by chatting with the model
