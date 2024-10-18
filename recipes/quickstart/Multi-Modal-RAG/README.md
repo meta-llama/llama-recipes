@@ -8,7 +8,9 @@
 
 ## Resources used: 
 
-List of models and libraries used in the showcase:
+Credit and Thanks to List of models and libraries used in the showcase:
+
+Firstly, thanks to the author here for providing this dataset on which we base our excercise []()
 
 - [Llama-3.2-11B-Vision-Instruct](https://www.llama.com/docs/how-to-guides/vision-capabilities/) Model
 - [Lance-db for vector database](https://lancedb.com)
