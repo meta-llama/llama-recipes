@@ -4,7 +4,7 @@ To run fine-tuning on multi-GPUs, we will  make use of two packages:
 
 1. [PEFT](https://huggingface.co/blog/peft) methods and in particular using the Hugging Face [PEFT](https://github.com/huggingface/peft)library.
 
-2. [FSDP](https://pytorch.org/tutorials/intermediate/FSDP_adavnced_tutorial.html) which helps us parallelize the training over multiple GPUs. [More details](LLM_finetuning.md/#2-full-partial-parameter-finetuning).
+2. [FSDP](https://pytorch.org/tutorials/intermediate/FSDP_adavnced_tutorial.html) which helps us parallelize the training over multiple GPUs. [More details](./LLM_finetuning.md).
 
 Given the combination of PEFT and FSDP, we would be able to fine tune a Meta Llama 8B model on multiple GPUs in one node.
 For big models like 405B we will need to fine-tune in a multi-node setup even if 4bit quantization is enabled.
