@@ -10,7 +10,7 @@
 
 Credit and Thanks to List of models and resources used in the showcase:
 
-Firstly, thanks to the author here for providing this dataset on which we base our excercise []()
+Firstly, thanks to the author here for providing this dataset on which we base our exercise []()
 
 - [Llama-3.2-11B-Vision-Instruct](https://www.llama.com/docs/how-to-guides/vision-capabilities/) Model
 - [Lance-db for vector database](https://lancedb.com)
