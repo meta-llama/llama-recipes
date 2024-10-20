@@ -11,3 +11,28 @@ OR - Put in a topic -> Scraped
 2. 2 Agents debate/interact? Podcast style -> Write a Transcript
 
 3. TTS Engine (E25 or ) Make the podcast
+
+### Instructions: 
+
+Running 1B-Model: ```python 1B-chat-start.py --temperature 0.7 --top_p 0.9 --system_message "you are acting as an old angry uncle and will debate why LLMs are bad" --user_message "I love LLMs"```
+
+Running Debator: ```python 1B-debating-script.py --initial_topic "The future of space exploration" --system_prompt1 "You are an enthusiastic advocate for space exploration" --system_prompt2 "You are a skeptic who believes we should focus on Earth's problems first" --n_turns 4 --temperature 0.8 --top_p 0.9 --model_name "meta-llama/Llama-3.2-1B-Instruct"```
+
+### Scratch-pad/Running Notes:
+
+Ignore/Delete this in final stages, right now this is a "vibe-check" for TTS model(s):
+
+- https://github.com/SWivid/F5-TTS: Latest and most popular-"feels robotic"
+- Reddit says E2 model from earlier is better
+
+
+Try later:
+- Whisper Colab: 
+- https://huggingface.co/parler-tts/parler-tts-large-v1
+- https://huggingface.co/myshell-ai/MeloTTS-English
+- Bark: https://huggingface.co/suno/bark (This has been insanely popular)
+- https://huggingface.co/facebook/mms-tts-eng
+- https://huggingface.co/fishaudio/fish-speech-1.4
+- https://huggingface.co/mlx-community/mlx_bark
+- https://huggingface.co/metavoiceio/metavoice-1B-v0.1
+- https://huggingface.co/suno/bark-small
