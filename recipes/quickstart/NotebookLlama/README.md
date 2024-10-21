@@ -25,6 +25,20 @@ Ignore/Delete this in final stages, right now this is a "vibe-check" for TTS mod
 - https://github.com/SWivid/F5-TTS: Latest and most popular-"feels robotic"
 - Reddit says E2 model from earlier is better
 
+Vibe check: 
+- This is most popular (ever) on HF and features different accents-the samples feel a little robotic and no accent difference: https://huggingface.co/myshell-ai/MeloTTS-English
+- Seems to have great documentation but still a bit robotic for my liking: https://coqui.ai/blog/tts/open_xtts
+- Super easy with laughter etc but very slightly robotic: https://huggingface.co/suno/bark
+- This is THE MOST NATURAL SOUNDING: https://huggingface.co/WhisperSpeech/WhisperSpeech
+- This has a lot of promise, even though its robotic, we can use natural voice to add filters or effects: https://huggingface.co/spaces/parler-tts/parler_tts
+
+Higher Barrier to testing (In other words-I was too lazy to test):
+- https://huggingface.co/fishaudio/fish-speech-1.4
+- https://huggingface.co/facebook/mms-tts-eng
+- https://huggingface.co/metavoiceio/metavoice-1B-v0.1
+- https://huggingface.co/nvidia/tts_hifigan
+- https://huggingface.co/speechbrain/tts-tacotron2-ljspeech
+
 
 Try later:
 - Whisper Colab: 
