@@ -8,7 +8,7 @@ Besides, LLMs usually have poor generation to long sequence during inference. H2
 
 Current implementation supports llama-1/2/3, from 7B to 70B. Since H2O only maintains the most important KV pairs, it might missing some important information in the middle content for some knowlege-intensive tasks.
 
-More details please refer to Paper: **https://arxiv.org/pdf/2306.14048**; Blog: **https://allenz.work/?p=11**.
+More details please refer to Paper: **https://arxiv.org/pdf/2306.14048**;
 
 **Note: this implementation is tested with transformers == 4.39.0**
 
@@ -21,7 +21,7 @@ python run_summarization.py \
 --input-path data/summarization/xsum.jsonl \
 --output-path summarization_output/xsum_h2o.jsonl \
 --model-name meta-llama/Meta-Llama-3-8B \
---enable_h2o_generation 
+--enable_h2o_generation
 ```
 
 ##### **Results**
