@@ -28,6 +28,8 @@ xTTS-v2 by coquai is cool, however-need to check the license-I think an example 
 
 Torotoise is blocking because it needs HF version that doesnt work with llama-3.2 models so I will probably need to make a seperate env-need to eval if its worth it
 
+Side note: The TTS library is a really cool effort!
+
 Bark-Tests: Best results for speaker/v6 are at ```speech_output = model.generate(**inputs, temperature = 0.9, semantic_temperature = 0.8)
 Audio(speech_output[0].cpu().numpy(), rate=sampling_rate)```
 
