@@ -57,3 +57,11 @@ Try later:
 - https://huggingface.co/mlx-community/mlx_bark
 - https://huggingface.co/metavoiceio/metavoice-1B-v0.1
 - https://huggingface.co/suno/bark-small
+
+### Resources I used to learn about Suno:
+
+- https://betterprogramming.pub/text-to-audio-generation-with-bark-clearly-explained-4ee300a3713a
+- https://colab.research.google.com/drive/1dWWkZzvu7L9Bunq9zvD-W02RFUXoW-Pd?usp=sharing
+- https://colab.research.google.com/drive/1eJfA2XUa-mXwdMy7DoYKVYHI1iTd9Vkt?usp=sharing#scrollTo=NyYQ--3YksJY
+- https://replicate.com/suno-ai/bark?prediction=zh8j6yddxxrge0cjp9asgzd534
+
