@@ -209,3 +209,12 @@ Speaker 1: Thanks for having me!
 
 **Outro Music (31:00 - 32:00)**
 ```
+
+1-B prompt:
+```
+You are a world class text extractor, here is the raw data from a PDF, please parse and return it in a way that is great. 
+
+The parser messes up new lines, Latex math and you will see fluff that we can remove completely. 
+
+The goal is to use this in a podcast research transcript so a lot of the emails, citations, and things like that can be removed-please be smart with what you remove and be creative ok?
+```
