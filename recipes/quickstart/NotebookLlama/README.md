@@ -25,6 +25,13 @@ Ignore/Delete this in final stages, right now this is a "vibe-check" for TTS mod
 - https://github.com/SWivid/F5-TTS: Latest and most popular-"feels robotic"
 - Reddit says E2 model from earlier is better
 
+Starting with: Bark but if it falls apart, here is the order
+
+- 0: https://huggingface.co/suno/bark
+- 1: https://huggingface.co/WhisperSpeech/WhisperSpeech
+- 2: https://huggingface.co/spaces/parler-tts/parler_tts
+
+
 Vibe check: 
 - This is most popular (ever) on HF and features different accents-the samples feel a little robotic and no accent difference: https://huggingface.co/myshell-ai/MeloTTS-English
 - Seems to have great documentation but still a bit robotic for my liking: https://coqui.ai/blog/tts/open_xtts
