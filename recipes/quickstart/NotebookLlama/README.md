@@ -20,6 +20,27 @@ Running Debator: ```python 1B-debating-script.py --initial_topic "The future of 
 
 ### Scratch-pad/Running Notes:
 
+Actually this IS THE MOST CONSISTENT PROMPT:
+Small:
+```
+description = """
+Laura's voice is expressive and dramatic in delivery, speaking at a fast pace with a very close recording that almost has no background noise.
+"""
+```
+
+Large: 
+```
+description = """
+Alisa's voice is consistent, quite expressive and dramatic in delivery, with a very close recording that almost has no background noise.
+"""
+```
+Small:
+```
+description = """
+Jenna's voice is consistent, quite expressive and dramatic in delivery, with a very close recording that almost has no background noise.
+"""
+```
+
 Bark is cool but just v6 works great, I tried v9 but its quite robotic and that is sad. 
 
 So Parler is next-its quite cool for prompting 
