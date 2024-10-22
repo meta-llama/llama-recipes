@@ -20,6 +20,17 @@ Running Debator: ```python 1B-debating-script.py --initial_topic "The future of 
 
 ### Scratch-pad/Running Notes:
 
+Bark-Tests: Best results for speaker/v6 are at ```speech_output = model.generate(**inputs, temperature = 0.9, semantic_temperature = 0.8)
+Audio(speech_output[0].cpu().numpy(), rate=sampling_rate)```
+
+Tested sound effects:
+
+- Laugh is probably most effective
+- Sigh is hit or miss
+- Gasps doesn't work
+- A singly hypen is effective
+- Captilisation makes it louder
+
 Ignore/Delete this in final stages, right now this is a "vibe-check" for TTS model(s):
 
 - https://github.com/SWivid/F5-TTS: Latest and most popular-"feels robotic"
