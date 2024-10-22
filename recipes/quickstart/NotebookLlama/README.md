@@ -20,6 +20,14 @@ Running Debator: ```python 1B-debating-script.py --initial_topic "The future of 
 
 ### Scratch-pad/Running Notes:
 
+Bark is cool but just v6 works great, I tried v9 but its quite robotic and that is sad. 
+
+So Parler is next-its quite cool for prompting 
+
+xTTS-v2 by coquai is cool, however-need to check the license-I think an example is allowed
+
+Torotoise is blocking because it needs HF version that doesnt work with llama-3.2 models so I will probably need to make a seperate env-need to eval if its worth it
+
 Bark-Tests: Best results for speaker/v6 are at ```speech_output = model.generate(**inputs, temperature = 0.9, semantic_temperature = 0.8)
 Audio(speech_output[0].cpu().numpy(), rate=sampling_rate)```
 
