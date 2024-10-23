@@ -1,22 +1,27 @@
-### Ideas: NotebookLLama
+### NotebookLlama: An Open Source version of NotebookLM
 
-Steps:  
-Path:
+Author: Sanyam Bhutani
 
-1. Decide the Topic
-- Upload a PDF
-OR - Put in a topic -> Scraped 
-- Report written 
+This is a guided series of tutorials/notebooks that can be taken as a reference or course to build a PDF to Podcast workflow. 
 
-2. 2 Agents debate/interact? Podcast style -> Write a Transcript
+Here is the outline:
 
-3. TTS Engine (E25 or ) Make the podcast
+- Step 1: Pre-process PDF: Use `Llama-3.2-1B` to pre-process and save a PDF
+- Step 2: Transcript Writer: Use `Llama-3.1-70B` model to write a podcast transcript from the text
+- Step 3: Dramatic Re-Writer: Use `Llama-3.1-8B` model to make the transcript more dramatic
+- Step 4: Text-To-Speech Workflow: Use `parler-tts/parler-tts-mini-v1` and `bark/suno` to generate a conversational podcast
 
-### Instructions: 
+### Steps to running the notebook:
 
-Running 1B-Model: ```python 1B-chat-start.py --temperature 0.7 --top_p 0.9 --system_message "you are acting as an old angry uncle and will debate why LLMs are bad" --user_message "I love LLMs"```
+TODO
 
-Running Debator: ```python 1B-debating-script.py --initial_topic "The future of space exploration" --system_prompt1 "You are an enthusiastic advocate for space exploration" --system_prompt2 "You are a skeptic who believes we should focus on Earth's problems first" --n_turns 4 --temperature 0.8 --top_p 0.9 --model_name "meta-llama/Llama-3.2-1B-Instruct"```
+### Next-Improvements/Further ideas:
+
+- Speech Model experimentation: The TTS model is the limitation of how natural this will sound. This probably be improved with a better pipeline
+- LLM vs LLM Debate: Another approach of writing the podcast would be having two agents debate the topic of interest and write the podcast outline. Right now we use a single LLM (70B) to write the podcast outline
+- Testing 405B for writing the transcripts
+- Better prompting
+- Support for ingesting a website, audio file, YouTube links and more. We welcome community PRs!
 
 ### Scratch-pad/Running Notes:
 
@@ -102,7 +107,7 @@ Try later:
 - https://huggingface.co/metavoiceio/metavoice-1B-v0.1
 - https://huggingface.co/suno/bark-small
 
-### Resources I used to learn about Suno:
+### Resources used for learning:
 
 - https://betterprogramming.pub/text-to-audio-generation-with-bark-clearly-explained-4ee300a3713a
 - https://colab.research.google.com/drive/1dWWkZzvu7L9Bunq9zvD-W02RFUXoW-Pd?usp=sharing
