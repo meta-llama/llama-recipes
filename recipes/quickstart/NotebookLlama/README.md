@@ -2,9 +2,17 @@
 
 Author: Sanyam Bhutani
 
-This is a guided series of tutorials/notebooks that can be taken as a reference or course to build a PDF to Podcast workflow. 
+This is a guided series of tutorials/notebooks that can be taken as a reference or course to build a PDF to Podcast workflow.
 
-Here is the outline:
+It assumes zero knowledge of LLMs, prompting and audio models, everything is covered in their respective notebooks.
+
+#### Outline:
+
+Requirements: GPU server or an API provider for using 70B, 8B and 1B Llama models.
+
+Note: For our GPU Poor friends, you can also use the 8B and lower models for the entire pipeline. There is no strong recommendation. The pipeline below is what worked best on first few tests. You should try and see what works best for you!
+
+Here is the current outline:
 
 - Step 1: Pre-process PDF: Use `Llama-3.2-1B` to pre-process and save a PDF
 - Step 2: Transcript Writer: Use `Llama-3.1-70B` model to write a podcast transcript from the text
@@ -13,7 +21,9 @@ Here is the outline:
 
 ### Steps to running the notebook:
 
-TODO
+So right now there is one issue: Parler needs transformers 4.43.3 or earlier and to generate you need latest, so I am just switching on fly
+
+TODO-MORE
 
 ### Next-Improvements/Further ideas:
 
@@ -24,8 +34,6 @@ TODO
 - Support for ingesting a website, audio file, YouTube links and more. We welcome community PRs!
 
 ### Scratch-pad/Running Notes:
-
-So right now there is one issue: Parler needs transformers 4.43.3 or earlier and to generate you need latest, so I am just switching on fly
 
 Actually this IS THE MOST CONSISTENT PROMPT:
 Small:
@@ -74,11 +82,8 @@ Ignore/Delete this in final stages, right now this is a "vibe-check" for TTS mod
 - https://github.com/SWivid/F5-TTS: Latest and most popular-"feels robotic"
 - Reddit says E2 model from earlier is better
 
-Starting with: Bark but if it falls apart, here is the order
-
-- 0: https://huggingface.co/suno/bark
+S
 - 1: https://huggingface.co/WhisperSpeech/WhisperSpeech
-- 2: https://huggingface.co/spaces/parler-tts/parler_tts
 
 
 Vibe check: 
@@ -107,7 +112,7 @@ Try later:
 - https://huggingface.co/metavoiceio/metavoice-1B-v0.1
 - https://huggingface.co/suno/bark-small
 
-### Resources used for learning:
+### Resources for further learning:
 
 - https://betterprogramming.pub/text-to-audio-generation-with-bark-clearly-explained-4ee300a3713a
 - https://colab.research.google.com/drive/1dWWkZzvu7L9Bunq9zvD-W02RFUXoW-Pd?usp=sharing
