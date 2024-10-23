@@ -20,6 +20,8 @@ Running Debator: ```python 1B-debating-script.py --initial_topic "The future of 
 
 ### Scratch-pad/Running Notes:
 
+So right now there is one issue: Parler needs transformers 4.43.3 or earlier and to generate you need latest, so I am just switching on fly
+
 Actually this IS THE MOST CONSISTENT PROMPT:
 Small:
 ```
