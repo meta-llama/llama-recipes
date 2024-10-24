@@ -54,11 +54,11 @@ Similar to parler models, suno has a [library](https://suno-ai.notion.site/8b8e8
 
 v9 from their library sounded robotic so we use Parler for our first speaker and the best one from bark.
 
-The incredible thing about Bark model is being able to add sound effects: `[Laugh]`, `[Gasps]`, `[Sigh]`, `[clears throat]`, making words capital causes the model to emphasise them. 
+The incredible thing about Bark model is being able to add sound effects: `[Laugh]`, `[Gasps]`, `[Sigh]`, `[clears throat]`, making words capital causes the model to emphasize them. 
 
-Adding `-` gives a break in the text. We utilise this knowledge when we re-write the transcript using the 8B model to add effects to our transcript.
+Adding `-` gives a break in the text. We utilize this knowledge when we re-write the transcript using the 8B model to add effects to our transcript.
 
-Note: Authors suggest using `...`. However, this didn't work as effectively as adding a hypen during trails.
+Note: Authors suggest using `...`. However, this didn't work as effectively as adding a hyphen during trails.
 
 #### Hyper-parameters: 
 
@@ -105,7 +105,7 @@ Promising directions to explore in future:
 
 #### Some more models that weren't tested:
 
-In other words, we leave this as an excercise to readers :D
+In other words, we leave this as an exercise to readers :D
 
 - [Fish-Speech](https://huggingface.co/fishaudio/fish-speech-1.4)
 - [MMS-TTS-Eng](https://huggingface.co/facebook/mms-tts-eng)

@@ -31,7 +31,7 @@ pip install -r requirements.txt
 
 - Notebook 1:
 
-This notebook is used for processing the PDF and processing it using the new Featherlight model into a `.txt` file.
+This notebook is used for processing the PDF and processing it using the new Feather light model into a `.txt` file.
 
 Update the first cell with a PDF link that you would like to use. Please decide on a PDF to use for Notebook 1, it can be any link but please remember to update the first cell of the notebook with the right link. 
 
@@ -45,26 +45,26 @@ Please try experimenting with the System prompts for the model and see if you ca
 
 - Notebook 3:
 
-This notebook takes the transcript from earlier and prompts `Llama-3.1-8B-Instruct` to add more dramatisation and interruptions in the conversations. 
+This notebook takes the transcript from earlier and prompts `Llama-3.1-8B-Instruct` to add more dramatization and interruptions in the conversations. 
 
 There is also a key factor here: we return a tuple of conversation which makes our lives easier later. Yes, studying Data Structures 101 was actually useful for once!
 
 For our TTS logic, we use two different models that behave differently with certain prompts. So we prompt the model to add specifics for each speaker accordingly.
 
-Please again try changing the system prompt and see if you can imporve the results. We encourage testing the featherlight 3B and 1B models as well at this stage
+Please again try changing the system prompt and see if you can improve the results. We encourage testing the feather light 3B and 1B models as well at this stage
 
 - Notebook 4:
 
 Finally, we take the results from last notebook and convert them into a podcast. We use the `parler-tts/parler-tts-mini-v1` and `bark/suno` models for a conversation.
 
-The speakers and the prompt for parler model were decided based on experimentation and suggestions from the model authors. Please try experimentating, you can find more details in the resources section.
+The speakers and the prompt for parler model were decided based on experimentation and suggestions from the model authors. Please try experimenting, you can find more details in the resources section.
 
 
 #### Note: Right now there is one issue: Parler needs transformers 4.43.3 or earlier and for steps 1 to 3 of the pipeline you need latest, so we just switch versions in the last notebook.
 
 ### Next-Improvements/Further ideas:
 
-- Speech Model experimentation: The TTS model is the limitation of how natural this will sound. This probably be improved with a better pipeline and with the help of somone more knowledgable-PRs are welcome! :) 
+- Speech Model experimentation: The TTS model is the limitation of how natural this will sound. This probably be improved with a better pipeline and with the help of someone more knowledgable-PRs are welcome! :) 
 - LLM vs LLM Debate: Another approach of writing the podcast would be having two agents debate the topic of interest and write the podcast outline. Right now we use a single LLM (70B) to write the podcast outline
 - Testing 405B for writing the transcripts
 - Better prompting
