@@ -288,7 +288,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         print(f"best eval loss on epoch {epoch+1} is {best_val_loss}")
                 else:
                         print(f"best eval loss on epoch {epoch+1} is {best_val_loss}")
-            val_loss.append(float(best_val_loss))
+            val_loss.append(float(eval_epoch_loss))
             val_prep.append(float(eval_ppl))
         if train_config.enable_fsdp:
             if rank==0:
