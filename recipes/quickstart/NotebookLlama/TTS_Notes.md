@@ -1,15 +1,14 @@
 ### Notes from TTS Experimentation
 
-For the TTS Pipeline, *all* of the top models from HuggingFace and Reddit were tested. 
+For the TTS Pipeline, *all* of the top models from HuggingFace and Reddit were tried. 
 
-Tested how? 
+The goal was to use the models that were easy to setup and sounded less robotic with ability to include sound effects like laughter, etc.
 
-It was a simple vibe test of checking which sounds less robotic. Promoising directions to explore in future:
+#### Parler-TTS
 
-- [MeloTTS](huggingface.co/myshell-ai/MeloTTS-English) This is most popular (ever) on HuggingFace
-- [WhisperSpeech](https://huggingface.co/WhisperSpeech/WhisperSpeech) sounded quite natural as well
-- 
 
+
+Surprisingly, Parler's mini model sounded more natural. In their [repo]() they share names of speakers that we can use in prompt 
 
 Actually this IS THE MOST CONSISTENT PROMPT:
 Small:
@@ -32,15 +31,9 @@ Jenna's voice is consistent, quite expressive and dramatic in delivery, with a v
 """
 ```
 
+#### Suno/Bark
+
 Bark is cool but just v6 works great, I tried v9 but its quite robotic and that is sad. 
-
-So Parler is next-its quite cool for prompting 
-
-xTTS-v2 by coquai is cool, however-need to check the license-I think an example is allowed
-
-Torotoise is blocking because it needs HF version that doesnt work with llama-3.2 models so I will probably need to make a seperate env-need to eval if its worth it
-
-Side note: The TTS library is a really cool effort!
 
 Bark-Tests: Best results for speaker/v6 are at ```speech_output = model.generate(**inputs, temperature = 0.9, semantic_temperature = 0.8)
 Audio(speech_output[0].cpu().numpy(), rate=sampling_rate)```
@@ -53,23 +46,27 @@ Tested sound effects:
 - A singly hypen is effective
 - Captilisation makes it louder
 
-Vibe check: 
-- 
-- Seems to have great documentation but still a bit robotic for my liking: https://coqui.ai/blog/tts/open_xtts
 
-- This is THE MOST NATURAL SOUNDING: 
-- This has a lot of promise, even though its robotic, we can use natural voice to add filters or effects: https://huggingface.co/spaces/parler-tts/parler_tts
+### Notes from other models that were tested:
 
-Higher Barrier to testing (In other words-I was too lazy to test):
-- https://huggingface.co/fishaudio/fish-speech-1.4
-- https://huggingface.co/facebook/mms-tts-eng
-- https://huggingface.co/metavoiceio/metavoice-1B-v0.1
-- https://huggingface.co/nvidia/tts_hifigan
-- https://huggingface.co/speechbrain/tts-tacotron2-ljspeech
+Promising directions to explore in future:
+
+- [MeloTTS](huggingface.co/myshell-ai/MeloTTS-English) This is most popular (ever) on HuggingFace
+- [WhisperSpeech](https://huggingface.co/WhisperSpeech/WhisperSpeech) sounded quite natural as well
+- [F5-TTS](https://github.com/SWivid/F5-TTS) was the latest release at this time, however, it felt a bit robotic
+- E2-TTS: r/locallama claims this to be a little better, however, it didn't pass the vibe test
+- [xTTS](https://coqui.ai/blog/tts/open_xtts) It has great documentation and also seems promising
 
 
-Try later:
-- Whisper Colab: 
-- https://huggingface.co/facebook/mms-tts-eng
-- https://huggingface.co/fishaudio/fish-speech-1.4
-- https://huggingface.co/metavoiceio/metavoice-1B-v0.1
+
+#### Some more models that weren't tested:
+
+In other words, we leave this as an excercise to readers :D
+
+- [Fish-Speech](https://huggingface.co/fishaudio/fish-speech-1.4)
+- [MMS-TTS-Eng](https://huggingface.co/facebook/mms-tts-eng)
+- [Metavoice](https://huggingface.co/metavoiceio/metavoice-1B-v0.1)
+- [Hifigan](https://huggingface.co/nvidia/tts_hifigan)
+- [TTS-Tacotron2](https://huggingface.co/speechbrain/tts-tacotron2-ljspeech) 
+- [MMS-TTS-Eng](https://huggingface.co/facebook/mms-tts-eng)
+- [VALL-E X](https://github.com/Plachtaa/VALL-E-X)
