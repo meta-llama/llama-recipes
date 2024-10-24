@@ -77,5 +77,4 @@ The speakers and the prompt for parler model were decided based on experimentati
 - https://colab.research.google.com/drive/1eJfA2XUa-mXwdMy7DoYKVYHI1iTd9Vkt?usp=sharing#scrollTo=NyYQ--3YksJY
 - https://replicate.com/suno-ai/bark?prediction=zh8j6yddxxrge0cjp9asgzd534
 - https://suno-ai.notion.site/8b8e8749ed514b0cbf3f699013548683?v=bc67cff786b04b50b3ceb756fd05f68c
-- 
 
