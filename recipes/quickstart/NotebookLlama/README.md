@@ -1,129 +1,74 @@
-### NotebookLlama: An Open Source version of NotebookLM
+## NotebookLlama: An Open Source version of NotebookLM
 
-Author: Sanyam Bhutani
+This is a guided series of tutorials/notebooks that can be taken as a reference or course to build a PDF to Podcast workflow. 
 
-This is a guided series of tutorials/notebooks that can be taken as a reference or course to build a PDF to Podcast workflow.
+You will also learn from my experimentation of using Text to Speech Models.
 
 It assumes zero knowledge of LLMs, prompting and audio models, everything is covered in their respective notebooks.
 
-#### Outline:
+### Outline:
 
-Requirements: GPU server or an API provider for using 70B, 8B and 1B Llama models.
-
-Note: For our GPU Poor friends, you can also use the 8B and lower models for the entire pipeline. There is no strong recommendation. The pipeline below is what worked best on first few tests. You should try and see what works best for you!
-
-Here is step by step (pun intended) thought for the task:
+Here is step by step thought (pun intended) for the task:
 
 - Step 1: Pre-process PDF: Use `Llama-3.2-1B` to pre-process and save a PDF
 - Step 2: Transcript Writer: Use `Llama-3.1-70B` model to write a podcast transcript from the text
 - Step 3: Dramatic Re-Writer: Use `Llama-3.1-8B` model to make the transcript more dramatic
 - Step 4: Text-To-Speech Workflow: Use `parler-tts/parler-tts-mini-v1` and `bark/suno` to generate a conversational podcast
 
-### Steps to running the notebook:
+### Detailed steps on running the notebook:
 
-- Install the requirements from [here]() by running inside the folder:
+Requirements: GPU server or an API provider for using 70B, 8B and 1B Llama models.
+
+Note: For our GPU Poor friends, you can also use the 8B and lower models for the entire pipeline. There is no strong recommendation. The pipeline below is what worked best on first few tests. You should try and see what works best for you!
+
+- First, please Install the requirements from [here]() by running inside the folder:
 
 ```
-git clone 
-cd 
+git clone https://github.com/meta-llama/llama-recipes
+cd llama-recipes/recipes/quickstart/NotebookLlama/
 pip install -r requirements.txt
 ```
 
-- Decide on a PDF to use for Notebook 1, it can be any link but please remember to update the first cell of the notebook with the right link
+- Notebook 1:
 
-- 
+This notebook is used for processing the PDF and processing it using the new Featherlight model into a `.txt` file.
+
+Update the first cell with a PDF link that you would like to use. Please decide on a PDF to use for Notebook 1, it can be any link but please remember to update the first cell of the notebook with the right link. 
+
+Please try changing the prompts for the `Llama-3.2-1B-Instruct` model and see if you can improve results.
+
+- Notebook 2:
+
+This notebook will take in the processed output from Notebook 1 and creatively convert it into a podcast transcript using the `Llama-3.1-70B-Instruct` model. If you are GPU or even generally rich, please feel free to test with the 405B model!
+
+Please try experimenting with the System prompts for the model and see if you can improve the results and try the 8B model as well here to see if there is a huge difference!
+
+- Notebook 3:
+
+This notebook takes the transcript from earlier and prompts `Llama-3.1-8B-Instruct` to add more dramatisation and interruptions in the conversations. 
+
+There is also a key factor here: we return a tuple of conversation which makes our lives easier later. Yes, studying Data Structures 101 was actually useful for once!
+
+For our TTS logic, we use two different models that behave differently with certain prompts. So we prompt the model to add specifics for each speaker accordingly.
+
+Please again try changing the system prompt and see if you can imporve the results. We encourage testing the featherlight 3B and 1B models as well at this stage
+
+- Notebook 4:
+
+Finally, we take the results from last notebook and convert them into a podcast. We use the `parler-tts/parler-tts-mini-v1` and `bark/suno` models for a conversation.
+
+The speakers and the prompt for parler model were decided based on experimentation and suggestions from the model authors. Please try experimentating, you can find more details in the resources section.
 
 
-So right now there is one issue: Parler needs transformers 4.43.3 or earlier and to generate you need latest, so I am just switching on fly in the notebooks.
-
-TODO-MORE
+#### Note: Right now there is one issue: Parler needs transformers 4.43.3 or earlier and for steps 1 to 3 of the pipeline you need latest, so we just switch versions in the last notebook.
 
 ### Next-Improvements/Further ideas:
 
-- Speech Model experimentation: The TTS model is the limitation of how natural this will sound. This probably be improved with a better pipeline
+- Speech Model experimentation: The TTS model is the limitation of how natural this will sound. This probably be improved with a better pipeline and with the help of somone more knowledgable-PRs are welcome! :) 
 - LLM vs LLM Debate: Another approach of writing the podcast would be having two agents debate the topic of interest and write the podcast outline. Right now we use a single LLM (70B) to write the podcast outline
 - Testing 405B for writing the transcripts
 - Better prompting
-- Support for ingesting a website, audio file, YouTube links and more. We welcome community PRs!
-
-### Scratch-pad/Running Notes:
-
-Actually this IS THE MOST CONSISTENT PROMPT:
-Small:
-```
-description = """
-Laura's voice is expressive and dramatic in delivery, speaking at a fast pace with a very close recording that almost has no background noise.
-"""
-```
-
-Large: 
-```
-description = """
-Alisa's voice is consistent, quite expressive and dramatic in delivery, with a very close recording that almost has no background noise.
-"""
-```
-Small:
-```
-description = """
-Jenna's voice is consistent, quite expressive and dramatic in delivery, with a very close recording that almost has no background noise.
-"""
-```
-
-Bark is cool but just v6 works great, I tried v9 but its quite robotic and that is sad. 
-
-So Parler is next-its quite cool for prompting 
-
-xTTS-v2 by coquai is cool, however-need to check the license-I think an example is allowed
-
-Torotoise is blocking because it needs HF version that doesnt work with llama-3.2 models so I will probably need to make a seperate env-need to eval if its worth it
-
-Side note: The TTS library is a really cool effort!
-
-Bark-Tests: Best results for speaker/v6 are at ```speech_output = model.generate(**inputs, temperature = 0.9, semantic_temperature = 0.8)
-Audio(speech_output[0].cpu().numpy(), rate=sampling_rate)```
-
-Tested sound effects:
-
-- Laugh is probably most effective
-- Sigh is hit or miss
-- Gasps doesn't work
-- A singly hypen is effective
-- Captilisation makes it louder
-
-Ignore/Delete this in final stages, right now this is a "vibe-check" for TTS model(s):
-
-- https://github.com/SWivid/F5-TTS: Latest and most popular-"feels robotic"
-- Reddit says E2 model from earlier is better
-
-S
-- 1: https://huggingface.co/WhisperSpeech/WhisperSpeech
-
-
-Vibe check: 
-- This is most popular (ever) on HF and features different accents-the samples feel a little robotic and no accent difference: https://huggingface.co/myshell-ai/MeloTTS-English
-- Seems to have great documentation but still a bit robotic for my liking: https://coqui.ai/blog/tts/open_xtts
-- Super easy with laughter etc but very slightly robotic: https://huggingface.co/suno/bark
-- This is THE MOST NATURAL SOUNDING: https://huggingface.co/WhisperSpeech/WhisperSpeech
-- This has a lot of promise, even though its robotic, we can use natural voice to add filters or effects: https://huggingface.co/spaces/parler-tts/parler_tts
-
-Higher Barrier to testing (In other words-I was too lazy to test):
-- https://huggingface.co/fishaudio/fish-speech-1.4
-- https://huggingface.co/facebook/mms-tts-eng
-- https://huggingface.co/metavoiceio/metavoice-1B-v0.1
-- https://huggingface.co/nvidia/tts_hifigan
-- https://huggingface.co/speechbrain/tts-tacotron2-ljspeech
-
-
-Try later:
-- Whisper Colab: 
-- https://huggingface.co/parler-tts/parler-tts-large-v1
-- https://huggingface.co/myshell-ai/MeloTTS-English
-- Bark: https://huggingface.co/suno/bark (This has been insanely popular)
-- https://huggingface.co/facebook/mms-tts-eng
-- https://huggingface.co/fishaudio/fish-speech-1.4
-- https://huggingface.co/mlx-community/mlx_bark
-- https://huggingface.co/metavoiceio/metavoice-1B-v0.1
-- https://huggingface.co/suno/bark-small
+- Support for ingesting a website, audio file, YouTube links and more. Again, we welcome community PRs!
 
 ### Resources for further learning:
 
@@ -131,4 +76,6 @@ Try later:
 - https://colab.research.google.com/drive/1dWWkZzvu7L9Bunq9zvD-W02RFUXoW-Pd?usp=sharing
 - https://colab.research.google.com/drive/1eJfA2XUa-mXwdMy7DoYKVYHI1iTd9Vkt?usp=sharing#scrollTo=NyYQ--3YksJY
 - https://replicate.com/suno-ai/bark?prediction=zh8j6yddxxrge0cjp9asgzd534
+- https://suno-ai.notion.site/8b8e8749ed514b0cbf3f699013548683?v=bc67cff786b04b50b3ceb756fd05f68c
+- 
 
