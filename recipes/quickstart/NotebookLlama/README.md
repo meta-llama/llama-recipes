@@ -4,7 +4,7 @@
 
 This is a guided series of tutorials/notebooks that can be taken as a reference or course to build a PDF to Podcast workflow. 
 
-You will also learn from experimentations of using  Text to Speech Models.
+You will also learn from the experiments of using  Text to Speech Models.
 
 It assumes zero knowledge of LLMs, prompting and audio models, everything is covered in their respective notebooks.
 

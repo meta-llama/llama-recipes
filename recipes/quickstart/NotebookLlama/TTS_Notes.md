@@ -97,7 +97,7 @@ Audio(speech_output[0].cpu().numpy(), rate=sampling_rate)```
 
 Promising directions to explore in future:
 
-- [MeloTTS](huggingface.co/myshell-ai/MeloTTS-English) This is most popular (ever) on HuggingFace
+- [MeloTTS](https://huggingface.co/myshell-ai/MeloTTS-English) This is most popular (ever) on HuggingFace
 - [WhisperSpeech](https://huggingface.co/WhisperSpeech/WhisperSpeech) sounded quite natural as well
 - [F5-TTS](https://github.com/SWivid/F5-TTS) was the latest release at this time, however, it felt a bit robotic
 - E2-TTS: r/locallama claims this to be a little better, however, it didn't pass the vibe test
