@@ -1,5 +1,11 @@
 ## NotebookLlama: An Open Source version of NotebookLM
 
+Here's the output Podcast from the example you will use in the guide:
+<audio controls>
+  <source src="./resources/_podcast.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
 This is a guided series of tutorials/notebooks that can be taken as a reference or course to build a PDF to Podcast workflow. 
 
 You will also learn from my experimentation of using Text to Speech Models.
