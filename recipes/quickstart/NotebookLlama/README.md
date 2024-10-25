@@ -41,7 +41,7 @@ Please try changing the prompts for the `Llama-3.2-1B-Instruct` model and see if
 
 - Notebook 2:
 
-This notebook will take in the processed output from Notebook 1 and creatively convert it into a podcast transcript using the `Llama-3.1-70B-Instruct` model. If you are GPU or even generally rich, please feel free to test with the 405B model!
+This notebook will take in the processed output from Notebook 1 and creatively convert it into a podcast transcript using the `Llama-3.1-70B-Instruct` model. If you are GPU rich, please feel free to test with the 405B model!
 
 Please try experimenting with the System prompts for the model and see if you can improve the results and try the 8B model as well here to see if there is a huge difference!
 
