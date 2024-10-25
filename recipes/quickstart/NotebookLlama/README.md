@@ -12,7 +12,7 @@ It assumes zero knowledge of LLMs, prompting and audio models, everything is cov
 
 Here is step by step thought (pun intended) for the task:
 
-- Step 1: Pre-process PDF: Use `Llama-3.2-1B` to pre-process and save a PDF
+- Step 1: Pre-process PDF: Use `Llama-3.2-1B` to pre-process the PDF and save it in a `.txt` file.
 - Step 2: Transcript Writer: Use `Llama-3.1-70B` model to write a podcast transcript from the text
 - Step 3: Dramatic Re-Writer: Use `Llama-3.1-8B` model to make the transcript more dramatic
 - Step 4: Text-To-Speech Workflow: Use `parler-tts/parler-tts-mini-v1` and `bark/suno` to generate a conversational podcast
