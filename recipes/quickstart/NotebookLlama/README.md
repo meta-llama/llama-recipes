@@ -2,8 +2,11 @@
 
 Here's the output Podcast from the example you will use in the guide:
 <audio controls>
-  <source src="./resources/_podcast.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
+    <source src="./resources/_podcast.mp3" type="audio/mpeg">
+    <p>
+        Your browser doesn't support HTML5 audio. Here is a 
+        <a href="./resources/_podcast.mp3">link to download the audio</a> instead.
+    </p>
 </audio>
 
 This is a guided series of tutorials/notebooks that can be taken as a reference or course to build a PDF to Podcast workflow. 
