@@ -1,5 +1,7 @@
 ## NotebookLlama: An Open Source version of NotebookLM
 
+![NotebookLlama](./resources/Outline.jpg)
+
 [Listen to audio from the example here](./resources/_podcast.mp3)
 
 This is a guided series of tutorials/notebooks that can be taken as a reference or course to build a PDF to Podcast workflow. 
