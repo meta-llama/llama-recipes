@@ -23,6 +23,8 @@ Note 1: In Step 1, we prompt the 1B model to not modify the text or summarize it
 
 Note 2: For Step 2, you can also use `Llama-3.1-8B-Instruct` model, we recommend experimenting and trying if you see any differences. The 70B model was used here because it gave slightly more creative podcast transcripts for the tested examples.
 
+Note 3: For Step 4, please try to extend the approach with other models. These models were chosen based on a sample prompt and worked best, newer models might sound better. Please see [Notes](./TTS_Notes.md) for some of the sample tests.
+
 ### Detailed steps on running the notebook:
 
 Requirements: GPU server or an API provider for using 70B, 8B and 1B Llama models.
