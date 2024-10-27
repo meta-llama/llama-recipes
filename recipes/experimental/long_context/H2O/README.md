@@ -8,7 +8,7 @@ Besides, LLMs usually have poor generation to long sequence during inference. H2
 
 Current implementation supports llama-1/2/3, from 7B to 70B. Since H2O only maintains the most important KV pairs, it might missing some important information in the middle content for some knowlege-intensive tasks.
 
-More details please refer to Paper: **https://arxiv.org/pdf/2306.14048**; Blog: **https://allenz.work/?p=11**.
+More details please refer to Paper: **https://arxiv.org/pdf/2306.14048**;
 
 **Note: this implementation is tested with transformers == 4.39.0**
 
@@ -21,7 +21,7 @@ python run_summarization.py \
 --input-path data/summarization/xsum.jsonl \
 --output-path summarization_output/xsum_h2o.jsonl \
 --model-name meta-llama/Meta-Llama-3-8B \
---enable_h2o_generation 
+--enable_h2o_generation
 ```
 
 ##### **Results**
@@ -36,7 +36,7 @@ Expected results on XSUM (Rouge-2 score, the higher the better) from the above s
 
 ### One Demo on Streaming to "Infinite" Context Length
 
-The following example demonstrates the generation process of "infinite" sequence length. We use MT-Bench data and generate the context sample-by-sample. The KV Cache will keep the KV pairs from the previous samples while maintain a fixed size. Results can be found on [Demo](https://allenz.work/?p=11) (Video 1).
+The following example demonstrates the generation process of "infinite" sequence length. We use MT-Bench data and generate the context sample-by-sample. The KV Cache will keep the KV pairs from the previous samples while maintain a fixed size.
 
 ```
 # run with full cache

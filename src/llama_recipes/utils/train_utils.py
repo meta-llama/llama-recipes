@@ -151,11 +151,11 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                                 batch[key] = batch[key].to('cuda:0')
                     with autocast():
                         loss = model(**batch).loss
+                    total_loss += loss.detach().float()
                     loss = loss / gradient_accumulation_steps
                     if train_config.save_metrics:
                         train_step_loss.append(loss.detach().float().item())
                         train_step_perplexity.append(float(torch.exp(loss.detach().float())))
-                    total_loss += loss.detach().float()
                     if train_config.use_fp16:
                         # if fp16 is enabled, use gradient scaler to handle gradient update
                         scaler.scale(loss).backward()
@@ -288,7 +288,7 @@ def train(model, train_dataloader,eval_dataloader, tokenizer, optimizer, lr_sche
                         print(f"best eval loss on epoch {epoch+1} is {best_val_loss}")
                 else:
                         print(f"best eval loss on epoch {epoch+1} is {best_val_loss}")
-            val_loss.append(float(best_val_loss))
+            val_loss.append(float(eval_epoch_loss))
             val_prep.append(float(eval_ppl))
         if train_config.enable_fsdp:
             if rank==0:
