@@ -12,7 +12,7 @@ python multi_modal_infer.py --image_path PATH_TO_IMAGE --prompt_text "Describe t
 ```
 ---
 ## Multi-modal Inferencing Using gradio UI for inferencing
-For multi-modal inferencing using gradio UI we have added [multi_modal_infer_Gradio_UI.py](multi_modal_infer_Gradio_UI.py) which used gradio and transformers library.
+For multi-modal inferencing using gradio UI we have added [multi_modal_infer_gradio_UI.py](multi_modal_infer_gradio_UI.py) which used gradio and transformers library.
 
 ### Steps to Run
 
@@ -20,7 +20,7 @@ The way to run this would be:
 - Ensure having proper access to llama 3.2 vision models, then run the command given below
 
 ```
-python multi_modal_infer_Gradio_UI.py --hf_token <your hf_token here>
+python multi_modal_infer_gradio_UI.py --hf_token <your hf_token here>
 ```
 
 ## Text-only Inference
