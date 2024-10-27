@@ -26,3 +26,4 @@ unstructured[pdf]
 sentence_transformers
 codeshield
 gradio
+markupsafe==2.0.1
