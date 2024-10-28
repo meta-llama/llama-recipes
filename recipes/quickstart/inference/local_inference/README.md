@@ -10,6 +10,18 @@ The way to run this would be:
 ```
 python multi_modal_infer.py --image_path PATH_TO_IMAGE --prompt_text "Describe this image" --temperature 0.5 --top_p 0.8 --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct"
 ```
+---
+## Multi-modal Inferencing Using gradio UI for inferencing
+For multi-modal inferencing using gradio UI we have added [multi_modal_infer_gradio_UI.py](multi_modal_infer_gradio_UI.py) which used gradio and transformers library.
+
+### Steps to Run
+
+The way to run this would be:
+- Ensure having proper access to llama 3.2 vision models, then run the command given below
+
+```
+python multi_modal_infer_gradio_UI.py --hf_token <your hf_token here>
+```
 
 ## Text-only Inference
 For local inference we have provided an [inference script](inference.py). Depending on the type of finetuning performed during training the [inference script](inference.py) takes different arguments.
