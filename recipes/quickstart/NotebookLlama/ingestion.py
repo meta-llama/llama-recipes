@@ -142,7 +142,7 @@ class AudioIngestor(BaseIngestor):
         self.model = whisper.load_model(self.model_type)
 
     def validate(self, audio_file: str) -> bool:
-        if 20240930not os.path.exists(audio_file):
+        if not os.path.exists(audio_file):
             print(f"Error: Audio file not found at path: {audio_file}")
             return False
         if not audio_file.lower().endswith(('.mp3', '.wav', '.flac', '.m4a')):
