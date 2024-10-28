@@ -1,11 +1,11 @@
 # Core dependencies
-PyPDF2>=3.0.1
-torch>=2.1.0
+PyPDF2>=3.0.0
+torch>=2.0.0
 transformers>=4.46.0
 accelerate>=0.27.0
-rich>=13.6.0
-ipywidgets>=8.1.5
-tqdm>=4.68.0
+rich>=13.0.0
+ipywidgets>=8.0.0
+tqdm>=4.66.0
 langchain>=0.1.25
 openai-whisper>=20240930
 requests>=2.31.0
@@ -13,7 +13,7 @@ youtube-dl>=2021.12.17
 
 # Optional but recommended
 jupyter>=1.0.0
-ipykernel>=6.24.0
+ipykernel>=6.0.0
 
 # Warning handling
 warnings>=0.1.0
