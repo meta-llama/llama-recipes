@@ -180,3 +180,142 @@ See the License file for Meta Llama 3 [here](https://github.com/meta-llama/llama
 
 See the License file for Meta Llama 2 [here](https://github.com/meta-llama/llama-models/blob/main/models/llama2/LICENSE) and Acceptable Use Policy [here](https://github.com/meta-llama/llama-models/blob/main/models/llama2/USE_POLICY.md)
 <!-- markdown-link-check-enable -->
+
+## Supported Input Formats
+
+- **PDF Documents**: Ingest and process text from PDF files.
+- **Websites**: Extract and process text content from web URLs.
+- **YouTube Videos**: Retrieve and transcribe audio from YouTube video URLs.
+- **Audio Files**: Transcribe audio files into text using Whisper.
+
+## Usage Examples
+
+### Ingest from a PDF
+
+```python
+from ingestion import IngestorFactory
+
+input_type = "pdf"
+pdf_path = './resources/2402.13116v3.pdf'
+extracted_text = ingest_content(input_type, pdf_path)
+if extracted_text:
+    with open('extracted_text.txt', 'w', encoding='utf-8') as f:
+        f.write(extracted_text)
+    print("Extracted text has been saved to extracted_text.txt")
+```
+
+### Ingest from a Website
+
+```python
+from ingestion import IngestorFactory
+
+input_type = "website"
+website_url = "https://www.example.com"
+website_text = ingest_content(input_type, website_url)
+if website_text:
+    with open('website_extracted_text.txt', 'w', encoding='utf-8') as f:
+        f.write(website_text)
+    print("Extracted website text has been saved to website_extracted_text.txt")
+```
+
+### Ingest from a YouTube Video
+
+```python
+from ingestion import IngestorFactory
+
+input_type = "youtube"
+youtube_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+youtube_transcript = ingest_content(input_type, youtube_url)
+if youtube_transcript:
+    with open('youtube_transcript.txt', 'w', encoding='utf-8') as f:
+        f.write(youtube_transcript)
+    print("YouTube transcript has been saved to youtube_transcript.txt")
+```
+
+### Ingest from an Audio File
+
+```python
+from ingestion import IngestorFactory
+
+input_type = "audio"
+audio_file = './resources/sample_audio.mp3'
+audio_transcription = ingest_content(input_type, audio_file, model_type="base")
+if audio_transcription:
+    with open('audio_transcription.txt', 'w', encoding='utf-8') as f:
+        f.write(audio_transcription)
+    print("Audio transcription has been saved to audio_transcription.txt")
+```
+
+## Step 4: Testing
+
+Ensure that each ingestor works as expected by testing with sample inputs.
+
+### 4.1. Create Test Cases
+
+```python
+# test_ingestion.py
+
+import unittest
+from ingestion import IngestorFactory
+
+class TestIngestion(unittest.TestCase):
+
+    def test_pdf_ingestion(self):
+        pdf_path = "./resources/sample.pdf"
+        ingestor = IngestorFactory.get_ingestor("pdf")
+        text = ingestor.extract_text(pdf_path)
+        self.assertIsInstance(text, str)
+        self.assertTrue(len(text) > 0)
+
+    def test_website_ingestion(self):
+        website_url = "https://www.example.com"
+        ingestor = IngestorFactory.get_ingestor("website")
+        text = ingestor.extract_text(website_url)
+        self.assertIsInstance(text, str)
+        self.assertTrue(len(text) > 0)
+
+    def test_youtube_ingestion(self):
+        youtube_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        ingestor = IngestorFactory.get_ingestor("youtube")
+        transcript = ingestor.extract_text(youtube_url)
+        self.assertIsInstance(transcript, str)
+        self.assertTrue(len(transcript) > 0)
+
+    def test_audio_ingestion(self):
+        audio_file = "./resources/sample_audio.mp3"
+        ingestor = IngestorFactory.get_ingestor("audio", model_type="base")
+        transcription = ingestor.extract_text(audio_file)
+        self.assertIsInstance(transcription, str)
+        self.assertTrue(len(transcription) > 0)
+    
+    def test_unsupported_type(self):
+        ingestor = IngestorFactory.get_ingestor("unsupported")
+        self.assertIsNone(ingestor)
+
+if __name__ == "__main__":
+    unittest.main()
+```
+
+### 4.2. Run Tests
+
+Execute the tests to verify all ingestion methods function correctly.
+
+```bash
+python test_ingestion.py
+```
+
+Ensure all tests pass and handle any exceptions or errors that arise.
+
+## Conclusion
+
+By following these steps, you've successfully **extended your `ingestion.py` module** to support multiple input formats—**websites, YouTube links, and audio files**—in addition to PDFs. This enhancement broadens the usability of your `NotebookLlama` pipeline, making it more versatile and valuable.
+
+### Next Steps
+
+1. **Handle Edge Cases**: Enhance each ingestor to manage various edge cases, such as unsupported formats, network issues, or transcription errors.
+2. **Asynchronous Processing**: Implement asynchronous ingestion to improve pipeline efficiency, especially for time-consuming tasks like audio transcription.
+3. **Logging and Error Reporting**: Integrate comprehensive logging to monitor ingestion processes and facilitate troubleshooting.
+4. **User Interface Enhancements**: Improve the interactive widgets in your notebook to provide better feedback and progress indicators during ingestion.
+5. **Documentation**: Continue to refine your documentation with detailed explanations, troubleshooting tips, and advanced usage examples.
+
+Feel free to reach out if you need further assistance or have more features you'd like to implement. Happy coding!
