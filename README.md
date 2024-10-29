@@ -76,7 +76,7 @@ Some recipes require the presence of langchain. To install the packages follow t
 ```
 pip install llama-recipes[langchain]
 ```
-Optional dependencies can also be combines with [option1,option2].
+Optional dependencies can also be combined with [option1,option2].
 
 #### Install from source
 To install from source e.g. for development use these commands. We're using hatchling as our build backend which requires an up-to-date pip as well as setuptools package.
@@ -119,7 +119,7 @@ Most of the code dealing with Llama usage is organized across 2 main folders: `r
 
 ### `recipes/`
 
-Contains examples are organized in folders by topic:
+Contains examples organized in folders by topic:
 | Subfolder | Description |
 |---|---|
 [quickstart](./recipes/quickstart) | The "Hello World" of using Llama, start here if you are new to using Llama.

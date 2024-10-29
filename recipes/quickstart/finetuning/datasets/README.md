@@ -58,7 +58,7 @@ To add a custom dataset the following steps need to be performed.
 
 1. Create a dataset configuration after the schema described above. Examples can be found in [configs/datasets.py](../../../../src/llama_recipes/configs/datasets.py).
 2. Create a preprocessing routine which loads the data and returns a PyTorch style dataset. The signature for the preprocessing function needs to be (dataset_config, tokenizer, split_name) where split_name will be the string for train/validation split as defined in the dataclass.
-3. Register the dataset name and preprocessing function by inserting it as key and value into the DATASET_PREPROC dictionary in [utils/dataset_utils.py](../../../../src/llama_recipes/utils/dataset_utils.py)
+3. Register the dataset name and preprocessing function by inserting it as key and value into the DATASET_PREPROC dictionary in [datasets/__init__.py](../../../../src/llama_recipes/datasets/__init__.py)
 4. Set dataset field in training config to dataset name or use --dataset option of the `llama_recipes.finetuning` module or examples/finetuning.py training script.
 
 ## Application
