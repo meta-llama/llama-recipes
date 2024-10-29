@@ -1,30 +1,14 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
-from torch.distributed._tensor.device_mesh import init_device_mesh
-import os 
+import os
 
-def fsdp_auto_wrap_policy(model, transformer_layer_names):
-    import functools
-
-    from torch.distributed.fsdp.wrap import _or_policy, lambda_auto_wrap_policy, transformer_auto_wrap_policy
-
-    def lambda_policy_fn(module):
-        if (
-            len(list(module.named_children())) == 0
-            and getattr(module, "weight", None) is not None
-            and module.weight.requires_grad
-        ):
-            return True
-        return False
-
-    lambda_policy = functools.partial(lambda_auto_wrap_policy, lambda_fn=lambda_policy_fn)
-    transformer_wrap_policy = functools.partial(
-        transformer_auto_wrap_policy,
-        transformer_layer_cls=set(transformer_layer_names)
-    )
-
-    auto_wrap_policy = functools.partial(_or_policy, policies=[lambda_policy, transformer_wrap_policy])
-    return auto_wrap_policy
+import torch
+import torch.nn as nn
+from llama_recipes.configs.fsdp import fsdp_config as FSDP_CONFIG
+from llama_recipes.policies import get_mixed_precision_policies
+from torch.distributed._composable.fsdp import fully_shard, CPUOffloadPolicy
+from torch.distributed._tensor.device_mesh import DeviceMesh, init_device_mesh
+from typing import List, Callable
 
 
 def hsdp_device_mesh(replica_group_size, sharding_group_size, device=None):
@@ -33,11 +17,11 @@ def hsdp_device_mesh(replica_group_size, sharding_group_size, device=None):
 
     This function requires explicit sizes for replica and sharding groups to accommodate models
     whose GPU fit is unknown, providing flexibility in distributed training setups.
-    
+
     Args:
         replica_group_size (int): The size of each replica group. Must be provided to ensure
             the model fits within the available resources.
-        sharding_group_size (int): The size of each sharding group that the model can fit. Must be provided to 
+        sharding_group_size (int): The size of each sharding group that the model can fit. Must be provided to
             ensure the correct distribution of model parameters.
         device (str, optional): The device to use (e.g., "cuda:0"). If None, defaults to "cuda"
             with the local rank as the device index.
@@ -59,7 +43,9 @@ def hsdp_device_mesh(replica_group_size, sharding_group_size, device=None):
     """
 
     if replica_group_size is None or sharding_group_size is None:
-        raise ValueError("Both replica_group_size and sharding_group_size must be provided.")
+        raise ValueError(
+            "Both replica_group_size and sharding_group_size must be provided."
+        )
 
     local_rank = int(os.getenv("LOCAL_RANK", "0"))
     world_size = int(os.getenv("WORLD_SIZE", "1"))
@@ -67,15 +53,76 @@ def hsdp_device_mesh(replica_group_size, sharding_group_size, device=None):
     device = device or f"cuda"
 
     if world_size % sharding_group_size != 0:
-        raise ValueError(f"World size {world_size} is not evenly divisible by "
-                         f"sharding group size {sharding_group_size}.")
+        raise ValueError(
+            f"World size {world_size} is not evenly divisible by "
+            f"sharding group size {sharding_group_size}."
+        )
 
     if (world_size // sharding_group_size) % replica_group_size != 0:
-        raise ValueError(f"The calculated number of replica groups is not evenly divisible by "
-                         f"replica_group_size {replica_group_size}.")
+        raise ValueError(
+            f"The calculated number of replica groups is not evenly divisible by "
+            f"replica_group_size {replica_group_size}."
+        )
 
     device_mesh = init_device_mesh(device, (replica_group_size, sharding_group_size))
     if device_mesh is None:
         raise RuntimeError("Failed to create a valid device mesh.")
 
     return device_mesh
+
+
+def parallelize_model(
+    model: nn.Module,
+    fsdp_config: FSDP_CONFIG,
+    device_mesh: DeviceMesh = None,
+    sharding_conditions: List[Callable] = None,
+) -> nn.Module:
+    """
+    Parallelizes a Llama model using FSDP.
+
+    Args:
+        model (nn.Module): The Llama model to parallelize.
+        fsdp_config (FSDP_CONFIG): The FSDP configuration.
+        device_mesh (torch.device_mesh): The device mesh to use for parallelization.
+
+    Returns:
+        None
+    """
+
+    mp_policy = get_mixed_precision_policies(fsdp_config)
+    fsdp_config = {
+        "mesh": device_mesh,
+        "mp_policy": None if fsdp_config.pure_bf16 else mp_policy,
+        "offload_policy": CPUOffloadPolicy() if fsdp_config.fsdp_cpu_offload else None
+        }
+
+    # Following torchtune's approach to wrap Lora first as dtype is different from base
+    for m in reversed(list(model.modules())):
+        if any(c(m) for c in sharding_conditions):
+            fully_shard(m, reshard_after_forward=True)
+
+    # 
+    # if hasattr(model, "base_model") and hasattr(model.base_model, "model"):
+    #     for n, m in reversed(list(model.named_modules())):
+    #         if any(c(m) for c in sharding_conditions):
+    #         # if (
+    #         #     len(list(m.named_children())) == 0
+    #         #     and getattr(m, "weight", None) is not None
+    #         #     and m.weight.requires_grad
+    #         # ):
+    #             fully_shard(m, reshard_after_forward=True)
+    #     layers = model.base_model.model.model.layers
+    # else:
+    #     layers = model.model.layers
+
+    # for idx, layer in enumerate(layers):
+    #     # Following torch titan we will not reshard the last layer
+    #     # https://github.com/pytorch/torchtitan/blob/7310abea8782bbe459b662bc6d8411fe8d55f62c/torchtitan/parallelisms/parallelize_llama.py#L347
+    #     reshard_after_forward = idx < len(layers) - 1
+    #     fully_shard(
+    #         layer,
+    #         reshard_after_forward=reshard_after_forward,
+    #     )
+
+    # Shard remaining modules like embeddings
+    fully_shard(model, **fsdp_config)
