@@ -62,3 +62,32 @@ To boost the performance of fine-tuning with FSDP, we can make use a number of f
 - **Activation Checkpointing**  which is a technique to save memory by discarding the intermediate activation in forward pass instead of keeping it in the memory with the cost recomputing them in the backward pass. FSDP Activation checkpointing is shard aware meaning we need to apply it after wrapping the model with FSDP. In our script we are making use of that.
 
 - **auto_wrap_policy** Which is the way to specify how FSDP would partition the model, there is default support for transformer wrapping policy. This allows FSDP to form each FSDP unit ( partition of the  model ) based on the transformer class in the model. To identify this layer in the model, you need to look at the layer that wraps both the attention layer and  MLP. This helps FSDP have more fine-grained units for communication that help with optimizing the communication cost.
+
+### Inference
+
+After fine-tuning the model, you can use the `code-merge-inference.py` script to generate text from images. The script supports merging PEFT adapter weights from a specified path.
+
+#### Usage
+
+To run the inference script, use the following command:
+
+```bash
+python code-merge-inference.py \
+    --image_path "path/to/your/image.png" \
+    --prompt_text "Your prompt text here" \
+    --temperature 1 \
+    --top_p 0.5 \
+    --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct" \
+    --hf_token "your_hugging_face_token" \
+    --finetuning_path "path/to/your/finetuned/model"
+```
+
+#### Script Details
+
+The `code-merge-inference.py` script performs the following steps:
+
+1. **Load Model and Processor**: Loads the pre-trained model and processor, and optionally loads PEFT adapter weights if specified.
+2. **Process Image**: Opens and converts the input image.
+3. **Generate Text**: Generates text from the image using the model and processor.
+
+For more details, refer to the `code-merge-inference.py` script.
