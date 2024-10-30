@@ -6,6 +6,9 @@ accelerate>=0.27.0
 rich>=13.0.0
 ipywidgets>=8.0.0
 tqdm>=4.66.0
+# pydub need mmpeg: apt install mmpeg
+pydub>=0.25.0
+git+https://github.com/huggingface/parler-tts.git
 
 # Optional but recommended
 jupyter>=1.0.0
