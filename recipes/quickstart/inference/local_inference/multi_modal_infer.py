@@ -16,7 +16,7 @@ DEFAULT_MODEL = "meta-llama/Llama-3.2-11B-Vision-Instruct"
 
 def load_model_and_processor(model_name: str, hf_token: str, finetuning_path: str = None):
     """
-    Load the model and processor, and optionally load adapter weights if specified.
+    Load the model and processor, and optionally load adapter weights if specified
     """
     # Load pre-trained model and processor
     model = MllamaForConditionalGeneration.from_pretrained(
