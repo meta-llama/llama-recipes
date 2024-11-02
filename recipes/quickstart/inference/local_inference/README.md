@@ -3,25 +3,45 @@
 ## Hugging face setup
 **Important Note**: Before running the inference, you'll need your Hugging Face access token, which you can get at your Settings page [here](https://huggingface.co/settings/tokens). Then run `huggingface-cli login` and copy and paste your Hugging Face access token to complete the login to make sure the scripts can download Hugging Face models if needed.
 
-## Multimodal Inference
-For Multi-Modal inference we have added [multi_modal_infer.py](multi_modal_infer.py) which uses the transformers library.
+## Multimodal Inference and CLI inference with or without PEFT LoRA weights
 
-The way to run this would be:
-```
-python multi_modal_infer.py --image_path PATH_TO_IMAGE --prompt_text "Describe this image" --temperature 0.5 --top_p 0.8 --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct"
-```
----
-## Multi-modal Inferencing Using gradio UI for inferencing
-For multi-modal inferencing using gradio UI we have added [multi_modal_infer_gradio_UI.py](multi_modal_infer_gradio_UI.py) which used gradio and transformers library.
+### Model Overview
+- Base model: `meta-llama/Llama-3.2-11B-Vision-Instruct`
+- Uses PEFT library (v0.13.1) for efficient fine-tuning
+- Supports vision-language tasks with instruction capabilities
 
-### Steps to Run
+### Features in
+`multi_modal_infer.py`
 
-The way to run this would be:
-- Ensure having proper access to llama 3.2 vision models, then run the command given below
+All functionality has been consolidated into a single file with three main modes:
+### Steops to run are given below:
+1. **Basic Inference**
+```bash
+python multi_modal_infer.py \
+    --image_path "path/to/image.jpg" \
+    --prompt_text "Describe this image" \
+    --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct" \
+    --hf_token "your_token"
+```
 
+2. **Gradio UI Mode**
+```bash
+python multi_modal_infer.py \
+    --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct" \
+    --hf_token "your_token" \
+    --gradio_ui
 ```
-python multi_modal_infer_gradio_UI.py --hf_token <your hf_token here>
+
+3. **LoRA Fine-tuning Integration**
+```bash
+python multi_modal_infer.py \
+    --image_path "path/to/image.jpg" \
+    --prompt_text "Describe this image" \
+    --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct" \
+    --hf_token "your_token" \
+    --finetuning_path "path/to/lora/weights"
 ```
+
 
 ## Text-only Inference
 For local inference we have provided an [inference script](inference.py). Depending on the type of finetuning performed during training the [inference script](inference.py) takes different arguments.
@@ -114,32 +134,3 @@ python inference.py --model_name <training_config.output_dir> --prompt_file <tes
 ## Inference on large models like Meta Llama 405B
 The FP8 quantized variants of Meta Llama (i.e. meta-llama/Meta-Llama-3.1-405B-FP8 and meta-llama/Meta-Llama-3.1-405B-Instruct-FP8) can be executed on a single node with 8x80GB H100 using the scripts located in this folder.
 To run the unquantized Meta Llama 405B variants (i.e. meta-llama/Meta-Llama-3.1-405B and meta-llama/Meta-Llama-3.1-405B-Instruct) we need to use a multi-node setup for inference. The llama-recipes inference script currently does not allow multi-node inference. To run this model you can use vLLM with pipeline and tensor parallelism as showed in [this example](../../../3p_integrations/vllm/README.md).
-
-### Inference-with-lora-checkpoints
-
-After fine-tuning the model, you can use the `code-merge-inference.py` script to generate text from images. The script supports merging PEFT adapter weights from a specified path.
-
-#### Usage
-
-To run the inference script, use the following command:
-
-```bash
-python code-merge-inference.py \
-    --image_path "path/to/your/image.png" \
-    --prompt_text "Your prompt text here" \
-    --temperature 1 \
-    --top_p 0.5 \
-    --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct" \
-    --hf_token "your_hugging_face_token" \
-    --finetuning_path "path/to/your/finetuned/model"
-```
-
-#### Script Details
-
-The `code-merge-inference.py` script performs the following steps:
-
-1. **Load Model and Processor**: Loads the pre-trained model and processor, and optionally loads PEFT adapter weights if specified.
-2. **Process Image**: Opens and converts the input image.
-3. **Generate Text**: Generates text from the image using the model and processor.
-
-For more details, refer to the `code-merge-inference.py` script.
