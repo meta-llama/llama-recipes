@@ -14,7 +14,7 @@
 `multi_modal_infer.py`
 
 All functionality has been consolidated into a single file with three main modes:
-### Steops to run are given below:
+### Steps to run are given below:
 1. **Basic Inference**
 ```bash
 python multi_modal_infer.py \
