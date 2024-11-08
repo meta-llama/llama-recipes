@@ -10,7 +10,7 @@ It seeks to increase model performance not through scaling parameters, but by sc
 
 This experiment built by the team at [Modal](https://modal.com), and is described in the following blog post:
 
-[Beat GPT-4o at Python by searching with 100 dumb LLaMAs](https://modal.com/blog/llama-human-eval)
+[Beat GPT-4o at Python by searching with 100 small Llamas](https://modal.com/blog/llama-human-eval)
 
 The experiment has since been upgraded to use the [Llama 3.2 3B Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) model, and runnable end-to-end using the Modal serverless platform.
 
