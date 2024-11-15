@@ -2,7 +2,7 @@
 
 ## Story Overview: Multi-Modal RAG using `Llama-3.2-11B` model: 
 
-- **Data Labeling and Preparation:** We start by downloading 5000 images of clothing items and labeling them using 11B model
+- **Data Labeling and Preparation:** We start by downloading 5000 images of clothing items and labeling them using `Llama-3.2-11B-Vision-Instruct` model
 - **Cleaning Labels:** With the labels based on the notebook above, we will then clean the dataset and prepare it for RAG
 - **Building Vector DB and RAG Pipeline:** With the final clean dataset, we can use descriptions and 11B model to generate recommendations
 
