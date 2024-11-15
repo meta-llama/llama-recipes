@@ -1,16 +1,10 @@
 name: "[GHA][CPU] llama-recipes Pytest tests on CPU GitHub hosted runner."
 on:
   pull_request:
-    branches:    
+    branches:
       - 'main'
-    paths:
-      - 'src/llama-recipes/configs/*.py'
-      - 'src/llama-recipes/utils/*.py'
-      - 'src/llama-recipes/datasets/*.py'
-      - 'src/llama-recipes/data/*.py'
-      - 'src/llama-recipes/*.py'
 
-  # triggers workflow manually for debugging purposes.      
+  # triggers workflow manually for debugging purposes.
   workflow_dispatch:
     inputs:
       runner:
@@ -23,8 +17,8 @@ on:
           required: false
           default: "true"
 
-env: 
-  PYTORCH_WHEEL_URL: https://download.pytorch.org/whl/test/cu118  
+env:
+  PYTORCH_WHEEL_URL: https://download.pytorch.org/whl/test/cu118
 
 jobs:
   execute_workflow:
@@ -63,7 +57,7 @@ jobs:
         id: install_llama_recipes_package
         run: |
           echo "Installing 'llama-recipes' project (re: https://github.com/facebookresearch/llama-recipes?tab=readme-ov-file#install-with-optional-dependencies)"
-          pip install --extra-index-url ${PYTORCH_WHEEL_URL} -e '.[tests]' 
+          pip install --extra-index-url ${PYTORCH_WHEEL_URL} -e '.[tests]'
 
 
       - name: "Running PyTest tests on GHA CPU Runner"
@@ -71,11 +65,10 @@ jobs:
         run: |
           echo "Running PyTest tests at 'GITHUB_WORKSPACE' path: ${GITHUB_WORKSPACE}"
           cd $GITHUB_WORKSPACE && python3 -m pytest --junitxml="$GITHUB_WORKSPACE/result.xml"
-  
+
       - name: Publish Test Summary
         id: test_summary
         uses: test-summary/action@v2
         with:
           paths: "**/*.xml"
         if: always()
-          

@@ -2,7 +2,7 @@
 
 The folder here containts the Llama 3 ported notebooks of the DLAI short course [Building Agentic RAG with Llamaindex](https://www.deeplearning.ai/short-courses/building-agentic-rag-with-llamaindex/).
 
-1. [Building Agentic RAG with Llamaindex L1 Router Engine](../../../quickstart/agents/dlai/Building_Agentic_RAG_with_Llamaindex_L1_Router_Engine.ipynb) shows how to implement a simple agentic RAG, a router that will pick up one of several query tools (question answering or summarization) to execute a query on a single document. Note this notebook is located in the `quickstart` folder.
+1. [Building Agentic RAG with Llamaindex L1 Router Engine](../../../quickstart/agents/DeepLearningai_Course_Notebooks/Building_Agentic_RAG_with_Llamaindex_L1_Router_Engine.ipynb) shows how to implement a simple agentic RAG, a router that will pick up one of several query tools (question answering or summarization) to execute a query on a single document. Note this notebook is located in the `quickstart` folder.
 
 2. [Building Agentic RAG with Llamaindex L2 Tool Calling](Building_Agentic_RAG_with_Llamaindex_L2_Tool_Calling.ipynb) shows how to use Llama 3 to not only pick a function to execute, but also infer an argument to pass through the function.
 

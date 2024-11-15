@@ -1,0 +1,32 @@
+model_name: "meta-llama/Llama-3.1-8B-Instruct" # The name of the model to evaluate. This must be a valid Meta Llama 3 based model name in the HuggingFace model hub."
+
+evals_dataset: "meta-llama/Llama-3.1-8B-Instruct-evals" # The name of the 3.1 evals dataset to evaluate, please make sure this eval dataset corresponds to the model loaded. This must be a valid Meta Llama 3.1 evals dataset name in the Llama 3.1 Evals collection.
+# Must be one of the following ["meta-llama/Llama-3.1-8B-Instruct-evals","meta-llama/Llama-3.1-70B-Instruct-evals","meta-llama/Llama-3.1-405B-Instruct-evals","meta-llama/Llama-3.1-8B-evals","meta-llama/Llama-3.1-70B-evals","meta-llama/Llama-3.1-405B-evals"]
+
+tasks: "meta_instruct" # Available tasks for instruct model: "meta_math_hard", "meta_gpqa", "meta_mmlu_pro_instruct", "meta_ifeval"; or just use "meta_instruct" to run all of them.
+# Available tasks for pretrain model: "meta_bbh", "meta_mmlu_pro_pretrain"; or just use "meta_pretrain" to run all of them.
+
+tensor_parallel_size: 1 # The VLLM argument that speicify the tensor parallel size for the model, eg how many GPUs to use for a model copy.
+
+data_parallel_size: 4 # The VLLM argument that speicify the data parallel size for the model, eg how copies of model will be used.
+
+gpu_memory_utilization: 0.9 #The VLLM argument that speicify gpu memory utilization, the rest will be reserved for KV cache.
+
+max_model_len: 8192 #The VLLM argument that speicify model max length, decrease this value only if GPU memory issue encountered. Please make sure the max_gen_toks in the yaml does not exceed this length.
+
+batch_size: "auto" # Batch size, can be 'auto', 'auto:N', or an integer. It is strongly recommend to use 'auto' for vllm to speed up the inference
+
+output_path: "eval_results" # the output folder to store all the eval results and samples.
+
+#limit: 12 # Limit number of examples per task, set 'null' to run all.
+limit: null # Limit number of examples per task, set 'null' to run all.
+
+verbosity: "INFO" #Logging level: CRITICAL, ERROR, WARNING, INFO, DEBUG.
+
+log_samples: true # If True, write out all model outputs and documents for per-sample measurement and post-hoc analysis.
+
+work_dir: ./work_dir # The work folder where the task template yaml files will be copied and modified, datasets will be downloaded for math_hard, ifeval.
+
+template_dir: ./meta_template #Path to the folder that contains all the meta task templates
+
+show_config: false # If True, shows the full config of all tasks at the end of the evaluation.

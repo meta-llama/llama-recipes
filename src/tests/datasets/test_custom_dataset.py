@@ -2,6 +2,7 @@
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
 import pytest
+from contextlib import nullcontext
 from unittest.mock import patch
 
 from transformers import LlamaTokenizer
@@ -96,15 +97,17 @@ def test_custom_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker,
 
 
 @patch('llama_recipes.finetuning.train')
+@patch('llama_recipes.finetuning.AutoConfig.from_pretrained')
 @patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
 @patch('llama_recipes.finetuning.AutoTokenizer.from_pretrained')
 @patch('llama_recipes.finetuning.optim.AdamW')
 @patch('llama_recipes.finetuning.StepLR')
-def test_unknown_dataset_error(step_lr, optimizer, tokenizer, get_model, train, mocker, llama_version):
+def test_unknown_dataset_error(step_lr, optimizer, tokenizer, get_model, get_config, train, mocker, llama_version):
     from llama_recipes.finetuning import main
 
     tokenizer.return_value = mocker.MagicMock(side_effect=lambda x: {"input_ids":[len(x)*[0,]], "attention_mask": [len(x)*[0,]]})
     get_model.return_value.get_input_embeddings.return_value.weight.shape = [32000 if "Llama-2" in llama_version else 128256]
+    get_config.return_value.model_type = "llama"
 
     kwargs = {
         "dataset": "custom_dataset",
@@ -131,13 +134,16 @@ def test_tokenize_dialog(tokenizer, monkeypatch, setup_tokenizer, llama_version)
         {"role":"assistant", "content":"Romans"},
     ]
 
-    result = tokenize_dialog(dialog, tokenizer)
+    c = pytest.raises(AttributeError) if llama_version == "fake_llama" else nullcontext()
+
+    with c:
+        result = tokenize_dialog(dialog, tokenizer)
     
     if "Llama-2" in llama_version:
         assert result["labels"][:12] == [-100] * 12
         assert result["labels"][17:28] == [-100] * 11
         assert result["labels"].count(-100) == 11 + 12
-    else:
+    elif "Llama-3" in llama_version:
         assert result["labels"][:38] == [-100] * 38
         assert result["labels"][43:54] == [-100] * 11
         assert result["labels"].count(-100) == 38 + 11

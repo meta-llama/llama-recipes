@@ -22,12 +22,14 @@ For **LoRA finetuning with FSDP**, we can run the following code:
 
 For more details about the finetuning configurations, please read the [finetuning readme](./README.md).
 
+For more details about local inference with the fine-tuned checkpoint, please read [Inference with FSDP checkpoints section](https://github.com/meta-llama/llama-recipes/tree/main/recipes/quickstart/inference/local_inference#inference-with-fsdp-checkpoints) to learn how to convert the FSDP weights into a consolidated Hugging Face formatted model for local inference.
+
 ### How to use a custom dataset to fine-tune vision model
 
 In order to use a custom dataset, please follow the steps below:
 
 1. Create a new dataset python file under `recipes/quickstart/finetuning/dataset` folder.
 2. In this python file, you need to define a `get_custom_dataset(dataset_config, processor, split, split_ratio=0.9)` function that handles the data loading.
-3. In this python file, you need to define a `get_data_collator(processor)` that returns a custom data collator that can be used by the Pytorch Data Loader.
+3. In this python file, you need to define a `get_data_collator(processor)` function that returns a custom data collator that can be used by the Pytorch Data Loader.
 4. This custom data collator class must have a `__call__(self, samples)` function that converts the image and text samples into the actual inputs that vision model expects.
-5. Run the `torchrun` commend from above section, please change the `--custom_dataset.file` to the new dataset python file, adjust the learning rate accordingly.
+5. Run the `torchrun` command from above section, please change the `--custom_dataset.file` to the new dataset python file, adjust the learning rate accordingly.

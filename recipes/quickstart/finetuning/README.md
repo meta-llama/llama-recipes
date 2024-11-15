@@ -8,7 +8,7 @@ This folder contains instructions to fine-tune Meta Llama 3 on a
 
 using the canonical [finetuning script](../../../src/llama_recipes/finetuning.py) in the llama-recipes package.
 
-If you are new to fine-tuning techniques, check out an overview: [](./LLM_finetuning_overview.md)
+If you are new to fine-tuning techniques, check out [an overview](./LLM_finetuning_overview.md).
 
 > [!TIP]
 > If you want to try finetuning Meta Llama 3 in a Jupyter notebook you can find a quickstart notebook [here](./quickstart_peft_finetuning.ipynb)
