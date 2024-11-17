@@ -12,12 +12,10 @@ Credit and Thanks to List of models and resources used in the showcase:
 
 Firstly, thanks to the author here for providing this dataset on which we base our exercise []()
 
-- [Llama-3.2-11B-Vision-Instruct](https://www.llama.com/docs/how-to-guides/vision-capabilities/) Model
+- [Llama-3.2-11B-Vision-Instruct Model](https://www.llama.com/docs/how-to-guides/vision-capabilities/)
 - [Lance-db for vector database](https://lancedb.com)
-- [This]() Kaggle dataset for building our work
+- [This Kaggle dataset]()
 - [HF Dataset](https://huggingface.co/datasets/Sanyam/MM-Demo) Since output of the model can be non-deterministic every time we run, we will use the uploaded dataset to give a universal experience
-- [Transformers for 11B model](https://github.com/huggingface/transformers) 
-- [Gradio for Demo](https://github.com/gradio-app/gradio)
 - [Together API for demo](https://www.together.ai)
 
 ## Detailed Outline 
