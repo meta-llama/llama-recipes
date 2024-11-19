@@ -41,6 +41,7 @@ from llama_recipes.utils.train_utils import (
     freeze_LLM_only,
     get_policies,
     print_model_size,
+    print_frozen_model_status,
     setup,
     setup_environ_flags,
     train,
@@ -194,6 +195,8 @@ def main(**kwargs):
         )
         model.resize_token_embeddings(len(tokenizer))
 
+    print_model_size(model, train_config, rank if train_config.enable_fsdp else 0)
+    
     # Convert the model to bfloat16 if fsdp and pure_bf16 is enabled
     if (
         train_config.enable_fsdp
@@ -234,12 +237,14 @@ def main(**kwargs):
 
         if not train_config.use_peft and train_config.freeze_layers:
             freeze_transformer_layers(model, train_config.num_freeze_layers)
+            # print model size and frozen layers after freezing layers
+            print_frozen_model_status(model, train_config, rank if train_config.enable_fsdp else 0)
             
         if not train_config.use_peft and train_config.freeze_LLM_only and config.model_type == "mllama":
             freeze_LLM_only(model)
+            # print model size and frozen layers after freezing layers
+            print_frozen_model_status(model, train_config, rank if train_config.enable_fsdp else 0)
         
-        print_model_size(model, train_config, rank if train_config.enable_fsdp else 0)
-
         mixed_precision_policy, wrapping_policy = get_policies(fsdp_config, rank)
         # Create the FSDP wrapper for MllamaSelfAttentionDecoderLayer,MllamaSelfAttentionDecoderLayer,MllamaVisionEncoderLayer in vision models
         if is_vision:
