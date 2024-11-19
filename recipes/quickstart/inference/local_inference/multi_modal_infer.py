@@ -18,19 +18,23 @@ DEFAULT_MODEL = "meta-llama/Llama-3.2-11B-Vision-Instruct"
 MAX_OUTPUT_TOKENS = 2048
 MAX_IMAGE_SIZE = (1120, 1120)
 
+from huggingface_hub import HfFolder
+
 def get_hf_token():
-    """Retrieve Hugging Face token from environment or local auth."""
+    """Retrieve Hugging Face token from the cache or environment."""
+    # Check if a token is explicitly set in the environment
     token = os.getenv("HUGGINGFACE_TOKEN")
     if token:
         return token
 
-    # Check if the user is logged in via huggingface-cli
-    try:
-        login()  # Will use local authentication cache if available
-    except Exception as e:
-        print("Unable to authenticate with Hugging Face. Ensure you are logged in via `huggingface-cli login`.")
-        sys.exit(1)
-    return None
+    # Automatically retrieve the token from the Hugging Face cache (set via huggingface-cli login)
+    token = HfFolder.get_token()
+    if token:
+        return token
+
+    print("Hugging Face token not found. Please login using `huggingface-cli login`.")
+    sys.exit(1)
+
 
 def load_model_and_processor(model_name: str, finetuning_path: str = None):
     """Load model and processor with optional LoRA adapter"""
