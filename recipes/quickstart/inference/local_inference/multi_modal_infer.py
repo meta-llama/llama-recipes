@@ -7,8 +7,7 @@ from PIL import Image as PIL_Image
 from transformers import MllamaForConditionalGeneration, MllamaProcessor
 from peft import PeftModel
 import gradio as gr
-from huggingface_hub import login
-
+from huggingface_hub import HfFolder
 # Initialize accelerator
 accelerator = Accelerator()
 device = accelerator.device
@@ -18,7 +17,6 @@ DEFAULT_MODEL = "meta-llama/Llama-3.2-11B-Vision-Instruct"
 MAX_OUTPUT_TOKENS = 2048
 MAX_IMAGE_SIZE = (1120, 1120)
 
-from huggingface_hub import HfFolder
 
 def get_hf_token():
     """Retrieve Hugging Face token from the cache or environment."""
