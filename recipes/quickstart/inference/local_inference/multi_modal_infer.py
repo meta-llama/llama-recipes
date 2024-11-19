@@ -7,6 +7,7 @@ from PIL import Image as PIL_Image
 from transformers import MllamaForConditionalGeneration, MllamaProcessor
 from peft import PeftModel
 import gradio as gr
+from huggingface_hub import login
 
 # Initialize accelerator
 accelerator = Accelerator()
@@ -17,9 +18,24 @@ DEFAULT_MODEL = "meta-llama/Llama-3.2-11B-Vision-Instruct"
 MAX_OUTPUT_TOKENS = 2048
 MAX_IMAGE_SIZE = (1120, 1120)
 
-def load_model_and_processor(model_name: str, hf_token: str = None, finetuning_path: str = None):
+def get_hf_token():
+    """Retrieve Hugging Face token from environment or local auth."""
+    token = os.getenv("HUGGINGFACE_TOKEN")
+    if token:
+        return token
+
+    # Check if the user is logged in via huggingface-cli
+    try:
+        login()  # Will use local authentication cache if available
+    except Exception as e:
+        print("Unable to authenticate with Hugging Face. Ensure you are logged in via `huggingface-cli login`.")
+        sys.exit(1)
+    return None
+
+def load_model_and_processor(model_name: str, finetuning_path: str = None):
     """Load model and processor with optional LoRA adapter"""
     print(f"Loading model: {model_name}")
+    hf_token = get_hf_token()
     model = MllamaForConditionalGeneration.from_pretrained(
         model_name,
         torch_dtype=torch.bfloat16,
@@ -60,7 +76,7 @@ def generate_text_from_image(model, processor, image, prompt_text: str, temperat
     output = model.generate(**inputs, temperature=temperature, top_p=top_p, max_new_tokens=MAX_OUTPUT_TOKENS)
     return processor.decode(output[0])[len(prompt):]
 
-def gradio_interface(model_name: str, hf_token: str):
+def gradio_interface(model_name: str):
     """Create Gradio UI with LoRA support"""
     # Initialize model state
     current_model = {"model": None, "processor": None}
@@ -68,7 +84,6 @@ def gradio_interface(model_name: str, hf_token: str):
     def load_or_reload_model(enable_lora: bool, lora_path: str = None):
         current_model["model"], current_model["processor"] = load_model_and_processor(
             model_name, 
-            hf_token,
             lora_path if enable_lora else None
         )
         return "Model loaded successfully" + (" with LoRA" if enable_lora else "")
@@ -159,12 +174,11 @@ def gradio_interface(model_name: str, hf_token: str):
 def main(args):
     """Main execution flow"""
     if args.gradio_ui:
-        demo = gradio_interface(args.model_name, args.hf_token)
+        demo = gradio_interface(args.model_name)
         demo.launch()
     else:
         model, processor = load_model_and_processor(
             args.model_name,
-            args.hf_token,
             args.finetuning_path
         )
         image = process_image(image_path=args.image_path)
@@ -183,7 +197,6 @@ if __name__ == "__main__":
     parser.add_argument("--temperature", type=float, default=0.7, help="Sampling temperature")
     parser.add_argument("--top_p", type=float, default=0.9, help="Top-p sampling")
     parser.add_argument("--model_name", type=str, default=DEFAULT_MODEL, help="Model name")
-    parser.add_argument("--hf_token", type=str, help="Hugging Face API token")
     parser.add_argument("--finetuning_path", type=str, help="Path to LoRA weights")
     parser.add_argument("--gradio_ui", action="store_true", help="Launch Gradio UI")
     
