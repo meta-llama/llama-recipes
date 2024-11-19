@@ -13,7 +13,7 @@
 ### Features in
 `multi_modal_infer.py`
 
-All functionality has been consolidated into a single file with three main modes:
+All functionality has been consolidated into a single file with three main modes, use `huggingface-cli login`:
 ### Steps to run are given below:
 1. **Basic Inference**
 ```bash
@@ -21,14 +21,12 @@ python multi_modal_infer.py \
     --image_path "path/to/image.jpg" \
     --prompt_text "Describe this image" \
     --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct" \
-    --hf_token "your_token"
 ```
 
 2. **Gradio UI Mode**
 ```bash
 python multi_modal_infer.py \
     --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct" \
-    --hf_token "your_token" \
     --gradio_ui
 ```
 
@@ -38,7 +36,6 @@ python multi_modal_infer.py \
     --image_path "path/to/image.jpg" \
     --prompt_text "Describe this image" \
     --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct" \
-    --hf_token "your_token" \
     --finetuning_path "path/to/lora/weights"
 ```
 
