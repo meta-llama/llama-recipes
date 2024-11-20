@@ -1,22 +1,10 @@
 # End to End Showcase using Llama models for Multi-Modal RAG 
 
-## Story Overview: Multi-Modal RAG using `Llama-3.2-11B` model: 
+## Recipe Overview: Multi-Modal RAG using `Llama-3.2-11B` model: 
 
 - **Data Labeling and Preparation:** We start by downloading 5000 images of clothing items and labeling them using `Llama-3.2-11B-Vision-Instruct` model
 - **Cleaning Labels:** With the labels based on the notebook above, we will then clean the dataset and prepare it for RAG
 - **Building Vector DB and RAG Pipeline:** With the final clean dataset, we can use descriptions and 11B model to generate recommendations
-
-## Resources used: 
-
-Credit and Thanks to List of models and resources used in the showcase:
-
-Firstly, thanks to the author here for providing this dataset on which we base our exercise []()
-
-- [Llama-3.2-11B-Vision-Instruct Model](https://www.llama.com/docs/how-to-guides/vision-capabilities/)
-- [Lance-db for vector database](https://lancedb.com)
-- [This Kaggle dataset]()
-- [HF Dataset](https://huggingface.co/datasets/Sanyam/MM-Demo) Since output of the model can be non-deterministic every time we run, we will use the uploaded dataset to give a universal experience
-- [Together API for demo](https://www.together.ai)
 
 ## Detailed Outline 
 
@@ -24,7 +12,7 @@ Here's the detailed outline:
 
 ### Step 1: Data Prep and Synthetic Labeling:
 
-The dataset consists of 5000 images with some classification.
+The dataset consists of 5000 images with some meta-data.
 
 The first half is preparing the dataset for labeling:
 - Clean/Remove corrupt images
@@ -71,3 +59,15 @@ Task: We can further improve the description prompt. You will notice sometimes t
 - 11B model describes the image
 - We retrieve complementary clothes to wear based on the description
 - You can keep the loop going by chatting with the model
+
+## Resources used: 
+
+Credit and Thanks to List of models and resources used in the showcase:
+
+Firstly, thanks to the author here for providing this dataset on which we base our exercise []()
+
+- [Llama-3.2-11B-Vision-Instruct Model](https://www.llama.com/docs/how-to-guides/vision-capabilities/)
+- [Lance-db for vector database](https://lancedb.com)
+- [This Kaggle dataset]()
+- [HF Dataset](https://huggingface.co/datasets/Sanyam/MM-Demo) Since output of the model can be non-deterministic every time we run, we will use the uploaded dataset to give a universal experience
+- [Together API for demo](https://www.together.ai)
