@@ -72,6 +72,17 @@ Now, we are ready to try our vector db pipeline:
 
 [Notebook for Step 3](./notebooks/Part_3_RAG_Setup_and_Validation.ipynb) and [Final Demo Script](./scripts/label_script.py)
 
+For running the script:
+```
+python final_demo.py \
+    --images_folder "../MM-Demo/compressed_images" \
+    --csv_path "../MM-Demo/final-captions.csv" \
+    --table_path "~/.lancedb" \
+    --api_key "your_together_api_key" \
+    --default_model "BAAI/bge-large-en-v1.5" \
+    --use_existing_table 
+```
+
 With the cleaned descriptions and dataset, we can now store these in a vector-db
 
 You will note that we are not using the categorization from our model-this is by design to show how RAG can simplify a lot of things. 
