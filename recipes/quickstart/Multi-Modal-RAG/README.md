@@ -89,7 +89,7 @@ For running the script:
 ```
 python scripts/final_demo.py \
     --images_folder "../MM-Demo/compressed_images" \
-    --csv_path "../MM-Demo/final-captions.csv" \
+    --csv_path "../MM-Demo/final_balanced_sample_dataset.csv" \
     --table_path "~/.lancedb" \
     --api_key "your_together_api_key" \
     --default_model "BAAI/bge-large-en-v1.5" \
