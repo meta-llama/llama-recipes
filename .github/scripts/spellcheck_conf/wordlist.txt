@@ -1505,3 +1505,4 @@ locallama
 myshell
 parler
 xTTS
+pydantic
