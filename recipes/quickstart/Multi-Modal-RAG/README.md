@@ -61,7 +61,7 @@ After running the script on the entire dataset, we have more data cleaning to pe
 
 [Notebook for Step 2](./notebooks/Part_2_Cleaning_Data_and_DB.ipynb)
 
-Even after our lengthy (apart from other things) prompt, the model still hallucinates categories and label-we need to address this
+Even after our lengthy (apart from other things) prompt, the model still hallucinates categories and label, here is how we address this
 
 - Re-balance the dataset by mapping correct categories
 - Fix Descriptions so that we can create a CSV
