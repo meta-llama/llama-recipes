@@ -3,25 +3,42 @@
 ## Hugging face setup
 **Important Note**: Before running the inference, you'll need your Hugging Face access token, which you can get at your Settings page [here](https://huggingface.co/settings/tokens). Then run `huggingface-cli login` and copy and paste your Hugging Face access token to complete the login to make sure the scripts can download Hugging Face models if needed.
 
-## Multimodal Inference
-For Multi-Modal inference we have added [multi_modal_infer.py](multi_modal_infer.py) which uses the transformers library.
+## Multimodal Inference and CLI inference with or without PEFT LoRA weights
 
-The way to run this would be:
-```
-python multi_modal_infer.py --image_path PATH_TO_IMAGE --prompt_text "Describe this image" --temperature 0.5 --top_p 0.8 --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct"
-```
----
-## Multi-modal Inferencing Using gradio UI for inferencing
-For multi-modal inferencing using gradio UI we have added [multi_modal_infer_gradio_UI.py](multi_modal_infer_gradio_UI.py) which used gradio and transformers library.
+### Model Overview
+- Base model: `meta-llama/Llama-3.2-11B-Vision-Instruct`
+- Uses PEFT library (v0.13.1) for efficient fine-tuning
+- Supports vision-language tasks with instruction capabilities
 
-### Steps to Run
+### Features in
+`multi_modal_infer.py`
 
-The way to run this would be:
-- Ensure having proper access to llama 3.2 vision models, then run the command given below
+All functionality has been consolidated into a single file with three main modes, use `huggingface-cli login`:
+### Steps to run are given below:
+1. **Basic Inference**
+```bash
+python multi_modal_infer.py \
+    --image_path "path/to/image.jpg" \
+    --prompt_text "Describe this image" \
+    --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct" \
+```
 
+2. **Gradio UI Mode**
+```bash
+python multi_modal_infer.py \
+    --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct" \
+    --gradio_ui
 ```
-python multi_modal_infer_gradio_UI.py --hf_token <your hf_token here>
+
+3. **LoRA Fine-tuning Integration**
+```bash
+python multi_modal_infer.py \
+    --image_path "path/to/image.jpg" \
+    --prompt_text "Describe this image" \
+    --model_name "meta-llama/Llama-3.2-11B-Vision-Instruct" \
+    --finetuning_path "path/to/lora/weights"
 ```
+
 
 ## Text-only Inference
 For local inference we have provided an [inference script](inference.py). Depending on the type of finetuning performed during training the [inference script](inference.py) takes different arguments.
