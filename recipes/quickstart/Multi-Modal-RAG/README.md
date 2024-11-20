@@ -50,7 +50,7 @@ The first half is preparing the dataset for labeling:
 - Merging up categories of clothes to reduce complexity 
 - Balancing dataset by randomly sampling images
 
-Second Half consists of Labeling the dataset. We are bound by an interesting constraint here, 11B model can only caption one image at a time:
+Second Half consists of Labeling the dataset. Llama 3.2, 11B model can only process one image at a time:
 - We load a few images and test captioning
 - We run this pipeline on random images and iterate on the prompt till we feel the model is giving good outputs
 - Finally, we can create a script to label all 5000 images on multi-GPU
