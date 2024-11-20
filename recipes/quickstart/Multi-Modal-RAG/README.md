@@ -72,16 +72,6 @@ Now, we are ready to try our vector db pipeline:
 
 [Notebook for Step 3](./notebooks/Part_3_RAG_Setup_and_Validation.ipynb) and [Final Demo Script](./scripts/label_script.py)
 
-For running the script:
-```
-python final_demo.py \
-    --images_folder "../MM-Demo/compressed_images" \
-    --csv_path "../MM-Demo/final-captions.csv" \
-    --table_path "~/.lancedb" \
-    --api_key "your_together_api_key" \
-    --default_model "BAAI/bge-large-en-v1.5" \
-    --use_existing_table 
-```
 
 With the cleaned descriptions and dataset, we can now store these in a vector-db
 
@@ -93,10 +83,18 @@ You will note that we are not using the categorization from our model-this is by
 
 We try the approach with different retrieval methods.
 
-
-### Step 4: Gradio App using Together API for Llama-3.2-11B and Lance-db for RAG
-
 Finally, we can bring this all together in a Gradio App. 
+
+For running the script:
+```
+python scripts/final_demo.py \
+    --images_folder "../MM-Demo/compressed_images" \
+    --csv_path "../MM-Demo/final-captions.csv" \
+    --table_path "~/.lancedb" \
+    --api_key "your_together_api_key" \
+    --default_model "BAAI/bge-large-en-v1.5" \
+    --use_existing_table 
+```
 
 Task: We can further improve the description prompt. You will notice sometimes the description starts with the title of the cloth which causes in retrieval of "similar" clothes instead of "complementary" items
 
