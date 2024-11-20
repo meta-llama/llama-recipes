@@ -13,10 +13,8 @@ This is a complete workshop on labelling images using the new Llama 3.2-Vision M
 Before we start:
 
 1. Please grab your HF CLI Token from [here](https://huggingface.co/settings/tokens)
-2. git clone [this dataset](https://huggingface.co/datasets/Sanyam/MM-Demo) inside the Multi-Modal-RAG folder: `git clone https://huggingface.co/datasets/Sanyam/MM-Demo`
-3. Launch jupyter notebook inside this folder
-4. We will also run two scripts after the notebooks
-5. Make sure you grab a together.ai token [here](https://www.together.ai)
+2. Git clone [this dataset](https://huggingface.co/datasets/Sanyam/MM-Demo) inside the Multi-Modal-RAG folder: `git clone https://huggingface.co/datasets/Sanyam/MM-Demo`
+3. Make sure you grab a together.ai token [here](https://www.together.ai)
 
 ## Detailed Outline for running:
 
@@ -32,6 +30,8 @@ Here's the detailed outline:
 
 ### Step 1: Data Prep and Synthetic Labeling:
 
+In this step we start with an unlabelled dataset and use the image captioning capability of the model to write a description of the image and categorise it.
+
 [Notebook for Step 1](./notebooks/Part_1_Data_Preperation.ipynb) and [Script for Step 1](./scripts/label_script.py)
 
 To run the script (remember to set n):
@@ -46,9 +46,9 @@ The dataset consists of 5000 images with some meta-data.
 
 The first half is preparing the dataset for labeling:
 - Clean/Remove corrupt images
-- EDA to understand existing distribution
+- Some exploratory analysis to understand existing distribution
 - Merging up categories of clothes to reduce complexity 
-- Balancing dataset by randomly sampling images
+- Balancing dataset by randomly sampling images to have an equal distribution for retrieval
 
 Second Half consists of Labeling the dataset. Llama 3.2, 11B model can only process one image at a time:
 - We load a few images and test captioning
@@ -61,9 +61,9 @@ After running the script on the entire dataset, we have more data cleaning to pe
 
 [Notebook for Step 2](./notebooks/Part_2_Cleaning_Data_and_DB.ipynb)
 
-Even after our lengthy (apart from other things) prompt, the model still hallucinates categories and label, here is how we address this
+We notice that even after some fun prompt engineering, the model faces some hallucinations-there are some issues with the JSON formatting and we notice that it hallucinates the label categories. Here is how we address this:
 
-- Re-balance the dataset by mapping correct categories
+- Re-balance the dataset by mapping correct categories. This is useful to make sure we have an equal distribution in our dataset for retrieval
 - Fix Descriptions so that we can create a CSV
 
 Now, we are ready to try our vector db pipeline:
@@ -73,13 +73,13 @@ Now, we are ready to try our vector db pipeline:
 [Notebook for Step 3](./notebooks/Part_3_RAG_Setup_and_Validation.ipynb) and [Final Demo Script](./scripts/label_script.py)
 
 
-With the cleaned descriptions and dataset, we can now store these in a vector-db
+With the cleaned descriptions and dataset, we can now store these in a vector-db, here's the steps:
 
-You will note that we are not using the categorization from our model-this is by design to show how RAG can simplify a lot of things. 
 
 - We create embeddings using the text description of our clothes
 - Use 11-B model to describe the uploaded image
-- Try to find similar or complimentary images based on the upload
+- Ask the model to suggest complementary items to the upload
+- Try to find similar or complementary images based on the upload
 
 We try the approach with different retrieval methods.
 
@@ -96,7 +96,7 @@ python scripts/final_demo.py \
     --use_existing_table 
 ```
 
-Task: We can further improve the description prompt. You will notice sometimes the description starts with the title of the cloth which causes in retrieval of "similar" clothes instead of "complementary" items
+Note: We can further improve the description prompt. You will notice sometimes the description starts with the title of the cloth which causes in retrieval of "similar" clothes instead of "complementary" items
 
 - Upload an image
 - 11B model describes the image
