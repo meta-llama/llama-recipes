@@ -34,12 +34,12 @@ Here's the detailed outline:
 
 [Notebook for Step 1](./notebooks/Part_1_Data_Preperation.ipynb) and [Script for Step 1](./scripts/label_script.py)
 
-To run the script: 
+To run the script (remember to set n):
 ```
-python scripts/caption_generator.py --hf_token "your_huggingface_token_here" \
-    --input_path "../images" \
-    --output_path "/path/to/output/folder" \
-    --num_gpus 2
+python scripts/label_script.py --hf_token "your_huggingface_token_here" \
+    --input_path "../MM-Demo/images_compressed" \
+    --output_path "../MM-Demo/output/" \
+    --num_gpus N
 ```
 
 The dataset consists of 5000 images with some meta-data.
