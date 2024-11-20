@@ -17,7 +17,7 @@ Here are our insights about the differences in terms of the eval configurations 
 - **Metric calculation**: For MMLU-Pro, BBH, GPQA tasks, we ask the model to generate response and score the parsed answer from generated response, while Hugging Face leaderboard evaluation is comparing log likelihood of all label words, such as [ (A),(B),(C),(D) ].
 - **Parsers**: For generative tasks, where the final answer needs to be parsed before scoring, the parser functions can be different between ours and Hugging Face leaderboard evaluation, as our prompts that define the model output format are designed differently.
 - **Inference**: We use an internal LLM inference solution that does not apply padding, while Hugging Face leaderboard uses padding on the generative tasks (MATH and IFEVAL).
-- **Tasks**  We run benchmarks on BBH and MMLU-Pro only for pretrained models and Math-Hard, IFeval, GPQA, only for pretrained models.
+- **Tasks**  We run benchmarks on BBH and MMLU-Pro only for pretrained models and Math-Hard, IFeval, GPQA, only for instruct models.
 
 Given those differences, the numbers from this recipe can not be compared to the numbers in the Hugging Face [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard), even if the task names are the same.
 
