@@ -1,6 +1,6 @@
 # Building LLM apps using Llama on Together AI
 
-This folder contains demos on how to use Llama on [Together.ai](https://www.together.ai/) to quickly build LLM apps.
+This folder contains demos on how to use Llama on [Together AI](https://www.together.ai/) to quickly build LLM apps.
 
  ## Prerequisites
 
