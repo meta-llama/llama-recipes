@@ -134,18 +134,26 @@ def change_yaml(args, base_name):
                         "WORK_DIR", str(yaml_dir)
                     )
                 )
-    # 3.2 evals dataset has a differents set of evals
+    # 3.2 evals dataset has a differents set of evals from 3.1
+    # so update the tasks in the meta_pretrain.yaml file (3.2 for meta_instruct.yaml not supported yet)
+    with open(args.template_dir + "/meta_pretrain.yaml", "r") as yaml_file:
+        meta_pretrain = yaml.safe_load(yaml_file)
+
     if args.evals_dataset in [
         "meta-llama/Llama-3.2-1B-evals",
         "meta-llama/Llama-3.2-3B-evals",
     ]:
-        # Change meta_pretrain.yaml to load in supported evals
-        with open(args.template_dir + "/meta_pretrain.yaml", "r") as yaml_file:
-            meta_pretrain = yaml.safe_load(yaml_file)
-            meta_pretrain["task"] = ["meta_mmlu"]
-        
-        with open(args.work_dir + "/meta_pretrain.yaml", "w") as yaml_file:
-            yaml.dump(meta_pretrain, yaml_file)
+        meta_pretrain["task"] = ["meta_mmlu"]
+    elif args.evals_dataset in [
+        "meta-llama/Llama-3.1-8B-evals",
+        "meta-llama/Llama-3.1-70B-evals",
+        "meta-llama/Llama-3.1-405B-evals",
+    ]:
+        meta_pretrain["task"] = ["meta_bbh", "meta_mmlu_pro_pretrain"]
+
+    with open(args.work_dir + "/meta_pretrain.yaml", "w") as yaml_file:
+        yaml.dump(meta_pretrain, yaml_file)
+
 
 
 
