@@ -135,7 +135,7 @@ def change_yaml(args, base_name):
                     )
                 )
     # 3.2 evals dataset has a differents set of evals from 3.1
-    # so update the tasks in the meta_pretrain.yaml file (3.2 for meta_instruct.yaml not supported yet)
+    # so update tasks in meta_pretrain.yaml (3.2 for meta_instruct.yaml not supported yet)
     with open(args.template_dir + "/meta_pretrain.yaml", "r") as yaml_file:
         meta_pretrain = yaml.safe_load(yaml_file)
 
