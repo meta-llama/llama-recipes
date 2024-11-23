@@ -1,0 +1,14 @@
+task: meta_mmlu
+dataset_path: meta-llama/Llama-3.1-8B-evals
+dataset_name: Llama-3.1-8B-evals__mmlu__details
+test_split: latest
+output_type: multiple_choice
+process_docs: !function utils.process_docs
+doc_to_text: !function utils.doc_to_text
+doc_to_target: !function utils.doc_to_target
+doc_to_choice: ["A", "B", "C", "D"]
+# 5-shot prompts are already included in the dataset
+# So no need to generate
+num_fewshot: 0
+metadata:
+  version: 1.0

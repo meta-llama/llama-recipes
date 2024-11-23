@@ -134,6 +134,19 @@ def change_yaml(args, base_name):
                         "WORK_DIR", str(yaml_dir)
                     )
                 )
+    # 3.2 evals dataset has a differents set of evals
+    if args.evals_dataset in [
+        "meta-llama/Llama-3.2-1B-evals",
+        "meta-llama/Llama-3.2-3B-evals",
+    ]:
+        # Change meta_pretrain.yaml to load in supported evals
+        with open(args.template_dir + "/meta_pretrain.yaml", "r") as yaml_file:
+            meta_pretrain = yaml.safe_load(yaml_file)
+            meta_pretrain["task"] = ["meta_mmlu"]
+        
+        with open(args.work_dir + "/meta_pretrain.yaml", "w") as yaml_file:
+            yaml.dump(meta_pretrain, yaml_file)
+
 
 
 # copy the files and change the yaml file to use the correct model name
@@ -214,9 +227,11 @@ if __name__ == "__main__":
         "meta-llama/Llama-3.1-8B-evals",
         "meta-llama/Llama-3.1-70B-evals",
         "meta-llama/Llama-3.1-405B-evals",
+        "meta-llama/Llama-3.2-1B-evals",
+        "meta-llama/Llama-3.2-3B-evals",
     ]:
         raise ValueError(
-            "The evals dataset is not valid, please double check the name, must use the name in the Llama 3.1 Evals collection"
+            "The evals dataset is not valid, please double check the name, must use the name in the Llama 3.1 or 3.2 Evals collection. Note that 3.2-Instruct evals are not yet supported."
         )
     args.model_args = f"pretrained={args.model_name},tensor_parallel_size={args.tensor_parallel_size},dtype=auto,gpu_memory_utilization={args.gpu_memory_utilization},data_parallel_size={args.data_parallel_size},max_model_len={args.max_model_len},add_bos_token=True,seed=42"
     # Copy the all files from template folder to the work folder
