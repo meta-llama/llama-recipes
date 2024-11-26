@@ -1,18 +1,20 @@
 model_name: "meta-llama/Llama-3.1-8B-Instruct" # The name of the model to evaluate. This must be a valid Meta Llama 3 based model name in the HuggingFace model hub."
 
-evals_dataset: "meta-llama/Llama-3.1-8B-Instruct-evals" # The name of the 3.1 evals dataset to evaluate, please make sure this eval dataset corresponds to the model loaded. This must be a valid Meta Llama 3.1 evals dataset name in the Llama 3.1 Evals collection.
-# Must be one of the following ["meta-llama/Llama-3.1-8B-Instruct-evals","meta-llama/Llama-3.1-70B-Instruct-evals","meta-llama/Llama-3.1-405B-Instruct-evals","meta-llama/Llama-3.1-8B-evals","meta-llama/Llama-3.1-70B-evals","meta-llama/Llama-3.1-405B-evals"]
+evals_dataset: "meta-llama/Llama-3.1-8B-Instruct-evals" # The name of the 3.1 evals dataset to evaluate, please make sure this eval dataset corresponds to the model loaded. This must be a valid dataset name in the Llama 3.x Evals collection.
+# Must be one of the following ["meta-llama/Llama-3.1-8B-Instruct-evals","meta-llama/Llama-3.1-70B-Instruct-evals","meta-llama/Llama-3.1-405B-Instruct-evals","meta-llama/Llama-3.1-8B-evals","meta-llama/Llama-3.1-70B-evals","meta-llama/Llama-3.1-405B-evals","meta-llama/Llama-3.2-1B-evals","meta-llama/Llama-3.2-3B-evals", "meta-llama/Llama-3.2-1B-Instruct-evals", "meta-llama/Llama-3.2-3B-Instruct-evals"]
 
-tasks: "meta_instruct" # Available tasks for instruct model: "meta_math_hard", "meta_gpqa", "meta_mmlu_pro_instruct", "meta_ifeval"; or just use "meta_instruct" to run all of them.
-# Available tasks for pretrain model: "meta_bbh", "meta_mmlu_pro_pretrain"; or just use "meta_pretrain" to run all of them.
+tasks: "meta_instruct" # Available tasks for 3.1 instruct model: "meta_math_hard", "meta_gpqa_cot", "meta_mmlu_pro_instruct", "meta_ifeval"; or just use "meta_instruct" to run all of them.
+# Available tasks for 3.1 pretrain model: "meta_bbh", "meta_mmlu_pro_pretrain"; or just use "meta_pretrain" to run all of them.
+# Available tasks for 3.2 instruct model: "meta_mmlu", "meta_math", "meta_gpqa"; or just use "meta_instruct" to run all of them.
+# Available tasks for 3.2 pretrain model: "meta_mmlu"; or just use "meta_pretrain" to run all of them
 
-tensor_parallel_size: 1 # The VLLM argument that speicify the tensor parallel size for the model, eg how many GPUs to use for a model copy.
+tensor_parallel_size: 1 # The VLLM argument that specify the tensor parallel size for the model, eg how many GPUs to use for a model copy.
 
-data_parallel_size: 4 # The VLLM argument that speicify the data parallel size for the model, eg how copies of model will be used.
+data_parallel_size: 4 # The VLLM argument that specify the data parallel size for the model, eg how copies of model will be used.
 
-gpu_memory_utilization: 0.9 #The VLLM argument that speicify gpu memory utilization, the rest will be reserved for KV cache.
+gpu_memory_utilization: 0.9 #The VLLM argument that specify gpu memory utilization, the rest will be reserved for KV cache.
 
-max_model_len: 8192 #The VLLM argument that speicify model max length, decrease this value only if GPU memory issue encountered. Please make sure the max_gen_toks in the yaml does not exceed this length.
+max_model_len: 8192 #The VLLM argument that specify model max length, decrease this value only if GPU memory issue encountered. Please make sure the max_gen_toks in the yaml does not exceed this length.
 
 batch_size: "auto" # Batch size, can be 'auto', 'auto:N', or an integer. It is strongly recommend to use 'auto' for vllm to speed up the inference
 

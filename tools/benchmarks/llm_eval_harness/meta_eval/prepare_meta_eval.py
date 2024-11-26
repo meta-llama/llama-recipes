@@ -11,6 +11,24 @@ import nltk
 import yaml
 from datasets import Dataset, load_dataset
 
+LLAMA_3_1_INSTRUCT_EVALS=[
+    "meta-llama/Llama-3.1-8B-Instruct-evals",
+    "meta-llama/Llama-3.1-70B-Instruct-evals",
+    "meta-llama/Llama-3.1-405B-Instruct-evals",
+]
+LLAMA_3_1_PRETRAIN_EVALS=[
+    "meta-llama/Llama-3.1-8B-evals",
+    "meta-llama/Llama-3.1-70B-evals",
+    "meta-llama/Llama-3.1-405B-evals",
+]
+LLAMA_3_2_INSTRUCT_EVALS=[
+    "meta-llama/Llama-3.2-1B-Instruct-evals",
+    "meta-llama/Llama-3.2-3B-Instruct-evals",
+]
+LLAMA_3_2_PRETRAIN_EVALS=[
+    "meta-llama/Llama-3.2-1B-evals",
+    "meta-llama/Llama-3.2-3B-evals",
+]
 
 # get the ifeval  from the evals dataset and join it with the original ifeval datasets
 def get_ifeval_data(model_name, output_dir):
@@ -56,8 +74,8 @@ def get_ifeval_data(model_name, output_dir):
 
 
 # get the math_hard data from the evals dataset and join it with the original math_hard dataset
-def get_math_data(model_name, output_dir):
-    print(f"preparing the math data using {model_name}'s evals dataset")
+def get_math_hard_data(model_name, output_dir):
+    print(f"preparing the math hard data using {model_name}'s evals dataset")
     if model_name not in [
         "Llama-3.1-8B-Instruct",
         "Llama-3.1-70B-Instruct",
@@ -74,6 +92,30 @@ def get_math_data(model_name, output_dir):
         split="latest",
     )
     math_data = load_dataset(original_dataset_name, split="test")
+    joined = join_meta_and_original_math_data(meta_data, math_data)
+    joined.to_parquet(output_dir + "/joined_math_hard.parquet")
+
+def get_math_data(model_name, output_dir):
+    print(f"preparing the math data using {model_name}'s evals dataset")
+    if model_name not in [
+        "Llama-3.2-1B-Instruct",
+        "Llama-3.2-3B-Instruct",
+    ]:
+        raise ValueError(
+            "Only Llama-3.2-1B-Instruct and Llama-3.2-3B-Instruct models are supported for MATH"
+        )
+    original_dataset_name = "lighteval/MATH"
+    meta_dataset_name = f"meta-llama/{model_name}-evals"
+    meta_data = load_dataset(
+        meta_dataset_name,
+        name=f"{model_name}-evals__math__details",
+        split="latest",
+    )
+    math_data = load_dataset(original_dataset_name, split="test")
+    joined = join_meta_and_original_math_data(meta_data, math_data)
+    joined.to_parquet(output_dir + "/joined_math.parquet")
+
+def join_meta_and_original_math_data(meta_data, math_data):
     meta_df = meta_data.to_pandas()
     math_df = math_data.to_pandas()
     math_df = math_df.rename(columns={"problem": "input_question"})
@@ -94,9 +136,7 @@ def get_math_data(model_name, output_dir):
     joined = joined.rename_column(
         "output_prediction_text", "previous_output_prediction_text"
     )
-
-    joined.to_parquet(output_dir + "/joined_math.parquet")
-
+    return joined
 
 # get the question from the ifeval dataset
 def get_question(example):
@@ -134,18 +174,33 @@ def change_yaml(args, base_name):
                         "WORK_DIR", str(yaml_dir)
                     )
                 )
+    # 3.2 evals dataset has a differents set of tasks from 3.1
+    # Update tasks in meta_pretrain.yaml
+    with open(args.template_dir + "/meta_pretrain.yaml", "r") as yaml_file:
+        meta_pretrain = yaml.safe_load(yaml_file)
+    if args.evals_dataset in LLAMA_3_1_PRETRAIN_EVALS:
+        meta_pretrain["task"] = ["meta_bbh", "meta_mmlu_pro_pretrain"]
+    elif args.evals_dataset in LLAMA_3_2_PRETRAIN_EVALS:
+        meta_pretrain["task"] = ["meta_mmlu"]
+    with open(args.work_dir + "/meta_pretrain.yaml", "w") as yaml_file:
+        yaml.dump(meta_pretrain, yaml_file)
+    
+    # Update tasks in meta_instruct.yaml
+    with open(args.template_dir + "/meta_instruct.yaml", "r") as yaml_file:
+        meta_instruct = yaml.safe_load(yaml_file)
+    if args.evals_dataset in LLAMA_3_1_INSTRUCT_EVALS:
+        meta_instruct["task"] = ["meta_ifeval", "meta_math_hard", "meta_gpqa_cot", "meta_mmlu_pro_instruct"]
+    elif args.evals_dataset in LLAMA_3_2_INSTRUCT_EVALS:
+        meta_instruct["task"] = ["meta_mmlu", "meta_math", "meta_gpqa"]
+    with open(args.work_dir + "/meta_instruct.yaml", "w") as yaml_file:
+        yaml.dump(meta_instruct, yaml_file)
 
 
 # copy the files and change the yaml file to use the correct model name
 def copy_and_prepare(args):
     # nltk punkt_tab package is needed
     nltk.download('punkt_tab')
-    if not os.path.exists(args.work_dir):
-        # Copy the all files, including yaml files and python files, from template folder to the work folder
-
-        copy_dir(args.template_dir, args.work_dir)
-    else:
-        print("work_dir already exists, no need to copy files")
+    copy_dir(args.template_dir, args.work_dir)
     # Use the template yaml to get the correct model name in work_dir yaml
     base_name = (
         args.evals_dataset.split("/")[-1].replace("-evals", "").replace("-Instruct", "")
@@ -169,21 +224,22 @@ def prepare_datasets(args):
     # model_name are derived from the evals_dataset name
     task_list = args.tasks.split(",")
     model_name = args.evals_dataset.split("/")[-1].replace("-evals", "")
-    if "meta_instruct" in task_list:
+    if "meta_instruct" in task_list and args.evals_dataset in LLAMA_3_1_INSTRUCT_EVALS:
         get_ifeval_data(model_name, args.work_dir)
-
+        get_math_hard_data(model_name, args.work_dir)
+    elif "meta_instruct" in task_list and args.evals_dataset in LLAMA_3_2_INSTRUCT_EVALS:
         get_math_data(model_name, args.work_dir)
     else:
         if "meta_ifeval" in task_list:
             get_ifeval_data(model_name, args.work_dir)
         if "meta_math_hard" in task_list:
-            get_math_data(model_name, args.work_dir)
+            get_math_hard_data(model_name, args.work_dir)
 
 
 # copy the files from src to dst
 def copy_dir(src, dst):
     try:
-        shutil.copytree(src, dst)
+        shutil.copytree(src, dst, dirs_exist_ok=True)
     except OSError as exc:  # python >2.5
         if exc.errno in (errno.ENOTDIR, errno.EINVAL):
             shutil.copy(src, dst)
@@ -207,16 +263,14 @@ if __name__ == "__main__":
         args.__setattr__(k, v)
     if not os.path.exists(args.template_dir):
         raise ValueError("The template_dir does not exist, please check the path")
-    if args.evals_dataset not in [
-        "meta-llama/Llama-3.1-8B-Instruct-evals",
-        "meta-llama/Llama-3.1-70B-Instruct-evals",
-        "meta-llama/Llama-3.1-405B-Instruct-evals",
-        "meta-llama/Llama-3.1-8B-evals",
-        "meta-llama/Llama-3.1-70B-evals",
-        "meta-llama/Llama-3.1-405B-evals",
-    ]:
+    if args.evals_dataset not in (
+        LLAMA_3_1_INSTRUCT_EVALS +
+        LLAMA_3_1_PRETRAIN_EVALS +
+        LLAMA_3_2_INSTRUCT_EVALS +
+        LLAMA_3_2_PRETRAIN_EVALS
+    ):
         raise ValueError(
-            "The evals dataset is not valid, please double check the name, must use the name in the Llama 3.1 Evals collection"
+            "The evals dataset is not valid, please double check the name, must use the name in the Llama 3.1 or 3.2 Evals collection."
         )
     args.model_args = f"pretrained={args.model_name},tensor_parallel_size={args.tensor_parallel_size},dtype=auto,gpu_memory_utilization={args.gpu_memory_utilization},data_parallel_size={args.data_parallel_size},max_model_len={args.max_model_len},add_bos_token=True,seed=42"
     # Copy the all files from template folder to the work folder

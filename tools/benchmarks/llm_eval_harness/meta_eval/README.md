@@ -1,10 +1,9 @@
 
-# Calculating Meta 3.1 Evaluation Metrics Using LM-Evaluation-Harness
+# Calculating Meta 3.x Evaluation Metrics Using LM-Evaluation-Harness
 
-As Llama models gain popularity, evaluating these models has become increasingly important. We have released all the evaluation details for Llama 3.1 models as datasets in the [3.1 evals Hugging Face collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f). This recipe demonstrates how to calculate the Llama 3.1 reported benchmark numbers using the [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/main) library and our prompts from the 3.1 evals datasets on selected tasks.
+As Llama models gain popularity, evaluating these models has become increasingly important. We have released all the evaluation details for Llama 3.x models on Hugging Face as datasets in the [3.1 evals collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f) and the [3.2 evals collection](https://huggingface.co/collections/meta-llama/llama-32-evals-66f44b3d2df1c7b136d821f0). This recipe demonstrates how to calculate the Llama 3.x reported benchmark numbers using the [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/main) library and our prompts from the 3.x evals datasets on selected tasks.
 
 ## Disclaimer
-
 
 1. **This recipe is not the official implementation** of Llama evaluation. Since our internal eval repo isn't public, we want to provide this recipe as an aid for anyone who wants to use the datasets we released. It is based on public third-party libraries, as this implementation is not mirroring Llama evaluation, therefore this may lead to minor differences in the produced numbers.
 2. **Model Compatibility**: This tutorial is specifically for Llama 3 based models, as our prompts include Llama 3 special tokens, e.g. `<|start_header_id|>user<|end_header_id|>`. It will not work with models that are not based on Llama 3.
@@ -38,14 +37,20 @@ To access our [3.1 evals Hugging Face collection](https://huggingface.co/collect
 - Log in to the Hugging Face website and click the 3.1 evals dataset pages and agree to the terms.
 - Follow the [Hugging Face authentication instructions](https://huggingface.co/docs/huggingface_hub/en/quick-start#authentication) to gain read access for your machine.
 
+The same process can be followed to access the [3.2 evals Hugging Face collection](https://huggingface.co/collections/meta-llama/llama-32-evals-66f44b3d2df1c7b136d821f0)
+
 It is recommended to read the dataset card to understand the meaning of each column and use the viewer feature in the Hugging Face dataset to view our dataset. It is important to have some basic understanding of our dataset format and content before proceeding.
 
 ### Task Selection
 
-Given the extensive number of tasks available (12 for pretrained models and 30 for instruct models), here we will focus on tasks that overlap with the popular Hugging Face [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard) as shown in the following:
+Given the extensive number of tasks available (12 for pretrained models and 30 for instruct models), a subset of tasks are chosen:
 
-- **Tasks for pretrained models**: BBH and MMLU-Pro
-- **Tasks for instruct models**: Math-Hard, IFeval, GPQA, and MMLU-Pro
+- **Tasks for 3.1 pretrained models**: BBH and MMLU-Pro
+- **Tasks for 3.1 instruct models**: Math-Hard, IFeval, GPQA, and MMLU-Pro
+- **Tasks for 3.2 pretrained models**: MMLU
+- **Tasks for 3.2 instruct models**: MMLU, GPQA
+
+These tasks are common evalutions, many of which overlap with the Hugging Face [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard)
 
 Here, we aim to get the benchmark numbers on the aforementioned tasks using Hugging Face [leaderboard implementation](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard). Please follow the instructions below to make necessary modifications to use our eval prompts and get more eval metrics.
 
@@ -58,14 +63,16 @@ Here, we aim to get the benchmark numbers on the aforementioned tasks using Hugg
 model_name: "meta-llama/Llama-3.1-8B-Instruct" # The name of the model to evaluate. This must be a valid Llama 3 based model name in the HuggingFace model hub."
 
 evals_dataset: "meta-llama/Llama-3.1-8B-Instruct-evals" # The name of the 3.1 evals dataset to evaluate, please make sure this eval dataset corresponds to the model loaded. This must be a valid Llama 3.1 evals dataset name in the Llama 3.1 Evals collection.
-# Must be one of the following ["meta-llama/Llama-3.1-8B-Instruct-evals","meta-llama/Llama-3.1-70B-Instruct-evals","meta-llama/Llama-3.1-405B-Instruct-evals","meta-llama/Llama-3.1-8B-evals","meta-llama/Llama-3.1-70B-evals","meta-llama/Llama-3.1-405B-evals"]
+# Must be one of the following ["meta-llama/Llama-3.1-8B-Instruct-evals","meta-llama/Llama-3.1-70B-Instruct-evals","meta-llama/Llama-3.1-405B-Instruct-evals","meta-llama/Llama-3.1-8B-evals","meta-llama/Llama-3.1-70B-evals","meta-llama/Llama-3.1-405B-evals","meta-llama/Llama-3.2-1B-evals","meta-llama/Llama-3.2-3B-evals", "meta-llama/Llama-3.2-1B-Instruct-evals", "meta-llama/Llama-3.2-3B-Instruct-evals"]
 
-tasks: "meta_instruct" # Available tasks for instruct model: "meta_math_hard", "meta_gpqa", "meta_mmlu_pro_instruct", "meta_ifeval"; or just use "meta_instruct" to run all of them.
-# Available tasks for pretrain model: "meta_bbh", "meta_mmlu_pro_pretrain"; or just use "meta_pretrain" to run all of them.
+tasks: "meta_instruct" # Available tasks for 3.1 instruct model: "meta_math_hard", "meta_gpqa_cot", "meta_mmlu_pro_instruct", "meta_ifeval"; or just use "meta_instruct" to run all of them.
+# Available tasks for 3.1 pretrain model: "meta_bbh", "meta_mmlu_pro_pretrain"; or just use "meta_pretrain" to run all of them.
+# Available tasks for 3.2 instruct model: "meta_mmlu", "meta_math", "meta_gpqa"; or just use "meta_instruct" to run all of them.
+# Available tasks for 3.2 pretrain model: "meta_mmlu"; or just use "meta_pretrain" to run all of them
 
-tensor_parallel_size: 1 # The VLLM argument that speicify the tensor parallel size for the model, eg how many GPUs to use for a model copy.
+tensor_parallel_size: 1 # The VLLM argument that specify the tensor parallel size for the model, eg how many GPUs to use for a model copy.
 
-data_parallel_size: 4 # The VLLM argument that speicify the data parallel size for the model, eg how copies of model will be used.
+data_parallel_size: 4 # The VLLM argument that specify the data parallel size for the model, eg how copies of model will be used.
 
 ...
 

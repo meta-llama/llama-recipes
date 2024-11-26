@@ -1,6 +1,6 @@
 dataset_path: meta-llama/Llama-3.1-8B-Instruct-evals
 dataset_name: Llama-3.1-8B-Instruct-evals__gpqa__details
-task: meta_gpqa_cot
+task: meta_gpqa
 output_type: generate_until
 process_docs: !function utils.process_docs
 test_split: latest
@@ -11,7 +11,7 @@ filter_list:
     filter:
       - function: "regex"
         group_select: -1
-        regex_pattern: 'best answer is ([A-Z])'
+        regex_pattern: ' ([A-Z])'
       - function: "take_first"
 generation_kwargs:
   until: []
