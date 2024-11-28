@@ -33,7 +33,7 @@ def tokenize_dialog(dialog, tokenizer):
                 # found prompt header, indicating that this seq should be masked
                 labels[last_idx:idx+1] = [-100] * (idx-last_idx+1)
             else:
-                last_idx = idx
+                last_idx = idx + 1
         # Lastly mask all the assistant header prompt <|start_header_id|>assistant<|end_header_id|>, which has been tokenized to [128006, 78191, 128007]
         assistant_header_seq = [128006, 78191, 128007]
         labels = replace_target(assistant_header_seq,labels)
