@@ -37,6 +37,7 @@ def main(
     enable_saleforce_content_safety: bool=True, # Enable safety check woth Saleforce safety flan t5
     use_fast_kernels: bool = False, # Enable using SDPA from PyTorch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
     enable_llamaguard_content_safety: bool = False,
+    enable_promptguard_safety: bool = False,
     **kwargs
 ):
     if prompt_file is not None:
@@ -81,6 +82,7 @@ def main(
                                         enable_sensitive_topics,
                                         enable_saleforce_content_safety,
                                         enable_llamaguard_content_safety,
+                                        enable_promptguard_safety
                                         )
             # Safety check of the user prompt
             safety_results = [check(dialogs[idx][0]["content"]) for check in safety_checker]

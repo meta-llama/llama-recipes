@@ -35,6 +35,7 @@ def main(
     enable_sensitive_topics: bool = False,  # Enable check for sensitive topics using AuditNLG APIs
     enable_salesforce_content_safety: bool = True,  # Enable safety check with Salesforce safety flan t5
     enable_llamaguard_content_safety: bool = False,
+    enable_promptguard_safety: bool = False,
     max_padding_length: int = None,  # the max padding length to be used with tokenizer padding the prompts.
     use_fast_kernels: bool = False,  # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
     share_gradio: bool = False,  # Enable endpoint creation for gradio.live
@@ -69,7 +70,9 @@ def main(
             enable_sensitive_topics,
             enable_salesforce_content_safety,
             enable_llamaguard_content_safety,
+            enable_promptguard_safety,
         )
+
 
         # Safety check of the user prompt
         safety_results = [check(user_prompt) for check in safety_checker]
@@ -118,9 +121,9 @@ def main(
 
         # Safety check of the model output
         safety_results = [
-            check(output_text, agent_type=AgentType.AGENT, user_prompt=user_prompt)
-            for check in safety_checker
+            check(output_text, agent_type=AgentType.AGENT, user_prompt=user_prompt) for check in safety_checker
         ]
+        print(safety_results)
         are_safe = all([r[1] for r in safety_results])
         if are_safe:
             print("User input and model output deemed safe.")
