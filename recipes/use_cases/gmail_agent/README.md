@@ -304,11 +304,11 @@ Tool calling returned: [{'message_id': '1936ef72ad3f30e8', 'sender': 'gmagent_te
 2. Improve the search, reply, forward, create email draft, and query about attachments to cover all listed and other examples in `functions_prompt.py`.
 3. Improve the fallback and error handling mechanism when the user asks don't lead to a correct function calling spec or the function calling fails. 
 4. Improve the user experience by showing progress when some Gmail search API calls take long (minutes) to complete.
-5. Implement the agent planning - decomposing a complicated ask into sub-tasks, using ReAct and other methods.
-6. Implement the agent long-term memory - longer context and memory across sessions (consider using Llama Stack/MemGPT/Letta)
-7. Implement reflection - on the tool calling spec and results.
-8. Introduce multiple-agent collaboration.
-9. Support any and all types of asks a user may have to Gmagent.
+5. Implement the async behavior of Gmagent - schedule an email to be sent later.
+6. Implement the agent planning - decomposing a complicated ask into sub-tasks, using ReAct and other methods.
+7. Implement the agent long-term memory - longer context and memory across sessions (consider using Llama Stack/MemGPT/Letta)
+8. Implement reflection - on the tool calling spec and results.
+9. Introduce multiple-agent collaboration.
 10. Implement the agent observability. 
 11. Compare different agent frameworks using Gmagent as the case study.
 12. Productionize Gmagent.
