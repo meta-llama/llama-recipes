@@ -315,7 +315,7 @@ Tool calling returned: [{'message_id': '1936ef72ad3f30e8', 'sender': 'gmagent_te
 
 
 # Resources
-1. Lilien Weng's blog [LLM Powered Autonomous Agents](https://lilianweng.github.io/posts/2023-06-23-agent/) 
+1. Lilian Weng's blog [LLM Powered Autonomous Agents](https://lilianweng.github.io/posts/2023-06-23-agent/) 
 2. Andrew Ng's posts [Agentic Design Patterns](https://www.deeplearning.ai/the-batch/how-agents-can-improve-llm-performance/)
 3. LangChain's survey [State of AI Agents](https://www.langchain.com/stateofaiagents)
 4. Deloitte's report [AI agents and multiagent systems](https://www2.deloitte.com/content/dam/Deloitte/us/Documents/consulting/us-ai-institute-generative-ai-agents-multiagent-systems.pdf)
