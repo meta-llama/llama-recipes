@@ -112,7 +112,7 @@ cd gmagent
 pip install -r requirements.txt
 ```
 
-# Build and Run Gament
+# Run Gmagent
 
 To run Gmagent, you need to first copy the `credentials.json` file downloaded and renamed above in Step 6 of Enable Gmail API to the gmagent folder, then run:
 ```
