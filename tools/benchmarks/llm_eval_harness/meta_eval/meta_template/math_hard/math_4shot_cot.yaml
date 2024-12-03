@@ -1,7 +1,7 @@
 dataset_path: parquet
 dataset_kwargs:
-  data_files: ./work_dir/joined_math_hard.parquet
-task: meta_math_hard
+  data_files: ./work_dir/joined_math.parquet
+task: meta_math
 process_docs: !function utils.process_docs
 output_type: generate_until
 test_split: train
@@ -12,7 +12,7 @@ generation_kwargs:
   until: []
   do_sample: false
   temperature: 0
-  max_gen_toks: 5120
+  max_gen_toks: 512
 metric_list:
   - metric: exact_match
     aggregation: mean
