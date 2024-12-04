@@ -44,7 +44,7 @@ In a November 2024 blog by Letta [The AI agents stack](https://www.letta.com/blo
 
 In addition, Harrison Chase defines agent in the blog [What is an AI agent](https://blog.langchain.dev/what-is-an-agent/) as "a system that uses an LLM to decide the control flow of an application." 
 
-Yet another simple [summary](https://www.felicis.com/insight/the-agentic-web) by Felicis of what an agent does is that an agent expands LLMs to go from chat to act: an agent can pair with LLMs with external data, multi-step reasoning and planning, and act on user's behalf. 
+Yet another simple [summary](https://www.felicis.com/insight/the-agentic-web) by Felicis of what an agent does is that an agent expands LLMs to go from chat to act: an agent can pair LLMs with external data, multi-step reasoning and planning, and act on the user's behalf. 
 
 All in all (see [Resources](#resources) for even more info), agents are systems that take a high-level task, use an LLM as a reasoning and planning engine, with the help of contextual info and long-term memory if needed, to decide what actions to take, reflect and improve on the actions, and eventually execute those actions to accomplish the task.
 
