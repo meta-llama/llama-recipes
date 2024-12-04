@@ -16,9 +16,9 @@ Email is an essential and one top killer app people use every day. A recent [Sta
 
 Andrew Ng wrote a 5-part [Agentic Design Patterns](https://www.deeplearning.ai/the-batch/how-agents-can-improve-llm-performance/) in March 2024 predicting "AI agent workflows will drive massive AI progress this year". 
 
-Deloitte published in November 2024 a report [AI agents and multiagent systems](https://www2.deloitte.com/content/dam/Deloitte/us/Documents/consulting/us-ai-institute-generative-ai-agents-multiagent-systems.pdf) stating that "Through their ability to reason, plan, remember and act, AI agents address key limitations of typical language models." and "Executive leaders should make moves now to prepare for and embrace this next era of intelligent organizational transformation."
+Deloitte published in November 2024 a report on [AI agents and multiagent systems](https://www2.deloitte.com/content/dam/Deloitte/us/Documents/consulting/us-ai-institute-generative-ai-agents-multiagent-systems.pdf) stating that "Through their ability to reason, plan, remember and act, AI agents address key limitations of typical language models." and "Executive leaders should make moves now to prepare for and embrace this next era of intelligent organizational transformation."
 
-In the Thanksgiving week, a new startup [/dev/agent](https://sdsa.ai/) building the next-gen OS for AI agents was on a spotlight.
+In the Thanksgiving week, a new startup [/dev/agent](https://sdsa.ai/) building the next-gen OS for AI agents was in the spotlight.
 
 So what exactly is an AI agent and how to start building an agent app?
 
