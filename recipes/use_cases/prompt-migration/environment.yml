@@ -1,0 +1,13 @@
+name: prompt-migration
+channels:
+  - defaults
+  - pytorch
+dependencies:
+  - python=3.9
+  - pip
+  - pip:
+    - dspy-ai
+    - torch
+    - transformers
+    - openai
+    - databricks-sdk 
