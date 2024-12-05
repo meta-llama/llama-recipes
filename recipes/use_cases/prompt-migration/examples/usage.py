@@ -16,10 +16,9 @@ source_prompt = PromptTemplate(
     model_type="openai"
 )
 
-# Example evaluation dataset
 eval_dataset = [
-    {"text": "Example text 1", "expected_summary": "Summary 1"},
-    {"text": "Example text 2", "expected_summary": "Summary 2"},
+    {"text": "Example text 1", "expected_answer": "Summary 1"},
+    {"text": "Example text 2", "expected_answer": "Summary 2"},
 ]
 
 # Migrate prompt

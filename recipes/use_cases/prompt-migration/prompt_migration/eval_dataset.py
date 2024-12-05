@@ -5,7 +5,7 @@ def get_evaluation_dataset() -> List[Dict]:
     Returns a comprehensive evaluation dataset for testing prompt migrations.
     Each test case includes:
     - text: Input text
-    - expected_summary: Expected output
+    - expected_answer: Expected output
     - prompt_type: Type of prompt (summarization, classification, qa, etc.)
     - complexity: Difficulty level (simple, medium, complex)
     """
@@ -13,7 +13,7 @@ def get_evaluation_dataset() -> List[Dict]:
         # Summarization examples
         {
             "text": "The quick brown fox jumps over the lazy dog.",
-            "expected_summary": "A fox jumps over a dog.",
+            "expected_answer": "A fox jumps over a dog.",
             "prompt_type": "summarization",
             "complexity": "simple"
         },
@@ -21,7 +21,7 @@ def get_evaluation_dataset() -> List[Dict]:
             "text": """Machine learning is a subset of artificial intelligence that focuses on developing 
                    systems that can learn from and make decisions based on data. It has numerous 
                    applications in various fields including healthcare, finance, and autonomous vehicles.""",
-            "expected_summary": "Machine learning is an AI technology that enables systems to learn and make decisions from data, used in healthcare, finance, and autonomous vehicles.",
+            "expected_answer": "Machine learning is an AI technology that enables systems to learn and make decisions from data, used in healthcare, finance, and autonomous vehicles.",
             "prompt_type": "summarization",
             "complexity": "medium"
         },
@@ -29,13 +29,13 @@ def get_evaluation_dataset() -> List[Dict]:
         # Classification examples
         {
             "text": "I absolutely loved this product! Best purchase ever!",
-            "expected_summary": "Positive",
+            "expected_answer": "Positive",
             "prompt_type": "sentiment_classification",
             "complexity": "simple"
         },
         {
             "text": "The product works fine but the customer service could be better.",
-            "expected_summary": "Neutral",
+            "expected_answer": "Neutral",
             "prompt_type": "sentiment_classification",
             "complexity": "medium"
         },
@@ -43,7 +43,7 @@ def get_evaluation_dataset() -> List[Dict]:
         # Question-Answering examples
         {
             "text": "What is the capital of France? Context: Paris is the capital and largest city of France.",
-            "expected_summary": "Paris",
+            "expected_answer": "Paris",
             "prompt_type": "qa",
             "complexity": "simple"
         },
@@ -51,7 +51,7 @@ def get_evaluation_dataset() -> List[Dict]:
             "text": """What causes rain? Context: Rain is precipitation of liquid water in the form of droplets. 
                    Water vapor in warm air rises and cools, forming clouds. When the droplets become too 
                    heavy, they fall as rain.""",
-            "expected_summary": "Rain occurs when water vapor in warm air rises, cools to form clouds, and droplets become heavy enough to fall.",
+            "expected_answer": "Rain occurs when water vapor in warm air rises, cools to form clouds, and droplets become heavy enough to fall.",
             "prompt_type": "qa",
             "complexity": "medium"
         },
@@ -59,13 +59,13 @@ def get_evaluation_dataset() -> List[Dict]:
         # Code-related examples
         {
             "text": "Write a function to add two numbers in Python.",
-            "expected_summary": "def add(a, b):\n    return a + b",
+            "expected_answer": "def add(a, b):\n    return a + b",
             "prompt_type": "code_generation",
             "complexity": "simple"
         },
         {
             "text": "Explain what this code does: for i in range(len(arr)): arr[i] *= 2",
-            "expected_summary": "This code multiplies each element in the array 'arr' by 2.",
+            "expected_answer": "This code multiplies each element in the array 'arr' by 2.",
             "prompt_type": "code_explanation",
             "complexity": "simple"
         },
@@ -73,13 +73,13 @@ def get_evaluation_dataset() -> List[Dict]:
         # Text transformation examples
         {
             "text": "convert this to passive voice: The cat chased the mouse.",
-            "expected_summary": "The mouse was chased by the cat.",
+            "expected_answer": "The mouse was chased by the cat.",
             "prompt_type": "text_transformation",
             "complexity": "simple"
         },
         {
             "text": "translate to French: Hello, how are you?",
-            "expected_summary": "Bonjour, comment allez-vous?",
+            "expected_answer": "Bonjour, comment allez-vous?",
             "prompt_type": "translation",
             "complexity": "simple"
         },
@@ -89,24 +89,24 @@ def get_evaluation_dataset() -> List[Dict]:
             "text": """A train leaves Station A at 2:00 PM traveling at 60 mph. Another train leaves 
                    Station B at 3:00 PM traveling at 75 mph in the opposite direction. If the stations 
                    are 375 miles apart, at what time will the trains meet?""",
-            "expected_summary": "The trains will meet at 5:00 PM.",
+            "expected_answer": "The trains will meet at 5:00 PM.",
             "prompt_type": "problem_solving",
             "complexity": "complex"
         },
         {
             "text": """Analyze the environmental impact of electric vehicles versus traditional 
                    gasoline vehicles, considering manufacturing, operation, and disposal.""",
-            "expected_summary": """Electric vehicles typically have higher manufacturing emissions but lower 
+            "expected_answer": """Electric vehicles typically have higher manufacturing emissions but lower 
                               operational emissions compared to gasoline vehicles. Overall lifecycle 
                               environmental impact depends on electricity source and battery recycling.""",
             "prompt_type": "analysis",
             "complexity": "complex"
         },
 
-        # Code Generation
+        # Simple Code Generation
         {
             "text": "Write a Python function to check if a number is prime.",
-            "expected_summary": """def is_prime(n):
+            "expected_answer": """def is_prime(n):
     if n < 2:
         return False
     for i in range(2, int(n ** 0.5) + 1):
@@ -118,22 +118,24 @@ def get_evaluation_dataset() -> List[Dict]:
         },
         {
             "text": "Create a Python function to reverse a string.",
-            "expected_summary": """def reverse_string(s):
+            "expected_answer": """def reverse_string(s):
     return s[::-1]""",
             "prompt_type": "code_generation",
             "complexity": "simple"
         },
         
+        # Code Explanation
         {
             "text": "Explain what this code does: [x*x for x in range(10) if x % 2 == 0]",
-            "expected_summary": "This list comprehension creates a list of squares of even numbers from 0 to 9. It filters numbers where x modulo 2 equals 0 (even numbers) and squares them.",
+            "expected_answer": "This list comprehension creates a list of squares of even numbers from 0 to 9. It filters numbers where x modulo 2 equals 0 (even numbers) and squares them.",
             "prompt_type": "code_explanation",
             "complexity": "medium"
         },
         
+        # Algorithm Implementation
         {
             "text": "Write a Python function to implement binary search.",
-            "expected_summary": """def binary_search(arr, target):
+            "expected_answer": """def binary_search(arr, target):
     left, right = 0, len(arr) - 1
     
     while left <= right:
@@ -150,9 +152,10 @@ def get_evaluation_dataset() -> List[Dict]:
             "complexity": "medium"
         },
         
+        # Data Structure Implementation
         {
             "text": "Implement a Stack class in Python using a list.",
-            "expected_summary": """class Stack:
+            "expected_answer": """class Stack:
     def __init__(self):
         self.items = []
         
@@ -173,9 +176,10 @@ def get_evaluation_dataset() -> List[Dict]:
             "complexity": "medium"
         },
         
+        # Code Debugging
         {
             "text": "Find and fix the bug in this code: def factorial(n): return n * factorial(n-1)",
-            "expected_summary": """def factorial(n):
+            "expected_answer": """def factorial(n):
     if n == 0 or n == 1:
         return 1
     return n * factorial(n-1)""",
@@ -183,9 +187,10 @@ def get_evaluation_dataset() -> List[Dict]:
             "complexity": "medium"
         },
         
+        # Code Optimization
         {
             "text": "Optimize this code: def fibonacci(n): return fibonacci(n-1) + fibonacci(n-2) if n > 1 else n",
-            "expected_summary": """def fibonacci(n):
+            "expected_answer": """def fibonacci(n):
     if n <= 1:
         return n
     a, b = 0, 1
@@ -196,9 +201,10 @@ def get_evaluation_dataset() -> List[Dict]:
             "complexity": "medium"
         },
         
+        # API Usage
         {
             "text": "Write a Python function using requests to fetch data from a REST API endpoint.",
-            "expected_summary": """import requests
+            "expected_answer": """import requests
 
 def fetch_data(url, params=None):
     try:
@@ -212,9 +218,10 @@ def fetch_data(url, params=None):
             "complexity": "medium"
         },
         
+        # File Handling
         {
             "text": "Write a Python function to read a CSV file and return it as a list of dictionaries.",
-            "expected_summary": """import csv
+            "expected_answer": """import csv
 
 def read_csv(file_path):
     data = []
@@ -231,9 +238,10 @@ def read_csv(file_path):
             "complexity": "medium"
         },
         
+        # Error Handling
         {
             "text": "Write a Python function that safely converts a string to integer with error handling.",
-            "expected_summary": """def safe_int_convert(s):
+            "expected_answer": """def safe_int_convert(s):
     try:
         return int(s), None
     except ValueError as e:
@@ -245,7 +253,7 @@ def read_csv(file_path):
         # Complex Algorithm
         {
             "text": "Implement a Python function for Depth-First Search on a graph.",
-            "expected_summary": """def dfs(graph, start, visited=None):
+            "expected_answer": """def dfs(graph, start, visited=None):
     if visited is None:
         visited = set()
     

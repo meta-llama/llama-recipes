@@ -14,17 +14,48 @@ def main():
         api_key=os.getenv("OPENAI_API_KEY")
     )
     
-    # target_lm = dspy.LM(
-    #     model="together_ai/togethercomputer/meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
-    #     api_key=os.getenv("TOGETHER_API_KEY")
-    # )
+    target_lm = dspy.LM(
+        model="together_ai/meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
+        api_key=os.getenv("TOGETHER_API_KEY")
+    )
+    # To run it with ollama
     # target_lm = dspy.LM('ollama_chat/llama3.2:3b-instruct-fp16', api_base='http://localhost:11434', api_key='')
-    target_lm = dspy.HFModel(model="gpt2")
+
+    # To run it with huggingface
+    # target_lm = dspy.HFModel(model="gpt2")
     
     engine = PromptMigrationEngine(openai_lm, target_lm)
     
     source_prompt = PromptTemplate(
-        template="Write a Python function that takes as input a file path to an image, loads the image into memory as a numpy array, then crops the rows and columns around the perimeter if they are darker than a threshold value. Use the mean value of rows and columns to decide if they should be marked for deletion.",
+        template="""You are an advanced Large Language Model tasked with generating Python code snippets in response to user prompts. Your primary objective is to provide accurate, concise, and well-structured Python functions. Follow these guidelines:
+
+    Understand the Context: Analyze the input prompt and identify its category (e.g., API Usage, File Handling, Error Handling).
+
+    Generate Code:
+        Write Python code that directly addresses the user's request.
+        Ensure the code is syntactically correct, functional, and adheres to Python best practices.
+        Include necessary imports and handle potential edge cases.
+
+    Error Handling:
+        Include appropriate error handling where applicable (e.g., try-except blocks).
+        If exceptions occur, provide meaningful error messages.
+
+    Readability:
+        Use clear variable names and include comments where necessary for clarity.
+        Prioritize readability and maintainability in all generated code.
+
+    Complexity Alignment:
+        Tailor the code's complexity based on the indicated difficulty (e.g., simple, medium, complex).
+        Ensure that the solution is neither overly simplistic nor unnecessarily complicated.
+
+    Prompt Type:
+        Focus on the code_generation type for creating Python functions.
+        Avoid deviating from the task unless additional clarification is requested.
+
+    Testing and Validity:
+        Assume the function might be run immediately. Provide code that is ready for use or minimal adaptation.
+        Highlight any dependencies or external libraries required.
+        """,
         input_variables=["text"],
         model_type="openai"
     )
@@ -33,20 +64,31 @@ def main():
 
 
     # To evaluate on a specific subset, use the following:
-    #summarization_dataset = get_eval_subset(prompt_type="summarization")
+    code_generation_dataset = get_eval_subset(prompt_type="code_generation")
     #simple_tasks = get_eval_subset(complexity="simple")
+    evaluator = PromptEvaluator(openai_lm, target_lm)
+
+    metrics = evaluator.evaluate(
+        source_prompt.template,  # Same prompt for both
+        source_prompt.template,  # Same prompt for both
+        code_generation_dataset
+    )
+    
+    print(f"Evaluation metrics:")
+    print(f"  Accuracy: {metrics.accuracy:.2f}")
+    print(f"  Similarity: {metrics.similarity:.2f}")
+    print(f"  Consistency: {metrics.consistency:.2f}")
     
     # Migrate prompt
     print("Migrating prompt...")
-    migrated_prompt = engine.migrate_prompt(source_prompt, eval_dataset)
+    migrated_prompt = engine.migrate_prompt(source_prompt, code_generation_dataset)
     
     # Evaluate migration
     print("Evaluating migration...")
-    evaluator = PromptEvaluator(openai_lm, target_lm)
     metrics = evaluator.evaluate(
         source_prompt.template,
         migrated_prompt.template,
-        eval_dataset
+        code_generation_dataset
     )
     
     print(f"\nResults:")
