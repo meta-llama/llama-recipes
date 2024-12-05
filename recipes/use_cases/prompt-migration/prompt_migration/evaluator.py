@@ -71,7 +71,6 @@ class PromptEvaluator:
                     return result
                 except Exception as e:
                     print(f"Error in judge: {str(e)}")
-                    # Return default scores
                     return type('Result', (), {
                         'accuracy': '0',
                         'consistency': '0',
@@ -119,12 +118,10 @@ class PromptEvaluator:
                 expected_output=expected
             )
             
-            # Calculate scores
             accuracy_score = float(judgment.accuracy) / 100
             consistency_score = float(judgment.consistency) / 100
             is_equivalent = judgment.equivalence.lower() == "yes"
             
-            # Store individual scores
             case_scores = {
                 "input": input_text,
                 "expected": expected,
@@ -137,7 +134,6 @@ class PromptEvaluator:
             }
             individual_scores.append(case_scores)
             
-            # Update totals
             total_accuracy += accuracy_score
             total_consistency += consistency_score
             total_similarity += float(is_equivalent)
@@ -149,7 +145,6 @@ class PromptEvaluator:
             print(f"Judge's reasoning: {judgment.reasoning}")
             print(f"Scores - Accuracy: {accuracy_score:.2f}, Consistency: {consistency_score:.2f}, Equivalent: {is_equivalent}")
         
-        # Calculate final metrics
         metrics = EvaluationMetrics(
             accuracy=total_accuracy / num_cases,
             similarity=total_similarity / num_cases,
@@ -157,7 +152,6 @@ class PromptEvaluator:
             individual_scores=individual_scores
         )
         
-        # Save results to JSON
         results = {
             "source_prompt": source_prompt,
             "target_prompt": target_prompt,
@@ -183,14 +177,12 @@ class PromptEvaluator:
     
     def _save_results(self, results: dict, filename: str = 'results.json') -> None:
         """Save results to a JSON file with a new name if the file already exists."""
-        # Check if file exists
+
         if os.path.exists(filename):
-            # Create new filename with timestamp
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
             base, ext = os.path.splitext(filename)
             filename = f"{base}_{timestamp}{ext}"
         
-        # Save results
         with open(filename, 'w') as f:
             json.dump(results, f, indent=2)
         print(f"Results saved to {filename}")
