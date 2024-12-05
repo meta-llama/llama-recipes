@@ -101,6 +101,163 @@ def get_evaluation_dataset() -> List[Dict]:
                               environmental impact depends on electricity source and battery recycling.""",
             "prompt_type": "analysis",
             "complexity": "complex"
+        },
+
+        # Code Generation
+        {
+            "text": "Write a Python function to check if a number is prime.",
+            "expected_summary": """def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
+    return True""",
+            "prompt_type": "code_generation",
+            "complexity": "medium"
+        },
+        {
+            "text": "Create a Python function to reverse a string.",
+            "expected_summary": """def reverse_string(s):
+    return s[::-1]""",
+            "prompt_type": "code_generation",
+            "complexity": "simple"
+        },
+        
+        {
+            "text": "Explain what this code does: [x*x for x in range(10) if x % 2 == 0]",
+            "expected_summary": "This list comprehension creates a list of squares of even numbers from 0 to 9. It filters numbers where x modulo 2 equals 0 (even numbers) and squares them.",
+            "prompt_type": "code_explanation",
+            "complexity": "medium"
+        },
+        
+        {
+            "text": "Write a Python function to implement binary search.",
+            "expected_summary": """def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+            
+    return -1""",
+            "prompt_type": "code_generation",
+            "complexity": "medium"
+        },
+        
+        {
+            "text": "Implement a Stack class in Python using a list.",
+            "expected_summary": """class Stack:
+    def __init__(self):
+        self.items = []
+        
+    def push(self, item):
+        self.items.append(item)
+        
+    def pop(self):
+        if not self.is_empty():
+            return self.items.pop()
+        
+    def is_empty(self):
+        return len(self.items) == 0
+        
+    def peek(self):
+        if not self.is_empty():
+            return self.items[-1]""",
+            "prompt_type": "code_generation",
+            "complexity": "medium"
+        },
+        
+        {
+            "text": "Find and fix the bug in this code: def factorial(n): return n * factorial(n-1)",
+            "expected_summary": """def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    return n * factorial(n-1)""",
+            "prompt_type": "code_debugging",
+            "complexity": "medium"
+        },
+        
+        {
+            "text": "Optimize this code: def fibonacci(n): return fibonacci(n-1) + fibonacci(n-2) if n > 1 else n",
+            "expected_summary": """def fibonacci(n):
+    if n <= 1:
+        return n
+    a, b = 0, 1
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+    return b""",
+            "prompt_type": "code_optimization",
+            "complexity": "medium"
+        },
+        
+        {
+            "text": "Write a Python function using requests to fetch data from a REST API endpoint.",
+            "expected_summary": """import requests
+
+def fetch_data(url, params=None):
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        print(f"Error fetching data: {e}")
+        return None""",
+            "prompt_type": "code_generation",
+            "complexity": "medium"
+        },
+        
+        {
+            "text": "Write a Python function to read a CSV file and return it as a list of dictionaries.",
+            "expected_summary": """import csv
+
+def read_csv(file_path):
+    data = []
+    try:
+        with open(file_path, 'r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                data.append(row)
+        return data
+    except Exception as e:
+        print(f"Error reading CSV: {e}")
+        return None""",
+            "prompt_type": "code_generation",
+            "complexity": "medium"
+        },
+        
+        {
+            "text": "Write a Python function that safely converts a string to integer with error handling.",
+            "expected_summary": """def safe_int_convert(s):
+    try:
+        return int(s), None
+    except ValueError as e:
+        return None, str(e)""",
+            "prompt_type": "code_generation",
+            "complexity": "simple"
+        },
+        
+        # Complex Algorithm
+        {
+            "text": "Implement a Python function for Depth-First Search on a graph.",
+            "expected_summary": """def dfs(graph, start, visited=None):
+    if visited is None:
+        visited = set()
+    
+    visited.add(start)
+    
+    for next_node in graph[start]:
+        if next_node not in visited:
+            dfs(graph, next_node, visited)
+            
+    return visited""",
+            "prompt_type": "code_generation",
+            "complexity": "complex"
         }
     ]
 
