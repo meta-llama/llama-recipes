@@ -6,10 +6,12 @@ from functions_prompt import system_prompt
 
 def main():
     parser = argparse.ArgumentParser(description="Set email address")
-    parser.add_argument("--user_email", type=str, required=True, help="Your Gmail address")
+    parser.add_argument("--gmail", type=str, required=True, help="Your Gmail address")
     args = parser.parse_args()
 
-    gmagent.set_email_service(args.user_email)
+    print(f"{args.gmail=}")
+
+    gmagent.set_email_service(args.gmail)
 
     greeting = llama31("hello", "Your name is Gmagent, an assistant that can perform all Gmail related tasks for your user.")
     agent_response = f"{greeting}\n\nYour ask: "

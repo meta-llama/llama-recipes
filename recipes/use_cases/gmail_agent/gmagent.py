@@ -491,11 +491,11 @@ user_email = None
 service = None
 user_id = 'me'
 
-def set_email_service(email):
+def set_email_service(gmail):
     global user_email
     global service
 
-    user_email = email
+    user_email = gmail
     service = authenticate_gmail(user_email)
 
 class Agent:
