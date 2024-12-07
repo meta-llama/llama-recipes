@@ -1,4 +1,4 @@
-python  main.py
+python  main.py --gmail=gmagent_tester1@gmail.com
 Hello! I'm Gmagent, your friendly Gmail assistant. I'm here to help you with any Gmail-related tasks. What can I do for you today? Do you need help checking email, composing a new message, or perhaps something else?
 
 Your ask: do i have any emails with attachments?
@@ -132,14 +132,14 @@ These examples are likely from the report you mentioned, which explores the perf
 
 If you'd like to discuss any specific points or ask questions about these examples, I'm here to help!
 
-Your ask: Draft an email to jeffxtang@meta.com saying working on it and will keep you updated. thanks for your patience.
+Your ask: Draft an email to gmagent_tester2@meta.com saying working on it and will keep you updated. thanks for your patience.
 
 -------------------------
 Calling Llama...
 
-Llama returned: {'function_name': 'create_draft', 'parameters': {'action': 'new', 'to': 'jeffxtang@meta.com', 'subject': 'Update on [Your Project]', 'body': 'Hi Jeff,\\n\\nI wanted to touch base with you regarding [Your Project]. I am currently working on it and will keep you updated. Thank you for your patience.\\n\\nBest regards,'}}.
+Llama returned: {'function_name': 'create_draft', 'parameters': {'action': 'new', 'to': 'gmagent_tester2@meta.com', 'subject': 'Update on [Your Project]', 'body': 'Hi Jeff,\\n\\nI wanted to touch base with you regarding [Your Project]. I am currently working on it and will keep you updated. Thank you for your patience.\\n\\nBest regards,'}}.
 
-Calling tool to access Gmail API: create_draft, {'action': 'new', 'to': 'jeffxtang@meta.com', 'subject': 'Update on [Your Project]', 'body': 'Hi Jeff,\\n\\nI wanted to touch base with you regarding [Your Project]. I am currently working on it and will keep you updated. Thank you for your patience.\\n\\nBest regards,'}...
+Calling tool to access Gmail API: create_draft, {'action': 'new', 'to': 'gmagent_tester2@meta.com', 'subject': 'Update on [Your Project]', 'body': 'Hi Jeff,\\n\\nI wanted to touch base with you regarding [Your Project]. I am currently working on it and will keep you updated. Thank you for your patience.\\n\\nBest regards,'}...
 Draft created with ID: r5930232887125763038
 
 Tool calling returned: r5930232887125763038
@@ -211,14 +211,14 @@ Tool calling returned: None
 
 Gmagent: Email sent.
 
-Your ask: forward the email to jeffxtang@meta.com
+Your ask: forward the email to gmagent_tester2@meta.com
 
 -------------------------
 Calling Llama...
 
-Llama returned: {'function_name': 'send_email', 'parameters': {'action': 'forward', 'to': 'jeffxtang@meta.com', 'subject': 'this is an interesting paper', 'body': '', 'email_id': '1936fce85e88a3ef'}}.
+Llama returned: {'function_name': 'send_email', 'parameters': {'action': 'forward', 'to': 'gmagent_tester2@meta.com', 'subject': 'this is an interesting paper', 'body': '', 'email_id': '1936fce85e88a3ef'}}.
 
-Calling tool to access Gmail API: send_email, {'action': 'forward', 'to': 'jeffxtang@meta.com', 'subject': 'this is an interesting paper', 'body': '', 'email_id': '1936fce85e88a3ef'}...
+Calling tool to access Gmail API: send_email, {'action': 'forward', 'to': 'gmagent_tester2@meta.com', 'subject': 'this is an interesting paper', 'body': '', 'email_id': '1936fce85e88a3ef'}...
 Message forwarded successfully! Message ID: 1936fdd039c68451
 
 Tool calling returned: None

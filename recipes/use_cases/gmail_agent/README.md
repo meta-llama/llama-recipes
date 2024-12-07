@@ -66,7 +66,12 @@ It's time to see an agent app in action and enjoy some coding. Below is a previe
 * how many emails do i have from xxx@gmail.com?
 * how about from yyy@gmail.com?
 
-[Here](./examples_log.txt) is a complete example interaction log with Gmagent.
+[Here](./examples_log.txt) is an example interaction log with Gmagent, with some screenshots of the interaction below (the user inputs and Gmagent outputs are after Your ask: and Gmagent: ; what's between ---- are Llama outputs and tool calling results):
+
+![](1.png)
+![](2.png)
+![](3.png)
+
 
 # Setup and Installation
 
