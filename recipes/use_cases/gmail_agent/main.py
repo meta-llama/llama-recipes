@@ -9,8 +9,6 @@ def main():
     parser.add_argument("--gmail", type=str, required=True, help="Your Gmail address")
     args = parser.parse_args()
 
-    print(f"{args.gmail=}")
-
     gmagent.set_email_service(args.gmail)
 
     greeting = llama31("hello", "Your name is Gmagent, an assistant that can perform all Gmail related tasks for your user.")
