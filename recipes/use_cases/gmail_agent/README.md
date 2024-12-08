@@ -20,6 +20,8 @@ Deloitte published in November 2024 a report on [AI agents and multiagent system
 
 In the Thanksgiving week, a new startup [/dev/agent](https://sdsa.ai/) building the next-gen OS for AI agents was in the spotlight.
 
+In December, Sequoia posted [here](https://www.linkedin.com/posts/konstantinebuhler_the-ai-landscape-is-shifting-from-simple-activity-7270111755710672897-ZHnr/) saying 2024 has been the year of agents (an agent is an AI that can complete tasks, not only tells you how to do it but also does it for you directly), and 2025 will be the year of networks of AI agents.
+
 So what exactly is an AI agent and how to start building an agent app?
 
 ## What is an agent?
@@ -330,3 +332,4 @@ Tool calling returned: [{'message_id': '1936ef72ad3f30e8', 'sender': 'gmagent_te
 8. Deeplearning.ai's [agent related courses](https://www.deeplearning.ai/courses/?courses_date_desc%5Bquery%5D=agents) (Meta, AWS, Microsoft, LangChain, LlamaIndex, crewAI, AutoGen, Letta) and some [lessons ported to using Llama](https://github.com/meta-llama/llama-recipes/tree/main/recipes/quickstart/agents/DeepLearningai_Course_Notebooks). 
 9. Felicis's [The Agentic Web](https://www.felicis.com/insight/the-agentic-web)
 10. A pretty complete [list of AI agents](https://github.com/e2b-dev/awesome-ai-agents), not including [/dev/agents](https://sdsa.ai/), a very new startup building the next-gen OS for AI agents, though.
+11. Sequoia's [post](https://www.linkedin.com/posts/konstantinebuhler_the-ai-landscape-is-shifting-from-simple-activity-7270111755710672897-ZHnr/) on 2024 being the year of AI agents and 2025 networks of AI agents.
