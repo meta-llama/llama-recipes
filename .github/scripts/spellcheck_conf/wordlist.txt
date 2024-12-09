@@ -1505,4 +1505,6 @@ locallama
 myshell
 parler
 xTTS
-pydantic
+TogetherAI
+Vercel's
+echarts
