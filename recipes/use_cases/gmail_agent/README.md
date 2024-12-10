@@ -10,6 +10,8 @@ Currently implemented features of Gmagent include:
 * get summary of a PDF attachment
 * draft and send an email
 
+![](gmagent.png)
+
 # Overview
 
 Email is an essential and one top killer app people use every day. A recent [State of AI Agents](https://www.langchain.com/stateofaiagents) survey by LangChain finds that "The top use cases for agents include performing research and summarization (58%), followed by streamlining tasks for personal productivity or assistance (53.5%)." 
