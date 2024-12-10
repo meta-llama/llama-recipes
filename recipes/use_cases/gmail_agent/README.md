@@ -114,8 +114,8 @@ source gmagent\Scripts\activate # on Windows
 
 Then install the required Python libraries:
 ```
-git clone https://github.com/jeffxtang/gmagent
-cd gmagent
+git clone https://github.com/meta-llama/llama-recipes
+cd llama-recipes/recipes/use_cases/gmail_agent
 pip install -r requirements.txt
 ```
 
