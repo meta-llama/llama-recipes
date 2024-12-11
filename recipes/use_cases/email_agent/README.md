@@ -52,9 +52,9 @@ Yet another simple [summary](https://www.felicis.com/insight/the-agentic-web) by
 
 All in all (see [Resources](#resources) for even more info), agents are systems that take a high-level task, use an LLM as a reasoning and planning engine, with the help of contextual info and long-term memory if needed, to decide what actions to take, reflect and improve on the actions, and eventually execute those actions to accomplish the task.
 
-It's time to see an agent app in action and enjoy some coding. Below is a preview of the questions or requests one may ask Emagent:  
+It's time to see an agent app in action and enjoy some coding. Below is a preview of the questions or requests one may ask the agent:  
 
-# Example Asks to Emagent
+# Example Asks to Email Agent
 
 * do i have any emails with attachments?
 * what's the content of the email from LangSmith
@@ -70,7 +70,10 @@ It's time to see an agent app in action and enjoy some coding. Below is a previe
 * how many emails do i have from xxx@gmail.com?
 * how about from yyy@gmail.com?
 
-[Here](./examples_log.txt) is an example interaction log with Emagent.
+Below are screenshots of some example interactions with the agent:
+![](1.png)
+![](2.png)
+![](3.png)
 
 # Setup and Installation
 
@@ -99,14 +102,14 @@ This will download a quantized version of Llama 3.1 of the size 4.7GB.
 First, create a Conda or virtual env:
 
 ```
-conda create -n emagent python=3.10
-conda activate emagent
+conda create -n emailagent python=3.10
+conda activate emailagent
 ```
 or
 ```
-python -m venv emagent
-source emagent/bin/activate # on Linux, macOS:
-source emagent\Scripts\activate # on Windows
+python -m venv emailagent
+source emailagent/bin/activate # on Linux, macOS:
+source emailagent\Scripts\activate # on Windows
 ```
 
 Then install the required Python libraries:
@@ -116,9 +119,9 @@ cd llama-recipes/recipes/use_cases/email_agent
 pip install -r requirements.txt
 ```
 
-# Run Emagent
+# Run Email Agent
 
-To run Emagent, you need to first copy the `credentials.json` file downloaded and renamed above in Step 6 of Enable Gmail API to the emagent folder, then run:
+To run the agent, you need to first copy the `credentials.json` file downloaded and renamed above in Step 6 of Enable Gmail API to the email_agent folder, then run:
 ```
 python main.py --gmail <your_gmail_address>
 ```
