@@ -1,17 +1,17 @@
 import argparse
-import gmagent
-from gmagent import *
+import email_agent
+from email_agent import *
 from functions_prompt import system_prompt
 
 
 def main():
     parser = argparse.ArgumentParser(description="Set email address")
-    parser.add_argument("--gmail", type=str, required=True, help="Your Gmail address")
+    parser.add_argument("--email", type=str, required=True, help="Your Gmail address")
     args = parser.parse_args()
 
-    gmagent.set_email_service(args.gmail)
+    email_agent.set_email_service(args.email)
 
-    greeting = llama31("hello", "Your name is Gmagent, an assistant that can perform all Gmail related tasks for your user.")
+    greeting = llama31("hello", "Your name is Email Agent, an assistant that can perform all email related tasks for your user.")
     agent_response = f"{greeting}\n\nYour ask: "
     agent = Agent(system_prompt)
 

@@ -1,8 +1,8 @@
-# Emagent - A Llama Powered Email Agent
+# Building A Llama Powered Email Agent
 
-This Emagent app shows how to build a Email agent app powered by Llama 3.1 8B running locally via Ollama (for privacy concern since Emagent is about your email). We'll start with building from scratch a basic agent with custom tool calling natively supported in Llama 3.1. The end goal is to cover all components of a production-ready agent app, acting as an assistant to your email, with great user experience: intuitive, engaging, efficient and reliable. We'll use Gmail as an example but any email client API's can be used instead.
+This app shows how to build an email agent powered by Llama 3.1 8B running locally via Ollama. We'll start with building from scratch a basic agent with custom tool calling natively supported in Llama 3.1. The end goal is to cover all components of a production-ready agent app, acting as an assistant to your email, with great user experience: intuitive, engaging, efficient and reliable. We'll use Gmail as an example but any email client API's can be used instead.
 
-Currently implemented features of Emagent include:
+Currently implemented features include:
 * search for emails and attachments
 * get email detail
 * reply to a specific email 
@@ -10,7 +10,7 @@ Currently implemented features of Emagent include:
 * get summary of a PDF attachment
 * draft and send an email
 
-![](gmagent.png)
+![](email_agent.png)
 
 # Overview
 
@@ -61,12 +61,12 @@ It's time to see an agent app in action and enjoy some coding. Below is a previe
 * do i have emails with attachment larger than 1mb?
 * what kind of attachments for the email with subject papers to read?
 * give me a summary of the pdf thinking_llm.pdf
-* Draft an email to gmagent_test1@gmail.com saying working on it and will keep you updated. thanks for your patience.
+* Draft an email to xxx@gmail.com saying working on it and will keep you updated. thanks for your patience.
 * send the draft
 * do i have any emails with attachment larger than 10mb?
 * how about 5mb
 * reply to the email saying thanks for sharing! 
-* forward the email to gmagent_test2@gmail.com
+* forward the email to xxx@gmail.com
 * how many emails do i have from xxx@gmail.com?
 * how about from yyy@gmail.com?
 
@@ -74,7 +74,7 @@ It's time to see an agent app in action and enjoy some coding. Below is a previe
 
 # Setup and Installation
 
-If you feel intimated by the steps of the following Enable Gmail API section, you may want to check again the example asks (to see what you can ask to the agent) and the example log (to see the whole conversation with gmagent) - the devil's in the detail and all the glorious description of a powerful trendy agent may not mention the little details one has to deal with to build it.
+If you feel intimated by the steps of the following Enable Gmail API section, you may want to check again the example asks (to see what you can ask to the agent) and the example log (to see the whole conversation with the agent) - the devil's in the detail and all the glorious description of a powerful trendy agent may not mention the little details one has to deal with to build it.
 
 ## Enable Gmail API
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
@@ -133,15 +133,15 @@ You need to copy the URL above and open it in a browser - if you Sign in with Go
 
 In the latter case, go to APIs & Services > OAuth consent screen > Test users, and click the + ADD USERS button, and you'll see this message: While publishing status is set to "Testing", only test users are able to access the app. Allowed user cap prior to app verification is 100, and is counted over the entire lifetime of the app.
 
-After clicking Continue, check the Select all checkbox to enable both settings required for running Gmagent:
+After clicking Continue, check the Select all checkbox to enable both settings required for running the agent:
 ```
 View your email messages and settings. 
 Manage drafts and send emails.
 ```
 
-Finally, copy the Authorization code and paste it to the Terminal, hit Enter and you'll see Gmagent's initial greeting (which will likely differ because the default temperature value 0.8 is used here - see [Ollama's model file](https://github.com/ollama/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values) for detail) such as:
+Finally, copy the Authorization code and paste it to the Terminal, hit Enter and you'll see the agent's initial greeting (which will likely differ because the default temperature value 0.8 is used here - see [Ollama's model file](https://github.com/ollama/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values) for detail) such as:
 ```
-Hello! I'm Gmagent, here to help you manage your Gmail account with ease.
+Hello! I'm Email Agent, here to help you manage your email account with ease.
 
 What would you like to do today? Do you want me to:
 
@@ -156,7 +156,7 @@ Let me know how I can assist you!
 Your ask:
 ```
 
-If you cancel here and run the command `python main.py --user_email <your_gmail_address>` again you should see the Gmagent greeting right away without the need to enter an authorization code, unless you enter a different Gmail address for the first time - in fact, for each authorized (added as a test user) Gmail address, a file `token_xxxx@gmail.com.pickle` will be created which contains the authorized token.
+If you cancel here and run the command `python main.py --email <your_gmail_address>` again you should see the agent greeting right away without the need to enter an authorization code, unless you enter a different Gmail address for the first time - in fact, for each authorized (added as a test user) Gmail address, a file `token_xxxx@gmail.com.pickle` will be created which contains the authorized token.
 
 See the example asks and interaction log above for the types of asks you may enter.
 
@@ -215,7 +215,7 @@ In fact, even though many hours of pre-processing work has been done to cover so
 
 ## Actual Function Call Implementation
 
-For each defined custom function call, its implementation using the Gmail API is present in `gmagent.py`. For example, the `list_emails` is defined as follows:
+For each defined custom function call, its implementation using the Gmail API is present in `email_agent.py`. For example, the `list_emails` is defined as follows:
 
 ```
 def list_emails(query='', max_results=100):
@@ -256,7 +256,7 @@ The function will be called by our agent after a user ask such as "do i have ema
  ```
 
 ## The Agent class
-Implemented also in `gmagent.py`, the Agent class uses 3 instance members to allow for contextual aware asks to Gmagent, making it have short-term memory:
+Implemented also in `email_agent.py`, the Agent class uses 3 instance members to allow for contextual aware asks to the agent, making it have short-term memory:
 1. `messages`: this list holds all the previous user asks and the function call results based on Llama's response to the user asks, making Llama able to answer follow-up questions such as "how about 5mb" (after initial ask "attachments larger than 10mb") or "how about from yyy@gmail.com" (after ask "any emails from xxx@gmail.com).
 2. `emails`: this list holds a list of emails that matches the user query, so follow-up questions such as "what kind of attachments for the email with subject xxx" can be answered. 
 3. `draft_id`: this is used to handle the ask "send the draft" after an initial ask such as "draft an email to xxx".
@@ -284,11 +284,11 @@ result = func(**parameters)
 ... <post-processing>
 ```
 
-When you try out Gmagent, you'll likely find that further pre- and post-processing still needed to make it production ready. In a great video on [Vertical LLM Agents](https://www.youtube.com/watch?v=eBVi_sLaYsc), Jake Heller said "after passes frankly even like 100 tests the odds that it will do on any random distribution of user inputs of the next 100,000, 100% accurately is very high" and "by the time you've dealt with like all the edge cases... there might be dozens of things you build into your application to actually make it work well and then you get to the prompting piece and writing out tests and very specific prompts and the strategy for how you break down a big problem into step by step by step thinking and how you feed in the information how you format that information the right way". That's what all the business logic is about. We'll cover decomposing a complicated ask and multi-step reasoning in a future version of Gmagent, and continue to explore the best possible way to streamline the pre- and post-processing. 
+When you try out the app, you'll likely find that further pre- and post-processing still needed to make it production ready. In a great video on [Vertical LLM Agents](https://www.youtube.com/watch?v=eBVi_sLaYsc), Jake Heller said "after passes frankly even like 100 tests the odds that it will do on any random distribution of user inputs of the next 100,000, 100% accurately is very high" and "by the time you've dealt with like all the edge cases... there might be dozens of things you build into your application to actually make it work well and then you get to the prompting piece and writing out tests and very specific prompts and the strategy for how you break down a big problem into step by step by step thinking and how you feed in the information how you format that information the right way". That's what all the business logic is about. We'll cover decomposing a complicated ask and multi-step reasoning in a future version of the app, and continue to explore the best possible way to streamline the pre- and post-processing. 
 
 ## Debugging output
 
-When running Gmagent, the detailed Llama returns, pre-processed tool call specs and the actual tool calling results are inside the `-------------------------` block, e.g.:
+When running the app, the detailed Llama returns, pre-processed tool call specs and the actual tool calling results are inside the `-------------------------` block, e.g.:
 
 -------------------------
 Calling Llama...
@@ -297,7 +297,7 @@ Llama returned: {'function_name': 'list_emails', 'parameters': {'query': 'subjec
 
 Calling tool to access Gmail API: list_emails, {'query': 'subject:papers to read has:attachment'}...
 
-Tool calling returned: [{'message_id': '1936ef72ad3f30e8', 'sender': 'gmagent_tester1@gmail.com', 'subject': 'Fwd: papers to read', 'received_time': '2024-11-27 10:51:51 PST'}, {'message_id': '1936b819706a4923', 'sender': 'Jeff Tang <gmagent_tester2@gmail.com>', 'subject': 'papers to read', 'received_time': '2024-11-26 18:44:19 PST'}]
+Tool calling returned: [{'message_id': '1936ef72ad3f30e8', 'sender': 'xxx@gmail.com', 'subject': 'Fwd: papers to read', 'received_time': '2024-11-27 10:51:51 PST'}, {'message_id': '1936b819706a4923', 'sender': 'Jeff Tang <xxx@gmail.com>', 'subject': 'papers to read', 'received_time': '2024-11-26 18:44:19 PST'}]
 
 -------------------------
 
@@ -308,14 +308,14 @@ Tool calling returned: [{'message_id': '1936ef72ad3f30e8', 'sender': 'gmagent_te
 2. Improve the search, reply, forward, create email draft, and query about types of attachments.
 3. Improve the fallback and error handling mechanism when the user asks don't lead to a correct function calling spec or the function calling fails. 
 4. Improve the user experience by showing progress when some Gmail search API calls take long (minutes) to complete.
-5. Implement the async behavior of Gmagent - schedule an email to be sent later.
+5. Implement the async behavior of the agent - schedule an email to be sent later.
 6. Implement the agent planning - decomposing a complicated ask into sub-tasks, using ReAct and other methods.
 7. Implement the agent long-term memory - longer context and memory across sessions (consider using Llama Stack/MemGPT/Letta)
 8. Implement reflection - on the tool calling spec and results.
 9. Introduce multiple-agent collaboration.
 10. Implement the agent observability. 
-11. Compare different agent frameworks using Gmagent as the case study.
-12. Add and implement a test plan and productionize Gmagent.
+11. Compare different agent frameworks using the app as the case study.
+12. Add and implement a test plan and productionize the app.
 
 
 # Resources

@@ -503,7 +503,7 @@ class Agent:
         self.system_prompt = system_prompt
         self.messages = []
 
-        # Gmagent-specific short term memory, used to answer follow up questions AFTER a list of emails is found matching user's query
+        # agent-specific short term memory, used to answer follow up questions AFTER a list of emails is found matching user's query
         self.emails = []
         self.draft_id = None
 
@@ -580,7 +580,7 @@ class Agent:
             elif function_name == "send_draft":
                 output = result
 
-            print(f"\n-------------------------\n\nGmagent: {output}\n")
+            print(f"\n-------------------------\n\nAgent: {output}\n")
         else:
             output = result # direct text, not JSON, response by Llama
 
