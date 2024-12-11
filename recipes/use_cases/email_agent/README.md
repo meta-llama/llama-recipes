@@ -1,8 +1,8 @@
-# Gmagent - A Llama Powered Gmail Agent
+# Emagent - A Llama Powered Email Agent
 
-This Gmagent app shows how to build a Gmail agent app powered by Llama 3.1 8B running locally via Ollama (for privacy concern since Gamgent is about your Gmail). We'll start with building from scratch a basic agent with custom tool calling natively supported in Llama 3.1. The end goal is to cover all components of a production-ready agent app, acting as an assistant to your Gmail, with great user experience: intuitive, engaging, efficient and reliable.
+This Emagent app shows how to build a Email agent app powered by Llama 3.1 8B running locally via Ollama (for privacy concern since Emagent is about your email). We'll start with building from scratch a basic agent with custom tool calling natively supported in Llama 3.1. The end goal is to cover all components of a production-ready agent app, acting as an assistant to your email, with great user experience: intuitive, engaging, efficient and reliable. We'll use Gmail as an example but any email client API's can be used instead.
 
-Currently implemented features of Gmagent include:
+Currently implemented features of Emagent include:
 * search for emails and attachments
 * get email detail
 * reply to a specific email 
@@ -52,9 +52,9 @@ Yet another simple [summary](https://www.felicis.com/insight/the-agentic-web) by
 
 All in all (see [Resources](#resources) for even more info), agents are systems that take a high-level task, use an LLM as a reasoning and planning engine, with the help of contextual info and long-term memory if needed, to decide what actions to take, reflect and improve on the actions, and eventually execute those actions to accomplish the task.
 
-It's time to see an agent app in action and enjoy some coding. Below is a preview of the questions or requests one may ask Gmagent:  
+It's time to see an agent app in action and enjoy some coding. Below is a preview of the questions or requests one may ask Emagent:  
 
-# Example Asks to Gmagent
+# Example Asks to Emagent
 
 * do i have any emails with attachments?
 * what's the content of the email from LangSmith
@@ -70,12 +70,7 @@ It's time to see an agent app in action and enjoy some coding. Below is a previe
 * how many emails do i have from xxx@gmail.com?
 * how about from yyy@gmail.com?
 
-[Here](./examples_log.txt) is an example interaction log with Gmagent, with some screenshots of the interaction below (the user inputs and Gmagent outputs are after Your ask: and Gmagent: ; what's between ---- are Llama outputs and tool calling results):
-
-![](1.png)
-![](2.png)
-![](3.png)
-
+[Here](./examples_log.txt) is an example interaction log with Emagent.
 
 # Setup and Installation
 
@@ -104,28 +99,28 @@ This will download a quantized version of Llama 3.1 of the size 4.7GB.
 First, create a Conda or virtual env:
 
 ```
-conda create -n gmagent python=3.10
-conda activate gmagent
+conda create -n emagent python=3.10
+conda activate emagent
 ```
 or
 ```
-python  -m venv gmagent
-source gmagent/bin/activate # on Linux, macOS:
-source gmagent\Scripts\activate # on Windows
+python -m venv emagent
+source emagent/bin/activate # on Linux, macOS:
+source emagent\Scripts\activate # on Windows
 ```
 
 Then install the required Python libraries:
 ```
 git clone https://github.com/meta-llama/llama-recipes
-cd llama-recipes/recipes/use_cases/gmail_agent
+cd llama-recipes/recipes/use_cases/email_agent
 pip install -r requirements.txt
 ```
 
-# Run Gmagent
+# Run Emagent
 
-To run Gmagent, you need to first copy the `credentials.json` file downloaded and renamed above in Step 6 of Enable Gmail API to the gmagent folder, then run:
+To run Emagent, you need to first copy the `credentials.json` file downloaded and renamed above in Step 6 of Enable Gmail API to the emagent folder, then run:
 ```
-python main.py --user_email <your_gmail_address>
+python main.py --gmail <your_gmail_address>
 ```
 
 The first time you run it, you'll get a prompt like this;
