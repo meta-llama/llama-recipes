@@ -123,7 +123,7 @@ pip install -r requirements.txt
 
 To run the agent, you need to first copy the `credentials.json` file downloaded and renamed above in Step 6 of Enable Gmail API to the email_agent folder, then run:
 ```
-python main.py --gmail <your_gmail_address>
+python main.py --email <your_gmail_address>
 ```
 
 The first time you run it, you'll get a prompt like this;
