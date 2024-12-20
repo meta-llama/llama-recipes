@@ -6,90 +6,100 @@
 
 This is a guided series of tutorials/notebooks that can be taken as a reference or course to build a PDF to Podcast workflow. 
 
-You will also learn from the experiments of using  Text to Speech Models.
+You will also learn from the experiments of using Text to Speech Models.
 
-It assumes zero knowledge of LLMs, prompting and audio models, everything is covered in their respective notebooks.
+It assumes zero knowledge of LLMs, prompting, and audio models; everything is covered in their respective notebooks.
 
 ### Outline:
 
-Here is step by step thought (pun intended) for the task:
+Here is a step-by-step guide for the task:
 
-- Step 1: Pre-process PDF: Use `Llama-3.2-1B-Instruct` to pre-process the PDF and save it in a `.txt` file.
-- Step 2: Transcript Writer: Use `Llama-3.1-70B-Instruct` model to write a podcast transcript from the text
-- Step 3: Dramatic Re-Writer: Use `Llama-3.1-8B-Instruct` model to make the transcript more dramatic
-- Step 4: Text-To-Speech Workflow: Use `parler-tts/parler-tts-mini-v1` and `bark/suno` to generate a conversational podcast
+- **Step 1: Pre-process PDF**: Use [`Llama-3.2-1B-Instruct`](https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct) to pre-process the PDF and save it in a `.txt` file.
+- **Step 2: Transcript Writer**: Use [`Llama-3.1-70B-Instruct`](https://huggingface.co/meta-llama/Llama-3.1-70B-Instruct) model to write a podcast transcript from the text.
+- **Step 3: Dramatic Re-Writer**: Use [`Llama-3.1-8B-Instruct`](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct) model to make the transcript more dramatic.
+- **Step 4: Text-To-Speech Workflow**: Use `parler-tts/parler-tts-mini-v1` and `bark/suno` to generate a conversational podcast.
 
-Note 1: In Step 1, we prompt the 1B model to not modify the text or summarize it, strictly clean up extra characters or garbage characters that might get picked due to encoding from PDF. Please see the prompt in Notebook 1 for more details.
+**Note 1**: In Step 1, we prompt the `Llama-3.2-1B-Instruct` model to not modify or summarize the text but strictly clean up extra characters or garbage characters that might get picked up due to encoding from the PDF. Please see the prompt in [Notebook 1: Pre-process PDF](Notebook1_PreprocessPDF.ipynb) for more details.
 
-Note 2: For Step 2, you can also use `Llama-3.1-8B-Instruct` model, we recommend experimenting and trying if you see any differences. The 70B model was used here because it gave slightly more creative podcast transcripts for the tested examples.
+**Note 2**: For Step 2, you can also use the `Llama-3.1-8B-Instruct` model. We recommend experimenting to see if you observe any differences. The 70B model was used here because it provided slightly more creative podcast transcripts in our tests.
 
-Note 3: For Step 4, please try to extend the approach with other models. These models were chosen based on a sample prompt and worked best, newer models might sound better. Please see [Notes](./TTS_Notes.md) for some of the sample tests.
+**Note 3**: For Step 4, please try to extend the approach with other models. These models were chosen based on sample prompts and worked best. Newer models might sound better. Please see [Notes](./TTS_Notes.md) for some sample tests.
 
 ### Detailed steps on running the notebook:
 
-Requirements: GPU server or an API provider for using 70B, 8B and 1B Llama models.
-For running the 70B model, you will need a GPU with aggregated memory around 140GB to infer in bfloat-16 precision.
+**Requirements**: 
 
-Note: For our GPU Poor friends, you can also use the 8B and lower models for the entire pipeline. There is no strong recommendation. The pipeline below is what worked best on first few tests. You should try and see what works best for you!
+- **GPU Server**: Required for using 70B, 8B, and 1B Llama models.
+- **70B Model**: Requires a GPU with approximately 140GB of aggregated memory to infer in bfloat-16 precision.
 
-- Before getting started, please make sure to login using the `huggingface cli` and then launch your jupyter notebook server to make sure you are able to download the Llama models.
+**Note**: If you do not have access to high-memory GPUs, you can use the 8B and lower models for the entire pipeline without significant loss in functionality.
 
-You'll need your Hugging Face access token, which you can get at your Settings page [here](https://huggingface.co/settings/tokens). Then run `huggingface-cli login` and copy and paste your Hugging Face access token to complete the login to make sure the scripts can download Hugging Face models if needed.
+- **Login to Hugging Face**: Make sure to login using the `huggingface cli` and then launch your Jupyter notebook server to ensure you can download the Llama models.
 
-- First, please Install the requirements from [here]() by running inside the folder:
+  You'll need your Hugging Face access token, which you can obtain from your [Settings page](https://huggingface.co/settings/tokens). Then run `huggingface-cli login` and paste your Hugging Face access token to complete the login, ensuring the scripts can download Hugging Face models as needed.
 
-```
-git clone https://github.com/meta-llama/llama-recipes
-cd llama-recipes/recipes/quickstart/NotebookLlama/
-pip install -r requirements.txt
-```
+- **Install Requirements**:
 
-- Notebook 1:
+  Clone the repository and install dependencies by running the following commands inside the folder:
 
-This notebook is used for processing the PDF and processing it using the new Feather light model into a `.txt` file.
+  ```bash
+  git clone https://github.com/meta-llama/llama-recipes
+  cd llama-recipes/recipes/quickstart/NotebookLlama/
+  pip install -r requirements.txt
+  ```
 
-Update the first cell with a PDF link that you would like to use. Please decide on a PDF to use for Notebook 1, it can be any link but please remember to update the first cell of the notebook with the right link. 
+- **Notebook 1: Pre-process PDF** (`Notebook1_PreprocessPDF.ipynb`):
 
-Please try changing the prompts for the `Llama-3.2-1B-Instruct` model and see if you can improve results.
+  This notebook processes the PDF and converts it into a `.txt` file using the new Feather light model.
+  
+  - Update the first cell with a PDF link that you would like to use. Ensure the link is correct before running the notebook.
+  - Experiment with the prompts for the `Llama-3.2-1B-Instruct` model to improve results.
 
-- Notebook 2:
+- **Notebook 2: Transcript Writer** (`Notebook2_TranscriptWriter.ipynb`):
 
-This notebook will take in the processed output from Notebook 1 and creatively convert it into a podcast transcript using the `Llama-3.1-70B-Instruct` model. If you are GPU rich, please feel free to test with the 405B model!
+  This notebook takes the processed output from Notebook 1 and generates a podcast transcript using the `Llama-3.1-70B-Instruct` model. If you have ample GPU resources, feel free to test with the 405B model!
+  
+  - Experiment with system prompts to improve results.
+  - Try using the 8B model to compare differences.
 
-Please try experimenting with the System prompts for the model and see if you can improve the results and try the 8B model as well here to see if there is a huge difference!
+- **Notebook 3: Dramatic Re-Writer** (`Notebook3_DramaticReWriter.ipynb`):
 
-- Notebook 3:
+  This notebook enhances the transcript by adding dramatization and interruptions using the `Llama-3.1-8B-Instruct` model.
+  
+  - The notebook returns a tuple of conversations, simplifying subsequent steps.
+  - Experiment with system prompts to further improve results.
+  - Consider testing with the feather light 3B and 1B models.
 
-This notebook takes the transcript from earlier and prompts `Llama-3.1-8B-Instruct` to add more dramatization and interruptions in the conversations. 
+- **Notebook 4: Text-To-Speech Workflow** (`Notebook4_TextToSpeechWorkflow.ipynb`):
 
-There is also a key factor here: we return a tuple of conversation which makes our lives easier later. Yes, studying Data Structures 101 was actually useful for once!
+  Convert the enhanced transcript into a podcast using `parler-tts/parler-tts-mini-v1` and `bark/suno` models.
+  
+  - The speakers and prompts for the parler model were chosen based on experimentation and suggestions from model authors.
+  - Experiment with different TTS models and prompts to improve the natural sound of the podcast.
 
-For our TTS logic, we use two different models that behave differently with certain prompts. So we prompt the model to add specifics for each speaker accordingly.
+#### Note: Currently, there is an issue where Parler requires `transformers` version 4.43.3 or earlier, conflicting with steps 1-3. In Notebook 4, we switch the `transformers` version to accommodate Parler. Ensure you follow the notebook's instructions carefully to avoid dependency conflicts.
 
-Please again try changing the system prompt and see if you can improve the results. We encourage testing the feather light 3B and 1B models as well at this stage
+### Next Improvements & Further Ideas:
 
-- Notebook 4:
+- **Speech Model Experimentation**: Improve the naturalness of the podcast by experimenting with different TTS models.
+- **LLM vs. LLM Debate**: Utilize two agents to debate the topic of interest and generate the podcast outline.
+- **Testing 405B Model**: Assess performance differences when using the 405B model for writing transcripts.
+- **Enhanced Prompting**: Refine system prompts for improved results.
+- **Support for Additional Input Sources**: Enable ingestion of websites, audio files, YouTube links, etc. Community contributions are welcome!
 
-Finally, we take the results from last notebook and convert them into a podcast. We use the `parler-tts/parler-tts-mini-v1` and `bark/suno` models for a conversation.
+### Resources for Further Learning:
 
-The speakers and the prompt for parler model were decided based on experimentation and suggestions from the model authors. Please try experimenting, you can find more details in the resources section.
+- [Text to Audio Generation with Bark - Clearly Explained](https://betterprogramming.pub/text-to-audio-generation-with-bark-clearly-explained-4ee300a3713a)
+- [Colab Notebook for Text Processing](https://colab.research.google.com/drive/1dWWkZzvu7L9Bunq9zvD-W02RFUXoW-Pd?usp=sharing)
+- [Replicate: Bark Model](https://replicate.com/suno-ai/bark?prediction=zh8j6yddxxrge0cjp9asgzd534)
+- [Suno AI Notion Page](https://suno-ai.notion.site/8b8e8749ed514b0cbf3f699013548683?v=bc67cff786b04b50b3ceb756fd05f68c)
 
+### Supported Input Sources:
 
-#### Note: Right now there is one issue: Parler needs transformers 4.43.3 or earlier and for steps 1 to 3 of the pipeline you need latest, so we just switch versions in the last notebook.
+NotebookLlama supports multiple input formats:
 
-### Next-Improvements/Further ideas:
+- **PDF files** (`*.pdf`)
+- **Web pages** (`http://`, `https://`)
+- **YouTube videos** (`youtube.com`, `youtu.be`)
 
-- Speech Model experimentation: The TTS model is the limitation of how natural this will sound. This probably be improved with a better pipeline and with the help of someone more knowledgable-PRs are welcome! :) 
-- LLM vs LLM Debate: Another approach of writing the podcast would be having two agents debate the topic of interest and write the podcast outline. Right now we use a single LLM (70B) to write the podcast outline
-- Testing 405B for writing the transcripts
-- Better prompting
-- Support for ingesting a website, audio file, YouTube links and more. Again, we welcome community PRs!
-
-### Resources for further learning:
-
-- https://betterprogramming.pub/text-to-audio-generation-with-bark-clearly-explained-4ee300a3713a
-- https://colab.research.google.com/drive/1dWWkZzvu7L9Bunq9zvD-W02RFUXoW-Pd?usp=sharing
-- https://colab.research.google.com/drive/1eJfA2XUa-mXwdMy7DoYKVYHI1iTd9Vkt?usp=sharing#scrollTo=NyYQ--3YksJY
-- https://replicate.com/suno-ai/bark?prediction=zh8j6yddxxrge0cjp9asgzd534
-- https://suno-ai.notion.site/8b8e8749ed514b0cbf3f699013548683?v=bc67cff786b04b50b3ceb756fd05f68c
-
+To use a different input source, simply provide the appropriate path or URL when running the notebooks.

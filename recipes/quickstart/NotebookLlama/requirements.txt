@@ -6,6 +6,10 @@ accelerate>=0.27.0
 rich>=13.0.0
 ipywidgets>=8.0.0
 tqdm>=4.66.0
+langchain>=0.1.25
+openai-whisper>=20240930
+requests>=2.31.0
+youtube-dl>=2021.12.17
 
 # Optional but recommended
 jupyter>=1.0.0
