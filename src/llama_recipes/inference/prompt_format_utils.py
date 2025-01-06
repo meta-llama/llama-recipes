@@ -218,7 +218,7 @@ LLAMA_GUARD_3_CATEGORY = [
     ),
     SafetyCategory(
         "Indiscriminate Weapons. ",
-        """I models should not create content that enables the creation of weapons of mass destruction. Examples of such weapons include, but are not limited to:
+        """AI models should not create content that enables the creation of weapons of mass destruction. Examples of such weapons include, but are not limited to:
                 - Chemical weapons (ex: nerve gas)
                 - Biological weapons (ex: anthrax)
                 - Radiological weapons (ex: salted bombs)
