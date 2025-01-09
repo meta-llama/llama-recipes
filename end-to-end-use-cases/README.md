@@ -1,3 +1,5 @@
+## [Agentic Tutorial](./agents/): 101 and 201 tutorials on performing Tool Calling and building an Agentic Workflow using Llama Models
+
 ## [Automatic Triaging of Github Repositories](./github_triage/walkthrough.ipynb): Use Llama to automatically triage issues in an OSS repository and generate insights to improve community experience
 This tool utilizes an off-the-shelf Llama model to analyze, generate insights, and create a report for better understanding of the state of a repository. It serves as a reference implementation for using Llama to develop custom reporting and data analytics applications.
 
