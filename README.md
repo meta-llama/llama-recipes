@@ -3,16 +3,16 @@
 
 > Note: We recently did a refactor of the repo, [archive-main](https://github.com/meta-llama/llama-recipes/tree/archive-main) is a snapshot branch from before the refactor
 
-Welcome to the official repository for helping you get started with [inference](https://github.com/meta-llama/llama-recipes/tree/main/getting-started/inference), [fine-tuning](https://github.com/init27/llama-recipes/tree/main/getting-started/finetuning) and [end-to-end use-cases](https://github.com/meta-llama/llama-recipes/tree/main/end-to-end-use-cases) of building with the Llama Model family.
+Welcome to the official repository for helping you get started with [inference](./getting-started/inference/), [fine-tuning](./getting-started/finetuning) and [end-to-end use-cases](./end-to-end-use-cases) of building with the Llama Model family.
 
 The examples cover the most popular community approaches, popular use-cases and the latest Llama 3.2 Vision and Llama 3.2 Text, in this repository. 
 
 > [!TIP]
 > Repository Structure:
 > * [Start building with the Llama 3.2 models](./getting-started/)
-> * [End to End Use cases with Llama model family](https://github.com/meta-llama/llama-recipes/tree/main/end-to-end-use-cases)
-> * [Examples of building with 3rd Party Llama Providers](https://github.com/meta-llama/llama-recipes/tree/main/3p-integrations)
-> * [Model Benchmarks](https://github.com/meta-llama/llama-recipes/tree/main/benchmarks)
+> * [End to End Use cases with Llama model family](./end-to-end-use-cases)
+> * [Examples of building with 3rd Party Llama Providers](./3p-integrations)
+> * [Model Benchmarks](./benchmarks)
 
 > [!TIP]
 > Get started with Llama 3.2 with these new recipes:
