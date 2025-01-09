@@ -12,8 +12,6 @@ The examples cover the most popular community approaches, popular use-cases and 
 > * [Start building with the Llama 3.2 models](./getting-started/)
 > * [End to End Use cases with Llama model family](./end-to-end-use-cases)
 > * [Examples of building with 3rd Party Llama Providers](./3p-integrations)
-> * [Model Benchmarks](./benchmarks)
-
 > [!TIP]
 > Get started with Llama 3.2 with these new recipes:
 > * [Finetune Llama 3.2 Vision](./getting-started/finetuning/finetune_vision_model.md)
@@ -32,8 +30,6 @@ The examples cover the most popular community approaches, popular use-cases and 
 - [3P Integrations](./3p-integrations): Getting Started Recipes and End to End Use-Cases from various Llama providers
 - [End to End Use Cases](./end-to-end-use-cases): As the name suggests, spanning various domains and applications
 - [Getting Started](./getting-started/): Reference for inferencing, fine-tuning and RAG examples
-- [Benchmarks](./benchmarks): Reference implementation for some benchmarks
-
 
 ## FAQ: 
 

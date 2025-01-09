@@ -1,4 +1,4 @@
-## Llama-Recipes Quickstart
+## Llama-Recipes Getting Started
 
 If you are new to developing with Meta Llama models, this is where you should start. This folder contains introductory-level notebooks across different techniques relating to Meta Llama.
 
