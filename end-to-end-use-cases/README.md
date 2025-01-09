@@ -1,10 +1,10 @@
 ## [Agentic Tutorial](./agents/): 101 and 201 tutorials on performing Tool Calling and building an Agentic Workflow using Llama Models
+101 notebooks show how to apply Llama models and enable tool calling functionality, 201 notebook walks you through an end to end workflow of building an agent that can search two papers, fetch their details and find their differences.
 
-## [Benchmarks](./benchmarks/): a folder contains benchmark scripts that apply a throughput analysis and introduction to `lm-evaluation-harness`, a tool to evaluate Llama models including quantized models focusing on quality.
+## [Benchmarks](./benchmarks/): a folder contains benchmark scripts 
+The scripts apply a throughput analysis and introduction to `lm-evaluation-harness`, a tool to evaluate Llama models including quantized models focusing on quality
 
 ## [Browser Usage](./browser_use/): Demo of how to apply Llama models and use them for browsing the internet and completing tasks
-
-## []()
 
 ## [Automatic Triaging of Github Repositories](./github_triage/walkthrough.ipynb): Use Llama to automatically triage issues in an OSS repository and generate insights to improve community experience
 This tool utilizes an off-the-shelf Llama model to analyze, generate insights, and create a report for better understanding of the state of a repository. It serves as a reference implementation for using Llama to develop custom reporting and data analytics applications.
@@ -14,6 +14,9 @@ This demo app uses Llama 3 to return a text summary of a YouTube video. It shows
 
 ## [NBA2023-24](./coding/text2sql/structured_llama.ipynb): Ask Llama 3 about Structured Data
 This demo app shows how to use LangChain and Llama 3 to let users ask questions about **structured** data stored in a SQL DB. As the 2023-24 NBA season is entering the playoff, we use the NBA roster info saved in a SQLite DB to show you how to ask Llama 3 questions about your favorite teams or players.
+
+## [NotebookLlama](./NotebookLlama/): PDF to Podcast using Llama Models
+Workflow showcasing how to use multiple Llama models to go from any PDF to a Podcast and using open models to generate a multi-speaker podcast
 
 ## [live_data](live_data.ipynb): Ask Llama 3 about Live Data (using Replicate or [OctoAI](../3p_integrations/octoai/live_data.ipynb))
 This demo app shows how to perform live data augmented generation tasks with Llama 3, [LlamaIndex](https://github.com/run-llama/llama_index), another leading open-source framework for building LLM apps, and the [Tavily](https://tavily.com) live search API.
