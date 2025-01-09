@@ -18,4 +18,5 @@ Nested Folders rename:
 Removed folders:
 - /flagged (Empty folder)
 - /recipes/quickstart/Running_Llama3_Anywhere (Redundant code)
+- /recipes/quickstart/codellama (deprecated model)
 
