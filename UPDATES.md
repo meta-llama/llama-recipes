@@ -13,10 +13,11 @@ Nested Folders rename:
 - /dev_requirements.txt -> /src/dev_requirements.txt
 - /requirements.txt -> /src/requirements.txt
 - /tools -> /end-to-end-use-cases/benchmarks/ 
+- /recipes/experimental/long_context -> /end-to-end-use-cases/long_context
 
 
 Removed folders:
 - /flagged (Empty folder)
 - /recipes/quickstart/Running_Llama3_Anywhere (Redundant code)
-- /recipes/quickstart/codellama (deprecated model)
+- /recipes/quickstart/inference/codellama (deprecated model)
 
