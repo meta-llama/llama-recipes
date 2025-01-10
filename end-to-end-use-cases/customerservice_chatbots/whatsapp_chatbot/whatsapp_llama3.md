@@ -10,7 +10,7 @@ Businesses of all sizes can use the [WhatsApp Business API](https://developers.f
 
 The diagram below shows the components and overall data flow of the Llama 3 enabled WhatsApp chatbot demo we built, using Amazon EC2 instance as an example for running the web server.
 
-![](../../../../docs/img/whatsapp_llama_arch.jpg)
+![](../../../src/docs/img/whatsapp_llama_arch.jpg)
 
 ## Getting Started with WhatsApp Business Cloud API
 
@@ -25,7 +25,7 @@ For the last step, you need to further follow the [Sample Callback URL for Webho
 
 Now open the [Meta for Develops Apps](https://developers.facebook.com/apps/) page and select the WhatsApp business app and you should be able to copy the curl command (as shown in the App Dashboard - WhatsApp - API Setup - Step 2 below) and run the command on a Terminal to send a test message to your WhatsApp.
 
-![](../../../../docs/img/whatsapp_dashboard.jpg)
+![](../../../src/docs/img/whatsapp_dashboard.jpg)
 
 Note down the "Temporary access token", "Phone number ID", and "a recipient phone number" in the API Setup page above, which will be used later.
 

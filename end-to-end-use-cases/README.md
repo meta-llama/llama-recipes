@@ -18,7 +18,7 @@ This demo app shows how to use LangChain and Llama 3 to let users ask questions 
 ## [NotebookLlama](./NotebookLlama/): PDF to Podcast using Llama Models
 Workflow showcasing how to use multiple Llama models to go from any PDF to a Podcast and using open models to generate a multi-speaker podcast
 
-## [live_data](live_data.ipynb): Ask Llama 3 about Live Data (using Replicate or [OctoAI](../3p_integrations/octoai/live_data.ipynb))
+## [live_data](live_data.ipynb): Ask Llama 3 about Live Data (using Replicate or [OctoAI](../3pintegrations/octoai/live_data.ipynb))
 This demo app shows how to perform live data augmented generation tasks with Llama 3, [LlamaIndex](https://github.com/run-llama/llama_index), another leading open-source framework for building LLM apps, and the [Tavily](https://tavily.com) live search API.
 
 ## [WhatsApp Chatbot](./customerservice_chatbots/whatsapp_chatbot/whatsapp_llama3.md): Building a Llama 3 Enabled WhatsApp Chatbot

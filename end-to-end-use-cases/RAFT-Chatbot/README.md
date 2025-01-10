@@ -124,7 +124,7 @@ export PATH_TO_RAFT_JSON=recipes/use_cases/end2end-recipes/raft/output/raft.json
 torchrun --nnodes 1 --nproc_per_node 4  recipes/quickstart/finetuning/finetuning.py --enable_fsdp --lr 1e-5 --context_length 8192 --num_epochs 1 --batch_size_training 1 --model_name meta-Llama/Meta-Llama-3-8B-Instruct --dist_checkpoint_root_folder $PATH_TO_ROOT_FOLDER --dist_checkpoint_folder fine-tuned  --use_fast_kernels --dataset "custom_dataset" --custom_dataset.test_split "test" --custom_dataset.file "recipes/finetuning/datasets/raft_dataset.py" --use-wandb  --run_validation True  --custom_dataset.data_path $PATH_TO_RAFT_JSON
 ```
 
-For more details on multi-GPU fine-tuning, please refer to the [multigpu_finetuning.md](../../../quickstart/finetuning/multigpu_finetuning.md) in the finetuning recipe.
+For more details on multi-GPU fine-tuning, please refer to the [multigpu_finetuning.md](../../getting-started/finetuning/multigpu_finetuning.md) in the finetuning recipe.
 
 Next, we need to convert the FSDP checkpoint to a HuggingFace checkpoint using the following command:
 
@@ -132,7 +132,7 @@ Next, we need to convert the FSDP checkpoint to a HuggingFace checkpoint using t
 python src/llama_recipes/inference/checkpoint_converter_fsdp_hf.py --fsdp_checkpoint_path  "$PATH_TO_ROOT_FOLDER/fine-tuned-meta-Llama/Meta-Llama-3-8B-Instruct" --consolidated_model_path "$PATH_TO_ROOT_FOLDER"
 ```
 
-For more details on FSDP to HuggingFace checkpoint conversion, please refer to the [readme](../../../quickstart/inference/local_inference/README.md) in the inference/local_inference recipe.
+For more details on FSDP to HuggingFace checkpoint conversion, please refer to the [readme](../../getting-started/finetuning/multigpu_finetuning.md) in the inference/local_inference recipe.
 
 ## Evaluation Steps
 Once we have the RAFT model, we need to evaluate its performance. In this tutorial, we'll not only use traditional evaluation methods (e.g., calculating exact match rate or ROUGE score) but also use LLM as a judge to score model-generated answers.

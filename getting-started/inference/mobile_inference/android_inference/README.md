@@ -9,7 +9,7 @@ Machine Learning Compilation for Large Language Models (MLC LLM) is a high-perfo
 
 You can read more about MLC-LLM at the following [link](https://github.com/mlc-ai/mlc-llm).
 
-MLC-LLM is also what powers the Llama3 inference APIs provided by [OctoAI](https://octo.ai/). You can use OctoAI for your Llama3 cloud-based inference needs by trying out the examples under the [following path](../../../../3p_integrations/octoai/).
+MLC-LLM is also what powers the Llama3 inference APIs provided by [OctoAI](https://octo.ai/). You can use OctoAI for your Llama3 cloud-based inference needs by trying out the examples under the [following path](../../../../3p-integrations/octoai/).
 
 This tutorial was tested with the following setup:
 * MacBook Pro 16 inch from 2021 with Apple M1 Max and 32GB of RAM running Sonoma 14.3.1

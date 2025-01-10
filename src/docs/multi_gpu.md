@@ -10,7 +10,7 @@ Given the combination of PEFT and FSDP, we would be able to fine tune a Meta Lla
 For big models like 405B we will need to fine-tune in a multi-node setup even if 4bit quantization is enabled.
 
 ## Requirements
-To run the examples, make sure to install the llama-recipes package and clone the github repository in order to use the provided [`finetuning.py`](../recipes/quickstart/finetuning/finetuning.py) script with torchrun (See [README.md](../README.md) for details).
+To run the examples, make sure to install the llama-recipes package and clone the github repository in order to use the provided [`finetuning.py`](../../getting-started/finetuning/finetuning.py) script with torchrun (See [README.md](../README.md) for details).
 
 ## How to run it
 
@@ -117,7 +117,7 @@ torchrun --nnodes 1 --nproc_per_node 4  recipes/quickstart/finetuning/finetuning
 
 ## Where to configure settings?
 
-* [Training config file](../llama_recipes/configs/training.py) is the main config file that helps to specify the settings for our run and can be found in [configs folder](../src/llama_recipes/configs/)
+* [Training config file](../llama_recipes/configs/training.py) is the main config file that helps to specify the settings for our run and can be found in [configs folder](../llama_recipes/configs/)
 
 It lets us specify the training settings for everything from `model_name` to `dataset_name`, `batch_size` and so on. Below is the list of supported settings:
 

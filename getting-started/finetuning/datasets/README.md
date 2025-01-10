@@ -48,17 +48,17 @@ python -m llama_recipes.finetuning --dataset "custom_dataset" --custom_dataset.f
 This will call the function `get_foo` instead of `get_custom_dataset` when retrieving the dataset.
 
 ### Adding new dataset
-Each dataset has a corresponding configuration (dataclass) in [configs/datasets.py](../../../../src/llama_recipes/configs/datasets.py) which contains the dataset name, training/validation split names, as well as optional parameters like datafiles etc.
+Each dataset has a corresponding configuration (dataclass) in [configs/datasets.py](../../../src/llama_recipes/configs/datasets.py) which contains the dataset name, training/validation split names, as well as optional parameters like datafiles etc.
 
-Additionally, there is a preprocessing function for each dataset in the [datasets](../../../../src/llama_recipes/datasets) folder.
+Additionally, there is a preprocessing function for each dataset in the [datasets](../../../src/llama_recipes/datasets) folder.
 The returned data of the dataset needs to be consumable by the forward method of the fine-tuned model by calling ```model(**data)```.
 For CausalLM models this usually means that the data needs to be in the form of a dictionary with "input_ids", "attention_mask" and "labels" fields.
 
 To add a custom dataset the following steps need to be performed.
 
-1. Create a dataset configuration after the schema described above. Examples can be found in [configs/datasets.py](../../../../src/llama_recipes/configs/datasets.py).
+1. Create a dataset configuration after the schema described above. Examples can be found in [configs/datasets.py](../../../src/llama_recipes/configs/datasets.py).
 2. Create a preprocessing routine which loads the data and returns a PyTorch style dataset. The signature for the preprocessing function needs to be (dataset_config, tokenizer, split_name) where split_name will be the string for train/validation split as defined in the dataclass.
-3. Register the dataset name and preprocessing function by inserting it as key and value into the DATASET_PREPROC dictionary in [datasets/__init__.py](../../../../src/llama_recipes/datasets/__init__.py)
+3. Register the dataset name and preprocessing function by inserting it as key and value into the DATASET_PREPROC dictionary in [datasets/__init__.py](../../../src/llama_recipes/datasets/__init__.py)
 4. Set dataset field in training config to dataset name or use --dataset option of the `llama_recipes.finetuning` module or examples/finetuning.py training script.
 
 ## Application

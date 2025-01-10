@@ -16,7 +16,7 @@ Here we discuss frequently asked questions that may occur and we found useful al
 
 4. Can I add custom datasets?
 
-    Yes, you can find more information on how to do that [here](../recipes/quickstart/finetuning/datasets/README.md).
+    Yes, you can find more information on how to do that [here](../../getting-started/finetuning/datasets/README.md).
 
 5. What are the hardware SKU requirements for deploying these models?
 
@@ -36,13 +36,13 @@ Here we discuss frequently asked questions that may occur and we found useful al
     os.environ['PYTORCH_CUDA_ALLOC_CONF']='expandable_segments:True'
 
     ```
-    We also added this enviroment variable in `setup_environ_flags` of the [train_utils.py](../src/llama_recipes/utils/train_utils.py), feel free to uncomment it if required.
+    We also added this enviroment variable in `setup_environ_flags` of the [train_utils.py](../llama_recipes/utils/train_utils.py), feel free to uncomment it if required.
 
 8. Additional debugging flags?
 
     The environment variable `TORCH_DISTRIBUTED_DEBUG` can be used to trigger additional useful logging and collective synchronization checks to ensure all ranks are synchronized appropriately. `TORCH_DISTRIBUTED_DEBUG` can be set to either OFF (default), INFO, or DETAIL depending on the debugging level required. Please note that the most verbose option, DETAIL may impact the application performance and thus should only be used when debugging issues.
 
-    We also added this enviroment variable in `setup_environ_flags` of the [train_utils.py](../src/llama_recipes/utils/train_utils.py), feel free to uncomment it if required.
+    We also added this enviroment variable in `setup_environ_flags` of the [train_utils.py](../llama_recipes/utils/train_utils.py), feel free to uncomment it if required.
 
 9. I am getting import errors when running inference.
 

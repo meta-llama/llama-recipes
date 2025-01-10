@@ -1,7 +1,7 @@
 # Fine-tuning with Single GPU
 This recipe steps you through how to finetune a Meta Llama 3 model on the text summarization task using the [samsum](https://huggingface.co/datasets/samsum) dataset on a single GPU.
 
-These are the instructions for using the canonical [finetuning script](../../../src/llama_recipes/finetuning.py) in the llama-recipes package.
+These are the instructions for using the canonical [finetuning script](../../src/llama_recipes/finetuning.py) in the llama-recipes package.
 
 
 ## Requirements
@@ -35,13 +35,13 @@ The args used in the command above are:
 
 Currently 3 open source datasets are supported that can be found in [Datasets config file](../../../src/llama_recipes/configs/datasets.py). You can also use your custom dataset (more info [here](./datasets/README.md)).
 
-* `grammar_dataset` : use this [notebook](../../../src/llama_recipes/datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process the Jfleg and C4 200M datasets for grammar checking.
+* `grammar_dataset` : use this [notebook](../../src/llama_recipes/datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process the Jfleg and C4 200M datasets for grammar checking.
 
 * `alpaca_dataset` : to get this open source data please download the `alpaca.json` to `dataset` folder.
 
 
 ```bash
-wget -P ../../../src/llama_recipes/datasets https://raw.githubusercontent.com/tatsu-lab/stanford_alpaca/main/alpaca_data.json
+wget -P ../../src/llama_recipes/datasets https://raw.githubusercontent.com/tatsu-lab/stanford_alpaca/main/alpaca_data.json
 ```
 
 * `samsum_dataset`
