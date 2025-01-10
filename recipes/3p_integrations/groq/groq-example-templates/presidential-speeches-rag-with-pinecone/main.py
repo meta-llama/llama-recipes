@@ -55,7 +55,7 @@ def presidential_speech_chat_completion(client, model, user_question, relevant_e
             },
             {
                 "role": "user",
-                "content": "User Question: " + user_question + "\n\nRelevant Speech Exerpt(s):\n\n" + relevant_excerpts,
+                "content": "User Question: " + user_question + "\n\nRelevant Speech Excerpt(s):\n\n" + relevant_excerpts,
             }
         ],
         model = model
