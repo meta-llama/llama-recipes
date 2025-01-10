@@ -1,5 +1,4 @@
 # Llama Cookbook: The Official Guide to building with Llama Models
-<!-- markdown-link-check-disable -->
 
 > Note: We recently did a refactor of the repo, [archive-main](https://github.com/meta-llama/llama-recipes/tree/archive-main) is a snapshot branch from before the refactor
 
@@ -18,7 +17,6 @@ The examples cover the most popular community approaches, popular use-cases and 
 > * [Multimodal Inference with Llama 3.2 Vision](./getting-started/inference/local_inference/README.md#multimodal-inference)
 > * [Inference on Llama Guard 1B + Multimodal inference on Llama Guard 11B-Vision](./end-to-end-use-cases/responsible_ai/llama_guard/llama_guard_text_and_vision_inference.ipynb)
 
-<!-- markdown-link-check-enable -->
 > [!NOTE]
 > Llama 3.2 follows the same prompt template as Llama 3.1, with a new special token `<|image|>` representing the input image for the multimodal models.
 > 

@@ -119,7 +119,7 @@ phase2_ds.save_to_disk("data/phase2")
 ```
 
 ### Train
-Finally, we can start finetuning Llama2 on these datasets by following the [finetuning recipes](../../quickstart/finetuning/). Remember to pass the new tokenizer path as an argument to the script: `--tokenizer_name=./extended_tokenizer`.
+Finally, we can start finetuning Llama2 on these datasets by following the [finetuning recipes](../getting-started/finetuning/). Remember to pass the new tokenizer path as an argument to the script: `--tokenizer_name=./extended_tokenizer`.
 
 OpenHathi was trained on 64 A100 80GB GPUs. Here are the hyperparameters used and other training details:
 - maximum learning rate: 2e-4

@@ -1,5 +1,5 @@
 DIFFLOG:
-
+<!-- markdown-link-check-disable -->
 Nested Folders rename:
 - /recipes/3p_integrations -> /3p-integrations
 - /recipes/quickstart -> /getting-started
@@ -20,4 +20,4 @@ Removed folders:
 - /flagged (Empty folder)
 - /recipes/quickstart/Running_Llama3_Anywhere (Redundant code)
 - /recipes/quickstart/inference/codellama (deprecated model)
-
+<!-- markdown-link-check-enable -->

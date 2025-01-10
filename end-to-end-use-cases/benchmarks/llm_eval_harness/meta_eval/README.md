@@ -50,7 +50,7 @@ Given the extensive number of tasks available (12 for pretrained models and 30 f
 - **Tasks for 3.2 pretrained models**: MMLU
 - **Tasks for 3.2 instruct models**: MMLU, GPQA
 
-These tasks are common evalutions, many of which overlap with the Hugging Face [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard)
+These tasks are common evaluations, many of which overlap with the Hugging Face [Open LLM Leaderboard v2](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard)
 
 Here, we aim to get the benchmark numbers on the aforementioned tasks using Hugging Face [leaderboard implementation](https://github.com/EleutherAI/lm-evaluation-harness/tree/main/lm_eval/tasks/leaderboard). Please follow the instructions below to make necessary modifications to use our eval prompts and get more eval metrics.
 

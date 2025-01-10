@@ -12,7 +12,7 @@ This experiment built by the team at [Modal](https://modal.com), and is describe
 
 [Beat GPT-4o at Python by searching with 100 small Llamas](https://modal.com/blog/llama-human-eval)
 
-The experiment has since been upgraded to use the [Llama 3.2 3B Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) model, and runnable end-to-end using the Modal serverless platform.
+The experiment has since been upgraded to use the [Llama 3.2 3B Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) model, and run end-to-end using the Modal serverless platform.
 
 ## Run it yourself
 
@@ -55,7 +55,7 @@ This will execute:
 5. Generating graphs of pass@k and fail@k
 
 ### Results
-
+<!-- markdown-link-check-disable -->
 The resulting plots of the evals will be saved locally to:
 - `/tmp/plot-pass-k.jpeg`
 - `/tmp/plot-fail-k.jpeg`
@@ -69,3 +69,4 @@ You'll see that at 100 generations, the Llama model is able to perform on-par wi
 `/tmp/plot-fail-k.jpeg` shows fail@k across a log-scale, showing smooth scaling of this method.
 
 ![plot-fail-k](https://github.com/user-attachments/assets/7286e4ff-5090-4288-bd62-8a078c6dc5a1)
+<!-- markdown-link-check-enable -->
