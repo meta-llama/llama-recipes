@@ -35,9 +35,9 @@ The args used in the command above are:
 
 ## How to run with different datasets?
 
-Currently 4 datasets are supported that can be found in [Datasets config file](../src/llama_recipes/configs/datasets.py).
+Currently 4 datasets are supported that can be found in [Datasets config file](../llama_recipes/configs/datasets.py).
 
-* `grammar_dataset` : use this [notebook](../src/llama_recipes/datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process theJfleg and C4 200M datasets for grammar checking.
+* `grammar_dataset` : use this [notebook](../llama_recipes/datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process theJfleg and C4 200M datasets for grammar checking.
 
 * `alpaca_dataset` : to get this open source data please download the `aplaca.json` to `ft_dataset` folder.
 
@@ -67,7 +67,7 @@ python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization
 
 ## Where to configure settings?
 
-* [Training config file](../src/llama_recipes/configs/training.py) is the main config file that help to specify the settings for our run can be found in
+* [Training config file](../llama_recipes/configs/training.py) is the main config file that help to specify the settings for our run can be found in
 
 It let us specify the training settings, everything from `model_name` to `dataset_name`, `batch_size` etc. can be set here. Below is the list of supported settings:
 
@@ -117,9 +117,10 @@ It let us specify the training settings, everything from `model_name` to `datase
 
 ```
 
-* [Datasets config file](../src/llama_recipes/configs/datasets.py) provides the available options for datasets.
+* [Datasets config file](../llama_recipes/configs/datasets.py)
+    ../src/llama_recipes/configs/datasets.py) provides the available options for datasets.
 
-* [peft config file](../src/llama_recipes/configs/peft.py) provides the supported PEFT methods and respective settings that can be modified.
+* [peft config file](../llama_recipes/configs/peft.py) provides the supported PEFT methods and respective settings that can be modified.
 
 ## FLOPS Counting and Pytorch Profiling
 
