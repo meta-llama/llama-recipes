@@ -10,7 +10,7 @@ Messenger from Meta is a messaging service that allows a Facebook business page 
 
 The diagram below shows the components and overall data flow of the Llama 3 enabled Messenger chatbot demo we built, using an Amazon EC2 instance as an example for running the web server.
 
-![](../../../../docs/img/messenger_llama_arch.jpg)
+![](../../../src/docs/img/messenger_llama_arch.jpg)
 
 ## Getting Started with Messenger Platform
 
@@ -24,7 +24,7 @@ The diagram below shows the components and overall data flow of the Llama 3 enab
 
 5. Open Messenger's API Settings, as shown in the screenshot below, then in "1. Configure webhooks", set the Callback URL and Verify Token set up in the previous step, and subscribe all message related fields for "Webhook Fields". Finally, in "2. Generate access tokens", connect your Facebook page (see step 1) and copy your page access token for later use.
 
-![](../../../../docs/img/messenger_api_settings.png)
+![](../../../src/docs/img/messenger_api_settings.png)
 
 ## Writing Llama 3 Enabled Web App
 

@@ -236,7 +236,7 @@ Once we evaluated and refined our RAFT model, we can deploy it locally to intera
 python recipes/inference/local_inference/inference.py --model_name raft-8b
 ```
 
-For more details,please check [local_inference recipe](../../../quickstart/inference/local_inference/README.md)
+For more details,please check [local_inference recipe](../../getting-started/inference/local_inference/README.md)
 
 ## Acknowledgement
 
