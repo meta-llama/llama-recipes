@@ -37,7 +37,7 @@ def get_custom_dataset(dataset_config, tokenizer, split: str):
 
 def get_data_collator(dataset_processer,dataset_config):
     if ":" in dataset_config.file:
-        module_path, func_name = dataset_config.file.split(":")
+        module_path, func_name = dataset_config.file.split(":")[0], "get_data_collator"
     else:
         module_path, func_name = dataset_config.file, "get_data_collator"
 
