@@ -34,6 +34,7 @@ def main(
     enable_sensitive_topics: bool=False, # Enable check for sensitive topics using AuditNLG APIs
     enable_salesforce_content_safety: bool=True, # Enable safety check with Salesforce safety flan t5
     enable_llamaguard_content_safety: bool=False, # Enable safety check with Llama-Guard
+    enable_promptguard_safety: bool = False,
     use_fast_kernels: bool = True, # Enable using SDPA from PyTroch Accelerated Transformers, make use Flash Attention and Xformer memory-efficient kernels
     **kwargs
 ):
@@ -62,6 +63,7 @@ def main(
                                         enable_sensitive_topics,
                                         enable_salesforce_content_safety,
                                         enable_llamaguard_content_safety,
+                                        enable_promptguard_safety,
                                         )
 
     # Safety check of the user prompt
