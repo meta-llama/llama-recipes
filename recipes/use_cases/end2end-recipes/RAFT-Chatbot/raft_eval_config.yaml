@@ -9,8 +9,8 @@ judge_prompt_template: >
     <|begin_of_text|><|start_header_id|>system<|end_header_id|>You have been provided with a question, a teacher's answer and a student's answer below.
     Given that question, you need to score the how good the student answer is compare to
     the teacher's answer. If the student's answer is correct based on the teacher's answer, then return YES, else return NO.
-    Here are the grade criterias to follow:
-    1. Review it carefully to make sure that the keywords and numerical vaules are exactly the same.
+    Here are the grade criteria to follow:
+    1. Review it carefully to make sure that the keywords and numerical values are exactly the same.
     2. Ensure that the student answer does not contain any conflicting statements.
     3. It is OK if the student answer contains more information than the ground truth answer, as long as it is factually accurate relative to the  ground truth answer.
     YES means that the student's answer meets all of the criteria.

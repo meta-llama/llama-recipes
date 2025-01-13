@@ -29,20 +29,20 @@ Here we discuss frequently asked questions that may occur and we found useful al
 
 7. How to handle CUDA memory fragmentations during fine-tuning that may lead into an OOM?
 
-    In some cases you may experience that after model checkpointing specially with FSDP (this usually does not happen with PEFT methods), the reserved and allocated CUDA memory has increased. This might be due to CUDA memory fragmentations. PyTorch recenly added an enviroment variable that helps to better manage memory fragmentation (this feature in available on PyTorch nightlies at the time of writing this doc July 30 2023). You can set this in your main training script as follows:
+    In some cases you may experience that after model checkpointing specially with FSDP (this usually does not happen with PEFT methods), the reserved and allocated CUDA memory has increased. This might be due to CUDA memory fragmentations. PyTorch recently added an environment variable that helps to better manage memory fragmentation (this feature in available on PyTorch nightlies at the time of writing this doc July 30 2023). You can set this in your main training script as follows:
 
     ```bash
 
     os.environ['PYTORCH_CUDA_ALLOC_CONF']='expandable_segments:True'
 
     ```
-    We also added this enviroment variable in `setup_environ_flags` of the [train_utils.py](../src/llama_recipes/utils/train_utils.py), feel free to uncomment it if required.
+    We also added this environment variable in `setup_environ_flags` of the [train_utils.py](../src/llama_recipes/utils/train_utils.py), feel free to uncomment it if required.
 
 8. Additional debugging flags?
 
     The environment variable `TORCH_DISTRIBUTED_DEBUG` can be used to trigger additional useful logging and collective synchronization checks to ensure all ranks are synchronized appropriately. `TORCH_DISTRIBUTED_DEBUG` can be set to either OFF (default), INFO, or DETAIL depending on the debugging level required. Please note that the most verbose option, DETAIL may impact the application performance and thus should only be used when debugging issues.
 
-    We also added this enviroment variable in `setup_environ_flags` of the [train_utils.py](../src/llama_recipes/utils/train_utils.py), feel free to uncomment it if required.
+    We also added this environment variable in `setup_environ_flags` of the [train_utils.py](../src/llama_recipes/utils/train_utils.py), feel free to uncomment it if required.
 
 9. I am getting import errors when running inference.
 

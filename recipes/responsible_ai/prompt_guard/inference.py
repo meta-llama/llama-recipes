@@ -11,7 +11,7 @@ Utilities for loading the PromptGuard model and evaluating text for jailbreaks a
 
 Note that the underlying model has a maximum recommended input size of 512 tokens as a DeBERTa model.
 The final two functions in this file implement efficient parallel batched evaluation of the model on a list
-of input strings of arbirary length, with the final score for each input being the maximum score across all
+of input strings of arbitrary length, with the final score for each input being the maximum score across all
 chunks of the input string.
 """
 

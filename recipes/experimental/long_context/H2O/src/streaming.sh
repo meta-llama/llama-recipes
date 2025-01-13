@@ -12,7 +12,7 @@ elif [[ ${method} == 'full' ]]; then
         --input-path data \
         --model-name lmsys/vicuna-13b-v1.5
 else
-    echo 'unknown argment for method'
+    echo 'unknown argument for method'
 fi
 
 
