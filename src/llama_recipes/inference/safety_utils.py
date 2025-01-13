@@ -152,7 +152,7 @@ class AzureSaftyChecker(object):
             report = "|" + "|".join(f"{c.name:^10}" for c in categories) + "|\n"
             report += "|" + "|".join(f"{levels[s]:^10}" for s in severities) + "|\n"
 
-        return "Azure Content Saftey API", is_safe, report
+        return "Azure Content Safety API", is_safe, report
 
 class LlamaGuardSafetyChecker(object):
 

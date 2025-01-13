@@ -27,12 +27,12 @@ To launch the inference simply execute the following command changing the tp_siz
 python inference.py --model_name $MODEL_PATH --peft_model_name $PEFT_MODEL_PATH --tp_size 8 --user_prompt "Hello my name is"
 ```
 The script will ask for another prompt ina loop after completing the generation which you can exit by simply pressing enter and leaving the prompt empty.
-When using multiple gpus the model will automatically be split accross the available GPUs using tensor parallelism.
+When using multiple gpus the model will automatically be split across the available GPUs using tensor parallelism.
 
 ## Multi-node multi-gpu inference
 The FP8 quantized variants of Meta Llama (i.e. meta-llama/Meta-Llama-3.1-405B-FP8 and meta-llama/Meta-Llama-3.1-405B-Instruct-FP8) can be executed on a single node with 8x80GB H100 using the script located in this folder.
 To run the unquantized Meta Llama 405B variants (i.e. meta-llama/Meta-Llama-3.1-405B and meta-llama/Meta-Llama-3.1-405B-Instruct) we need multi-node inference.
-vLLM allows this by leveraging pipeline parallelism accros nodes while still applying tensor parallelism insid each node.
+vLLM allows this by leveraging pipeline parallelism across nodes while still applying tensor parallelism inside each node.
 To start a multi-node inference we first need to set up a ray serves which well be leveraged by vLLM to execute the model across node boundaries.
 
 ```bash

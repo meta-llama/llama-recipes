@@ -6,7 +6,7 @@ If you're interested in a Llama 3 enabled WhatsApp chatbot, see [here](../whatsa
 
 ## Overview
 
-Messenger from Meta is a messaging service that allows a Facebook business page to respond to people who are interested in their business using [Messenger Platform](https://developers.facebook.com/docs/messenger-platform/overview). The benefits of an intelligent and knowledgable Llama 3 powered chatbot are obvious, including cost saving and better customer experience such as 24x7 availability. In this tutorial, we'll cover the details of integrating Llama 3 with the Messenger Platform to build a basic Llama 3 enabled chatbot - for more Llama 3 application development and deployment demos such as how to integrate your own data with Llama 3, see the recipes.
+Messenger from Meta is a messaging service that allows a Facebook business page to respond to people who are interested in their business using [Messenger Platform](https://developers.facebook.com/docs/messenger-platform/overview). The benefits of an intelligent and knowledgeable Llama 3 powered chatbot are obvious, including cost saving and better customer experience such as 24x7 availability. In this tutorial, we'll cover the details of integrating Llama 3 with the Messenger Platform to build a basic Llama 3 enabled chatbot - for more Llama 3 application development and deployment demos such as how to integrate your own data with Llama 3, see the recipes.
 
 The diagram below shows the components and overall data flow of the Llama 3 enabled Messenger chatbot demo we built, using an Amazon EC2 instance as an example for running the web server.
 

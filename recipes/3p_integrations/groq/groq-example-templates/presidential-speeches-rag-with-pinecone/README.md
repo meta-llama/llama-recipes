@@ -1,6 +1,6 @@
 # Presidential Speeches RAG with Pinecone
 
-This repository contains a command line application that allows users to ask questions about US presidental speeches by applying Retrieval-Augmented Generation (RAG) over a Pinecone vector database. The application uses RAG to answer the user's question by retrieving the most relevant presidential speeches and using them to supplant the LLM response.
+This repository contains a command line application that allows users to ask questions about US presidential speeches by applying Retrieval-Augmented Generation (RAG) over a Pinecone vector database. The application uses RAG to answer the user's question by retrieving the most relevant presidential speeches and using them to supplant the LLM response.
 
 ## Features
 
