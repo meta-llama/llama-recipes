@@ -20,4 +20,5 @@ Removed folders:
 - /flagged (Empty folder)
 - /recipes/quickstart/Running_Llama3_Anywhere (Redundant code)
 - /recipes/quickstart/inference/codellama (deprecated model)
+- /recipes/quickstart/getting-to-know-llama-3.ipynb
 <!-- markdown-link-check-enable -->
