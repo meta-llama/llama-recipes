@@ -7,15 +7,14 @@ Welcome to the official repository for helping you get started with [inference](
 The examples cover the most popular community approaches, popular use-cases and the latest Llama 3.2 Vision and Llama 3.2 Text, in this repository. 
 
 > [!TIP]
-> Repository Structure:
-> * [Start building with the Llama 3.2 models](./getting-started/)
-> * [End to End Use cases with Llama model family](./end-to-end-use-cases)
-> * [Examples of building with 3rd Party Llama Providers](./3p-integrations)
-> [!TIP]
-> Get started with Llama 3.2 with these new recipes:
-> * [Finetune Llama 3.2 Vision](./getting-started/finetuning/finetune_vision_model.md)
+> Popular getting started links:
+> * [Build with Llama Notebook](./getting-started/build_with_Llama_3_2.ipynb)
 > * [Multimodal Inference with Llama 3.2 Vision](./getting-started/inference/local_inference/README.md#multimodal-inference)
-> * [Inference on Llama Guard 1B + Multimodal inference on Llama Guard 11B-Vision](./end-to-end-use-cases/responsible_ai/llama_guard/llama_guard_text_and_vision_inference.ipynb)
+> * [Inference on Llama Guard 1B + Multimodal inference on Llama Guard 11B-Vision](./end-to-end-use-cases/responsible_ai/llama_guard/
+
+> [!TIP]
+> Popular end to end recipes:
+> * [Finetune Llama 3.2 Vision](./getting-started/finetuning/finetune_vision_model.md)llama_guard_text_and_vision_inference.ipynb)
 
 > [!NOTE]
 > Llama 3.2 follows the same prompt template as Llama 3.1, with a new special token `<|image|>` representing the input image for the multimodal models.
