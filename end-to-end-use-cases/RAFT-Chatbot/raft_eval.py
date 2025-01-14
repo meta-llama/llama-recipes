@@ -82,7 +82,7 @@ def generate_answers_with_RAG(model_name, question_list,api_config,retriever,api
         )
     all_tasks = []
     for q in question_list:
-        # retrive the top K documents
+        # retrieve the top K documents
         retrieved_docs = retriever.invoke(q)        
         # format the documents into a string
         documents = format_docs_raft(retrieved_docs)
@@ -200,7 +200,7 @@ def main(api_config):
                     questions.append(item["question"])
                     groud_truth.append(item["answer"])
         generated_answers = {}            
-        # build retriver
+        # build retriever
         retriever = build_retriever(api_config,"sentence-transformers/multi-qa-mpnet-base-cos-v1",api_config["rag_topk"])
         # Generate answers for 8B models
         model_name = api_config["model_name"]
@@ -312,7 +312,7 @@ def parse_arguments():
         "-r", "--rag_topk",
         default=5,
         type=int,
-        help="set the number of top k documents the RAG needs to retrive."
+        help="set the number of top k documents the RAG needs to retrieve."
     )
     parser.add_argument("--chunk_size", type=int, default=1000, help="The character size of each chunk used in RAG")
     return parser.parse_args()

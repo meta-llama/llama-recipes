@@ -7,7 +7,7 @@
 # buffer dtypes.
 # Optional Kahan summation is used to offset precision reduction for
 # the weight updates. This allows full training in BFloat16 (equal or
-# better than FP32 results in many cases) due to high precision weight upates.
+# better than FP32 results in many cases) due to high precision weight updates.
 
 import torch
 from torch.optim.optimizer import Optimizer

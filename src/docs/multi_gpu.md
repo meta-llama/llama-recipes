@@ -174,7 +174,7 @@ It lets us specify the training settings for everything from `model_name` to `da
 
     * `mixed_precision` boolean flag to specify using mixed precision, defatults to true.
 
-    * `use_fp16` boolean flag to specify using FP16 for mixed precision, defatults to False. We recommond not setting this flag, and only set `mixed_precision` that will use `BF16`, this will help with speed and memory savings while avoiding challenges of scaler accuracies with `FP16`.
+    * `use_fp16` boolean flag to specify using FP16 for mixed precision, defatults to False. We recommend not setting this flag, and only set `mixed_precision` that will use `BF16`, this will help with speed and memory savings while avoiding challenges of scaler accuracies with `FP16`.
 
     *  `sharding_strategy` this specifies the sharding strategy for FSDP, it can be:
         * `FULL_SHARD` that shards model parameters, gradients and optimizer states, results in the most memory savings.
@@ -187,7 +187,7 @@ It lets us specify the training settings for everything from `model_name` to `da
 
 * `checkpoint_type` specifies the state dict checkpoint type for saving the model. `FULL_STATE_DICT` streams state_dict of each model shard from a rank to CPU and assembels the full state_dict on CPU. `SHARDED_STATE_DICT` saves one checkpoint per rank, and enables the re-loading the model in a different world size.
 
-* `fsdp_activation_checkpointing` enables activation checkpoining for FSDP, this saves significant amount of memory with the trade off of recomputing itermediate activations during the backward pass. The saved memory can be re-invested in higher batch sizes to increase the throughput. We recommond you use this option.
+* `fsdp_activation_checkpointing` enables activation checkpoining for FSDP, this saves significant amount of memory with the trade off of recomputing itermediate activations during the backward pass. The saved memory can be re-invested in higher batch sizes to increase the throughput. We recommend you use this option.
 
 * `fsdp_config.pure_bf16` it moves the  model to `BFloat16` and if `optimizer` is set to `anyprecision` then optimizer states will be kept in `BFloat16` as well. You can use this option if necessary.
 

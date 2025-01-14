@@ -112,7 +112,7 @@ def generate_questions(api_config):
     if len(documents) == 0:
         logging.info(f"Error reading files, document_text is {len(documents)}")
     document_batches = get_chunks(documents,api_config["chunk_size"],api_config)
-    # use OpenAI API protocol to hanlde the chat request, including local VLLM openai compatible server
+    # use OpenAI API protocol to handle the chat request, including local VLLM openai compatible server
     llm = ChatOpenAI(
         openai_api_key=key,
         openai_api_base=api_url,
@@ -132,7 +132,7 @@ def generate_questions(api_config):
         queries = [strip_str(q) for q in queries]
         queries = [q for q in queries if any(c.isalpha() for c in q)]
         if len(queries) > int(api_config['questions_per_chunk']):
-            # As the model may have unrelated question at the begining of the result
+            # As the model may have unrelated question at the beginning of the result
             # if queries is more than questions_per_chunk, then we need to truncate it and only keep last questions_per_chunk lines
             queries = queries[-int(api_config['questions_per_chunk']):]
         final_result.append(queries)
@@ -152,7 +152,7 @@ def generate_COT(chunk_questions_zip,api_config) -> dict:
                 prompt = api_config['COT_prompt_template'].format(question=question,context=str(document_content))
                 all_tasks.append(prompt)
                 chunk_questions.append((document_content,question))
-    # use OpenAI API protocol to hanlde the chat request, including local VLLM openai compatible server
+    # use OpenAI API protocol to handle the chat request, including local VLLM openai compatible server
     llm = ChatOpenAI(
         openai_api_key=api_config["api_key"],
         openai_api_base=api_config["endpoint_url"],
