@@ -26,11 +26,11 @@ def replace_target(target, seq):
 
 def tokenize_dialogs(dialogs, images, processor):
     text_prompt = processor.apply_chat_template(dialogs)
+    text_prompt = [prompt.replace('<|begin_of_text|>','') for prompt in text_prompt]
     batch = processor(
         images=images,
         text=text_prompt,
         padding=True,
-        text_kwargs={"add_special_tokens": False},
         return_tensors="pt",
     )
     label_list = []
@@ -137,3 +137,4 @@ class OCRVQADataCollator:
 
 def get_data_collator(processor):
     return OCRVQADataCollator(processor)
+
