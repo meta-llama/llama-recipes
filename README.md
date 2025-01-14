@@ -2,19 +2,19 @@
 
 Welcome to the official repository for helping you get started with [inference](./getting-started/inference/), [fine-tuning](./getting-started/finetuning) and [end-to-end use-cases](./end-to-end-use-cases) of building with the Llama Model family.
 
-The examples cover the most popular community approaches, popular use-cases and the latest Llama 3.2 Vision and Llama 3.2 Text, in this repository. 
+This repository covers the most popular community approaches, use-cases and the latest recipes for Llama Text and Vision models.
 
 > [!TIP]
 > Popular getting started links:
-> * [Build with Llama Notebook](./getting-started/build_with_Llama_3_2.ipynb)
+> * [Build with Llama Tutorial](./getting-started/build_with_Llama_3_2.ipynb)
 > * [Multimodal Inference with Llama 3.2 Vision](./getting-started/inference/local_inference/README.md#multimodal-inference)
-> * [Inference on Llama Guard 1B + Multimodal inference on Llama Guard 11B-Vision](./end-to-end-use-cases/responsible_ai/llama_guard/)
+> * [Inferencing using Llama Guard (Safety Model)](./end-to-end-use-cases/responsible_ai/llama_guard/)
 
 > [!TIP]
 > Popular end to end recipes:
-> * [Agentic Examples](./end-to-end-use-cases/agents/)
+> * [Email Agent](./end-to-end-use-cases/email_agent/)
 > * [NotebookLlama](./end-to-end-use-cases/NotebookLlama/)
-> * [Browser Use with Llama](./end-to-end-use-cases/browser_use/)
+> * [Text to SQL](./end-to-end-use-cases/coding/text2sql/)
 
 
 > Note: We recently did a refactor of the repo, [archive-main](https://github.com/meta-llama/llama-recipes/tree/archive-main) is a snapshot branch from before the refactor
