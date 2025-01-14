@@ -28,6 +28,10 @@ This repository covers the most popular community approaches, use-cases and the 
 
 ## FAQ: 
 
+- Q: What happened to llama-recipes?
+
+A: We recently renamed llama-recipes to llama-cookbook
+
 - Q: Prompt Template changes for Multi-Modality? 
 
 A: Llama 3.2 follows the same prompt template as Llama 3.1, with a new special token `<|image|>` representing the input image for the multimodal models.
