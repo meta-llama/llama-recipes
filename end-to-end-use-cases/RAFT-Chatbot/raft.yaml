@@ -1,0 +1,51 @@
+COT_prompt_template: >
+  <|begin_of_text|><|start_header_id|>system<|end_header_id|> You are a helpful chatbot who can provide an answer to every questions from the user given a relevant context.<|eot_id|>
+  <|start_header_id|>user<|end_header_id|>
+  Question: {question}\nContext: {context}\n
+  Answer this question using the information given by multiple documents in the context above. Here are the things to pay attention to:
+  - The context contains many documents, each document starts with <DOCUMENT> and ends </DOCUMENT>.
+  - First provide step-by-step reasoning on how to answer the question.
+  - In the reasoning, if you need to copy paste some sentences from the context, include them in ##begin_quote## and ##end_quote##. This would mean that things outside of ##begin_quote## and ##end_quote## are not directly copy paste from the context.
+  - End your response with final answer in the form <ANSWER>: $answer, the answer should less than 60 words.
+  You MUST begin your final answer with the tag "<ANSWER>:". <|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+question_prompt_template: >
+  <|begin_of_text|><|start_header_id|>system<|end_header_id|> You are a synthetic question-answer pair generator. Given a chunk of context about
+  some topic(s), generate {num_questions} example questions a user could ask and would be answered
+  using information from the chunk. For example, if the given context was a Wikipedia
+  paragraph about the United States, an example question could be 'How many states are
+  in the United States?
+  Your questions should be formulated in the same style as questions that users could ask in a search engine.
+  This means that your questions MUST NOT mention something like "according to the passage" or "context".
+  The questions should be able to be answered in 60 words or less. Include only the questions in your response.<|eot_id|>
+  <|start_header_id|>user<|end_header_id|>
+  Context: {context}\n <|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+# question_prompt_template: >
+#   <|begin_of_text|><|start_header_id|>system<|end_header_id|> You are a language model skilled in creating quiz questions.
+#   You will be provided with a document,
+#   read it and please generate factoid question and answer pairs that are most likely be asked by a user of Llama language models
+#   which includes LLama, Llama2, Meta Llama3, Code Llama, Meta Llama Guard 1,	Meta Llama Guard 2
+#   Your factoid questions should be answerable with a specific, concise piece of factual information from the context.
+#   Your factoid questions should be formulated in the same style as questions users could ask in a search engine.
+#   This means that your factoid questions MUST NOT mention something like "according to the passage" or "context".
+#   please make sure you follow those rules:
+#   1. Generate {num_questions} question answer pairs, you can generate less answer if there is nothing related to
+#   model, training, fine-tuning and evaluation details of Llama language models,
+#   2. The questions can be answered based *solely* on the given passage.
+#   3. Avoid asking questions with similar meaning.
+#   4. Never use any abbreviation.
+#   5. The questions should be able to be answered in 60 words or less. Include only the questions in your response. <|eot_id|>
+#   <|start_header_id|>user<|end_header_id|>
+#   Context: {context}\n <|eot_id|><|start_header_id|>assistant<|end_header_id|>
+data_dir: "./data"
+
+xml_path: ""
+
+chunk_size: 1000
+
+questions_per_chunk: 5
+
+num_distract_docs: 4 # number of distracting documents to add to each chunk
+
+refusal_probability: 0.05 # probability of related documents to be added to each chunk

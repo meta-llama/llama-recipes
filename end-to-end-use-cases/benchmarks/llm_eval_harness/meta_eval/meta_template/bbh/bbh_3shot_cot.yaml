@@ -1,0 +1,28 @@
+dataset_path: meta-llama/Llama-3.1-8B-evals
+dataset_name: Llama-3.1-8B-evals__bbh__details
+task: meta_bbh
+output_type: generate_until
+process_docs: !function utils.process_docs
+test_split: latest
+doc_to_text: !function utils.doc_to_text
+doc_to_target: answer
+filter_list:
+  - name: "strict-match"
+    filter:
+      - function: "regex"
+        regex_pattern: 'the answer is (.*?)\.'
+      - function: "take_first"
+generation_kwargs:
+  until: "\n\nQ: "
+  do_sample: false
+  temperature: 0
+  max_gen_toks: 512
+num_fewshot: 0
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: true
+    ignore_punctuation: true
+metadata:
+  version: 1.0

@@ -1,0 +1,29 @@
+task: meta_mmlu_pro_instruct
+dataset_path: meta-llama/Llama-3.1-8B-Instruct-evals
+dataset_name: Llama-3.1-8B-Instruct-evals__mmlu_pro__details
+test_split: latest
+output_type: generate_until
+process_docs: !function utils.process_docs
+doc_to_text: !function utils.doc_to_text
+doc_to_target: gold
+filter_list:
+  - name: "strict-match"
+    filter:
+      - function: "regex"
+        group_select: -1
+        regex_pattern: 'best answer is ([A-Z])'
+      - function: "take_first"
+generation_kwargs:
+  until: []
+  do_sample: false
+  temperature: 0
+  max_gen_toks: 1024
+num_fewshot: 0
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: true
+    ignore_punctuation: true
+metadata:
+  version: 1.0

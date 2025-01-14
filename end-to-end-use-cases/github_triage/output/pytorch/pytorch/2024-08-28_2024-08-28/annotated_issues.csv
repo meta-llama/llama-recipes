@@ -1,0 +1,1846 @@
+repo_name,number,html_url,closed,num_comments,created_at,discussion,summary,possible_causes,remediations,component,sentiment,issue_type,severity,op_expertise,themes
+pytorch/pytorch,134637,https://github.com/pytorch/pytorch/issues/134637,False,0,2024-08-28T01:14:14Z,"LSTM inference c++ threads block on DropoutState
+### 🐛 Describe the bug
+
+I'd doing RL with c++ mutiple threads on a single GPU.
+I find find threads are all block was block in lstm foward in get_dropout_state on a static varable:
+
+RNN.cpp
+_cudnn_impl(){
+  ...
+  auto& dropout_state = get_dropout_state(dropout_p, train, input.options());
+  std::unique_lock<DropoutState> lock{dropout_state};
+  ...
+}
+
+get_dropout_state(){
+  ...
+  static std::vector dropout_state_cache{
+  static_cast<size_t>(cuda::getNumGPUs())};
+  ...
+}
+
+And the DropoutState comments says:
+
+// Every time we use a dropout state, we need to synchronize with its event,
+// to make sure all previous uses finish running before this one starts. Once
+// we’re done, we record the event to allow others to synchronize with this
+// kernel. Those events are really needed only for inter-stream sync on a
+// single GPU. I doubt anyone will want to run cuDNN RNNs in parallel on a
+// single GPU, so they should end up being complete no-ops.
+
+In fact lstm forwad doesn’t need a DropoutState, but it still mutex lock on it.
+Is it possible to bypass the mutex lock in this situation?
+
+### Versions
+
+v2.4.0",Threads block on DropoutState in LSTM inference with C++ and multiple threads on a single GPU due to mutex lock in get_dropout_state function.,"['Mutex lock on DropoutState in get_dropout_state function', 'Unnecessary use of DropoutState in LSTM forward pass']","['Remove or bypass the mutex lock on DropoutState when not necessary, such as in LSTM forward pass', 'Optimize the get_dropout_state function to reduce synchronization overhead']",RNN,negative,bug_report,major,advanced,"['Model Loading', 'Model Inference']"
+pytorch/pytorch,134640,https://github.com/pytorch/pytorch/issues/134640,False,0,2024-08-28T01:58:33Z,"Meet “No module named'tools. setup_helpers‘“ when installing caffe2
+### 🐛 Describe the bug
+
+I pulled the branch  v 2.4.0 and compiled on ARM64 platform. Similar problem in [#707](https://github.com/pytorch/pytorch/issues/707) happened. 
+
+Have USED `export FULL_CAFFE2=1` firstly and build wheel from sorce. Torch install and  work well but when I use `pip install caffe2`，I get
+
+```shell
+Collecting caffe2
+  Using cached caffe2-0.5.0a0.dev100.tar.gz (10.7 MB)
+  Preparing metadata (setup.py) ... error
+  error: subprocess-exited-with-error
+  
+  × python setup.py egg_info did not run successfully.
+  │ exit code: 1
+  ╰─> [6 lines of output]
+      Traceback (most recent call last):
+        File ""<string>"", line 2, in <module>
+        File ""<pip-setuptools-caller>"", line 34, in <module>
+        File ""/tmp/pip-install-i_faspwa/caffe2_6bf5d76bcddc4318b88e7aef5c343901/setup.py"", line 108, in <module>
+          from tools.setup_helpers.env import check_env_flag, check_negative_env_flag
+      ModuleNotFoundError: No module named 'tools.setup_helpers'
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: metadata-generation-failed
+```
+Waiting for any suggestion :) .
+
+### Versions
+
+Environment Info:
+- OS: Ubuntu 22.04
+- Python: 3.10.14
+- CUDA: 12.2
+- gcc: 11.4.0
+- glibc: 2.35
+- arch: aarch64
+- numpy: 1.26.4
+- torch: 2.4.0（build from source）
+- torchvision: 2.4.0（build from source）
+- torchaudio: 0.19.0（build from source）
+
+","The user encountered an error when installing caffe2 using pip, specifically a ModuleNotFoundError for 'tools.setup_helpers'. This issue occurred on ARM64 platform with Python 3.10.14 and CUDA 12.2.","['Incompatible version of caffe2 with the current environment', 'Missing dependencies required by caffe2', 'Issue with the setup.py file in the caffe2 repository']","['Try installing an older version of caffe2 that is compatible with the current environment', 'Verify that all dependencies required by caffe2 are installed and up-to-date']",caffe2,negative,bug_report,major,intermediate,['Miscellaneous']
+pytorch/pytorch,134641,https://github.com/pytorch/pytorch/issues/134641,False,1,2024-08-28T02:00:59Z,"nn.Module.to(memory_format= channels_last format) failed if containing 5D parameters
+### 🐛 Describe the bug
+
+The following code may failed:
+
+```
+import torch
+from torch import nn
+
+class A(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.p = nn.Parameter(torch.zeros((1, 8, 1, 1, 256)))
+
+a=A().to(memory_format=torch.channels_last)
+```
+
+, which is due to the following code in nn.module:
+```
+        def convert(t):
+            if convert_to_format is not None and t.dim() in (4, 5):
+                return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None,
+                            non_blocking, memory_format=convert_to_format)
+            return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None, non_blocking)
+```
+Should it do nothing, or just throws a warning if any parameters cannot be converted to channels_last or channels_last_3d?
+Or shaw we convert the tensors in different ways, like this?
+```
+        def convert(t):
+            if ((convert_to_format==torch.channels_last and t.dim() ==4) 
+                or (convert_to_format==torch.channels_last_3d and t.dim() ==5)):
+                return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None,
+                            non_blocking, memory_format=convert_to_format)
+            return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None, non_blocking)
+```
+
+
+
+
+
+### Versions
+
+
+/usr/local/lib/python3.10/runpy.py:126: RuntimeWarning: 'torch.utils.collect_env' found in sys.modules after import of package 'torch.utils', but prior to execution of 'torch.utils.collect_env'; this may result in unpredictable behaviour
+  warn(RuntimeWarning(msg))
+Collecting environment information...
+PyTorch version: 2.4.0+cu118
+Is debug build: False
+CUDA used to build PyTorch: 11.8
+ROCM used to build PyTorch: N/A
+
+OS: Ubuntu 20.04.6 LTS (x86_64)
+GCC version: (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0
+Clang version: Could not collect
+CMake version: version 3.16.3
+Libc version: glibc-2.31
+
+Python version: 3.10.13 (main, Apr 26 2024, 04:45:52) [GCC 9.4.0] (64-bit runtime)
+Python platform: Linux-4.15.0-189-generic-x86_64-with-glibc2.31
+Is CUDA available: True
+CUDA runtime version: 11.8.89
+CUDA_MODULE_LOADING set to: LAZY
+GPU models and configuration: 
+GPU 0: NVIDIA RTX A6000
+GPU 1: NVIDIA RTX A6000
+
+Nvidia driver version: 525.78.01
+cuDNN version: Probably one of the following:
+/usr/lib/x86_64-linux-gnu/libcudnn.so.8.9.6
+/usr/lib/x86_64-linux-gnu/libcudnn_adv_infer.so.8.9.6
+/usr/lib/x86_64-linux-gnu/libcudnn_adv_train.so.8.9.6
+/usr/lib/x86_64-linux-gnu/libcudnn_cnn_infer.so.8.9.6
+/usr/lib/x86_64-linux-gnu/libcudnn_cnn_train.so.8.9.6
+/usr/lib/x86_64-linux-gnu/libcudnn_ops_infer.so.8.9.6
+/usr/lib/x86_64-linux-gnu/libcudnn_ops_train.so.8.9.6
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+Is XNNPACK available: True
+
+CPU:
+Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   46 bits physical, 48 bits virtual
+CPU(s):                          64
+On-line CPU(s) list:             0-63
+Thread(s) per core:              2
+Core(s) per socket:              16
+Socket(s):                       2
+NUMA node(s):                    1
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           85
+Model name:                      Intel(R) Xeon(R) Gold 5218 CPU @ 2.30GHz
+Stepping:                        7
+CPU MHz:                         1504.649
+BogoMIPS:                        4600.00
+Virtualization:                  VT-x
+L1d cache:                       1 MiB
+L1i cache:                       1 MiB
+L2 cache:                        32 MiB
+L3 cache:                        44 MiB
+NUMA node0 CPU(s):               0-63
+Vulnerability Itlb multihit:     KVM: Mitigation: Split huge pages
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Not affected
+Vulnerability Mmio stale data:   Mitigation; Clear CPU buffers; SMT vulnerable
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling
+Vulnerability Srbds:             Not affected
+Vulnerability Tsx async abort:   Mitigation; TSX disabled
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 invpcid_single intel_ppin ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm mpx rdt_a avx512f avx512dq rdseed adx smap clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm arat pln pts pku ospke avx512_vnni md_clear flush_l1d arch_capabilities
+
+Versions of relevant libraries:
+[pip3] numpy==1.26.4
+[pip3] open-clip-torch==2.24.0
+[pip3] torch==2.4.0+cu118
+[pip3] torchlaunch==1.0
+[pip3] torchvision==0.19.0+cu118
+[pip3] triton==3.0.0
+[conda] Could not collect
+> ","nn.Module.to(memory_format=channels_last format) fails when containing 5D parameters. The issue arises from the convert function in nn.Module, which does not handle 5D tensors correctly when converting to channels_last format.","['The convert function in nn.Module does not handle 5D tensors correctly when converting to channels_last format.', 'The channels_last format is not compatible with 5D tensors.']","['Modify the convert function in nn.Module to handle 5D tensors correctly when converting to channels_last format.', 'Add a warning or error message when attempting to convert a 5D tensor to channels_last format.']",nn.Module,negative,bug_report,major,advanced,['Miscellaneous']
+pytorch/pytorch,134642,https://github.com/pytorch/pytorch/issues/134642,False,4,2024-08-28T02:15:07Z,"Memory leak starting with torch==2.5.0dev20240824 during training
+### 🐛 Describe the bug
+
+Between 20240823 and 20240824 version, there is a serious memory leak. The latest nightly 20240827 still has the issue
+
+<img width=""500"" alt=""image"" src=""https://github.com/user-attachments/assets/c413a455-e85b-4717-b698-add1d716d996"">
+
+Without compile, there is no memory leak. This is happening with torchtune, though I think I should be able to reproduce it in a small standalone script too. Will update if I can.
+
+Extra relevant info: fine-tune Llama3.1-8B with torchtune. Full BF16 training, with activation checkpointing.
+
+cc @ezyang @gchanan @zou3519 @kadeng @msaroufim @chauhang @penguinwu 
+
+### Error logs
+
+OOM
+
+### Minified repro
+
+Install deps
+
+```
+pip install -U --pre torch==2.5.0dev20240824 torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu124
+git clone https://github.com/pytorch/torchtune
+cd torchtune
+pip install -e . -v
+pip install git+https://github.com/pytorch/ao  # earlier torchao doesn't work with torch nightly
+```
+
+Download Llama
+
+```
+pip install huggingface_hub
+huggingface-cli login  # if not logged in yet
+tune download meta-llama/Meta-Llama-3.1-8B-Instruct --output-dir /tmp/Meta-Llama-3.1-8B-Instruct --ignore-patterns ""original/consolidated.00.pth""
+```
+
+Run the finetune job
+
+```
+tune run full_finetune_single_device --config llama3_1/8B_full_single_device optimizer=torch.optim.AdamW optimizer.fused=True optimizer_in_bwd=False compile=True log_peak_memory_stats=True
+```
+
+### Versions
+
+```
+Collecting environment information...
+PyTorch version: 2.5.0.dev20240824+cu124
+Is debug build: False
+CUDA used to build PyTorch: 12.4
+ROCM used to build PyTorch: N/A
+
+OS: Ubuntu 22.04.4 LTS (x86_64)
+GCC version: (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+Clang version: Could not collect
+CMake version: version 3.26.4
+Libc version: glibc-2.35
+
+Python version: 3.11.9 (main, Apr 19 2024, 16:48:06) [GCC 11.2.0] (64-bit runtime)
+Python platform: Linux-6.5.0-44-generic-x86_64-with-glibc2.35
+Is CUDA available: True
+CUDA runtime version: 12.4.131
+CUDA_MODULE_LOADING set to: LAZY
+GPU models and configuration: GPU 0: NVIDIA A100-SXM4-80GB
+Nvidia driver version: 555.52.04
+cuDNN version: Could not collect
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+Is XNNPACK available: True
+
+CPU:
+Architecture:                       x86_64
+CPU op-mode(s):                     32-bit, 64-bit
+Address sizes:                      48 bits physical, 48 bits virtual
+Byte Order:                         Little Endian
+CPU(s):                             128
+On-line CPU(s) list:                0-127
+Vendor ID:                          AuthenticAMD
+Model name:                         AMD EPYC 7513 32-Core Processor
+CPU family:                         25
+Model:                              1
+Thread(s) per core:                 2
+Core(s) per socket:                 32
+Socket(s):                          2
+Stepping:                           1
+BogoMIPS:                           5189.74
+Flags:                              fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 invpcid_single hw_pstate ssbd mba ibrs ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 invpcid cqm rdt_a rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local clzero irperf xsaveerptr rdpru wbnoinvd amd_ppin brs arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold v_vmsave_vmload vgif v_spec_ctrl umip pku ospke vaes vpclmulqdq rdpid overflow_recov succor smca
+Virtualization:                     AMD-V
+L1d cache:                          2 MiB (64 instances)
+L1i cache:                          2 MiB (64 instances)
+L2 cache:                           32 MiB (64 instances)
+L3 cache:                           256 MiB (8 instances)
+NUMA node(s):                       8
+NUMA node0 CPU(s):                  0-7,64-71
+NUMA node1 CPU(s):                  8-15,72-79
+NUMA node2 CPU(s):                  16-23,80-87
+NUMA node3 CPU(s):                  24-31,88-95
+NUMA node4 CPU(s):                  32-39,96-103
+NUMA node5 CPU(s):                  40-47,104-111
+NUMA node6 CPU(s):                  48-55,112-119
+NUMA node7 CPU(s):                  56-63,120-127
+Vulnerability Gather data sampling: Not affected
+Vulnerability Itlb multihit:        Not affected
+Vulnerability L1tf:                 Not affected
+Vulnerability Mds:                  Not affected
+Vulnerability Meltdown:             Not affected
+Vulnerability Mmio stale data:      Not affected
+Vulnerability Retbleed:             Not affected
+Vulnerability Spec rstack overflow: Mitigation; Safe RET
+Vulnerability Spec store bypass:    Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:           Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:           Mitigation; Retpolines; IBPB conditional; IBRS_FW; STIBP always-on; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected
+Vulnerability Srbds:                Not affected
+Vulnerability Tsx async abort:      Not affected
+
+Versions of relevant libraries:
+[pip3] numpy==1.26.4
+[pip3] optree==0.12.1
+[pip3] pytorch-triton==3.0.0+dedb7bdf33
+[pip3] torch==2.5.0.dev20240824+cu124
+[pip3] torchao==0.4.0+gitf9d4e2a
+[pip3] torchaudio==2.4.0
+[pip3] torchelastic==0.2.2
+[pip3] torchtune==0.0.0
+[pip3] torchvision==0.20.0.dev20240824+cu124
+[pip3] triton==3.0.0
+[conda] blas                      1.0                         mkl  
+[conda] ffmpeg                    4.3                  hf484d3e_0    pytorch
+[conda] libjpeg-turbo             2.0.0                h9bf148f_0    pytorch
+[conda] mkl                       2023.1.0         h213fc3f_46344  
+[conda] mkl-service               2.4.0           py311h5eee18b_1  
+[conda] mkl_fft                   1.3.8           py311h5eee18b_0  
+[conda] mkl_random                1.2.4           py311hdb19cb5_0  
+[conda] numpy                     1.26.4          py311h08b1b3b_0  
+[conda] numpy-base                1.26.4          py311hf175353_0  
+[conda] optree                    0.12.1                   pypi_0    pypi
+[conda] pytorch-cuda              12.4                 hc786d27_6    pytorch
+[conda] pytorch-mutex             1.0                        cuda    pytorch
+[conda] pytorch-triton            3.0.0+dedb7bdf33          pypi_0    pypi
+[conda] torch                     2.5.0.dev20240824+cu124          pypi_0    pypi
+[conda] torchao                   0.4.0+gitf9d4e2a           dev_0    <develop>
+[conda] torchaudio                2.4.0               py311_cu124    pytorch
+[conda] torchelastic              0.2.2                    pypi_0    pypi
+[conda] torchtriton               3.0.0                     py311    pytorch
+[conda] torchtune                 0.0.0                    pypi_0    pypi
+[conda] torchvision               0.20.0.dev20240824+cu124          pypi_0    pypi
+```
+> High priority because of the memory leak
+> A smaller snippet to reproduce memory leak
+
+```python
+import torch
+from tqdm import tqdm
+from transformers import LlamaConfig, LlamaForCausalLM
+
+
+def get_loss(model: LlamaForCausalLM, batch: torch.Tensor):
+    logits = model(batch).logits[:, :-1].flatten(0, 1)
+    labels = batch[:, 1:].flatten()
+    return torch.nn.functional.cross_entropy(logits, labels)
+
+
+if __name__ == ""__main__"":
+    seq_len = 2048
+    config = LlamaConfig(
+        hidden_size=1024,
+        intermediate_size=4096,
+        num_hidden_layers=12,
+        num_attention_heads=8,
+        max_position_embeddings=seq_len,
+        use_cache=False,
+    )
+    model = LlamaForCausalLM(config).bfloat16().cuda()
+    model.gradient_checkpointing_enable()
+
+    optim = torch.optim.AdamW(model.parameters())
+
+    n_steps = 10_000
+    step = 0
+    log_interval = 50
+    bsize = 4
+    pbar = tqdm(total=n_steps, dynamic_ncols=True)
+    model.train()
+
+    while step < n_steps:
+        batch = torch.randint(0, config.vocab_size, (bsize, seq_len), device=""cuda"")
+        loss = torch.compile(get_loss)(model, batch)
+        loss.backward()
+        optim.step()
+        optim.zero_grad()
+
+        step += 1
+        pbar.update()
+```
+> If someone can run this under memory profiler that would help with triage
+> I ran memory profile on this snippet for the first 10 iterations https://github.com/pytorch/pytorch/issues/134642#issuecomment-2314063019
+
+[memory_snapshot.pickle.zip](https://github.com/user-attachments/files/16784189/memory_snapshot.pickle.zip)
+
+Seems like activations are not freed?
+
+<img width=""1411"" alt=""image"" src=""https://github.com/user-attachments/assets/ea14f69b-4794-4f1e-b85b-5b04dd8fcb6d"">
+
+I can confirm that this only happens when activations checkpointing is enabled. So removing the following line will make memory leak go away.
+
+```
+model.gradient_checkpointing_enable()
+```","A memory leak has been reported with torch version 2.5.0dev20240824, specifically when using torchtune for fine-tuning the Llama3.1-8B model. The memory leak is caused by activations not being freed when gradient checkpointing is enabled.","['Activations not being freed when gradient checkpointing is enabled', 'Memory leak in the torchtune library']","['Disable gradient checkpointing to prevent memory leak', 'Fix the memory leak in the torchtune library']",torchtune,negative,bug_report,critical,advanced,"['Model Loading', 'Model Fine-tuning and Training']"
+pytorch/pytorch,134644,https://github.com/pytorch/pytorch/issues/134644,False,0,2024-08-28T02:25:25Z,"Deduce Tangents Stride For Channels Last Tensor
+### 🚀 The feature, motivation and pitch
+
+We are working on the performance of Diffusion models, and find that one of the `torch.compile` performance issue is that AOTAutograd forces tangents to be contiguous. This introduces a lot of performance overhead for CNN models if there's graph break around channels last tensors, resulting in quite some `direct_copy_kernel` during back-propagation.
+
+### Alternatives
+
+As AOT has to guess the tangents stride, I'd propose to guess the stride using the forward-propagation output instead of forcing contiguous. Because most of operators work on channels last expect `grad_output` as channels last too. Thus guessing the stride using output tensor of forward-propagation can avoid those `direct_copy_kernel` introduced during back-propation.
+
+### Additional context
+
+_No response_","The discussion is about improving the performance of Diffusion models using torch.compile, specifically addressing the issue of AOTAutograd forcing tangents to be contiguous, which introduces performance overhead for CNN models with channels last tensors.","['AOTAutograd forcing tangents to be contiguous', 'Graph break around channels last tensors']","['Guess the stride using the forward-propagation output instead of forcing contiguous', 'Modify AOT to work with channels last tensors without introducing direct_copy_kernel']",torch.compile,neutral,feature_request,major,advanced,"['Model Fine-tuning and Training', 'Model Inference', 'Performance and Optimization']"
+pytorch/pytorch,134646,https://github.com/pytorch/pytorch/issues/134646,False,2,2024-08-28T02:59:54Z,"[DTensor] use P2P for complicated transformation when redistributing tensor
+### 🚀 The feature, motivation and pitch
+
+# Motivation
+
+For complicated `DTensor` redistribution (e.g. `[S(0), S(1)] -> [S(1), S(0)]`), it's likely that only GPU1 and GPU2 need to communicate (when tensor and mesh are both square) and can be achieved by P2P operations.
+
+The current implementation only applies rule-based redistribution, for the above case, it does the following:
+1. `S(1)` -> `R` on mesh dim 1
+2. `S(0)` -> `S(1)` on mesh dim 0
+3. `R` -> `S(0)` on mesh dim 1
+
+Instead, P2P does:
+
+1. rank1 sends local_tensor to rank2
+2. rank2 sends local_tensor to rank1
+
+And they can be done concurrently since there is no data dependency. This helps to optimize both communication volume and intermediate tensor buffer size.
+
+# Experiment
+
+As discussed in #132751, one major concern is that this method cannot utilize comm collectives and might suffer when communicating between 2 nodes. After conducting simple experiments, I believe it still benefits the communication time considering the reduced communication volume.
+
+## Setup
+The above case was conducted with a `4*4` mesh (2 nodes, 8 GPUs each, NV8 fully connected and InfiniBand is used), `rule` refers to `main` implementation, and `p2p` refers to the above method. The 2-d square tensor size increases along the x-axis, and execution time is recorded along the y-axis.
+
+## Result
+
+### `[S(0), S(1)] -> [S(1), S(0)]`
+![case1_16_gpus_p2p](https://github.com/user-attachments/assets/4923d08b-e557-451f-aefa-c64fe72cd033)
+
+### `[S(0), S(0)] -> [S(1), S(1)]`
+![case2_16_gpus_p2p](https://github.com/user-attachments/assets/043d6991-73b7-4e2a-bb85-f5f7218893d2)
+
+# Implementation: Doing P2P and rule-based in a hybrid way
+
+[benchmark file](https://github.com/botbw/pytorch/blob/main/bench1.py)
+
+I do observe P2P suffers in some cases, especially when the redistribution can be done using a single collective. Thus I implemented a draft redistribute function such that it utilizes collectives whenever possible, and uses P2P to handle the rest.
+
+I roughly tested the implementation with different mesh settings: `2*2`, `4*2`, `8*2`, `4*4` (1 node for the first 2 settings and 2 nodes for the last 2), the microbenchmark was done with `(32, 8192, 4096)` tensor redistributing with any placement combination from [R, S(0), S(1), S(2)] (4 ** 4 in total). The performance is as follows (green dots indicate that this implementation reduces communication time):
+
+![torch Size( 2, 2 )_optimization](https://github.com/user-attachments/assets/6a8213fd-0eab-43e4-a690-34f36e1510c5)
+![torch Size( 4, 2 )_optimization](https://github.com/user-attachments/assets/d8f8286b-2c3b-46db-912b-df605be8aa43)
+![torch Size( 2, 8 )_optimization](https://github.com/user-attachments/assets/ff5207fc-266e-4091-a47b-e83d8f3f6a37)
+![torch Size( 4, 4 )_optimization](https://github.com/user-attachments/assets/7deea5ba-9115-4565-a4a7-68ee227a1373)
+
+And the hybrid implementation doesn't hurt the performance we got from *Experiment* section:
+### `[S(0), S(1)] -> [S(1), S(0)]`
+![case1_16_gpus_hybrid](https://github.com/user-attachments/assets/49133f47-0008-4b36-bf25-5d2c32de3cfd)
+
+### `[S(0), S(0)] -> [S(1), S(1)]`
+![case2_16_gpus_hybrid](https://github.com/user-attachments/assets/21b0eca8-9d18-44ef-8b37-685908c533f4)
+
+# Other
+
+I used additional buffers when using P2P for easier implementation so I didn't test on memory optimization. If you guys think P2P makes sense considering the experiment above, do let me know and I'm happy to work on this.
+
+You can find the above experiment code and draft implementation in [this fork](https://github.com/botbw/pytorch/), the p2p implementation passed [test_redistribute_p2p.py](https://github.com/botbw/pytorch/blob/main/test/distributed/_tensor/test_redistribute_p2p.py), which is modified from `test_redistribute.py`
+
+cc: @wanchaol 
+
+### Alternatives
+
+_No response_
+
+### Additional context
+
+_No response_
+> cc: @tianyu-l since @wanchaol  is out",The discussion is about optimizing the redistribution of DTensors using P2P operations instead of rule-based redistribution. The author conducted experiments and found that P2P operations can reduce communication time and volume. A hybrid implementation was proposed to utilize collectives whenever possible and use P2P for the rest.,"['Inefficient redistribution of DTensors', 'Limited utilization of collectives', 'Insufficient optimization of communication volume and intermediate tensor buffer size']","['Implement a hybrid redistribute function that utilizes collectives whenever possible and uses P2P for the rest', 'Optimize the P2P implementation to reduce memory usage and improve performance']",DTensor,positive,feature_request,major,advanced,"['Model Fine-tuning and Training', 'Model Inference', 'Distributed Training and Multi-GPU', 'Performance and Optimization']"
+pytorch/pytorch,134663,https://github.com/pytorch/pytorch/issues/134663,False,0,2024-08-28T09:33:28Z,"Error in torch.export for torch.ops.aten.chunk for dynamic shape
+### 🐛 Describe the bug
+
+While exporting a  model with `torch.ops.aten.chunk` it decomposes into` torch.ops.aten.split.Tensor` in `torch.export`. With dynamic inputs the below code-
+```
+import torch
+import torch_tensorrt
+class TestChunk(torch.nn.Module):
+    def forward(self, input):
+        out = torch.ops.aten.chunk.default(input, 3, 0)
+        return out
+
+inputs = [torch.randn(3)]
+inputs_zero_shape = torch.export.Dim(""shape"", min=1, max=3)
+dynamic_shapes = [[torch.export.Dim(""shape"", min=1, max=3)]]
+exp_program = torch.export.export(TestChunk(), tuple(inputs), dynamic_shapes=dynamic_shapes)
+trt_gm = torch_tensorrt.dynamo.compile(exp_program, inputs)
+# Run inference
+trt_gm(*inputs)
+```
+Fails in torch.export. The error is the following
+```
+Traceback (most recent call last):
+  File ""/code/torch_trt/TensorRT/tests/py/dynamo/conversion/split_dynamic.py"", line 14, in <module>
+    exp_program = torch.export.export(TestChunk(), tuple(inputs), dynamic_shapes=dynamic_shapes)
+  File ""/root/.pyenv/versions/3.10.14/lib/python3.10/site-packages/torch/export/__init__.py"", line 172, in export
+    return _export(
+  File ""/root/.pyenv/versions/3.10.14/lib/python3.10/site-packages/torch/export/_trace.py"", line 1013, in wrapper
+    raise e
+  File ""/root/.pyenv/versions/3.10.14/lib/python3.10/site-packages/torch/export/_trace.py"", line 986, in wrapper
+    ep = fn(*args, **kwargs)
+  File ""/root/.pyenv/versions/3.10.14/lib/python3.10/site-packages/torch/export/exported_program.py"", line 97, in wrapper
+    return fn(*args, **kwargs)
+  File ""/root/.pyenv/versions/3.10.14/lib/python3.10/site-packages/torch/export/_trace.py"", line 1921, in _export
+    export_artifact = export_func(  # type: ignore[operator]
+  File ""/root/.pyenv/versions/3.10.14/lib/python3.10/site-packages/torch/export/_trace.py"", line 1220, in _strict_export
+    return _strict_export_lower_to_aten_ir(
+  File ""/root/.pyenv/versions/3.10.14/lib/python3.10/site-packages/torch/export/_trace.py"", line 1248, in _strict_export_lower_to_aten_ir
+    gm_torch_level = _export_to_torch_ir(
+  File ""/root/.pyenv/versions/3.10.14/lib/python3.10/site-packages/torch/export/_trace.py"", line 572, in _export_to_torch_ir
+    raise UserError(UserErrorType.CONSTRAINT_VIOLATION, str(e))  # noqa: B904
+torch._dynamo.exc.UserError: Constraints violated (shape)! For more information, run with TORCH_LOGS=""+dynamic"".
+  - Not all values of shape = L['input'].size()[0] in the specified range shape <= 3 satisfy the generated guard Eq(((L['input'].size()[0] + ((L['input'].size()[0] + 2)//3) - 1)//(((L['input'].size()[0] + 2)//3))), 3).
+Specializations unexpectedly required (shape)! For more information, run with TORCH_LOGS=""+dynamic"".
+  - solving the guards generated for shape = L['input'].size()[0] resulted in a specialized value of 3.
+
+Suggested fixes:
+  shape = 3
+```
+It seems to fail in the torch.export guard. Could someone please look into this?
+
+### Versions
+
+Torch- 2.5.0.dev20240827+cu124",Error in torch.export for torch.ops.aten.chunk with dynamic shape,"['torch.export guard constraints not satisfied', 'torch.ops.aten.chunk decomposition into torch.ops.aten.split.Tensor not handled correctly for dynamic shapes']","['Improve torch.export guard constraints to handle dynamic shapes', 'Modify torch.ops.aten.chunk decomposition to correctly handle dynamic shapes']",torch.export,negative,bug_report,major,advanced,['Miscellaneous']
+pytorch/pytorch,134664,https://github.com/pytorch/pytorch/issues/134664,False,1,2024-08-28T09:55:46Z,"Questions about CVE-2022-3171, CVE-2022-3509 and CVE-2022-3510
+### 🐛 Describe the bug
+
+Description
+Summary
+The version of protobuf in .github/requirements/pip-requirements-macOS.txt is 3.20.2, this version of protobuf contains vulnerabilities
+CVE-2022-3171, CVE-2022-3509 and CVE-2022-3510, which may pose security and performance risks to the PyTorch project.
+
+Details
+CVE-2022-3171
+Severity: Medium
+Url: https://www.cve.org/CVERecord?id=CVE-2022-3171
+Description: A parsing issue with binary data in protobuf-java core and lite versions prior to 3.21.7, 3.20.3, 3.19.6 and 3.16.3 can lead to a denial of service attack. Inputs containing multiple instances of non-repeated embedded messages with repeated or unknown fields causes objects to be converted back-n-forth between mutable and immutable forms, resulting in potentially long garbage collection pauses. We recommend updating to the versions mentioned above.
+Impact: If the PyTorch project uses the affected version of Protobuf and processes maliciously crafted messages during data serialization/deserialization, it could lead to prolonged pauses during garbage collection, affecting performance and potentially making the service unavailable.
+
+CVE-2022-3509
+Severity: High
+Url: https://www.cve.org/CVERecord?id=CVE-2022-3509
+Description: A parsing issue similar to https://github.com/advisories/GHSA-h4h5-3hr4-j3g2, but with textformat in protobuf-java core and lite versions prior to 3.21.7, 3.20.3, 3.19.6 and 3.16.3 can lead to a denial of service attack. Inputs containing multiple instances of non-repeated embedded messages with repeated or unknown fields causes objects to be converted back-n-forth between mutable and immutable forms, resulting in potentially long garbage collection pauses. We recommend updating to the versions mentioned above.
+Impact: If PyTorch processes Protobuf data in text format containing maliciously crafted messages, it may cause abnormal garbage collection behavior, affecting system stability and performance, especially in scenarios where large volumes of Protobuf data are handled.
+
+CVE-2022-3510
+Severity: High
+Url: https://www.cve.org/CVERecord?id=CVE-2022-3510
+Description: A parsing issue similar to https://github.com/advisories/GHSA-h4h5-3hr4-j3g2, but with Message-Type Extensions in protobuf-java core and lite versions prior to 3.21.7, 3.20.3, 3.19.6 and 3.16.3 can lead to a denial of service attack. Inputs containing multiple instances of non-repeated embedded messages with repeated or unknown fields causes objects to be converted back-n-forth between mutable and immutable forms, resulting in potentially long garbage collection pauses. We recommend updating to the versions mentioned above.
+Impact: If PyTorch uses the affected Protobuf version and processes maliciously crafted messages with extension fields, it could lead to garbage collection issues, affecting system stability.
+
+> PyTorch does not use protobuf for anything but ONNX, so unless one uses ONNX they should not be affected by any of the above-mentioned. ","The PyTorch project's version of protobuf (3.20.2) contains vulnerabilities CVE-2022-3171, CVE-2022-3509, and CVE-2022-3510, which may pose security and performance risks. However, PyTorch only uses protobuf for ONNX, so users not using ONNX are not affected.","['Using the affected version of protobuf (3.20.2)', 'Processing maliciously crafted messages during data serialization/deserialization', 'Using ONNX with the affected version of protobuf']","['Update protobuf to a version mentioned in the CVE reports (e.g., 3.21.7, 3.20.3, 3.19.6, or 3.16.3)', 'Avoid using ONNX with the affected version of protobuf']",protobuf,neutral,bug_report,major,intermediate,['Miscellaneous']
+pytorch/pytorch,134668,https://github.com/pytorch/pytorch/issues/134668,False,1,2024-08-28T11:06:58Z,"Whether tensor parallelism supports the overlap of communication calculations for gradient computation, and how to implement it
+### 🚀 The feature, motivation and pitch
+
+I want to know How to achieve the overlap of communication calculations when finding the gradient after row cutting/column cutting of the linear layer，thanks
+The following is
+https://pytorch.org/docs/2.3/distributed.tensor.parallel.html
+
+### Alternatives
+
+_No response_
+
+### Additional context
+
+_No response_
+> cc: @yifuwang ","The user is inquiring about tensor parallelism support for overlapping communication calculations during gradient computation, specifically after row or column cutting of the linear layer in PyTorch.","['Lack of understanding of tensor parallelism in PyTorch', 'Insufficient documentation on overlapping communication calculations']","['Improve documentation on tensor parallelism and overlapping communication calculations', 'Provide examples or tutorials on achieving overlap of communication calculations during gradient computation']",Distributed Tensor Parallelism,neutral,discussion,minor,intermediate,['Distributed Training and Multi-GPU']
+pytorch/pytorch,134674,https://github.com/pytorch/pytorch/issues/134674,False,0,2024-08-28T13:28:24Z,"[Inductor] `test_triton_kernels` Tests failing w/ latest Triton (August 28th) 
+### 🐛 Describe the bug
+
+```
+----------------------------------------------------------------------
+Ran 203 tests in 36.824s
+
+FAILED (failures=91, errors=3)
+```
+example failure: 
+```
+FAIL: test_while_loop (__main__.MutationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File ""/localdisk/abaden/Projects/pytorch/torch/testing/_internal/common_utils.py"", line 2979, in wrapper
+    method(*args, **kwargs)
+  File ""/localdisk/abaden/Projects/pytorch/test/inductor/test_triton_kernels.py"", line 1555, in test_fn
+    self.assertListEqual(
+AssertionError: Lists differ: ['x_ptr', 'o_ptr'] != ['o_ptr']
+
+First differing element 0:
+'x_ptr'
+'o_ptr'
+
+First list contains 1 additional elements.
+First extra element 1:
+'o_ptr'
+
+- ['x_ptr', 'o_ptr']
++ ['o_ptr']
+```
+additional, possibly unrelated failure:
+```
+FAIL: test_triton_kernel_inference_mode (__main__.MutationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File ""/localdisk/abaden/Projects/pytorch/torch/testing/_internal/common_utils.py"", line 2979, in wrapper
+    method(*args, **kwargs)
+  File ""/localdisk/abaden/Projects/pytorch/torch/testing/_internal/common_utils.py"", line 1751, in wrapper
+    return fn(*args, **kwargs)
+  File ""/localdisk/abaden/Projects/pytorch/test/inductor/test_triton_kernels.py"", line 1739, in test_triton_kernel_inference_mode
+    self.assertEqual(out_ref, out_test)
+  File ""/localdisk/abaden/Projects/pytorch/torch/testing/_internal/common_utils.py"", line 3885, in assertEqual
+    raise error_metas.pop()[0].to_error(
+AssertionError: Tensor-likes are not close!
+
+Mismatched elements: 32 / 32 (100.0%)
+Greatest absolute difference: 2.0 at index (0,) (up to 1e-05 allowed)
+Greatest relative difference: inf at index (0,) (up to 1.3e-06 allowed)
+```
+
+I am investigating on behalf of the Intel backend but wanted to open the issue for awareness. I did not see any open issues or active PRs to address this issue in either the PyTorch or Triton repos, but of course could have missed something. 
+
+### Versions
+
+```
+PyTorch version: 2.5.0a0+gitf33bcbe
+Is debug build: False
+CUDA used to build PyTorch: 11.7
+ROCM used to build PyTorch: N/A
+
+OS: Ubuntu 22.04.4 LTS (x86_64)
+GCC version: (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+Clang version: 14.0.0-1ubuntu1.1
+CMake version: version 3.29.3
+Libc version: glibc-2.35
+
+Python version: 3.10.12 (main, Jul 29 2024, 16:56:48) [GCC 11.4.0] (64-bit runtime)
+Python platform: Linux-6.5.0-44-generic-x86_64-with-glibc2.35
+Is CUDA available: True
+CUDA runtime version: Could not collect
+CUDA_MODULE_LOADING set to: LAZY
+GPU models and configuration: 
+GPU 0: NVIDIA RTX A5000
+GPU 1: NVIDIA RTX A5000
+
+Nvidia driver version: 545.23.08
+cuDNN version: Could not collect
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+Is XNNPACK available: True
+```",The `test_triton_kernels` tests are failing with the latest Triton version (August 28th) due to assertion errors in the `MutationTests` class. The failures are related to differences in lists and tensor-likes not being close.,"['Incompatibility between PyTorch and Triton versions', 'Changes in Triton kernel behavior', 'Incorrect test expectations']","['Update PyTorch to a compatible version with the latest Triton', 'Review and update test expectations to match the new Triton kernel behavior']",Triton kernel integration,negative,bug_report,major,advanced,['Miscellaneous']
+pytorch/pytorch,134676,https://github.com/pytorch/pytorch/issues/134676,False,0,2024-08-28T13:51:42Z,"[Compiled_autograd] Input stack for backward graph having unknown symint inputs when compiled autograd used with dynamic shape
+### 🐛 Describe the bug
+
+This issue able to see with below example code:
+
+```
+def test_op_compiled_autograd():
+    from torch._dynamo import compiled_autograd
+    input_shapes = [
+        [(3, 6, 4), (3, 24), (2, 1)],
+        [(3, 8, 4), (3, 32), (2, 2)],
+        [(3, 10, 4), (3, 40), (2, 3)],
+    ]
+
+    def raw_function(t0, t1, t2):
+        t = t0.shape
+        t0 = torch.relu(t0)
+        shape = (t[0], int(t[1] * t[2]))
+        reshape_t = t0.reshape(shape)
+        o1 = torch.add(reshape_t, t1)
+        o2 = torch.add(t2, t2)
+        return o1, o2
+
+    compiled_fn = torch.compile(raw_function, backend=""hpu_backend"", dynamic=True)
+
+    with compiled_autograd.enable(compiled_fn):
+        for s in input_shapes:
+            t0 = torch.randn(s[0], requires_grad=True).to(""hpu"")
+            t1 = torch.randn(s[1], requires_grad=True).to(""hpu"")
+            t2 = torch.randn(s[2], requires_grad=True).to(""hpu"")
+            o1, o2 = compiled_fn(t0, t1, t2)
+            grad = torch.ones_like(o2)
+            o2.backward(grad)
+			
+```
+Backward FX graph module:
+```
+class fused_0(torch.nn.Module):
+    def forward(self, primals_6: ""Sym(s4)"", relu: ""f32[s0, s1, s2]"", tangents_2: ""f32[s4, 1]"", tangents_1: ""f32[s0, s1*s2]"", primals_1: ""Sym(s0)"", primals_2: ""Sym(s1)"", primals_3: ""Sym(s2)""):
+        alias: ""f32[s0, s1, s2]"" = torch.ops.aten.alias.default(relu);  relu = None
+        add_2: ""f32[s4, 1]"" = torch.ops.aten.add.Tensor(tangents_2, tangents_2);  tangents_2 = None
+        view_1: ""f32[s0, s1, s2]"" = torch.ops.aten.view.default(tangents_1, [primals_1, primals_2, primals_3]);  tangents_1 = primals_1 = primals_2 = primals_3 = None
+        alias_1: ""f32[s0, s1, s2]"" = torch.ops.aten.alias.default(alias);  alias = None
+        alias_2: ""f32[s0, s1, s2]"" = torch.ops.aten.alias.default(alias_1);  alias_1 = None
+        alias_3: ""f32[s0, s1, s2]"" = torch.ops.aten.alias.default(alias_2);  alias_2 = None
+        threshold_backward: ""f32[s0, s1, s2]"" = torch.ops.aten.threshold_backward.default(view_1, alias_3, 0);  view_1 = alias_3 = None
+        return (add_2, threshold_backward)
+```
+
+Backward graph input arguments:
+`input_stack: , (s8, FakeTensor(..., device='hpu:0', size=(s1, s2, s3)), FakeTensor(..., device='hpu:0', size=(2, 1)), FakeTensor(..., device='hpu:0', size=(3, 24)), s5, s6, s7)`
+
+Here , in the graph, 1st input is primals_6: ""Sym(s4)"", but the input stack is not an int. Its a new symbol created with name s8. Same happend of 5th, 6th and 7th input arguments.
+Please help to fix the issue:
+
+The above test case is with ""hpu"" tensor, the same scenario could not verify on cpu as it was giving another error ""TypeError: test_op_compiled_autograd.<locals>.raw_function() missing 2 required positional arguments: 't1' and 't2'""
+
+### Versions
+
+Collecting environment information...
+PyTorch version: 2.4.0a0+git91246ca
+Is debug build: False
+CUDA used to build PyTorch: None
+ROCM used to build PyTorch: N/A
+
+OS: Ubuntu 22.04.4 LTS (x86_64)
+GCC version: (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+Clang version: 14.0.5 (ssh://gerrit.habana-labs.com:29418/tpc_llvm10 c55f3b366b16b7448a4ffbd095e6bbce39b10fab)
+CMake version: version 3.29.2
+Libc version: glibc-2.35
+
+Python version: 3.10.12 (main, Jul 29 2024, 16:56:48) [GCC 11.4.0] (64-bit runtime)
+Python platform: Linux-5.15.0-117-generic-x86_64-with-glibc2.35
+Is CUDA available: False
+CUDA runtime version: No CUDA
+CUDA_MODULE_LOADING set to: N/A
+GPU models and configuration: No CUDA
+Nvidia driver version: No CUDA
+cuDNN version: No CUDA
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+Is XNNPACK available: True",Compiled autograd with dynamic shape causes unknown symint inputs in backward graph,"['Incorrect handling of dynamic shapes in compiled autograd', 'Incompatible tensor shapes in the backward graph']","['Update compiled autograd to handle dynamic shapes correctly', 'Verify tensor shapes in the backward graph to ensure compatibility']",Compiled Autograd,negative,bug_report,major,advanced,['Miscellaneous']
+pytorch/pytorch,134678,https://github.com/pytorch/pytorch/issues/134678,False,3,2024-08-28T14:35:03Z,"[MPS] pytorch nightly lost SDPA support?
+### 🐛 Describe the bug
+
+On 2.4.0 we have an issue with corrupted results but in 2.5 where the corruption bug is fixed, training diffusion models no longer works due to a now-missing core component of SDPA for MPS:
+
+```
+derivative for aten::_scaled_dot_product_attention_math_for_mps is not implemented
+```
+
+@skotapati @malfet this seems like a pretty substantial regression. was it intentional? it makes MPS useless with pytorch.
+
+### Versions
+
+Collecting environment information...
+PyTorch version: 2.5.0.dev20240828
+Is debug build: False
+CUDA used to build PyTorch: None
+ROCM used to build PyTorch: N/A
+
+OS: macOS 15.0 (arm64)
+GCC version: Could not collect
+Clang version: 15.0.0 (clang-1500.3.9.4)
+CMake version: version 3.30.2
+Libc version: N/A
+
+Python version: 3.10.14 (main, Mar 19 2024, 21:46:16) [Clang 15.0.0 (clang-1500.3.9.4)] (64-bit runtime)
+Python platform: macOS-15.0-arm64-arm-64bit
+Is CUDA available: False
+CUDA runtime version: No CUDA
+CUDA_MODULE_LOADING set to: N/A
+GPU models and configuration: No CUDA
+Nvidia driver version: No CUDA
+cuDNN version: No CUDA
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+Is XNNPACK available: True
+
+CPU:
+Apple M3 Max
+
+Versions of relevant libraries:
+[pip3] mypy-extensions==1.0.0
+[pip3] numpy==1.26.0
+[pip3] open_clip_torch==2.26.1
+[pip3] torch==2.5.0.dev20240828
+[pip3] torch-optimi==0.2.1
+[pip3] torch-stoi==0.2.1
+[pip3] torchaudio==2.5.0.dev20240828
+[pip3] torchmetrics==1.4.1
+[pip3] torchsde==0.2.6
+[pip3] torchvision==0.20.0.dev20240828
+[conda] No relevant packages
+
+cc @ezyang @gchanan @zou3519 @kadeng @msaroufim @jbschlosser @bhosmer @cpuhrsch @erichan1 @drisspg @mikaylagawarecki @kulinseth @albanD @malfet @DenisVieriu97 @jhavukainen
+> Assigning to myself to understand what had happened, and why decom is not there. 
+
+@bghira do you have a small reproducer?
+> unfortunately i havent had the ability to figure out even what line it occurs on yet because i am swamped with other projects but i will try and get more information for you soon
+> So I think the root cause is that the fast path added here doesn't implement its corresponding backward function: https://github.com/pytorch/pytorch/pull/131362.
+
+I think a quick way to address it is to check whether the input tensors require grad. If required, then we don't get into the fast path and fall back to composite implicit.","PyTorch 2.5.0.dev20240828 has lost SDPA support for MPS, causing training diffusion models to fail with a missing core component error. This is a regression from PyTorch 2.4.0.","['Missing backward function implementation for the fast path in SDPA', 'Incompatible changes in PyTorch 2.5.0.dev20240828']","['Implement the backward function for the fast path in SDPA', 'Check if input tensors require grad and fall back to composite implicit if necessary']",SDPA for MPS,negative,bug_report,major,advanced,['Model Loading']
+pytorch/pytorch,134679,https://github.com/pytorch/pytorch/issues/134679,False,0,2024-08-28T14:36:32Z,"[CPU] jx_nest_base float32 both inductor and eager performance regression in 2024-08-26 nightly release
+### 🐛 Describe the bug
+
+<p>fp32 static shape default wrapper</p><table border=""1"" class=""dataframe table"">
+  <thead>
+    <tr style=""text-align: right;"">
+      <th>suite</th>
+      <th>name</th>
+      <th>thread</th>
+      <th>batch_size_new</th>
+      <th>speed_up_new</th>
+      <th>inductor_new</th>
+      <th>eager_new</th>
+      <th>compilation_latency_new</th>
+      <th>batch_size_old</th>
+      <th>speed_up_old</th>
+      <th>inductor_old</th>
+      <th>eager_old</th>
+      <th>compilation_latency_old</th>
+      <th>Ratio Speedup(New/old)</th>
+      <th>Eager Ratio(old/new)</th>
+      <th>Inductor Ratio(old/new)</th>
+      <th>Compilation_latency_Ratio(old/new)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>timm_models</td>
+      <td>jx_nest_base</td>
+      <td>single</td>
+      <td>1</td>
+      <td>1.235563</td>
+      <td>0.27360534200000003</td>
+      <td>0.338056637177546</td>
+      <td>62.567019</td>
+      <td>1</td>
+      <td>1.201868</td>
+      <td>0.234643102</td>
+      <td>0.282010035714536</td>
+      <td>61.797824</td>
+      <td>1.03</td>
+      <td>0.83</td>
+      <td>0.86</td>
+      <td>0.99</td>
+    </tr>
+  </tbody>
+
+</table>
+
+<p>fp32 dynamic shape default wrapper</p><table border=""1"" class=""dataframe table"">
+  <thead>
+    <tr style=""text-align: right;"">
+      <th>suite</th>
+      <th>name</th>
+      <th>thread</th>
+      <th>batch_size_new</th>
+      <th>speed_up_new</th>
+      <th>inductor_new</th>
+      <th>eager_new</th>
+      <th>compilation_latency_new</th>
+      <th>batch_size_old</th>
+      <th>speed_up_old</th>
+      <th>inductor_old</th>
+      <th>eager_old</th>
+      <th>compilation_latency_old</th>
+      <th>Ratio Speedup(New/old)</th>
+      <th>Eager Ratio(old/new)</th>
+      <th>Inductor Ratio(old/new)</th>
+      <th>Compilation_latency_Ratio(old/new)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>timm_models</td>
+      <td>jx_nest_base</td>
+      <td>single</td>
+      <td>1</td>
+      <td>1.240841</td>
+      <td>0.276368383</td>
+      <td>0.342929220730103</td>
+      <td>62.597383</td>
+      <td>1</td>
+      <td>1.192174</td>
+      <td>0.23566079199999998</td>
+      <td>0.280948669041808</td>
+      <td>61.646299</td>
+      <td>1.04</td>
+      <td>0.82</td>
+      <td>0.85</td>
+      <td>0.98</td>
+    </tr>
+  </tbody>
+
+</table>
+
+<p>fp32 static shape cpp wrapper</p><table border=""1"" class=""dataframe table"">
+  <thead>
+    <tr style=""text-align: right;"">
+      <th>suite</th>
+      <th>name</th>
+      <th>thread</th>
+      <th>batch_size_new</th>
+      <th>speed_up_new</th>
+      <th>inductor_new</th>
+      <th>eager_new</th>
+      <th>compilation_latency_new</th>
+      <th>batch_size_old</th>
+      <th>speed_up_old</th>
+      <th>inductor_old</th>
+      <th>eager_old</th>
+      <th>compilation_latency_old</th>
+      <th>Ratio Speedup(New/old)</th>
+      <th>Eager Ratio(old/new)</th>
+      <th>Inductor Ratio(old/new)</th>
+      <th>Compilation_latency_Ratio(old/new)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>timm_models</td>
+      <td>jx_nest_base</td>
+      <td>single</td>
+      <td>1</td>
+      <td>1.278338</td>
+      <td>0.26669467300000005</td>
+      <td>0.34092593489347406</td>
+      <td>46.669321</td>
+      <td>1</td>
+      <td>1.202949</td>
+      <td>0.23166499200000001</td>
+      <td>0.278681170461408</td>
+      <td>45.100968</td>
+      <td>1.06</td>
+      <td>0.82</td>
+      <td>0.87</td>
+      <td>0.97</td>
+    </tr>
+  </tbody>
+
+</table>
+
+<p>fp32 dynamic shape cpp wrapper</p><table border=""1"" class=""dataframe table"">
+  <thead>
+    <tr style=""text-align: right;"">
+      <th>suite</th>
+      <th>name</th>
+      <th>thread</th>
+      <th>batch_size_new</th>
+      <th>speed_up_new</th>
+      <th>inductor_new</th>
+      <th>eager_new</th>
+      <th>compilation_latency_new</th>
+      <th>batch_size_old</th>
+      <th>speed_up_old</th>
+      <th>inductor_old</th>
+      <th>eager_old</th>
+      <th>compilation_latency_old</th>
+      <th>Ratio Speedup(New/old)</th>
+      <th>Eager Ratio(old/new)</th>
+      <th>Inductor Ratio(old/new)</th>
+      <th>Compilation_latency_Ratio(old/new)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>timm_models</td>
+      <td>jx_nest_base</td>
+      <td>single</td>
+      <td>1</td>
+      <td>1.277099</td>
+      <td>0.27013244200000003</td>
+      <td>0.34498587154575805</td>
+      <td>47.364179</td>
+      <td>1</td>
+      <td>1.225369</td>
+      <td>0.231195754</td>
+      <td>0.283300109883226</td>
+      <td>45.65043</td>
+      <td>1.04</td>
+      <td>0.82</td>
+      <td>0.86</td>
+      <td>0.96</td>
+    </tr>
+  </tbody>
+
+</table>
+
+### Versions
+
+<p>SW info</p><table border=""1"" class=""dataframe table"">
+  <thead>
+    <tr style=""text-align: right;"">
+      <th>name</th>
+      <th>target_branch</th>
+      <th>target_commit</th>
+      <th>refer_branch</th>
+      <th>refer_commit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>torchbench</td>
+      <td>main</td>
+      <td>23512dbe</td>
+      <td>main</td>
+      <td>23512dbe</td>
+    </tr>
+    <tr>
+      <td>torch</td>
+      <td>main</td>
+      <td>2553278bae5993bd94bae4f04bf4586fb3f30d57</td>
+      <td>main</td>
+      <td>b4a1673a6741e183856cf3503f0574d3ac881ce0</td>
+    </tr>
+    <tr>
+      <td>torchvision</td>
+      <td>main</td>
+      <td>0.19.0a0+d23a6e1</td>
+      <td>main</td>
+      <td>0.19.0a0+d23a6e1</td>
+    </tr>
+    <tr>
+      <td>torchtext</td>
+      <td>main</td>
+      <td>0.16.0a0+b0ebddc</td>
+      <td>main</td>
+      <td>0.16.0a0+b0ebddc</td>
+    </tr>
+    <tr>
+      <td>torchaudio</td>
+      <td>main</td>
+      <td>2.4.0a0+b3f6f51</td>
+      <td>main</td>
+      <td>2.4.0a0+b3f6f51</td>
+    </tr>
+    <tr>
+      <td>torchdata</td>
+      <td>main</td>
+      <td>0.7.1a0+0790338</td>
+      <td>main</td>
+      <td>0.7.1a0+0790338</td>
+    </tr>
+    <tr>
+      <td>dynamo_benchmarks</td>
+      <td>main</td>
+      <td>nightly</td>
+      <td>main</td>
+      <td>nightly</td>
+    </tr>
+  </tbody>
+</table>
+
+</table>
+
+Repro:
+inductor_single_run.sh
+bash inductor_single_run.sh single inference performance timm_models jx_nest_base float32 first static cpp
+Suspected guilty commit: fb26b843906bbad5e28d1edccf298c74b8e00492
+[timm_models-jx_nest_base-inference-float32-static-cpp-single-performance-drop_guilty_commit.log](https://github.com/user-attachments/files/16784943/timm_models-jx_nest_base-inference-float32-static-cpp-single-performance-drop_guilty_commit.log)
+cc @WeizhuoZhang-intel @chuanqi129","Performance regression in jx_nest_base model with float32 precision on CPU, affecting both inductor and eager modes, in the 2024-08-26 nightly release.","['Changes in the torch or torchvision libraries', 'Changes in the model or benchmarking code', 'Changes in the compiler or build flags']","['Investigate the suspected guilty commit fb26b843906bbad5e28d1edccf298c74b8e00492 and revert or fix the changes', 'Verify that the model and benchmarking code are correct and up-to-date']",timm_models,negative,bug_report,major,advanced,"['Performance and Optimization', 'Model Evaluation and Benchmarking']"
+pytorch/pytorch,134680,https://github.com/pytorch/pytorch/issues/134680,False,0,2024-08-28T14:50:06Z,"Use `torch._C._stash_obj_in_tls` for global state in serialization
+### 🐛 Describe the bug
+
+Specifically, this issue is to track https://github.com/pytorch/pytorch/pull/134504#discussion_r1733494807 in #134504
+
+Fixing this will properly propagate thread local state to our cpp threadpool (used for DDP and such)
+
+However, we should also do this properly for all global state in serialization (e.g. `_safe_globals`, `_default_mmap_options`, everything in `_serialization_tls`
+
+### Versions
+
+main
+
+cc @mruberry",The issue is about properly propagating thread local state to the C++ threadpool used for DDP and other global state in serialization. This is a follow-up from a discussion in PR #134504.,"['Incorrect usage of global state in serialization', 'Missing propagation of thread local state to C++ threadpool']","['Use `torch._C._stash_obj_in_tls` for global state in serialization', 'Properly propagate thread local state to C++ threadpool for all global state in serialization']",Serialization,neutral,bug_report,major,advanced,['Miscellaneous']
+pytorch/pytorch,134682,https://github.com/pytorch/pytorch/issues/134682,False,0,2024-08-28T15:07:23Z,"RuntimeError: cuDNN version incompatibility: happened when I have lstm layer
+### 🐛 Describe the bug
+
+I have a simple deep learning learning model like this
+```
+class model(nn.Module):
+    def __init__(self, insize=32, hiddensize = 16, level=10):
+        super(model, self).__init__()
+
+        self.conv = nn.Conv2d(1, 32, kernel_size=(1,20))
+        self.lstm = nn.LSTM(input_size=insize, hidden_size=hiddensize, batch_first=True)
+        self.fc1 = nn.Linear(in_features=hiddensize, out_features=3)
+
+    def forward(self, x):
+        out = self.conv(x)
+        
+        out = out.permute(0, 2, 1, 3)
+        out = out.squeeze(3)
+        out, _ = self.lstm(out)
+
+        out = torch.narrow(out, 1, out.shape[1]-1, 1).squeeze(1)
+        
+        out = self.fc1(out)
+
+        return out
+```
+The input I used is a 100*20 image with 1 channel.
+When I run the model,  the error happened
+```
+RuntimeError: cuDNN version incompatibility: PyTorch was compiled  against (8, 3, 2) but found runtime version (8, 2, 4). 
+PyTorch already comes bundled with cuDNN. One option to resolving this error is to ensure PyTorch can find the bundled cuDNN. 
+Looks like your LD_LIBRARY_PATH contains incompatible version of cudnnPlease either remove it from the path or install cudnn (8, 3, 2)
+```
+But when I disable my lstm layer like this
+```
+class model(nn.Module):
+    def __init__(self, insize=32, hiddensize = 16, level=10):
+        super(model, self).__init__()
+
+        self.conv = nn.Conv2d(1, 32, kernel_size=(1,20))
+        #self.lstm = nn.LSTM(input_size=insize, hidden_size=hiddensize, batch_first=True)
+        self.fc1 = nn.Linear(in_features=hiddensize, out_features=3)
+
+    def forward(self, x):
+        out = self.conv(x)
+        
+        out = out.permute(0, 2, 1, 3)
+        out = out.squeeze(3)
+        #out, _ = self.lstm(out)
+
+        out = torch.narrow(out, 1, out.shape[1]-1, 1).squeeze(1)
+        
+        out = self.fc1(out)
+
+        return out
+```
+Everything worked fine, no more error happened.
+I wonder why the error only happened when I have lstm layer
+
+### Versions
+
+```
+Versions of relevant libraries:
+[pip3] efficientnet-pytorch==0.7.1
+[pip3] flake8==3.9.2
+[pip3] focal-loss-torch==0.1.2
+[pip3] mypy-extensions==0.4.3
+[pip3] numpy==1.20.3
+[pip3] numpydoc==1.1.0
+[pip3] onnx==1.11.0
+[pip3] onnx-simplifier==0.3.10
+[pip3] onnxoptimizer==0.2.7
+[pip3] onnxruntime==1.11.1
+[pip3] pytorchcv==0.0.67
+[pip3] torch==1.13.0+cu116
+[pip3] torch-tb-profiler==0.4.1
+[pip3] torch2trt==0.3.0
+[pip3] torchaudio==0.13.0+cu116
+[pip3] torchcv==0.0.2
+[pip3] torchinfo==1.6.3
+[pip3] torchsummary==1.5.1
+[pip3] torchvision==0.14.0+cu116
+[conda] blas                      1.0                         mkl
+[conda] cudatoolkit               11.3.1               h2bc3f7f_2
+[conda] efficientnet-pytorch      0.7.1                    pypi_0    pypi
+[conda] ffmpeg                    4.3                  hf484d3e_0    pytorch
+[conda] focal-loss-torch          0.1.2                    pypi_0    pypi
+[conda] mkl                       2021.4.0           h06a4308_640
+[conda] mkl-service               2.4.0            py39h7f8727e_0
+[conda] mkl_fft                   1.3.1            py39hd3c417c_0
+[conda] mkl_random                1.2.2            py39h51133e4_0
+[conda] numpy                     1.20.3           py39hf144106_0
+[conda] numpy-base                1.20.3           py39h74d4b33_0
+[conda] numpydoc                  1.1.0              pyhd3eb1b0_1
+[conda] pytorch-mutex             1.0                        cuda    pytorch
+[conda] pytorchcv                 0.0.67                   pypi_0    pypi
+[conda] torch                     1.13.0+cu116             pypi_0    pypi
+[conda] torch-tb-profiler         0.4.1                    pypi_0    pypi
+[conda] torch2trt                 0.3.0                    pypi_0    pypi
+[conda] torchaudio                0.13.0+cu116             pypi_0    pypi
+[conda] torchcv                   0.0.2                    pypi_0    pypi
+[conda] torchinfo                 1.6.3                    pypi_0    pypi
+[conda] torchsummary              1.5.1                    pypi_0    pypi
+[conda] torchvision               0.14.0+cu116             pypi_0    pypi
+```",A RuntimeError occurred due to cuDNN version incompatibility when using an LSTM layer in a PyTorch model. The error disappeared when the LSTM layer was disabled.,"['cuDNN version incompatibility between PyTorch and the runtime environment', 'Incompatible cuDNN version in the LD_LIBRARY_PATH']","['Ensure PyTorch can find the bundled cuDNN by removing incompatible versions from the LD_LIBRARY_PATH', 'Install cuDNN version 8.3.2 to match the version PyTorch was compiled against']",PyTorch LSTM layer,negative,bug_report,major,intermediate,['CUDA Compatibility']
+pytorch/pytorch,134684,https://github.com/pytorch/pytorch/issues/134684,False,0,2024-08-28T15:31:12Z,"[AOTI] Test fails with compilation error
+### 🐛 Describe the bug
+
+The following command:
+```bash
+python /opt/pytorch/pytorch/test/inductor/test_aot_inductor.py -k test_fp8
+```
+Fails with the message:
+```
+/tmp/tmp2w3hmh08/cc2ki73moqt2d3knlnvifbg4u2iray5kurdhfp43gahixqrsl2zk/c3eljobjhy2nx3bwa4jzoeydexb3ngilngrjx4enbznkg4gfe5yo.cpp: In member function ‘void torch::aot_inductor::AOTInductorModel::run_impl(AtenTensorOpaque**, AtenTensorOpaque**, torch::aot_inductor::DeviceStreamType, AOTIProxyExecutorHandle)’:
+/tmp/tmp2w3hmh08/cc2ki73moqt2d3knlnvifbg4u2iray5kurdhfp43gahixqrsl2zk/c3eljobjhy2nx3bwa4jzoeydexb3ngilngrjx4enbznkg4gfe5yo.cpp:618:309: error: cannot convert ‘const torch::aot_inductor::RAIIAtenTensorHandle’ to ‘AtenTensorOpaque**’
+  618 | f_tensor_to_tensor(arg1_1), convert_arrayref_tensor_to_tensor(wrap_with_raii_handle_if_needed(tmp_tensor_handle_0)), convert_arrayref_tensor_to_tensor(arg3_1), convert_arrayref_tensor_to_tensor(arg4_1), convert_arrayref_tensor_to_tensor(arg2_1)));
+      |                                                                                                                                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+      |                                                                                                                                                                                                  |
+      |                                                                                                                                                                                                  const torch::aot_inductor::RAIIAtenTensorHandle
+```
+
+cc @desertfire 
+
+### Versions
+
+latest main + NVIDIA H100.",Compilation error in test_aot_inductor.py when running test_fp8 with NVIDIA H100,"['Incompatible NVIDIA H100 hardware with current PyTorch version', 'Incorrect usage of AtenTensorOpaque in AOTInductorModel::run_impl', 'Missing or outdated dependencies required for compilation']","['Update PyTorch to a version compatible with NVIDIA H100', 'Review and correct the usage of AtenTensorOpaque in AOTInductorModel::run_impl']",AOTInductor,negative,bug_report,major,advanced,"['CUDA Compatibility', 'Miscellaneous']"
+pytorch/pytorch,134686,https://github.com/pytorch/pytorch/issues/134686,False,0,2024-08-28T16:04:42Z,"[inductor][cpu]inductor_max_autotune xcit_large_24_p8_224 multiple thread AMP static shape default wrapper performance regression
+### 🐛 Describe the bug
+
+<p>AMP static shape default wrapper</p><table border=""1"" class=""dataframe table"">
+  <thead>
+    <tr style=""text-align: right;"">
+      <th>suite</th>
+      <th>name</th>
+      <th>thread</th>
+      <th>batch_size_new</th>
+      <th>speed_up_new</th>
+      <th>inductor_new</th>
+      <th>eager_new</th>
+      <th>compilation_latency_new</th>
+      <th>batch_size_old</th>
+      <th>speed_up_old</th>
+      <th>inductor_old</th>
+      <th>eager_old</th>
+      <th>compilation_latency_old</th>
+      <th>Ratio Speedup(New/old)</th>
+      <th>Eager Ratio(old/new)</th>
+      <th>Inductor Ratio(old/new)</th>
+      <th>Compilation_latency_Ratio(old/new)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>timm_models</td>
+      <td>xcit_large_24_p8_224</td>
+      <td>multiple</td>
+      <td>16</td>
+      <td>1.844225</td>
+      <td>0.347939503</td>
+      <td>0.6416787299201749</td>
+      <td>70.358923</td>
+      <td>16.0</td>
+      <td>2.107447</td>
+      <td>0.309641143</td>
+      <td>0.652552297891921</td>
+      <td>59.310145</td>
+      <td>0.88</td>
+      <td>1.02</td>
+      <td>0.89</td>
+      <td>0.84</td>
+    </tr>
+  </tbody>
+
+</table>
+
+the bad commit c22f51ce7c77ef23d9add8fc7c525145efd52230
+```
+running benchmark: 100%|██████████████████████████████████████████████████| 50/50 [00:40<00:00,  1.24it/s]
+1.592x
+WARNING:common:Trying to call the empty_gpu_cache for device: cpu, which is not in list [cuda, xpu]
+dev,name,batch_size,speedup,abs_latency,compilation_latency,compression_ratio,eager_peak_mem,dynamo_peak_mem,calls_captured,unique_graphs,graph_breaks,unique_graph_breaks,autograd_captures,autograd_compiles,cudagraph_skips
+cpu,xcit_large_24_p8_224,16,1.591776,311.873558,105.495911,0.987995,1819.712307,1841.824154,1108,1,0,0,0,0,1
+```
+
+</table>
+
+the last good commit 8f7cf796eaafc8e1b77c2d7815291f2721ccb377
+```
+running benchmark: 100%|██████████████████████████████████████████████████| 50/50 [00:39<00:00,  1.25it/s]
+1.670x
+WARNING:common:Trying to call the empty_gpu_cache for device: cpu, which is not in list [cuda, xpu]
+dev,name,batch_size,speedup,abs_latency,compilation_latency,compression_ratio,eager_peak_mem,dynamo_peak_mem,calls_captured,unique_graphs,graph_breaks,unique_graph_breaks,autograd_captures,autograd_compiles,cudagraph_skips
+cpu,xcit_large_24_p8_224,16,1.669862,299.543120,65.827989,0.988743,1819.984691,1840.705536,1108,1,0,0,0,0,1
+```
+
+</table>
+
+### Versions
+
+</table><p>SW info</p><table border=""1"" class=""dataframe table"">
+  <thead>
+    <tr style=""text-align: right;"">
+      <th>name</th>
+      <th>target_branch</th>
+      <th>target_commit</th>
+      <th>refer_branch</th>
+      <th>refer_commit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>torchbench</td>
+      <td>main</td>
+      <td>23512dbe</td>
+      <td>main</td>
+      <td>23512dbe</td>
+    </tr>
+    <tr>
+      <td>torch</td>
+      <td>main</td>
+      <td>92151c814ba715fe7d1f5648b0ae6950dceee6b7</td>
+      <td>main</td>
+      <td>1d1d074072ecb0aa6ca95e3f43221d2275e16d74</td>
+    </tr>
+    <tr>
+      <td>torchvision</td>
+      <td>main</td>
+      <td>0.19.0a0+d23a6e1</td>
+      <td>main</td>
+      <td>0.19.0a0+d23a6e1</td>
+    </tr>
+    <tr>
+      <td>torchtext</td>
+      <td>main</td>
+      <td>0.16.0a0+b0ebddc</td>
+      <td>main</td>
+      <td>0.16.0a0+b0ebddc</td>
+    </tr>
+    <tr>
+      <td>torchaudio</td>
+      <td>main</td>
+      <td>2.4.0a0+b3f6f51</td>
+      <td>main</td>
+      <td>2.4.0a0+69b2a0a</td>
+    </tr>
+    <tr>
+      <td>torchdata</td>
+      <td>main</td>
+      <td>0.7.0a0+11bb5b8</td>
+      <td>main</td>
+      <td>0.7.0a0+11bb5b8</td>
+    </tr>
+    <tr>
+      <td>dynamo_benchmarks</td>
+      <td>main</td>
+      <td>nightly</td>
+      <td>main</td>
+      <td>fea73cb</td>
+    </tr>
+  </tbody>
+</table>
+
+</table>
+
+Repro:
+[inductor_single_run.sh](https://github.com/chuanqi129/inductor-tools/blob//weizhuoz/enable_max_autotune_for_guilty/scripts/modelbench/inductor_single_run.sh)
+bash inductor_single_run.sh multiple inference performance timm_models xcit_large_24_p8_224 amp first static default 0 inductor_max_autotune
+Suspected guilty commit: https://github.com/pytorch/pytorch/commit/c22f51ce7c77ef23d9add8fc7c525145efd52230
+[timm_models-xcit_large_24_p8_224-inference-amp-static-default-multiple-performance-drop_guilty_commit.log](https://github.com/user-attachments/files/16786042/timm_models-xcit_large_24_p8_224-inference-amp-static-default-multiple-performance-drop_guilty_commit.log)
+cc @WeizhuoZhang-intel @chuanqi129 @chunyuan-w ",Performance regression in AMP static shape default wrapper with multiple threads on CPU for xcit_large_24_p8_224 model,"['Commit c22f51ce7c77ef23d9add8fc7c525145efd52230 introduced a performance regression', 'Issue with inductor_max_autotune', 'Problem with AMP static shape default wrapper on CPU']","['Revert commit c22f51ce7c77ef23d9add8fc7c525145efd52230 and re-test', 'Investigate and fix the performance regression in inductor_max_autotune']",inductor,negative,bug_report,major,advanced,['Performance and Optimization']
+pytorch/pytorch,134687,https://github.com/pytorch/pytorch/issues/134687,False,1,2024-08-28T16:08:18Z,"DISABLED test_transformerencoderlayer_cuda_float32 (__main__.TestNNDeviceTypeCUDA)
+Platforms: rocm
+
+Broken by https://github.com/pytorch/pytorch/pull/133331
+
+cc @jeffdaily @sunway513 @pruthvistony @ROCmSupport @dllehr-amd @jataylo @hongxiayang
+> <!-- validation-comment-start --><body>Hello there! From the DISABLED prefix in this issue title, it looks like you are attempting to disable a test in PyTorch CI. The information I have parsed is below:
+
+* Test name: `test_transformerencoderlayer_cuda_float32 (__main__.TestNNDeviceTypeCUDA)`
+* Platforms for which to skip the test: rocm
+* Disabled by `jithunnair-amd`
+
+Within ~15 minutes, `test_transformerencoderlayer_cuda_float32 (__main__.TestNNDeviceTypeCUDA)` will be disabled in PyTorch CI for these platforms: rocm. Please verify that your test name looks correct, e.g., `test_cuda_assert_async (__main__.TestCuda)`.
+
+To modify the platforms list, please include a line in the issue body, like below. The default action will disable the test for all platforms if no platforms list is specified. 
+```
+Platforms: case-insensitive, list, of, platforms
+```
+We currently support the following platforms: asan, dynamo, inductor, linux, mac, macos, rocm, slow, win, windows.
+
+
+### How to re-enable a test
+To re-enable the test globally, close the issue. To re-enable a test for only a subset of platforms, remove the platforms from the list in the issue body. This may take some time to propagate. To re-enable a test only for a PR, put `Fixes #134687` in the PR body and rerun the test jobs. Note that if a test is flaky, it maybe be difficult to tell if the test is still flaky on the PR.
+</body><!-- validation-comment-end -->",DISABLED test_transformerencoderlayer_cuda_float32 test in PyTorch CI for rocm platforms due to a broken test caused by a recent pull request.,"['Recent pull request #133331 broke the test', 'Incompatibility with rocm platforms']","['Revert or fix the changes made in pull request #133331', 'Update the test to be compatible with rocm platforms']",PyTorch CI,neutral,bug_report,major,advanced,['Miscellaneous']
+pytorch/pytorch,134691,https://github.com/pytorch/pytorch/issues/134691,False,0,2024-08-28T16:34:53Z,"[docs] We should add a lint for bullet points and multiple lines
+People (me) commonly get this wrong: https://stackoverflow.com/questions/54677795/python-and-sphinx-bullet-point-list-in-multiline-google-style-docstring",The reporter is suggesting to add a lint for bullet points and multiple lines in the documentation to prevent common formatting errors.,"['Lack of clear documentation guidelines', 'Insufficient tooling for automated formatting checks']","['Add a linting rule for bullet points and multiple lines in the documentation', 'Update the documentation guidelines to include clear examples of correct formatting']",Documentation,positive,feature_request,minor,intermediate,['Documentation']
+pytorch/pytorch,134694,https://github.com/pytorch/pytorch/issues/134694,False,0,2024-08-28T16:46:53Z,"Release 2.4.1 validations checklist and cherry-picks
+### 🐛 Describe the bug
+
+Similar to: https://github.com/pytorch/pytorch/issues/130151
+
+We need to make sure that:
+- [ ] CUDA
+   - [ ] pypi binaries with slimmed dependencies are usable in standard AWS containers (amazonlinux:2 regression in 1.13) 
+   ```pip3 install torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/test/cu121``` @PaliC 
+   - [ ] pypi binaries with slimmed dependencies are usable with stock  Ubuntu-20.04: https://github.com/pytorch/pytorch/issues/91067 . Test: https://github.com/pytorch/builder/actions/runs/9878730185/job/27288617275
+  - [ ] Check cuda 1.12.1 update issue: https://github.com/pytorch/pytorch/issues/94772 with small wheels  (This is an old issue from way back to 2.1, so I wonder if we need to continue verifying it) @PaliC 
+ - [ ] `torch.compile`
+    - [ ] Basic test works (for example see test mentioned in https://github.com/openai/triton/pull/1176 ) in PyTorch docker container @atalman 
+    - [ ] `torch.compile` raises an error if used on Windows. Test: https://github.com/pytorch/builder/actions/runs/9878730185/job/27288640469#step:9:408
+    - [ ] `torch.compile` works on 3.11, 3.12 : Test: https://github.com/pytorch/builder/actions/runs/9878730185/job/27288615685#step:12:5163
+  - MPS
+    - [ ] Resnet is usable out of the box (i.e. https://github.com/pytorch/builder/blob/main/test/smoke_test/smoke_test.py passes for MPS device). Test: https://github.com/pytorch/builder/actions/runs/9878730185/job/27288648048
+- [ ] Validate docker release builds  @atalman  https://github.com/pytorch/builder/actions/runs/10084146628
+
+### Cherry-Picks to validate
+
+ - [ ] https://github.com/pytorch/pytorch/issues/132004
+ - [x] https://github.com/pytorch/pytorch/issues/131662
+ - [ ] https://github.com/pytorch/pytorch/issues/131958
+ - [ ] https://github.com/pytorch/pytorch/issues/132032
+ - [ ] https://github.com/pytorch/pytorch/issues/133437
+ - [ ] https://github.com/pytorch/pytorch/issues/131864
+ - [ ] https://github.com/pytorch/pytorch/pull/133331
+ - [ ] https://github.com/pytorch/pytorch/issues/134242
+ - [x] https://github.com/pytorch/pytorch/issues/131668 Covered by test: https://github.com/pytorch/builder/actions/runs/10599520657/job/29374911786#step:9:506
+ - [ ] https://github.com/pytorch/pytorch/issues/130619
+ - [ ] https://github.com/pytorch/pytorch/pull/133888
+ - [ ] https://github.com/pytorch/pytorch/pull/133610
+ - [ ] https://github.com/pytorch/pytorch/issues/132486
+ - [ ] https://github.com/pytorch/pytorch/issues/132103
+ - [ ] https://github.com/pytorch/pytorch/pull/130816
+ - [ ] https://github.com/pytorch/pytorch/issues/128130
+ - [ ] https://github.com/pytorch/pytorch/pull/130026
+ - [ ] https://github.com/pytorch/pytorch/issues/130196
+ - [ ] https://github.com/pytorch/pytorch/issues/131070
+ - [ ] https://github.com/pytorch/pytorch/pull/130994
+ - [ ] https://github.com/pytorch/pytorch/issues/130659
+ - [ ] https://github.com/pytorch/pytorch/issues/130242
+ - [ ] https://github.com/pytorch/pytorch/pull/130014
+ - [ ] https://github.com/pytorch/pytorch/issues/127055
+ - [ ] https://github.com/pytorch/pytorch/pull/128753
+ - [ ] https://github.com/pytorch/pytorch/pull/129075
+
+
+### Versions
+
+2.4.1","Release 2.4.1 validation checklist and cherry-picks for PyTorch, including CUDA, torch.compile, and MPS testing.","['Inadequate testing of CUDA and torch.compile functionality', 'Incompatibility issues with specific versions of Ubuntu and AWS containers', 'Regression in 1.13 affecting amazonlinux:2']","['Improve testing coverage for CUDA and torch.compile functionality', 'Verify compatibility with various versions of Ubuntu and AWS containers']",PyTorch,neutral,bug_report,major,advanced,['Miscellaneous']
+pytorch/pytorch,134700,https://github.com/pytorch/pytorch/issues/134700,False,0,2024-08-28T17:54:17Z,"[c10d][MPI] Attempting to create a new group after MPI causes ""RuntimeError: Underlying Non-PrefixStore shouldn't be null""
+### 🐛 Describe the bug
+
+```python
+import torch
+
+torch.distributed.init_process_group(backend=""mpi"")
+nccl_group = torch.distributed.new_group(backend=""nccl"")
+```
+
+```
+[rank0]: Traceback (most recent call last):
+[rank0]:   File ""/opt/pytorch/pytorch/repro.py"", line 4, in <module>
+[rank0]:     nccl_group = torch.distributed.new_group(backend=""nccl"")
+[rank0]:   File ""/opt/pytorch/pytorch/torch/distributed/c10d_logger.py"", line 97, in wrapper
+[rank0]:     func_return = func(*args, **kwargs)
+[rank0]:   File ""/opt/pytorch/pytorch/torch/distributed/distributed_c10d.py"", line 4577, in new_group
+[rank0]:     return _new_group_with_tag(
+[rank0]:   File ""/opt/pytorch/pytorch/torch/distributed/distributed_c10d.py"", line 4660, in _new_group_with_tag
+[rank0]:     pg, pg_store = _new_process_group_helper(
+[rank0]:   File ""/opt/pytorch/pytorch/torch/distributed/distributed_c10d.py"", line 1783, in _new_process_group_helper
+[rank0]:     backend_class = ProcessGroupNCCL(
+[rank0]: RuntimeError: Underlying Non-PrefixStore shouldn't be null.
+```
+
+### Versions
+
+main
+
+cc @XilunWu @H-Huang @awgu @kwen2501 @wanchaol @fegin @fduwjj @wz337 @wconstab @d4l3k @c-p-i-o",Creating a new group with NCCL backend after initializing process group with MPI backend causes a RuntimeError due to a null Non-PrefixStore.,"['Incompatible backend combinations', 'Incorrect initialization order', 'Missing or incorrect configuration']","['Use a consistent backend for process group initialization and new group creation', 'Review and update the documentation to clarify supported backend combinations and initialization order']",torch.distributed,negative,bug_report,major,advanced,"['Distributed Training and Multi-GPU', 'Miscellaneous']"
+pytorch/pytorch,134706,https://github.com/pytorch/pytorch/issues/134706,False,0,2024-08-28T18:50:25Z,"Better namings for triton fusion ops when a custom triton kernel is present?
+### 🚀 The feature, motivation and pitch
+
+Hi, the code can run fine. It is just that the generated comments and names are a bit confusing.
+
+Say we have a function with some torch ops at the beginning and _scaled_mm (which has inductor triton lowerings added earlier).
+```
+amax_row = torch.max(torch.abs(x), dim=1, keepdim=True).values
+scale = _amax_to_scale(amax_row, dtype_float8, x.dtype)  # shape is [M]
+# x * scale is M x K * M, broadcast
+x_fp8 = _to_fp8_saturated(x * scale, dtype_float8)  # clamp and cast
+x_inverse_scale = scale.reciprocal()
+
+y = torch._scaled_mm(
+    x_fp8,
+    w_t_fp8,
+    x_inverse_scale,
+    w_inverse_scale_row.t(),
+    bias,
+    out_dtype=output_dtype,
+    use_fast_accum=use_fast_accum,
+)
+```
+
+After inductor, we have two fused triton kernels. The first one comprises of all the torch ops and the second one is the triton lowering of _scaled_mm. 
+```
+# Topologically Sorted Source Nodes: [x, abs_1, max_1, amax, clamp, res, mul, x_1, x_fp8, x_inverse_scale, y], Original ATen: [aten.sigmoid, aten.abs, aten.max, aten._to_copy, aten.clamp, aten.reciprocal, aten.mul, aten._scaled_mm]
+stream0 = get_raw_stream(0)
+triton_per_fused__scaled_mm__to_copy_abs_clamp_max_mul_reciprocal_sigmoid_0.run(arg0_1, buf2, buf3, 1024, 512, grid=grid(1024), stream=stream0)
+del arg0_1
+buf5 = empty_strided_cuda((1024, 2048), (2048, 1), torch.bfloat16)
+# Topologically Sorted Source Nodes: [x, amax, clamp, res, mul, x_1, x_fp8, x_inverse_scale, y, y_1, y_2], Original ATen: [aten.sigmoid, aten._to_copy, aten.clamp, aten.reciprocal, aten.mul, aten._scaled_mm, aten.relu, aten.add]
+triton_tem_fused__scaled_mm__to_copy_add_clamp_mul_reciprocal_relu_sigmoid_1.run(buf2, arg2_1, buf3, arg1_1, buf5, grid=torch._inductor.kernel.mm_common.mm_grid(1024, 2048, meta0), stream=stream0)
+```
+
+However, the namings and comments are a bit unintuitive:
+1. aten._scaled_mm is listed as original atens in both kernels, but it is only present in the second one.
+2. [partly explained by the numberings] The first triton kernel does not use aten._scaled_mm but has it in the name. The second triton kernel only comprises of aten._scaled_mm but has other ops in its name.
+
+Any idea on how to possibly improve them?
+
+### Alternatives
+
+I imagine the solution would look like this:
+* do not attempt to fuse them together, since we cannot really fuse them
+* [optional] Sort the list of original atens before printing the comments 
+
+### Additional context
+
+repro (need H100):
+```
+import os
+
+os.environ[""TORCH_LOGS""] = ""+output_code""
+os.environ[""TORCHINDUCTOR_UNIQUE_KERNEL_NAMES""] = ""1""
+
+import torch
+import torch._inductor.config
+
+
+torch._inductor.config.force_disable_caches = True
+# inductor_config.triton.descriptive_names = ""False""
+
+################## inputs for each scenario
+
+fusion_case = ""pointwise""  # ""pointwise"" or ""reduction""
+
+# Matmul Y = X [M, K] x W [N, K]
+M = 1024  # batch size
+K = 512  # in_features
+N = 2048  # out_features
+
+################## setup
+device = ""cuda:0""
+dtype_float8 = torch.float8_e4m3fn
+
+input_dtype = torch.bfloat16  # torch.float32 or bfloat16
+output_dtype = torch.bfloat16  # torch.float32 or dtype_float8 or torch.bfloat16
+
+use_fast_accum = True
+
+x = torch.rand(M, K, dtype=input_dtype, device=device)
+w = torch.rand(N, K, dtype=input_dtype, device=device)
+
+bias = None
+
+
+################### utilities
+# ref fbcode/caffe2/torch/fb/model_transform/experimental/fp8_linear.py FP8LinearDynamic
+
+E4M3_MAX_POS: float = torch.finfo(torch.float8_e4m3fn).max
+E5M2_MAX_POS: float = torch.finfo(torch.float8_e5m2).max
+FP16_MAX_POS: float = torch.finfo(torch.float16).max
+EPS: float = 1e-12
+
+# fbcode/caffe2/torch/fb/model_transform/experimental/fp8_linear.py
+
+
+@torch.no_grad()
+def _amax_to_scale(
+    amax: torch.Tensor, float8_dtype: torch.dtype, orig_dtype: torch.dtype
+) -> torch.Tensor:
+    # To make scale dtype to be fp32 for accuracy
+    amax = amax.float()
+    if float8_dtype == torch.float8_e4m3fn:
+        res = E4M3_MAX_POS / torch.clamp(amax, min=EPS)
+    else:  # e5m2
+        res = E5M2_MAX_POS / torch.clamp(amax, min=EPS)
+
+    # Ensure that the scale is representable in float16,
+    # this helps when amax is small. We are assuming that we don't need
+    # to care about this for float32/bfloat16.
+    if orig_dtype is torch.float16:
+        res = torch.clamp(res, max=FP16_MAX_POS)
+    return res
+
+
+def _to_fp8_saturated(x: torch.Tensor, float8_dtype: torch.dtype) -> torch.Tensor:
+    # The default behavior in PyTorch for casting to `float8_e4m3fn`
+    # and `e5m2` is to not saturate. In this context, we should saturate.
+    # A common case where we want to saturate is when the history of a
+    # tensor has a maximum value of `amax1`, and the current amax value
+    # is `amax2`, where `amax1 < amax2`. This is common when using delayed
+    # scaling.
+    if float8_dtype == torch.float8_e4m3fn:
+        x = x.clamp(min=-1 * E4M3_MAX_POS, max=E4M3_MAX_POS)
+    else:
+        x = x.clamp(min=-1 * E5M2_MAX_POS, max=E5M2_MAX_POS)
+    return x.to(float8_dtype)
+
+
+################### rowwise scaling fp8
+
+# quantize weight, done in model building stage prior to inference
+weight_amax_row = torch.max(torch.abs(w), dim=1, keepdim=True).values
+weight_scale_row = _amax_to_scale(weight_amax_row, dtype_float8, w.dtype)
+w_t_fp8_row = _to_fp8_saturated(w * weight_scale_row, dtype_float8).t()
+w_inverse_scale_row = weight_scale_row.reciprocal()  # element-wise reciprocal
+
+
+@torch.no_grad()
+def fb8_rowwise_scaling(x, w_t_fp8, w_inverse_scale_row):
+    if fusion_case == ""pointwise"":
+        # Fusion Case 1: Pointwise (e.g. Sigmoid) + Matmul
+        x = torch.sigmoid(x)
+    else:
+        # Fusion Case 2: Reduction (e.g. LayerNorm) + Matmul
+        layer_norm = torch.nn.LayerNorm(K, device=device, dtype=input_dtype)
+        x = layer_norm(x)
+
+    # quantize input x
+    amax_row = torch.max(torch.abs(x), dim=1, keepdim=True).values
+    scale = _amax_to_scale(amax_row, dtype_float8, x.dtype)  # shape is [M]
+    # x * scale is M x K * M, broadcast
+    x_fp8 = _to_fp8_saturated(x * scale, dtype_float8)  # clamp and cast
+    x_inverse_scale = scale.reciprocal()
+
+    y = torch._scaled_mm(
+        x_fp8,
+        w_t_fp8,
+        x_inverse_scale,
+        w_inverse_scale_row.t(),
+        bias,
+        out_dtype=output_dtype,
+        use_fast_accum=use_fast_accum,
+    )
+
+    # epilogue
+    y = torch.nn.functional.relu(y)
+    y = y + 0.01
+
+    return y
+
+
+fb8_rowwise_scaling_compiled = torch.compile(
+    fb8_rowwise_scaling, mode=""max-autotune-no-cudagraphs""
+)
+y = fb8_rowwise_scaling_compiled(x, w_t_fp8_row, w_inverse_scale_row)
+
+print(""done"")
+# Matmul Y = X [M, K] x W [N, K]
+```",The generated comments and names for triton fusion ops with custom triton kernel are confusing and unintuitive. The reporter suggests improving the naming and comments to better reflect the actual operations being performed.,"['The current naming and commenting scheme is not well-suited for custom triton kernels.', 'The fusion of ops is not properly handled, leading to confusing names and comments.']","['Improve the naming and commenting scheme to better reflect the actual operations being performed.', 'Consider not fusing ops together if it leads to confusing names and comments.']",Triton,neutral,bug_report,minor,advanced,['Miscellaneous']
+pytorch/pytorch,134709,https://github.com/pytorch/pytorch/issues/134709,False,1,2024-08-28T19:20:14Z,"[dashboard][aarch64] fp16 is slower than 
+From https://github.com/pytorch/pytorch/pull/134282#issuecomment-2307157197, in the aarch64 dashboard results, if we benchmark with fp16, it is 2x~10x slower than bf16, often causing timeout in cases.
+
+# bfloat16
+https://hud.pytorch.org/benchmark/huggingface/inductor_no_cudagraphs?dashboard=torchinductor&startTime=Fri,%2016%20Aug%202024%2013:17:17%20GMT&stopTime=Fri,%2023%20Aug%202024%2013:17:17%20GMT&granularity=hour&mode=inference&dtype=bfloat16&deviceName=cpu%20(aarch64)&lBranch=main&lCommit=ca3f48dd5ba387cdbf1b5106e4050e8b5c2f175c&rBranch=main&rCommit=ca3f48dd5ba387cdbf1b5106e4050e8b5c2f175c
+
+# float16 
+https://hud.pytorch.org/benchmark/huggingface/inductor_no_cudagraphs?dashboard=torchinductor&startTime=Fri,%2016%20Aug%202024%2013:12:39%20GMT&stopTime=Fri,%2023%20Aug%202024%2013:12:39%20GMT&granularity=hour&mode=inference&dtype=float16&deviceName=cpu%20(aarch64)&lBranch=desertfire/aarch64_4&lCommit=6078701acfe49369714d45653eb3b662dbe02106&rBranch=desertfire/aarch64_4&rCommit=6078701acfe49369714d45653eb3b662dbe02106
+
+cc @malfet @snadampal @milpuz01 @ezyang @chauhang @penguinwu
+> Adding module ARM to get myself CCed on this one. But I suspect this is due to optimized bf16 ops in oneDNN/ACL, where fp16 ones are missing. Also, perhaps I'm reading those incorrectly, but does it look like fp16 eager is also slower and bf16? Or just on the compile side? Because on compile I've just recently put a change that speed up torch-chat almost 2x by running vectorized BF16->F32 conversion, but F32->BF16 is still scalar","On aarch64, PyTorch's fp16 is 2x-10x slower than bf16, often causing timeouts, likely due to missing optimized fp16 ops in oneDNN/ACL.","['Missing optimized fp16 ops in oneDNN/ACL', 'Suboptimal fp16 implementation in PyTorch']","['Implement optimized fp16 ops in oneDNN/ACL', ""Optimize PyTorch's fp16 implementation""]",PyTorch's aarch64 backend,negative,bug_report,major,advanced,"['Performance and Optimization', 'Quantization and Mixed Precision']"
+pytorch/pytorch,134714,https://github.com/pytorch/pytorch/issues/134714,False,0,2024-08-28T19:46:44Z,"Don't create caffe2::pthreadpool() with getDefaultNumThreads()-many threads in set_num_threads(1)
+### 🚀 The feature, motivation and pitch
+
+I start my interaction with libtorch by calling `at::set_num_threads(1);`. What I observe (on a computer with many cores) is 60+ threads being created and immediately destroyed, which bumps my program's htop usage well above 100% and I find it inefficient (and silly). 
+
+I guess the problems is that `caffe2::pthreadpool()` always initializes its static pool (https://github.com/pytorch/pytorch/blob/44dadf25065c73bd1370258e7fb1b421cee4283a/caffe2/utils/threadpool/pthreadpool-cpp.cc#L90C35-L90C55) with `getDefaultNumThreads()` many threads first, before listening to `set_thread_count` (https://github.com/pytorch/pytorch/blob/aa31e7019a49e1d36b23a5132dc52f2414b65055/aten/src/ATen/ParallelNative.cpp#L234C9-L234C25) in `set_num_threads`.
+
+This could be fixed by passing `nthreads` to `caffe2::pthreadpool()` and only resorting to `getDefaultNumThreads()` if no reasonable value is provided (like 0, which could be the default).
+
+### Alternatives
+
+_No response_
+
+### Additional context
+
+_No response_","Calling at::set_num_threads(1) creates 60+ threads and immediately destroys them, causing high CPU usage. This is due to caffe2::pthreadpool() initializing its static pool with getDefaultNumThreads() many threads before listening to set_thread_count in set_num_threads.","['caffe2::pthreadpool() initializing with getDefaultNumThreads() many threads', 'set_num_threads() not being able to override the default thread count']","['Pass nthreads to caffe2::pthreadpool() and only use getDefaultNumThreads() if no reasonable value is provided', 'Allow set_num_threads() to override the default thread count']",caffe2::pthreadpool,negative,bug_report,major,advanced,['Miscellaneous']
+pytorch/pytorch,134715,https://github.com/pytorch/pytorch/issues/134715,False,0,2024-08-28T19:48:51Z,"Numerical differences for different tensor shapes
+### 🐛 Describe the bug
+
+```python
+import torch
+import torch.nn.functional as F
+from torch import nn
+
+dim = 1536
+hidden_dim = 4096
+seqlen = 333  # Define seqlen as a variable
+
+w1 = nn.Linear(dim, hidden_dim * 2, bias=False)
+w2 = nn.Linear(hidden_dim, dim, bias=False)
+w1, w2 = w1.cuda(), w2.cuda()
+
+def swiglu_forward(w1, w2, x):
+    x, gate = w1(x).chunk(2, dim=-1)
+    return w2(F.silu(x) * gate)
+
+x = torch.randn(1, seqlen, dim).cuda()
+
+with torch.autocast(""cuda"", dtype=torch.bfloat16):
+    x = x.to(torch.bfloat16)
+    output_full = swiglu_forward(w1, w2, x)
+    x_padded = F.pad(x, (0, 0, 0, (4 - seqlen % 4) % 4))
+    chunks = x_padded.chunk(4, dim=1)
+
+    chunk_outputs = [swiglu_forward(w1, w2, chunk) for chunk in chunks]
+    output_chunked = torch.cat(chunk_outputs, dim=1)
+    output_chunked = output_chunked[:, :seqlen, :]
+
+    torch.testing.assert_close(output_full, output_chunked, rtol=1e-3, atol=1e-3)
+    print(""Test passed successfully!"")
+```
+
+This test should pass. But it fails with the following error:
+```
+Traceback (most recent call last):
+  File ""/home/myhomedir/training/q.py"", line 29, in <module>
+    torch.testing.assert_close(output_full, output_chunked, rtol=1e-3, atol=1e-3)
+  File ""/tmp/env/lib/python3.10/site-packages/torch/testing/_comparison.py"", line 1524, in assert_close
+    raise error_metas[0].to_error(msg)
+AssertionError: Tensor-likes are not close!
+
+Mismatched elements: 3 / 511488 (0.0%)
+Greatest absolute difference: 0.001953125 at index (0, 78, 212) (up to 0.001 allowed)
+Greatest relative difference: 0.0076904296875 at index (0, 78, 212) (up to 0.001 allowed)
+```
+
+Using `CUBLAS_WORKSPACE_CONFIG=:4096:8` does not help. 
+
+### Versions
+
+Collecting environment information...
+PyTorch version: 2.4.0+cu124
+Is debug build: False
+CUDA used to build PyTorch: 12.4
+ROCM used to build PyTorch: N/A
+
+OS: Ubuntu 22.04.4 LTS (x86_64)
+GCC version: (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+Clang version: Could not collect
+CMake version: Could not collect
+Libc version: glibc-2.35
+
+Python version: 3.10.12 (main, Mar 22 2024, 16:50:05) [GCC 11.4.0] (64-bit runtime)
+Python platform: Linux-5.15.0-112-generic-x86_64-with-glibc2.35
+Is CUDA available: True
+CUDA runtime version: Could not collect
+CUDA_MODULE_LOADING set to: LAZY
+GPU models and configuration: 
+GPU 0: NVIDIA H100 80GB HBM3
+GPU 1: NVIDIA H100 80GB HBM3
+GPU 2: NVIDIA H100 80GB HBM3
+GPU 3: NVIDIA H100 80GB HBM3
+GPU 4: NVIDIA H100 80GB HBM3
+GPU 5: NVIDIA H100 80GB HBM3
+GPU 6: NVIDIA H100 80GB HBM3
+GPU 7: NVIDIA H100 80GB HBM3
+
+Nvidia driver version: 535.183.01
+cuDNN version: Probably one of the following:
+/usr/lib/x86_64-linux-gnu/libcudnn.so.9.3.0
+/usr/lib/x86_64-linux-gnu/libcudnn_adv.so.9.3.0
+/usr/lib/x86_64-linux-gnu/libcudnn_cnn.so.9.3.0
+/usr/lib/x86_64-linux-gnu/libcudnn_engines_precompiled.so.9.3.0
+/usr/lib/x86_64-linux-gnu/libcudnn_engines_runtime_compiled.so.9.3.0
+/usr/lib/x86_64-linux-gnu/libcudnn_graph.so.9.3.0
+/usr/lib/x86_64-linux-gnu/libcudnn_heuristic.so.9.3.0
+/usr/lib/x86_64-linux-gnu/libcudnn_ops.so.9.3.0
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+Is XNNPACK available: True
+
+CPU:
+Architecture:                       x86_64
+CPU op-mode(s):                     32-bit, 64-bit
+Address sizes:                      46 bits physical, 57 bits virtual
+Byte Order:                         Little Endian
+CPU(s):                             176
+On-line CPU(s) list:                0-175
+Vendor ID:                          GenuineIntel
+Model name:                         Intel(R) Xeon(R) Platinum 8468V
+CPU family:                         6
+Model:                              143
+Thread(s) per core:                 2
+Core(s) per socket:                 44
+Socket(s):                          2
+Stepping:                           8
+BogoMIPS:                           4800.00
+Flags:                              fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch cpuid_fault invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves avx_vnni avx512_bf16 wbnoinvd arat avx512vbmi umip pku ospke waitpkg avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq la57 rdpid bus_lock_detect cldemote movdiri movdir64b fsrm md_clear serialize tsxldtrk avx512_fp16 arch_capabilities
+Virtualization:                     VT-x
+Hypervisor vendor:                  KVM
+Virtualization type:                full
+L1d cache:                          4.1 MiB (88 instances)
+L1i cache:                          2.8 MiB (88 instances)
+L2 cache:                           176 MiB (88 instances)
+L3 cache:                           195 MiB (2 instances)
+NUMA node(s):                       2
+NUMA node0 CPU(s):                  0-87
+NUMA node1 CPU(s):                  88-175
+Vulnerability Gather data sampling: Not affected
+Vulnerability Itlb multihit:        Not affected
+Vulnerability L1tf:                 Not affected
+Vulnerability Mds:                  Not affected
+Vulnerability Meltdown:             Not affected
+Vulnerability Mmio stale data:      Not affected
+Vulnerability Retbleed:             Not affected
+Vulnerability Spec rstack overflow: Not affected
+Vulnerability Spec store bypass:    Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+Vulnerability Spectre v1:           Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:           Mitigation; Enhanced IBRS; IBPB conditional; RSB filling; PBRSB-eIBRS SW sequence; BHI Syscall hardening, KVM SW loop
+Vulnerability Srbds:                Not affected
+Vulnerability Tsx async abort:      Mitigation; TSX disabled
+
+Versions of relevant libraries:
+[pip3] lion-pytorch==0.1.4
+[pip3] numpy==1.26.4
+[pip3] onnx==1.15.0
+[pip3] onnxruntime==1.17.0
+[pip3] optree==0.11.0
+[pip3] pytorch-ranger==0.1.1
+[pip3] pytorch-triton==3.0.0+45fff310c8
+[pip3] stlpips_pytorch==0.0.2
+[pip3] torch==2.4.0+cu124
+[pip3] torch-fidelity==0.3.0
+[pip3] torch-optimizer==0.3.0
+[pip3] torch-summary==1.4.5
+[pip3] torchaudio==2.4.0+cu124
+[pip3] torchdiffeq==0.2.3
+[pip3] torchmetrics==1.3.0.post0
+[pip3] torchvision==0.19.0+cu124
+[pip3] triton==3.0.0
+[conda] Could not collect",Numerical differences in tensor shapes cause assertion error in PyTorch test,"['Numerical instability in tensor operations', 'Inconsistent tensor shapes or sizes', 'Insufficient precision in floating-point operations']","['Verify tensor shapes and sizes before performing operations', 'Use higher precision data types or increase numerical stability']",PyTorch tensor operations,negative,bug_report,minor,advanced,['Miscellaneous']
+pytorch/pytorch,134716,https://github.com/pytorch/pytorch/issues/134716,False,0,2024-08-28T20:06:26Z,"Windows GPU tests has been broken for the last 6 days
+### 🐛 Describe the bug
+
+See https://hud.pytorch.org/hud/pytorch/pytorch/b07d0a22f5451a4d02999007ea20be9d10fe897b/6?per_page=50&name_filter=periodic%20%2F%20win-vs2019-cuda11.8-py3%20%2F%20test
+
+Any volunteers to go ahead and fix those? If none, should we just disable those?
+
+### Versions
+
+CI
+
+cc @peterjc123 @mszhanyi @skyline75489 @nbcsm @iremyux @Blackhex","Windows GPU tests have been broken for the last 6 days, with the issue being tracked on hud.pytorch.org. The tests in question are periodic/win-vs2019-cuda11.8-py3/test.","['CI configuration issue', 'Dependency version mismatch', 'Test script error']","['Review and update CI configuration to ensure compatibility with Windows GPU environment', 'Verify that dependencies are up-to-date and compatible with the test environment']",CI/Testing,negative,bug_report,major,advanced,['Miscellaneous']
