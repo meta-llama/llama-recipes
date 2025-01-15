@@ -32,7 +32,7 @@ Here's the detailed outline:
 
 In this step we start with an unlabeled dataset and use the image captioning capability of the model to write a description of the image and categorize it.
 
-[Notebook for Step 1](./notebooks/Part_1_Data_Preparation.ipynb) and [Script for Step 1](./scripts/label_script.py)
+[Notebook for Step 1](./notebooks/Part_1_Data_Preperation.ipynb) and [Script for Step 1](./scripts/label_script.py)
 
 To run the script (remember to set n):
 ```

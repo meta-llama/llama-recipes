@@ -28,7 +28,7 @@ For **finetuning with LLM freeze using FSDP**, we can run the following code:
 
 For more details about the finetuning configurations, please read the [finetuning readme](./README.md).
 
-For more details about local inference with the fine-tuned checkpoint, please read [Inference with FSDP checkpoints section](https://github.com/meta-llama/llama-recipes/tree/main/recipes/quickstart/inference/local_inference#inference-with-fsdp-checkpoints) to learn how to convert the FSDP weights into a consolidated Hugging Face formatted model for local inference.
+For more details about local inference with the fine-tuned checkpoint, please read [Inference with FSDP checkpoints section](../../getting-started/inference/local_inference/#inference-with-fsdp-checkpoints) to learn how to convert the FSDP weights into a consolidated Hugging Face formatted model for local inference.
 
 ### How to use a custom dataset to fine-tune vision model
 
