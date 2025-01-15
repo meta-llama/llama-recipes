@@ -8,7 +8,7 @@ import torch
 from llama_recipes.inference.chat_utils import read_dialogs_from_file
 
 ROOT_DIR = Path(__file__).parents[2]
-CHAT_COMPLETION_DIR = ROOT_DIR / "recipes/quickstart/inference/local_inference/chat_completion/"
+CHAT_COMPLETION_DIR = ROOT_DIR / "getting-started/inference/local_inference/chat_completion/"
 
 sys.path = [CHAT_COMPLETION_DIR.as_posix()] + sys.path
 

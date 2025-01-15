@@ -1,4 +1,4 @@
-# Contributing to llama-recipes
+# Contributing to llama-cookbook
 We want to make contributing to this project as easy and transparent as
 possible.
 
@@ -27,18 +27,18 @@ disclosure of security bugs. In those cases, please go through the process
 outlined on that page and do not file a public issue.
 
 ## License
-By contributing to llama-recipes, you agree that your contributions will be licensed
+By contributing to llama-cookbook, you agree that your contributions will be licensed
 under the LICENSE file in the root directory of this source tree.
 
 ## Tests
-Llama-recipes currently comes with a basic set of unit tests (covering the parts of the main training script and training loop) but we strive to increase our test coverage in the future in order to mitigate silent errors.
+Llama-cookbook currently comes with a basic set of unit tests (covering the parts of the main training script and training loop) but we strive to increase our test coverage in the future in order to mitigate silent errors.
 When submitting a new feature PR please make sure to cover the newly added code with a unit test.
 Run the tests locally to ensure the new feature does not break an old one.
-We use **pytest** for our unit tests and to run them locally you need to install llama-recipes with optional [tests] dependencies enabled:
+We use **pytest** for our unit tests and to run them locally you need to install llama-cookbook with optional [tests] dependencies enabled:
 ```
-pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-recipes[tests]
+pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 llama-cookbook[tests]
 ```
-For development and contributing to llama-recipes please install from source with all optional dependencies:
+For development and contributing to llama-cookbook please install from source with all optional dependencies:
 ```
 pip install -U pip setuptools
 pip install --extra-index-url https://download.pytorch.org/whl/test/cu118 -e .[tests,auditnlg,vllm]

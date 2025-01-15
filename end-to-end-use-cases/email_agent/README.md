@@ -114,8 +114,8 @@ source emailagent\Scripts\activate # on Windows
 
 Then install the required Python libraries:
 ```
-git clone https://github.com/meta-llama/llama-recipes
-cd llama-recipes/end-to-end-use-cases/email_agent
+git clone https://github.com/meta-llama/llama-cookbook
+cd llama-cookbook/end-to-end-use-cases/email_agent
 pip install -r requirements.txt
 ```
 
@@ -329,7 +329,7 @@ Tool calling returned: [{'message_id': '1936ef72ad3f30e8', 'sender': 'xxx@gmail.
 5. Letta's blog [The AI agents stack](https://www.letta.com/blog/ai-agents-stack)
 6. Microsoft's multi-agent system [Magentic-One](https://www.microsoft.com/en-us/research/articles/magentic-one-a-generalist-multi-agent-system-for-solving-complex-tasks)
 7. Amazon's [Multi-Agent Orchestrator framework](https://awslabs.github.io/multi-agent-orchestrator/)
-8. Deeplearning.ai's [agent related courses](https://www.deeplearning.ai/courses/?courses_date_desc%5Bquery%5D=agents) (Meta, AWS, Microsoft, LangChain, LlamaIndex, crewAI, AutoGen, Letta) and some [lessons ported to using Llama](https://github.com/meta-llama/llama-recipes/tree/main/recipes/quickstart/agents/DeepLearningai_Course_Notebooks). 
+8. Deeplearning.ai's [agent related courses](https://www.deeplearning.ai/courses/?courses_date_desc%5Bquery%5D=agents) (Meta, AWS, Microsoft, LangChain, LlamaIndex, crewAI, AutoGen, Letta) and some [lessons ported to using Llama](https://github.com/meta-llama/llama-cookbook/tree/main/end-to-end-use-cases/agents/DeepLearningai_Course_Notebooks). 
 9. Felicis's [The Agentic Web](https://www.felicis.com/insight/the-agentic-web)
 10. A pretty complete [list of AI agents](https://github.com/e2b-dev/awesome-ai-agents), not including [/dev/agents](https://sdsa.ai/), a very new startup building the next-gen OS for AI agents, though.
 11. Sequoia's [post](https://www.linkedin.com/posts/konstantinebuhler_the-ai-landscape-is-shifting-from-simple-activity-7270111755710672897-ZHnr/) on 2024 being the year of AI agents and 2025 networks of AI agents.
