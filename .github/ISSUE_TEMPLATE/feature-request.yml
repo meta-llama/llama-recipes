@@ -1,5 +1,5 @@
 name: 🚀 Feature request
-description: Submit a proposal/request for a new llama-recipes feature
+description: Submit a proposal/request for a new llama-cookbook feature
 
 body:
 - type: textarea

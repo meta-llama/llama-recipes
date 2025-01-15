@@ -52,7 +52,7 @@ def test_custom_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker,
     kwargs = {
         "dataset": "custom_dataset",
         "model_name": llama_version,
-        "custom_dataset.file": "recipes/quickstart/finetuning/datasets/custom_dataset.py",
+        "custom_dataset.file": "getting-started/finetuning/datasets/custom_dataset.py",
         "custom_dataset.train_split": "validation",
         "batch_size_training": 2,
         "val_batch_size": 4,
@@ -111,7 +111,7 @@ def test_unknown_dataset_error(step_lr, optimizer, tokenizer, get_model, get_con
 
     kwargs = {
         "dataset": "custom_dataset",
-        "custom_dataset.file": "recipes/quickstart/finetuning/datasets/custom_dataset.py:get_unknown_dataset",
+        "custom_dataset.file": "getting-started/finetuning/datasets/custom_dataset.py:get_unknown_dataset",
         "batch_size_training": 1,
         "use_peft": False,
         }
@@ -121,7 +121,7 @@ def test_unknown_dataset_error(step_lr, optimizer, tokenizer, get_model, get_con
 @pytest.mark.skip_missing_tokenizer
 @patch('llama_recipes.finetuning.AutoTokenizer')
 def test_tokenize_dialog(tokenizer, monkeypatch, setup_tokenizer, llama_version):
-    monkeypatch.syspath_prepend("recipes/quickstart/finetuning/datasets/")
+    monkeypatch.syspath_prepend("getting-started/finetuning/datasets/")
     from custom_dataset import tokenize_dialog
 
     setup_tokenizer(tokenizer)

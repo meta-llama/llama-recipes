@@ -1,4 +1,4 @@
-name: "[GHA][CPU] llama-recipes Pytest tests on CPU GitHub hosted runner."
+name: "[GHA][CPU] llama-cookbook Pytest tests on CPU GitHub hosted runner."
 on:
   pull_request:
     branches:
@@ -35,7 +35,7 @@ jobs:
         run: |
             cat /etc/os-release
 
-      - name: "Checkout 'facebookresearch/llama-recipes' repository"
+      - name: "Checkout 'meta-llama/llama-cookbook' repository"
         id: checkout
         uses: actions/checkout@v4
 
@@ -53,10 +53,10 @@ jobs:
           pip3 install setuptools
 
 
-      - name: "Installing 'llama-recipes' project"
-        id: install_llama_recipes_package
+      - name: "Installing 'llama-cookbook' project"
+        id: install_llama_cookbook_package
         run: |
-          echo "Installing 'llama-recipes' project (re: https://github.com/facebookresearch/llama-recipes?tab=readme-ov-file#install-with-optional-dependencies)"
+          echo "Installing 'llama-cookbook' project (re: https://github.com/meta-llama/llama-cookbook/tree/main/src?tab=readme-ov-file#install-with-optional-dependencies)"
           pip install --extra-index-url ${PYTORCH_WHEEL_URL} -e '.[tests]'
 
 

@@ -28,7 +28,7 @@ Logs for Test B
 
 ## Before submitting
 - [ ] This PR fixes a typo or improves the docs (you can dismiss the other checks if that's the case).
-- [ ] Did you read the [contributor guideline](https://github.com/facebookresearch/llama-recipes/blob/main/CONTRIBUTING.md#pull-requests),
+- [ ] Did you read the [contributor guideline](https://github.com/meta-llama/llama-cookbook/blob/main/CONTRIBUTING.md),
       Pull Request section?
 - [ ] Was this discussed/approved via a Github issue? Please add a link
       to it if that's the case.
