@@ -1505,6 +1505,9 @@ locallama
 myshell
 parler
 xTTS
+TogetherAI
+Vercel's
+echarts
 pydantic
 Deloitte
 Deloitte's
