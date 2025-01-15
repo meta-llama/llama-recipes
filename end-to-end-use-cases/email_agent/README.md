@@ -115,7 +115,7 @@ source emailagent\Scripts\activate # on Windows
 Then install the required Python libraries:
 ```
 git clone https://github.com/meta-llama/llama-recipes
-cd llama-recipes/recipes/use_cases/email_agent
+cd llama-recipes/end-to-end-use-cases/email_agent
 pip install -r requirements.txt
 ```
 
