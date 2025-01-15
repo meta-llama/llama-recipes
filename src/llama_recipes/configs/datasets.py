@@ -28,7 +28,7 @@ class alpaca_dataset:
 @dataclass
 class custom_dataset:
     dataset: str = "custom_dataset"
-    file: str = "src/llama_cookbook/datasets/custom_dataset.py"
+    file: str = "getting-started/finetuning/datasets/custom_dataset.py"
     train_split: str = "train"
     test_split: str = "validation"
     data_path: str = ""
