@@ -2,7 +2,7 @@
 
 ## Recipe Overview: Multi-Modal RAG using `Llama-3.2-11B` model: 
 
-This is a complete workshop on labelling images using the new Llama 3.2-Vision Models and performing RAG using the image caption capiblites of the model.
+This is a complete workshop on how to label images using the new Llama 3.2-Vision Models and performing RAG using the image caption capablites of the model.
 
 - **Data Labeling and Preparation:** We start by downloading 5000 images of clothing items and labeling them using `Llama-3.2-11B-Vision-Instruct` model
 - **Cleaning Labels:** With the labels based on the notebook above, we will then clean the dataset and prepare it for RAG
@@ -30,7 +30,7 @@ Here's the detailed outline:
 
 ### Step 1: Data Prep and Synthetic Labeling:
 
-In this step we start with an unlabelled dataset and use the image captioning capability of the model to write a description of the image and categorise it.
+In this step we start with an unlabeled dataset and use the image captioning capability of the model to write a description of the image and categorize it.
 
 [Notebook for Step 1](./notebooks/Part_1_Data_Preparation.ipynb) and [Script for Step 1](./scripts/label_script.py)
 
