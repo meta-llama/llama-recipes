@@ -36,7 +36,7 @@ Here we discuss frequently asked questions that may occur and we found useful al
     os.environ['PYTORCH_CUDA_ALLOC_CONF']='expandable_segments:True'
 
     ```
-    We also added this environment variable in `setup_environ_flags` of the [train_utils.py](../src/llama_recipes/utils/train_utils.py), feel free to uncomment it if required.
+    We also added this environment variable in `setup_environ_flags` of the [train_utils.py](../llama_recipes/utils/train_utils.py), feel free to uncomment it if required.
 
 8. Additional debugging flags?
 
