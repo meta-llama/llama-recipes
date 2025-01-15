@@ -13,7 +13,7 @@ This is a complete workshop on how to label images using the new Llama 3.2-Visio
 Before we start:
 
 1. Please grab your HF CLI Token from [here](https://huggingface.co/settings/tokens)
-2. Git clone [this dataset](https://huggingface.co/datasets/Sanyam/MM-Demo) inside the Multi-Modal-RAG folder: `git clone https://huggingface.co/datasets/Sanyam/MM-Demo` (Remember to thank the original author by upvoting [Kaggle Dataset](https://www.kaggle.com/datasets/agrigorev/clothing-dataset-full))
+2. Git clone [this dataset](https://huggingface.co/datasets/Sanyam/MM-Demo) inside the Multi-Modal-RAG folder: `git clone https://huggingface.co/datasets/Sanyam/MM-Demo` (Remember to thank the original author by up voting [Kaggle Dataset](https://www.kaggle.com/datasets/agrigorev/clothing-dataset-full))
 3. Make sure you grab a together.ai token [here](https://www.together.ai)
 
 ## Detailed Outline for running:
@@ -107,7 +107,7 @@ Note: We can further improve the description prompt. You will notice sometimes t
 
 Credit and Thanks to List of models and resources used in the showcase:
 
-Firstly, thanks to the author here for providing this dataset on which we base our exercise []()
+Firstly, thanks to the author here for providing this dataset on which we base our exercise [here](https://www.kaggle.com/datasets/agrigorev/clothing-dataset-full)
 
 - [Llama-3.2-11B-Vision-Instruct Model](https://www.llama.com/docs/how-to-guides/vision-capabilities/)
 - [Lance-db for vector database](https://lancedb.com)
