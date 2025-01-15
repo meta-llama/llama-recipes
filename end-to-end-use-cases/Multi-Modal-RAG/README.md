@@ -13,7 +13,7 @@ This is a complete workshop on how to label images using the new Llama 3.2-Visio
 Before we start:
 
 1. Please grab your HF CLI Token from [here](https://huggingface.co/settings/tokens)
-2. Git clone [this dataset](https://huggingface.co/datasets/Sanyam/MM-Demo) inside the Multi-Modal-RAG folder: `git clone https://huggingface.co/datasets/Sanyam/MM-Demo`
+2. Git clone [this dataset](https://huggingface.co/datasets/Sanyam/MM-Demo) inside the Multi-Modal-RAG folder: `git clone https://huggingface.co/datasets/Sanyam/MM-Demo` (Remember to thank the original author by upvoting [Kaggle Dataset](https://www.kaggle.com/datasets/agrigorev/clothing-dataset-full))
 3. Make sure you grab a together.ai token [here](https://www.together.ai)
 
 ## Detailed Outline for running:
@@ -32,7 +32,7 @@ Here's the detailed outline:
 
 In this step we start with an unlabeled dataset and use the image captioning capability of the model to write a description of the image and categorize it.
 
-[Notebook for Step 1](./notebooks/Part_1_Data_Preperation.ipynb) and [Script for Step 1](./scripts/label_script.py)
+[Notebook for Step 1](./notebooks/Part_1_Data_Preparation.ipynb) and [Script for Step 1](./scripts/label_script.py)
 
 To run the script (remember to set n):
 ```
