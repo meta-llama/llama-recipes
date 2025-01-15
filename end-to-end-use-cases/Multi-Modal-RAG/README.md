@@ -20,7 +20,7 @@ Before we start:
 
 Order of running files, the notebook establish the method of approaching the problem. Once we establish it, we use the scripts to run the method end to end.
 
-- Notebook 1: `Part_1_Data_Preperation.ipynb`
+- Notebook 1: `Part_1_Data_Preparation.ipynb`
 - Script: `label_script.py`
 - Notebook 2: `Part_2_Cleaning_Data_and_DB.ipynb`
 - Notebook 3: `Part_3_RAG_Setup_and_Validation.ipynb`
@@ -32,7 +32,7 @@ Here's the detailed outline:
 
 In this step we start with an unlabelled dataset and use the image captioning capability of the model to write a description of the image and categorise it.
 
-[Notebook for Step 1](./notebooks/Part_1_Data_Preperation.ipynb) and [Script for Step 1](./scripts/label_script.py)
+[Notebook for Step 1](./notebooks/Part_1_Data_Preparation.ipynb) and [Script for Step 1](./scripts/label_script.py)
 
 To run the script (remember to set n):
 ```
@@ -111,6 +111,6 @@ Firstly, thanks to the author here for providing this dataset on which we base o
 
 - [Llama-3.2-11B-Vision-Instruct Model](https://www.llama.com/docs/how-to-guides/vision-capabilities/)
 - [Lance-db for vector database](https://lancedb.com)
-- [This Kaggle dataset]()
+- [This Kaggle dataset](https://www.kaggle.com/datasets/agrigorev/clothing-dataset-full)
 - [HF Dataset](https://huggingface.co/datasets/Sanyam/MM-Demo) Since output of the model can be non-deterministic every time we run, we will use the uploaded dataset to give a universal experience
 - [Together API for demo](https://www.together.ai)
