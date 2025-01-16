@@ -1,8 +1,6 @@
 # AI Analyst with Llama and E2B
 This is an AI-powered code and data analysis tool powered by Meta Llama and the [E2B SDK](https://e2b.dev/docs).
 
-![Preview](https://private-user-images.githubusercontent.com/33395784/382129362-3bc8b017-4a09-416c-b55c-ce53da7e5560.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MzEwNzg5NDQsIm5iZiI6MTczMTA3ODY0NCwicGF0aCI6Ii8zMzM5NTc4NC8zODIxMjkzNjItM2JjOGIwMTctNGEwOS00MTZjLWI1NWMtY2U1M2RhN2U1NTYwLmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDExMDglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQxMTA4VDE1MTA0NFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWRlZjc4ZDhmNzY1ZjExODM4OGEzMzFiZGRjMWU4ZmQ0OWI5MjJmNTY5MGZkZDk4MmI1MWRiMzFhY2UxYjM0NjcmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.Kaab1leGbgBiQhfh6bV1VHTc8QfinP7ufqwmn7Ra57c)
-
 → Try on [ai-analyst.e2b.dev](https://ai-analyst.e2b.dev/)
 
 ## Features
