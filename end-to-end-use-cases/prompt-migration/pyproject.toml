@@ -1,0 +1,33 @@
+[project]
+name = "llama-prompt-migrator"
+version = "0.1.0"
+description = ""
+authors = [{ name = "Cyrus Nouroozi", email = "cyrus@zenbase.ai" }]
+dependencies = [
+    "dspy @ git+https://github.com/stanfordnlp/dspy.git",
+    "numpy<2",
+    "lm-eval[wandb,api,math,ifeval,sentencepiece]>=0.4.7",
+    "python-dotenv>=1.0.1",
+]
+readme = "README.md"
+requires-python = ">= 3.10"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "ipdb>=0.13.13",
+    "ipython>=8.31.0",
+    "pytest>=8.3.4",
+    "ruff>=0.9.1",
+    "ipykernel>=6.29.5",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["prompt_migrator/"]
