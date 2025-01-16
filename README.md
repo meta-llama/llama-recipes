@@ -17,7 +17,7 @@ This repository covers the most popular community approaches, use-cases and the 
 > * [Text to SQL](./end-to-end-use-cases/coding/text2sql/)
 
 
-> Note: We recently did a refactor of the repo, [archive-main](https://github.com/meta-llama/llama-recipes/tree/archive-main) is a snapshot branch from before the refactor
+> Note: We recently did a refactor of the repo, [archive-main](https://github.com/meta-llama/llama-cookbook/tree/archive-main) is a snapshot branch from before the refactor
 
 ## Repository Structure:
 
@@ -44,7 +44,7 @@ A: Checkout the Fine-Tuning FAQ [here](./src/docs/)
 
 - Q: Some links are broken/folders are missing: 
 
-A: We recently did a refactor of the repo, [archive-main](https://github.com/meta-llama/llama-recipes/tree/archive-main) is a snapshot branch from before the refactor
+A: We recently did a refactor of the repo, [archive-main](https://github.com/meta-llama/llama-cookbook/tree/archive-main) is a snapshot branch from before the refactor
 
 - Where can we find details about the latest models?
 
