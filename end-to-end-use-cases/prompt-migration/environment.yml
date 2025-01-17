@@ -20,3 +20,4 @@ dependencies:
       - transformers
       - openai
       - databricks-sdk
+      - bigcode_eval
