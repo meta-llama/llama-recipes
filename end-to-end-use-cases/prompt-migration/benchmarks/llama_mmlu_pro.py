@@ -52,13 +52,11 @@ outputs = ["output_parsed_answer"]
 
 
 def _task_doc_example(doc: TaskDoc) -> dspy.Example:
-    # Create a new Example with the correct field mapping
     example = dspy.Example(
         question=doc["input_question"],
         options=doc["input_choice_list"],
         answer=doc["output_parsed_answer"],
     )
-    # Explicitly set input and output fields
     example._input_keys = {"question", "options"}
     example._output_keys = {"answer"}
     return example
@@ -67,7 +65,6 @@ def _task_doc_example(doc: TaskDoc) -> dspy.Example:
 def signature(instructions: str = "") -> dspy.Signature:
     class MMLUPro(dspy.Signature):
         __doc__ = instructions
-        # Match the field names with what we're using in _task_doc_example
         question: str = dspy.InputField(desc="The question to be answered")
         options: dict = dspy.InputField(desc="Dictionary of answer choices")
         answer: str = dspy.OutputField(desc="The correct answer letter")
