@@ -21,7 +21,7 @@ Get access to a machine with one GPU or if using a multi-GPU machine please make
 
 ```bash
 
-python -m llama_cookbook.finetuning  --use_peft --peft_method lora --quantization 8bit --use_fp16 --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization 8bit --use_fp16 --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 ```
 The args used in the command above are:
@@ -35,14 +35,14 @@ The args used in the command above are:
 
 ## How to run with different datasets?
 
-Currently 4 datasets are supported that can be found in [Datasets config file](../llama_cookbook/configs/datasets.py).
+Currently 4 datasets are supported that can be found in [Datasets config file](../llama_recipes/configs/datasets.py).
 
 * `grammar_dataset` : use this [notebook](../llama_recipes/datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process theJfleg and C4 200M datasets for grammar checking.
 
 * `alpaca_dataset` : to get this open source data please download the `aplaca.json` to `ft_dataset` folder.
 
 ```bash
-wget -P src/llama_cookbookittgdlenfkinikdtdhiruhtebvfcjtib/datasets https://raw.githubusercontent.com/tatsu-lab/stanford_alpaca/main/alpaca_data.json
+wget -P src/llama_recipes/datasets https://raw.githubusercontent.com/tatsu-lab/stanford_alpaca/main/alpaca_data.json
 ```
 
 * `samsum_dataset`
