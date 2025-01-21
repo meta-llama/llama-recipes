@@ -22,15 +22,16 @@ Given those differences, the numbers from this recipe can not be compared to the
 
 ## Environment setups
 
-Please install lm-evaluation-harness and our llama-recipe repo by following:
+Please install lm-evaluation-harness and our llama-cookbook repo by following:
 
 ```
-git clone git@github.com:meta-llama/llama-recipes.git
-cd llama-recipes
+git clone git@github.com:meta-llama/llama-cookbook.git
+cd llama-cookbook
 pip install -U pip setuptools
 pip install -e .
+pip install -U antlr4_python3_runtime==4.11
 pip install lm-eval[math,ifeval,sentencepiece,vllm]==0.4.3
-cd tools/benchmarks/llm_eval_harness/meta_eval
+cd end-to-end-use-cases/benchmarks/llm_eval_harness/meta_eval
 ```
 
 To access our [3.1 evals Hugging Face collection](https://huggingface.co/collections/meta-llama/llama-31-evals-66a2c5a14c2093e58298ac7f), you must:
