@@ -14,6 +14,9 @@ Llama-Cookbook provides a pip distribution for easy install and usage in other p
 > Ensure you use the correct CUDA version (from `nvidia-smi`) when installing the PyTorch wheels. Here we are using 11.8 as `cu118`.
 > H100 GPUs work better with CUDA >12.0
 
+> > [!NOTE]
+When importing, please use the package name `llama_recipes`. We recently renamed the package to `llama-cookbook and will update the library naming in a following release`
+
 #### Install with pip
 ```
 pip install llama-cookbook
