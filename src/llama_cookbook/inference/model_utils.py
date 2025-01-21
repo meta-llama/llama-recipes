@@ -3,8 +3,8 @@
 
 from warnings import warn
 
-from llama_recipes.configs import quantization_config as QUANT_CONFIG
-from llama_recipes.utils.config_utils import update_config
+from llama_cookbook.configs import quantization_config as QUANT_CONFIG
+from llama_cookbook.utils.config_utils import update_config
 from peft import PeftModel
 from transformers import (
     AutoConfig,
