@@ -30,7 +30,7 @@ The **Prompt Migration** toolkit helps you assess and adapt prompts across diffe
    ```
    To serve a large model (example: Meta’s Llama 3.3 70B Instruct), you might run:
    ```bash
-   vllm serve meta-llama/Llama-3.3-70B-Instruct --tensor-parallel-size=2
+   vllm serve meta-llama/Llama-3.3-70B-Instruct --tensor-parallel-size=4
    ```
    Adjust the model name and `--tensor-parallel-size` according to your hardware and parallelization needs.
 
