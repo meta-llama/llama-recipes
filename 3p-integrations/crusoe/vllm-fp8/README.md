@@ -23,8 +23,8 @@ source $HOME/.cargo/env
 
 Now, clone the recipes and navigate to this tutorial. Initialize the virtual environment and install dependencies:
 ```bash
-git clone https://github.com/meta-llama/llama-recipes.git
-cd llama-recipes/recipes/3p_integrations/crusoe/vllm-fp8/
+git clone https://github.com/meta-llama/llama-cookbook.git
+cd llama-cookbook/recipes/3p_integrations/crusoe/vllm-fp8/
 uv add vllm setuptools
 ```
 

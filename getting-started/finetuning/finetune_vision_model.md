@@ -1,7 +1,7 @@
 ## Llama 3.2 Vision Models Fine-Tuning Recipe
 This recipe steps you through how to finetune a Llama 3.2 vision model on the OCR VQA task using the [OCRVQA](https://huggingface.co/datasets/HuggingFaceM4/the_cauldron/viewer/ocrvqa?row=0) dataset.
 
-**Disclaimer**: As our vision models already have a very good OCR ability, here we use the OCRVQA dataset only for demonstration purposes of the required steps for fine-tuning our vision models with llama-recipes.
+**Disclaimer**: As our vision models already have a very good OCR ability, here we use the OCRVQA dataset only for demonstration purposes of the required steps for fine-tuning our vision models with llama-cookbook.
 
 ### Fine-tuning steps
 

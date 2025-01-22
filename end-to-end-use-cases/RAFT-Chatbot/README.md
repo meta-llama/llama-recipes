@@ -116,7 +116,7 @@ As shown in the above example, we have a "question" section for the generated qu
 To create a reliable evaluation set, it's ideal to use human-annotated question and answer pairs. This ensures that the questions are relevant and the answers are accurate. However, human annotation is time-consuming and costly. For demonstration purposes, we'll use a subset of the validation set, which will never be used in the fine-tuning. We only need to keep the "question" section and the final answer section, marked by the `<ANSWER>` tag in "cot_answer". We'll manually check each example and select only the good ones. We want to ensure that the questions are general enough to be used for web search engine queries and are related to Llama. We'll also use some QA pairs from our FAQ page, with modifications. This will result in 72 question and answer pairs as our evaluation set, saved as `eval_llama.json`.
 
 ## Fine-Tuning Steps
-Once the RAFT dataset is ready in JSON format, we can start fine-tuning. Unfortunately, the LORA method didn't produce good results, so we'll use the full fine-tuning method. We can use the following commands as an example in the llama-recipes main folder:
+Once the RAFT dataset is ready in JSON format, we can start fine-tuning. Unfortunately, the LORA method didn't produce good results, so we'll use the full fine-tuning method. We can use the following commands as an example in the llama-cookbook main folder:
 
 ```bash
 export PATH_TO_ROOT_FOLDER=./raft-8b
@@ -129,7 +129,7 @@ For more details on multi-GPU fine-tuning, please refer to the [multigpu_finetun
 Next, we need to convert the FSDP checkpoint to a HuggingFace checkpoint using the following command:
 
 ```bash
-python src/llama_recipes/inference/checkpoint_converter_fsdp_hf.py --fsdp_checkpoint_path  "$PATH_TO_ROOT_FOLDER/fine-tuned-meta-Llama/Meta-Llama-3-8B-Instruct" --consolidated_model_path "$PATH_TO_ROOT_FOLDER"
+python src/llama_cookbook/inference/checkpoint_converter_fsdp_hf.py --fsdp_checkpoint_path  "$PATH_TO_ROOT_FOLDER/fine-tuned-meta-Llama/Meta-Llama-3-8B-Instruct" --consolidated_model_path "$PATH_TO_ROOT_FOLDER"
 ```
 
 For more details on FSDP to HuggingFace checkpoint conversion, please refer to the [readme](../../getting-started/finetuning/multigpu_finetuning.md) in the inference/local_inference recipe.

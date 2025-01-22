@@ -6,7 +6,7 @@ This [notebook](llama_guard_text_and_vision_inference.ipynb) shows how to load t
 
 ## Requirements
 1. Access to Llama guard model weights on Hugging Face. To get access, follow the steps described in the top of the model card in [Hugging Face](https://huggingface.co/meta-llama/Llama-Guard-3-1B)
-2. Llama recipes package and its dependencies [installed](https://github.com/meta-llama/llama-recipes?tab=readme-ov-file#installing)
+2. Llama recipes package and its dependencies [installed](https://github.com/meta-llama/llama-cookbook?tab=readme-ov-file#installing)
 3. Pillow package installed
 
 ## Inference Safety Checker

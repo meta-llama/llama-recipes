@@ -8,7 +8,7 @@ Agents can empower Llama 3 with important new capabilities. In particular, we wi
 
 Tool-calling agents with LangGraph use two nodes: (1) a node with an LLM decides which tool to invoke based upon the user question. It outputs the tool name and arguments to use. (2) the tool name and arguments are passed to a tool node, which calls the tool itself with the specified arguments and returns the result back to the LLM.
 
-![Screenshot 2024-05-30 at 10 48 58 AM](https://github.com/rlancemartin/llama-recipes/assets/122662504/a2c2ec40-2c7b-486e-9290-33b6da26c304)
+![Screenshot 2024-05-30 at 10 48 58 AM](https://github.com/rlancemartin/llama-cookbook/assets/122662504/a2c2ec40-2c7b-486e-9290-33b6da26c304)
 
 Our first notebook, `langgraph-tool-calling-agent`, shows how to build our agent mentioned above using LangGraph.
 
@@ -31,7 +31,7 @@ We implement each approach as a control flow in LangGraph:
 
 We will build from CRAG (blue, below) to Self-RAG (green) and finally to Adaptive RAG (red):
 
-![langgraph_rag_agent_](https://github.com/rlancemartin/llama-recipes/assets/122662504/ec4aa1cd-3c7e-4cd1-a1e7-7deddc4033a8)
+![langgraph_rag_agent_](https://github.com/rlancemartin/llama-cookbook/assets/122662504/ec4aa1cd-3c7e-4cd1-a1e7-7deddc4033a8)
 
 --- 
  

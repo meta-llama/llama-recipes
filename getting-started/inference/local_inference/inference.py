@@ -10,9 +10,9 @@ import fire
 import torch
 
 from accelerate.utils import is_xpu_available
-from llama_recipes.inference.model_utils import load_model, load_peft_model
+from llama_cookbook.inference.model_utils import load_model, load_peft_model
 
-from llama_recipes.inference.safety_utils import AgentType, get_safety_checker
+from llama_cookbook.inference.safety_utils import AgentType, get_safety_checker
 from transformers import AutoTokenizer
 
 
@@ -176,7 +176,7 @@ def main(
                 )
             ],
             title="Meta Llama3 Playground",
-            description="https://github.com/meta-llama/llama-recipes",
+            description="https://github.com/meta-llama/llama-cookbook",
         ).queue().launch(server_name="0.0.0.0", share=share_gradio)
 
 
