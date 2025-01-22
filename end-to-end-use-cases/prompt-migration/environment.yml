@@ -20,4 +20,6 @@ dependencies:
       - transformers
       - openai
       - databricks-sdk
-      - bigcode_eval
+      - bigcode_eval @ git@github.com:bigcode-project/bigcode-evaluation-harness.git
+      - python-dotenv
+      - dspy
