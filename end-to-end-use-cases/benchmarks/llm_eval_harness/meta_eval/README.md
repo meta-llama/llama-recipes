@@ -25,8 +25,8 @@ Given those differences, the numbers from this recipe can not be compared to the
 Please install lm-evaluation-harness and our llama-recipe repo by following:
 
 ```
-git clone git@github.com:meta-llama/llama-recipes.git
-cd llama-recipes
+git clone git@github.com:meta-llama/llama-cookbook.git
+cd llama-cookbook
 pip install -U pip setuptools
 pip install -e .
 pip install lm-eval[math,ifeval,sentencepiece,vllm]==0.4.3

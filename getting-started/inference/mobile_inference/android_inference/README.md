@@ -103,7 +103,7 @@ Connect your phone to your development machine. On OSX, you'll be prompted on th
 
 ## Building the Android Package with MLC
 
-First edit the file under `android/MLCChat/mlc-package-config.json` and with the [mlc-package-config.json](./mlc-package-config.json) in llama-recipes.
+First edit the file under `android/MLCChat/mlc-package-config.json` and with the [mlc-package-config.json](./mlc-package-config.json) in llama-cookbook.
 
 To understand what these JSON fields mean you can refer to this [documentation](https://llm.mlc.ai/docs/deploy/android.html#step-2-build-runtime-and-model-libraries).
 

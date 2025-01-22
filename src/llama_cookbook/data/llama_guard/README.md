@@ -10,9 +10,9 @@ The finetuning_data_formatter script provides classes and methods for formatting
 
 ## Running the script
 
-1. Clone the llama-recipes repo
+1. Clone the llama-cookbook repo
 2. Install the dependencies
-3. Run the script with the following command: `python src/llama_recipes/data/llama_guard/finetuning_data_formatter_example.py > sample.json`
+3. Run the script with the following command: `python src/llama_cookbook/data/llama_guard/finetuning_data_formatter_example.py > sample.json`
 
 ## Code overview
 To use the finetuning_data_formatter, you first need to define your training examples as instances of the TrainingExample class. For example:

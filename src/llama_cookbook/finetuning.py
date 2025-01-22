@@ -74,7 +74,7 @@ def setup_wandb(train_config, fsdp_config, **kwargs):
             "You are trying to use wandb which is not currently installed. "
             "Please install it using pip install wandb"
         )
-    from llama_recipes.configs import wandb_config as WANDB_CONFIG
+    from llama_cookbook.configs import wandb_config as WANDB_CONFIG
 
     wandb_config = WANDB_CONFIG()
     update_config(wandb_config, **kwargs)
@@ -196,7 +196,7 @@ def main(**kwargs):
         model.resize_token_embeddings(len(tokenizer))
 
     print_model_size(model, train_config, rank if train_config.enable_fsdp else 0)
-    
+
     # Convert the model to bfloat16 if fsdp and pure_bf16 is enabled
     if (
         train_config.enable_fsdp
@@ -239,12 +239,12 @@ def main(**kwargs):
             freeze_transformer_layers(model, train_config.num_freeze_layers)
             # print model size and frozen layers after freezing layers
             print_frozen_model_status(model, train_config, rank if train_config.enable_fsdp else 0)
-            
+
         if not train_config.use_peft and train_config.freeze_LLM_only and config.model_type == "mllama":
             freeze_LLM_only(model)
             # print model size and frozen layers after freezing layers
             print_frozen_model_status(model, train_config, rank if train_config.enable_fsdp else 0)
-        
+
         mixed_precision_policy, wrapping_policy = get_policies(fsdp_config, rank)
         # Create the FSDP wrapper for MllamaSelfAttentionDecoderLayer,MllamaCrossAttentionDecoderLayer,MllamaVisionEncoderLayer in vision models
         if is_vision:
@@ -264,7 +264,7 @@ def main(**kwargs):
             device_id = torch.xpu.current_device()
         elif torch.cuda.is_available():
             device_id = torch.cuda.current_device()
-        
+
         if train_config.freeze_LLM_only:
             use_orig_params = True
         else:
@@ -312,7 +312,7 @@ def main(**kwargs):
         dataset_processer = processor
     else:
         dataset_processer = tokenizer
-    
+
     # Load and preprocess the dataset for training and validation
 
     dataset_train = get_preprocessed_dataset(

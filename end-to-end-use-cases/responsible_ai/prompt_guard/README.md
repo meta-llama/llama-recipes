@@ -8,4 +8,4 @@ This is a very small model and inference and fine-tuning are feasible on local C
 
 ## Requirements
 1. Access to Prompt Guard model weights on Hugging Face. To get access, follow the steps described [here](https://github.com/facebookresearch/PurpleLlama/tree/main/Prompt-Guard#download)
-2. Llama recipes package and it's dependencies [installed](https://github.com/meta-llama/llama-recipes?tab=readme-ov-file#installing)
+2. Llama recipes package and it's dependencies [installed](https://github.com/meta-llama/llama-cookbook?tab=readme-ov-file#installing)

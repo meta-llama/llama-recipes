@@ -32,7 +32,7 @@ pip install -r requirements.txt
 ### Running the Tool
 
 ```bash
-python triage.py --repo_name='meta-llama/llama-recipes' --start_date='2024-08-14' --end_date='2024-08-27'
+python triage.py --repo_name='meta-llama/llama-cookbook' --start_date='2024-08-14' --end_date='2024-08-27'
 ```
 
 ### Output
