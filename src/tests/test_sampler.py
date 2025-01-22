@@ -6,8 +6,8 @@ import pytest
 
 import torch
 
-from llama_recipes.data.sampler import LengthBasedBatchSampler
-from llama_recipes.data.sampler import DistributedLengthBasedBatchSampler
+from llama_cookbook.data.sampler import LengthBasedBatchSampler
+from llama_cookbook.data.sampler import DistributedLengthBasedBatchSampler
 
 SAMPLES = 33
 

@@ -5,7 +5,7 @@ from enum import Enum
 import unittest
 from typing import Optional, List
 
-from llama_recipes.data.llama_guard.finetuning_data_formatter import (
+from llama_cookbook.data.llama_guard.finetuning_data_formatter import (
     AugmentationConfigs,
     Category,
     create_formatted_finetuning_examples,

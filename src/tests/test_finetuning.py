@@ -9,9 +9,9 @@ from unittest.mock import patch
 import pytest
 
 import torch
-from llama_recipes.data.sampler import LengthBasedBatchSampler
+from llama_cookbook.data.sampler import LengthBasedBatchSampler
 
-from llama_recipes.finetuning import main
+from llama_cookbook.finetuning import main
 from pytest import approx
 from torch.optim import AdamW
 from torch.utils.data.dataloader import DataLoader
@@ -32,18 +32,18 @@ def get_fake_dataset():
     ]
 
 
-@patch("llama_recipes.finetuning.torch.cuda.is_available")
-@patch("llama_recipes.finetuning.train")
-@patch("llama_recipes.finetuning.MllamaForConditionalGeneration.from_pretrained")
-@patch("llama_recipes.finetuning.AutoProcessor.from_pretrained")
-@patch("llama_recipes.finetuning.LlamaForCausalLM.from_pretrained")
-@patch("llama_recipes.finetuning.AutoConfig.from_pretrained")
-@patch("llama_recipes.finetuning.AutoTokenizer.from_pretrained")
-@patch("llama_recipes.finetuning.get_preprocessed_dataset")
-@patch("llama_recipes.finetuning.generate_peft_config")
-@patch("llama_recipes.finetuning.get_peft_model")
-@patch("llama_recipes.finetuning.optim.AdamW")
-@patch("llama_recipes.finetuning.StepLR")
+@patch("llama_cookbook.finetuning.torch.cuda.is_available")
+@patch("llama_cookbook.finetuning.train")
+@patch("llama_cookbook.finetuning.MllamaForConditionalGeneration.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoProcessor.from_pretrained")
+@patch("llama_cookbook.finetuning.LlamaForCausalLM.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoConfig.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoTokenizer.from_pretrained")
+@patch("llama_cookbook.finetuning.get_preprocessed_dataset")
+@patch("llama_cookbook.finetuning.generate_peft_config")
+@patch("llama_cookbook.finetuning.get_peft_model")
+@patch("llama_cookbook.finetuning.optim.AdamW")
+@patch("llama_cookbook.finetuning.StepLR")
 @pytest.mark.parametrize("cuda_is_available", [True, False])
 @pytest.mark.parametrize("run_validation", [True, False])
 @pytest.mark.parametrize("use_peft", [True, False])
@@ -107,15 +107,15 @@ def test_finetuning(
         assert model.return_value.to.call_count == 0
 
 
-@patch("llama_recipes.finetuning.get_peft_model")
-@patch("llama_recipes.finetuning.setup")
-@patch("llama_recipes.finetuning.train")
-@patch("llama_recipes.finetuning.MllamaForConditionalGeneration.from_pretrained")
-@patch("llama_recipes.finetuning.AutoProcessor.from_pretrained")
-@patch("llama_recipes.finetuning.LlamaForCausalLM.from_pretrained")
-@patch("llama_recipes.finetuning.AutoConfig.from_pretrained")
-@patch("llama_recipes.finetuning.AutoTokenizer.from_pretrained")
-@patch("llama_recipes.finetuning.get_preprocessed_dataset")
+@patch("llama_cookbook.finetuning.get_peft_model")
+@patch("llama_cookbook.finetuning.setup")
+@patch("llama_cookbook.finetuning.train")
+@patch("llama_cookbook.finetuning.MllamaForConditionalGeneration.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoProcessor.from_pretrained")
+@patch("llama_cookbook.finetuning.LlamaForCausalLM.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoConfig.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoTokenizer.from_pretrained")
+@patch("llama_cookbook.finetuning.get_preprocessed_dataset")
 def test_finetuning_peft_llama_adapter(
     get_dataset,
     tokenizer,
@@ -165,15 +165,15 @@ def test_finetuning_peft_llama_adapter(
         main(**kwargs)
 
 
-@patch("llama_recipes.finetuning.train")
-@patch("llama_recipes.finetuning.MllamaForConditionalGeneration.from_pretrained")
-@patch("llama_recipes.finetuning.AutoProcessor.from_pretrained")
-@patch("llama_recipes.finetuning.LlamaForCausalLM.from_pretrained")
-@patch("llama_recipes.finetuning.AutoConfig.from_pretrained")
-@patch("llama_recipes.finetuning.AutoTokenizer.from_pretrained")
-@patch("llama_recipes.finetuning.get_preprocessed_dataset")
-@patch("llama_recipes.finetuning.get_peft_model")
-@patch("llama_recipes.finetuning.StepLR")
+@patch("llama_cookbook.finetuning.train")
+@patch("llama_cookbook.finetuning.MllamaForConditionalGeneration.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoProcessor.from_pretrained")
+@patch("llama_cookbook.finetuning.LlamaForCausalLM.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoConfig.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoTokenizer.from_pretrained")
+@patch("llama_cookbook.finetuning.get_preprocessed_dataset")
+@patch("llama_cookbook.finetuning.get_peft_model")
+@patch("llama_cookbook.finetuning.StepLR")
 def test_finetuning_weight_decay(
     step_lr,
     get_peft_model,
@@ -210,15 +210,15 @@ def test_finetuning_weight_decay(
     assert optimizer.state_dict()["param_groups"][0]["weight_decay"] == approx(0.01)
 
 
-@patch("llama_recipes.finetuning.train")
-@patch("llama_recipes.finetuning.MllamaForConditionalGeneration.from_pretrained")
-@patch("llama_recipes.finetuning.AutoProcessor.from_pretrained")
-@patch("llama_recipes.finetuning.LlamaForCausalLM.from_pretrained")
-@patch("llama_recipes.finetuning.AutoConfig.from_pretrained")
-@patch("llama_recipes.finetuning.AutoTokenizer.from_pretrained")
-@patch("llama_recipes.finetuning.get_preprocessed_dataset")
-@patch("llama_recipes.finetuning.optim.AdamW")
-@patch("llama_recipes.finetuning.StepLR")
+@patch("llama_cookbook.finetuning.train")
+@patch("llama_cookbook.finetuning.MllamaForConditionalGeneration.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoProcessor.from_pretrained")
+@patch("llama_cookbook.finetuning.LlamaForCausalLM.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoConfig.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoTokenizer.from_pretrained")
+@patch("llama_cookbook.finetuning.get_preprocessed_dataset")
+@patch("llama_cookbook.finetuning.optim.AdamW")
+@patch("llama_cookbook.finetuning.StepLR")
 def test_batching_strategy(
     step_lr,
     optimizer,
