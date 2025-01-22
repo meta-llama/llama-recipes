@@ -11,9 +11,9 @@ import sys
 import torch
 from transformers import AutoTokenizer
 
-from llama_recipes.inference.chat_utils import read_dialogs_from_file
-from llama_recipes.inference.model_utils import load_model, load_peft_model
-from llama_recipes.inference.safety_utils import get_safety_checker
+from llama_cookbook.inference.chat_utils import read_dialogs_from_file
+from llama_cookbook.inference.model_utils import load_model, load_peft_model
+from llama_cookbook.inference.safety_utils import get_safety_checker
 from accelerate.utils import is_xpu_available
 
 def main(

@@ -31,15 +31,15 @@ fake_samsum_dataset = 2048*[{'id': '420',
  'summary': 'Mario and Luigi are going to save the princess.'}]
 
 @pytest.mark.skip_missing_tokenizer
-@patch('llama_recipes.finetuning.train')
-@patch('llama_recipes.finetuning.AutoTokenizer')
-@patch("llama_recipes.finetuning.AutoConfig.from_pretrained")
-@patch("llama_recipes.finetuning.AutoProcessor")
-@patch("llama_recipes.finetuning.MllamaForConditionalGeneration.from_pretrained")
-@patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
-@patch('llama_recipes.finetuning.optim.AdamW')
-@patch('llama_recipes.finetuning.StepLR')
-@patch('llama_recipes.datasets.samsum_dataset.datasets')
+@patch('llama_cookbook.finetuning.train')
+@patch('llama_cookbook.finetuning.AutoTokenizer')
+@patch("llama_cookbook.finetuning.AutoConfig.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoProcessor")
+@patch("llama_cookbook.finetuning.MllamaForConditionalGeneration.from_pretrained")
+@patch('llama_cookbook.finetuning.LlamaForCausalLM.from_pretrained')
+@patch('llama_cookbook.finetuning.optim.AdamW')
+@patch('llama_cookbook.finetuning.StepLR')
+@patch('llama_cookbook.datasets.samsum_dataset.datasets')
 def test_packing(
     datasets,
     step_lr,
@@ -55,7 +55,7 @@ def test_packing(
     llama_version,
     model_type,
     ):
-    from llama_recipes.finetuning import main
+    from llama_cookbook.finetuning import main
 
     setup_tokenizer(tokenizer)
     setup_processor(processor)
@@ -101,21 +101,21 @@ def test_packing(
 
 
 @pytest.mark.skip_missing_tokenizer
-@patch("llama_recipes.utils.train_utils.torch.cuda.is_bf16_supported")
-@patch("llama_recipes.finetuning.torch.cuda.is_available")
-@patch('llama_recipes.finetuning.train')
-@patch('llama_recipes.finetuning.AutoTokenizer')
-@patch("llama_recipes.finetuning.AutoConfig.from_pretrained")
-@patch("llama_recipes.finetuning.AutoProcessor")
-@patch("llama_recipes.finetuning.MllamaForConditionalGeneration.from_pretrained")
-@patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
-@patch('llama_recipes.finetuning.optim.AdamW')
-@patch('llama_recipes.finetuning.StepLR')
-@patch('llama_recipes.finetuning.setup')
-@patch('llama_recipes.finetuning.FSDP')
-@patch('llama_recipes.finetuning.torch.distributed.is_initialized')
-@patch('llama_recipes.utils.config_utils.dist')
-@patch('llama_recipes.datasets.samsum_dataset.datasets')
+@patch("llama_cookbook.utils.train_utils.torch.cuda.is_bf16_supported")
+@patch("llama_cookbook.finetuning.torch.cuda.is_available")
+@patch('llama_cookbook.finetuning.train')
+@patch('llama_cookbook.finetuning.AutoTokenizer')
+@patch("llama_cookbook.finetuning.AutoConfig.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoProcessor")
+@patch("llama_cookbook.finetuning.MllamaForConditionalGeneration.from_pretrained")
+@patch('llama_cookbook.finetuning.LlamaForCausalLM.from_pretrained')
+@patch('llama_cookbook.finetuning.optim.AdamW')
+@patch('llama_cookbook.finetuning.StepLR')
+@patch('llama_cookbook.finetuning.setup')
+@patch('llama_cookbook.finetuning.FSDP')
+@patch('llama_cookbook.finetuning.torch.distributed.is_initialized')
+@patch('llama_cookbook.utils.config_utils.dist')
+@patch('llama_cookbook.datasets.samsum_dataset.datasets')
 def test_distributed_packing(
     datasets,
     dist,
@@ -138,7 +138,7 @@ def test_distributed_packing(
     model_type,
     ):
     import os
-    from llama_recipes.finetuning import main
+    from llama_cookbook.finetuning import main
 
     setup_tokenizer(tokenizer)
     setup_processor(processor)

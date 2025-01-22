@@ -1,7 +1,7 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
 
-from llama_recipes.model_checkpointing.checkpoint_handler import (
+from llama_cookbook.model_checkpointing.checkpoint_handler import (
     load_model_checkpoint,
     save_fsdp_model_checkpoint_full,
     save_peft_checkpoint,

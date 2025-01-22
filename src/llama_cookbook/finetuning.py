@@ -13,29 +13,29 @@ import torch
 import torch.optim as optim
 from accelerate.utils import is_xpu_available
 
-from llama_recipes.configs import (
+from llama_cookbook.configs import (
     fsdp_config as FSDP_CONFIG,
     quantization_config as QUANTIZATION_CONFIG,
     train_config as TRAIN_CONFIG,
 )
-from llama_recipes.data.concatenator import ConcatDataset
-from llama_recipes.policies import AnyPrecisionAdamW, apply_fsdp_checkpointing
+from llama_cookbook.data.concatenator import ConcatDataset
+from llama_cookbook.policies import AnyPrecisionAdamW, apply_fsdp_checkpointing
 
-from llama_recipes.utils import fsdp_auto_wrap_policy
-from llama_recipes.utils.config_utils import (
+from llama_cookbook.utils import fsdp_auto_wrap_policy
+from llama_cookbook.utils.config_utils import (
     check_fsdp_config,
     generate_dataset_config,
     generate_peft_config,
     get_dataloader_kwargs,
     update_config,
 )
-from llama_recipes.utils.dataset_utils import (
+from llama_cookbook.utils.dataset_utils import (
     get_custom_data_collator,
     get_preprocessed_dataset,
 )
 
-from llama_recipes.utils.fsdp_utils import hsdp_device_mesh
-from llama_recipes.utils.train_utils import (
+from llama_cookbook.utils.fsdp_utils import hsdp_device_mesh
+from llama_cookbook.utils.train_utils import (
     clear_gpu_cache,
     freeze_transformer_layers,
     freeze_LLM_only,

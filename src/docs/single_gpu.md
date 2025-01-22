@@ -21,7 +21,7 @@ Get access to a machine with one GPU or if using a multi-GPU machine please make
 
 ```bash
 
-python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization 8bit --use_fp16 --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m llama_cookbook.finetuning  --use_peft --peft_method lora --quantization 8bit --use_fp16 --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 ```
 The args used in the command above are:
@@ -35,14 +35,14 @@ The args used in the command above are:
 
 ## How to run with different datasets?
 
-Currently 4 datasets are supported that can be found in [Datasets config file](../llama_recipes/configs/datasets.py).
+Currently 4 datasets are supported that can be found in [Datasets config file](../llama_cookbook/configs/datasets.py).
 
-* `grammar_dataset` : use this [notebook](../llama_recipes/datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process theJfleg and C4 200M datasets for grammar checking.
+* `grammar_dataset` : use this [notebook](../llama_cookbook/datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process theJfleg and C4 200M datasets for grammar checking.
 
 * `alpaca_dataset` : to get this open source data please download the `aplaca.json` to `ft_dataset` folder.
 
 ```bash
-wget -P src/llama_recipes/datasets https://raw.githubusercontent.com/tatsu-lab/stanford_alpaca/main/alpaca_data.json
+wget -P src/llama_cookbook/datasets https://raw.githubusercontent.com/tatsu-lab/stanford_alpaca/main/alpaca_data.json
 ```
 
 * `samsum_dataset`
@@ -52,22 +52,22 @@ to run with each of the datasets set the `dataset` flag in the command as shown 
 ```bash
 # grammer_dataset
 
-python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization 8bit --dataset grammar_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m llama_cookbook.finetuning  --use_peft --peft_method lora --quantization 8bit --dataset grammar_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 # alpaca_dataset
 
-python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization 8bit --dataset alpaca_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m llama_cookbook.finetuning  --use_peft --peft_method lora --quantization 8bit --dataset alpaca_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 
 # samsum_dataset
 
-python -m llama_recipes.finetuning  --use_peft --peft_method lora --quantization 8bit --dataset samsum_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
+python -m llama_cookbook.finetuning  --use_peft --peft_method lora --quantization 8bit --dataset samsum_dataset --model_name /path_of_model_folder/8B --output_dir Path/to/save/PEFT/model
 
 ```
 
 ## Where to configure settings?
 
-* [Training config file](../llama_recipes/configs/training.py) is the main config file that help to specify the settings for our run can be found in
+* [Training config file](../llama_cookbook/configs/training.py) is the main config file that help to specify the settings for our run can be found in
 
 It let us specify the training settings, everything from `model_name` to `dataset_name`, `batch_size` etc. can be set here. Below is the list of supported settings:
 
@@ -117,10 +117,10 @@ It let us specify the training settings, everything from `model_name` to `datase
 
 ```
 
-* [Datasets config file](../llama_recipes/configs/datasets.py)
-    ../src/llama_recipes/configs/datasets.py) provides the available options for datasets.
+* [Datasets config file](../llama_cookbook/configs/datasets.py)
+    ../src/llama_cookbook/configs/datasets.py) provides the available options for datasets.
 
-* [peft config file](../llama_recipes/configs/peft.py) provides the supported PEFT methods and respective settings that can be modified.
+* [peft config file](../llama_cookbook/configs/peft.py) provides the supported PEFT methods and respective settings that can be modified.
 
 ## FLOPS Counting and Pytorch Profiling
 

@@ -9,7 +9,7 @@ import sys
 import fire
 import yaml
 
-from llama_recipes.inference.model_utils import load_llama_from_config
+from llama_cookbook.inference.model_utils import load_llama_from_config
 
 from transformers import AutoConfig, AutoTokenizer, MllamaProcessor
 

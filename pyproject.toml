@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "llama-cookbook"
-version = "0.0.4.post1"
+version = "0.0.5"
 authors = [
   { name="Hamid Shojanazeri", email="hamidnazeri@meta.com" },
   { name="Matthias Reso", email="mreso@meta.com" },
@@ -36,7 +36,7 @@ exclude = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/llama_recipes"]
+packages = ["src/llama_cookbook"]
 
 [tool.hatch.metadata.hooks.requirements_txt]
 files = ["requirements.txt"]

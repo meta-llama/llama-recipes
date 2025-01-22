@@ -9,7 +9,7 @@ import torch
 import os
 import shutil
 
-from llama_recipes.utils.train_utils import train
+from llama_cookbook.utils.train_utils import train
 
 TEMP_OUTPUT_DIR = os.getcwd() + "/tmp"
 
@@ -23,10 +23,10 @@ def temp_output_dir():
     shutil.rmtree(temp_output_dir)
 
 
-@patch("llama_recipes.utils.train_utils.MemoryTrace")
-@patch("llama_recipes.utils.train_utils.nullcontext")
-@patch("llama_recipes.utils.train_utils.torch.cuda.amp.GradScaler")
-@patch("llama_recipes.utils.train_utils.torch.cuda.amp.autocast")
+@patch("llama_cookbook.utils.train_utils.MemoryTrace")
+@patch("llama_cookbook.utils.train_utils.nullcontext")
+@patch("llama_cookbook.utils.train_utils.torch.cuda.amp.GradScaler")
+@patch("llama_cookbook.utils.train_utils.torch.cuda.amp.autocast")
 def test_gradient_accumulation(
     autocast,
     scaler,
