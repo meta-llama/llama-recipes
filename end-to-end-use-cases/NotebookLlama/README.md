@@ -40,7 +40,7 @@ You'll need your Hugging Face access token, which you can get at your Settings p
 
 ```
 git clone https://github.com/meta-llama/llama-recipes
-cd llama-recipes/recipes/quickstart/NotebookLlama/
+cd llama-recipes/end-to-end-use-cases/NotebookLlama/
 pip install -r requirements.txt
 ```
 
