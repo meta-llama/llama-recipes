@@ -10,7 +10,7 @@ Given the combination of PEFT and FSDP, we would be able to fine tune a Meta Lla
 For big models like 405B we will need to fine-tune in a multi-node setup even if 4bit quantization is enabled.
 
 ## Requirements
-To run the examples, make sure to install the llama-recipes package and clone the github repository in order to use the provided [`finetuning.py`](../../getting-started/finetuning/finetuning.py) script with torchrun (See [README.md](../README.md) for details).
+To run the examples, make sure to install the llama-cookbook package and clone the github repository in order to use the provided [`finetuning.py`](../../getting-started/finetuning/finetuning.py) script with torchrun (See [README.md](../README.md) for details).
 
 ## How to run it
 
@@ -86,14 +86,14 @@ sbatch getting-started/finetuning/multi_node.slurm
 
 ## How to run with different datasets?
 
-Currently 4 datasets are supported that can be found in [Datasets config file](../llama_recipes/configs/datasets.py).
+Currently 4 datasets are supported that can be found in [Datasets config file](../llama_cookbook/configs/datasets.py).
 
-* `grammar_dataset` : use this [notebook](../llama_recipes/datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process theJfleg and C4 200M datasets for grammar checking.
+* `grammar_dataset` : use this [notebook](../llama_cookbook/datasets/grammar_dataset/grammar_dataset_process.ipynb) to pull and process theJfleg and C4 200M datasets for grammar checking.
 
 * `alpaca_dataset` : to get this open source data please download the `aplaca.json` to `dataset` folder.
 
 ```bash
-wget -P src/llama_recipes/datasets https://raw.githubusercontent.com/tatsu-lab/stanford_alpaca/main/alpaca_data.json
+wget -P src/llama_cookbook/datasets https://raw.githubusercontent.com/tatsu-lab/stanford_alpaca/main/alpaca_data.json
 ```
 
 * `samsum_dataset`
@@ -117,7 +117,7 @@ torchrun --nnodes 1 --nproc_per_node 4  getting-started/finetuning/finetuning.py
 
 ## Where to configure settings?
 
-* [Training config file](../llama_recipes/configs/training.py) is the main config file that helps to specify the settings for our run and can be found in [configs folder](../llama_recipes/configs/)
+* [Training config file](../llama_cookbook/configs/training.py) is the main config file that helps to specify the settings for our run and can be found in [configs folder](../llama_cookbook/configs/)
 
 It lets us specify the training settings for everything from `model_name` to `dataset_name`, `batch_size` and so on. Below is the list of supported settings:
 
