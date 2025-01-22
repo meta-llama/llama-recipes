@@ -5,19 +5,19 @@ from pathlib import Path
 import pytest
 from unittest.mock import patch
 
-DATA_DIR = Path(__file__).parents[2] / "llama_recipes/datasets/grammar_dataset/"
+DATA_DIR = Path(__file__).parents[2] / "llama_cookbook/datasets/grammar_dataset/"
 
 @pytest.mark.skip_missing_tokenizer
 @pytest.mark.skipif(not Path(DATA_DIR / "grammar_validation.csv").exists(), reason="grammar_validation.csv not found")
 @pytest.mark.skipif(not Path(DATA_DIR / "gtrain_10k.csv").exists(), reason="gtrain_10k.csv not found")
-@patch('llama_recipes.finetuning.train')
-@patch('llama_recipes.finetuning.AutoTokenizer')
-@patch('llama_recipes.finetuning.AutoConfig.from_pretrained')
-@patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
-@patch('llama_recipes.finetuning.optim.AdamW')
-@patch('llama_recipes.finetuning.StepLR')
+@patch('llama_cookbook.finetuning.train')
+@patch('llama_cookbook.finetuning.AutoTokenizer')
+@patch('llama_cookbook.finetuning.AutoConfig.from_pretrained')
+@patch('llama_cookbook.finetuning.LlamaForCausalLM.from_pretrained')
+@patch('llama_cookbook.finetuning.optim.AdamW')
+@patch('llama_cookbook.finetuning.StepLR')
 def test_grammar_dataset(step_lr, optimizer, get_model, get_config, tokenizer, train, setup_tokenizer, llama_version):
-    from llama_recipes.finetuning import main
+    from llama_cookbook.finetuning import main
 
     setup_tokenizer(tokenizer)
     get_model.return_value.get_input_embeddings.return_value.weight.shape = [32000 if "Llama-2" in llama_version else 128256]

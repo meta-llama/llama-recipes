@@ -36,13 +36,13 @@ def check_padded_entry(batch, tokenizer):
 
 @pytest.mark.skip(reason="Flakey due to random dataset order @todo fix order")
 @pytest.mark.skip_missing_tokenizer
-@patch('llama_recipes.finetuning.train')
-@patch('llama_recipes.finetuning.AutoTokenizer')
-@patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
-@patch('llama_recipes.finetuning.optim.AdamW')
-@patch('llama_recipes.finetuning.StepLR')
+@patch('llama_cookbook.finetuning.train')
+@patch('llama_cookbook.finetuning.AutoTokenizer')
+@patch('llama_cookbook.finetuning.LlamaForCausalLM.from_pretrained')
+@patch('llama_cookbook.finetuning.optim.AdamW')
+@patch('llama_cookbook.finetuning.StepLR')
 def test_custom_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker, setup_tokenizer, llama_version):
-    from llama_recipes.finetuning import main
+    from llama_cookbook.finetuning import main
 
     setup_tokenizer(tokenizer)
 
@@ -96,14 +96,14 @@ def test_custom_dataset(step_lr, optimizer, get_model, tokenizer, train, mocker,
 
 
 
-@patch('llama_recipes.finetuning.train')
-@patch('llama_recipes.finetuning.AutoConfig.from_pretrained')
-@patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
-@patch('llama_recipes.finetuning.AutoTokenizer.from_pretrained')
-@patch('llama_recipes.finetuning.optim.AdamW')
-@patch('llama_recipes.finetuning.StepLR')
+@patch('llama_cookbook.finetuning.train')
+@patch('llama_cookbook.finetuning.AutoConfig.from_pretrained')
+@patch('llama_cookbook.finetuning.LlamaForCausalLM.from_pretrained')
+@patch('llama_cookbook.finetuning.AutoTokenizer.from_pretrained')
+@patch('llama_cookbook.finetuning.optim.AdamW')
+@patch('llama_cookbook.finetuning.StepLR')
 def test_unknown_dataset_error(step_lr, optimizer, tokenizer, get_model, get_config, train, mocker, llama_version):
-    from llama_recipes.finetuning import main
+    from llama_cookbook.finetuning import main
 
     tokenizer.return_value = mocker.MagicMock(side_effect=lambda x: {"input_ids":[len(x)*[0,]], "attention_mask": [len(x)*[0,]]})
     get_model.return_value.get_input_embeddings.return_value.weight.shape = [32000 if "Llama-2" in llama_version else 128256]
@@ -119,7 +119,7 @@ def test_unknown_dataset_error(step_lr, optimizer, tokenizer, get_model, get_con
         main(**kwargs)
 
 @pytest.mark.skip_missing_tokenizer
-@patch('llama_recipes.finetuning.AutoTokenizer')
+@patch('llama_cookbook.finetuning.AutoTokenizer')
 def test_tokenize_dialog(tokenizer, monkeypatch, setup_tokenizer, llama_version):
     monkeypatch.syspath_prepend("getting-started/finetuning/datasets/")
     from custom_dataset import tokenize_dialog

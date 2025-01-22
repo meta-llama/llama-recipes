@@ -19,14 +19,14 @@ except ValueError:
 
 @pytest.mark.skipif(SAMSUM_UNAVAILABLE, reason="Samsum dataset is unavailable")
 @pytest.mark.skip_missing_tokenizer
-@patch('llama_recipes.finetuning.train')
-@patch('llama_recipes.finetuning.AutoTokenizer')
-@patch("llama_recipes.finetuning.AutoConfig.from_pretrained")
-@patch("llama_recipes.finetuning.AutoProcessor")
-@patch("llama_recipes.finetuning.MllamaForConditionalGeneration.from_pretrained")
-@patch('llama_recipes.finetuning.LlamaForCausalLM.from_pretrained')
-@patch('llama_recipes.finetuning.optim.AdamW')
-@patch('llama_recipes.finetuning.StepLR')
+@patch('llama_cookbook.finetuning.train')
+@patch('llama_cookbook.finetuning.AutoTokenizer')
+@patch("llama_cookbook.finetuning.AutoConfig.from_pretrained")
+@patch("llama_cookbook.finetuning.AutoProcessor")
+@patch("llama_cookbook.finetuning.MllamaForConditionalGeneration.from_pretrained")
+@patch('llama_cookbook.finetuning.LlamaForCausalLM.from_pretrained')
+@patch('llama_cookbook.finetuning.optim.AdamW')
+@patch('llama_cookbook.finetuning.StepLR')
 def test_samsum_dataset(
     step_lr,
     optimizer,
@@ -40,7 +40,7 @@ def test_samsum_dataset(
     setup_tokenizer,
     llama_version,
     ):
-    from llama_recipes.finetuning import main
+    from llama_cookbook.finetuning import main
 
     setup_tokenizer(tokenizer)
     get_model.return_value.get_input_embeddings.return_value.weight.shape = [32000 if "Llama-2" in llama_version else 128256]
