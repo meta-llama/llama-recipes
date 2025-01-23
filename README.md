@@ -8,7 +8,7 @@ This repository covers the most popular community approaches, use-cases and the 
 > Popular getting started links:
 > * [Build with Llama Tutorial](./getting-started/build_with_Llama_3_2.ipynb)
 > * [Multimodal Inference with Llama 3.2 Vision](./getting-started/inference/local_inference/README.md#multimodal-inference)
-> * [Inferencing using Llama Guard (Safety Model)](./end-to-end-use-cases/responsible_ai/llama_guard/)
+> * [Inferencing using Llama Guard (Safety Model)](./getting-started/responsible_ai/llama_guard/)
 
 > [!TIP]
 > Popular end to end recipes:
@@ -26,13 +26,13 @@ This repository covers the most popular community approaches, use-cases and the 
 - [Getting Started](./getting-started/): Reference for inferencing, fine-tuning and RAG examples
 - [src](./src/): Contains the src for the original llama-recipes library along with some FAQs for fine-tuning.
 
-## FAQ: 
+## FAQ:
 
 - Q: What happened to llama-recipes?
 
 A: We recently renamed llama-recipes to llama-cookbook
 
-- Q: Prompt Template changes for Multi-Modality? 
+- Q: Prompt Template changes for Multi-Modality?
 
 A: Llama 3.2 follows the same prompt template as Llama 3.1, with a new special token `<|image|>` representing the input image for the multimodal models.
 
@@ -42,7 +42,7 @@ More details on the prompt templates for image reasoning, tool-calling and code 
 
 A: Checkout the Fine-Tuning FAQ [here](./src/docs/)
 
-- Q: Some links are broken/folders are missing: 
+- Q: Some links are broken/folders are missing:
 
 A: We recently did a refactor of the repo, [archive-main](https://github.com/meta-llama/llama-cookbook/tree/archive-main) is a snapshot branch from before the refactor
 
