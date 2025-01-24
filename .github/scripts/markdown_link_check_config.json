@@ -23,5 +23,6 @@
     {
       "pattern": "https://www.intel.com/content/www/us/en/developer/articles/news/llama2.html"
     }
-  ]
+  ],
+  "aliveStatusCodes": [429, 200]
 }
