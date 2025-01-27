@@ -6,9 +6,10 @@ channels:
 dependencies:
   - python=3.10  # Updated to match pyproject.toml requires-python
   - pip
+  - jupyter
+  - notebook
   - numpy<2  # Matches pyproject.toml dependency
   - pip:
-      - dspy @ git+ssh://git@github.com/stanfordnlp/dspy.git
       - lm-eval[wandb,api,math,ifeval,sentencepiece]>=0.4.7
       - python-dotenv>=1.0.1
       - ipdb>=0.13.13
@@ -20,6 +21,6 @@ dependencies:
       - transformers
       - openai
       - databricks-sdk
-      - bigcode_eval @ git@github.com:bigcode-project/bigcode-evaluation-harness.git
       - python-dotenv
       - dspy
+      - huggingface_hub

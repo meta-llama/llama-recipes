@@ -39,10 +39,6 @@ The **Prompt Migration** toolkit helps you assess and adapt prompts across diffe
    1. **Create a Hugging Face account (if you don’t have one):**
       Visit [Hugging Face](https://huggingface.co/) and create an account.
    2. **Authenticate via the Hugging Face CLI:**
-      - Install the Hugging Face Hub CLI:
-        ```bash
-        pip install huggingface_hub
-        ```
       - Log in to Hugging Face:
         ```bash
         huggingface-cli login
