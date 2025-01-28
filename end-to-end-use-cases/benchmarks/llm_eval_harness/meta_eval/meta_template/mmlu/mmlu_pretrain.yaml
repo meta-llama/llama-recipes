@@ -3,8 +3,8 @@ dataset_path: meta-llama/Llama-3.1-8B-evals
 dataset_name: Llama-3.1-8B-evals__mmlu__details
 test_split: latest
 output_type: multiple_choice
-process_docs: !function utils.process_docs
-doc_to_text: !function utils.doc_to_text
+process_docs: !function utils.process_docs_pretrain
+doc_to_text: !function utils.doc_to_text_pretrain
 doc_to_target: !function utils.doc_to_target
 doc_to_choice: ["A", "B", "C", "D"]
 # 5-shot prompts are already included in the dataset

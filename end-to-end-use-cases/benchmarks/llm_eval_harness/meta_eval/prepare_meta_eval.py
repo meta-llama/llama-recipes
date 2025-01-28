@@ -188,7 +188,7 @@ def change_yaml(args, base_name):
     if args.evals_dataset in LLAMA_3_1_PRETRAIN_EVALS:
         meta_pretrain["task"] = ["meta_bbh", "meta_mmlu_pro_pretrain"]
     elif args.evals_dataset in LLAMA_3_2_PRETRAIN_EVALS:
-        meta_pretrain["task"] = ["meta_mmlu"]
+        meta_pretrain["task"] = ["meta_mmlu_pretrain"]
     with open(args.work_dir + "/meta_pretrain.yaml", "w") as yaml_file:
         yaml.dump(meta_pretrain, yaml_file)
 
@@ -203,7 +203,7 @@ def change_yaml(args, base_name):
             "meta_mmlu_pro_instruct",
         ]
     elif args.evals_dataset in LLAMA_3_2_INSTRUCT_EVALS:
-        meta_instruct["task"] = ["meta_mmlu", "meta_math", "meta_gpqa"]
+        meta_instruct["task"] = ["meta_mmlu_instruct", "meta_math", "meta_gpqa"]
     with open(args.work_dir + "/meta_instruct.yaml", "w") as yaml_file:
         yaml.dump(meta_instruct, yaml_file)
 
