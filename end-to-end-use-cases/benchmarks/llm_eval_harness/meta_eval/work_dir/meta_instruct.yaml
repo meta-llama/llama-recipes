@@ -1,0 +1,3 @@
+group: meta_instruct
+task:
+- meta_mmlu_pro_instruct

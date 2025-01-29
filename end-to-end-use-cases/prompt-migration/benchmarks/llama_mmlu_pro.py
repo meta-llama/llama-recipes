@@ -5,7 +5,7 @@ import dspy
 from datasets import load_dataset
 
 from .datatypes import TaskDatasets
-from .helpers import train_val_test_split
+from .helpers import fixed_split, train_val_test_split
 
 
 def datasets(
@@ -19,12 +19,7 @@ def datasets(
         "meta-llama/Llama-3.3-70B-Instruct-evals",
         "Llama-3.3-70B-Instruct-evals__mmlu_pro__details",
     )
-    return train_val_test_split(
-        dataset["latest"],
-        _task_doc_example,
-        train_size,
-        validation_size,
-    )
+    return fixed_split(dataset["latest"], _task_doc_example)
 
 
 class TaskDoc(t.TypedDict):
@@ -58,7 +53,7 @@ def _task_doc_example(doc: TaskDoc) -> dspy.Example:
         answer=doc["output_parsed_answer"],
     )
     example._input_keys = {"question", "options"}
-    example._output_keys = {"answer"} 
+    example._output_keys = {"answer"}
     return example
 
 
