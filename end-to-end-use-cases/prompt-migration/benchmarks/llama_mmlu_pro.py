@@ -55,10 +55,11 @@ def _task_doc_example(doc: TaskDoc) -> dspy.Example:
     example = dspy.Example(
         question=doc["input_question"],
         options=doc["input_choice_list"],
+        reasoning="",
         answer=doc["output_parsed_answer"],
     )
     example._input_keys = {"question", "options"}
-    example._output_keys = {"answer"}
+    example._output_keys = {"reasoning", "answer"} 
     return example
 
 
