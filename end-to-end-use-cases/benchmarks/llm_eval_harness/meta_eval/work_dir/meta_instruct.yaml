@@ -1,3 +1,4 @@
 group: meta_instruct
 task:
-- meta_mmlu_pro_instruct
+- meta_mmlu
+# - meta_mmlu_pro_instruct

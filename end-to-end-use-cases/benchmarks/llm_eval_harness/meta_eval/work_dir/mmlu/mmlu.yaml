@@ -1,6 +1,6 @@
 task: meta_mmlu
-dataset_path: meta-llama/Llama-3.1-70B-evals
-dataset_name: Llama-3.1-70B-evals__mmlu__details
+dataset_path: meta-llama/Llama-3.3-70B-Instruct-evals
+dataset_name: Llama-3.3-70B-Instruct-evals__mmlu__0_shot__cot__details
 test_split: latest
 output_type: multiple_choice
 process_docs: !function utils.process_docs
