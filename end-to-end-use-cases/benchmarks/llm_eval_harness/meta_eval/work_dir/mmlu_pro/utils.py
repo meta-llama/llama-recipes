@@ -3,8 +3,16 @@ import string
 import datasets
 
 
+# def doc_to_text(doc: dict) -> str:
+#     question, choice = doc["input_question"], str(doc["input_choice_list"])
+#     prompt = f"<|start_header_id|>user<|end_header_id|>You are a helpful assistant designed to help with multiple choice question. Think step by step. Question: {question}\n {choice}\n<|eot_id|> \n\n<|start_header_id|>assistant<|end_header_id|>"
+#     return prompt
+
+
 def doc_to_text(doc: dict) -> str:
-    doc = [
+    input_question, input_choice = doc["input_question"], str(doc["input_choice_list"])
+
+    optimized_examples = [
         {
             "question": "Explain what difficulties would arise if messenger RNA molecules were not destroyed after they had produced some polypeptide chains.",
             "options": {
@@ -87,7 +95,7 @@ def doc_to_text(doc: dict) -> str:
         },
     ]
     formatted_text = ""
-    for question in doc:
+    for question in optimized_examples:
         # Format user message with question and options
         user_msg = "<|start_header_id|>user<|end_header_id|>\n\n"
         user_msg += "Given the following question and candidate answers, choose the best answer.\n"
@@ -99,12 +107,17 @@ def doc_to_text(doc: dict) -> str:
                 user_msg += f"{option_key}. {option_value}\n"
 
         user_msg += '\nYour response should end with "The best answer is [the_answer_letter]." where the [the_answer_letter] is a letter from the provided choices.\n\n'
-        user_msg += "Let's think step by step.<|eot_id|>"
+        user_msg += f"Let's think step by step. Question: {input_question}\n {input_choice}\n <|eot_id|>"
+
+        formatted_text += user_msg
 
         # Add assistant placeholder message
-        assistant_msg = "<|start_header_id|>assistant<|end_header_id|>\n\n<|eot_id|>"
+    assistant_msg = "<|start_header_id|>assistant<|end_header_id|>\n\n<|eot_id|>"
 
-        formatted_text += user_msg + assistant_msg
+    formatted_text += assistant_msg
+
+    # print(formatted_text)
+    # exit()
 
     return formatted_text
 
