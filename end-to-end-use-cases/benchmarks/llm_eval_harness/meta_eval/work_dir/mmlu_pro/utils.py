@@ -9,94 +9,95 @@ def doc_to_text(doc: dict) -> str:
         "You are a helpful assistant for multiple choice questions. Think step by step.",
         "To address the multiple-choice question effectively, carefully read and analyze the provided `question`. Then, evaluate each option in the `options` dictionary, considering the context and any relevant information that might influence the correct choice. In the `reasoning` field, outline your thought process step by step, ensuring that your logic is clear and easy to follow. Finally, select the most appropriate answer based on your analysis and present it as the `answer`. Remember to justify your choice with sound reasoning, making it easier for others to understand your decision-making process.",
     ]
-    template = f"<|start_header_id|>user<|end_header_id|>{prompt[0]}. Question: {question}\n {choice}\n<|eot_id|> \n\n<|start_header_id|>assistant<|end_header_id|>"
+    default_parsing_text = 'Your response should end with "The best answer is [the_answer_letter]." where the [the_answer_letter] is a letter from the provided choices.'
+    template = f"<|start_header_id|>user<|end_header_id|>{prompt[1]}. {default_parsing_text} Question: {question}\n {choice}\n<|eot_id|> \n\n<|start_header_id|>assistant<|end_header_id|>"
     return template
 
     # def doc_to_text(doc: dict) -> str:
     #     input_question, input_choice = doc["input_question"], str(doc["input_choice_list"])
 
-    optimized_examples = [
-        {
-            "question": "Explain what difficulties would arise if messenger RNA molecules were not destroyed after they had produced some polypeptide chains.",
-            "options": {
-                "A": "mRNA would replicate rapidly",
-                "B": "The cell would use mRNA as a source of energy",
-                "C": "The cell would lack proteins",
-                "D": "Cell would enter a state of permanent division",
-                "E": "mRNA would be transformed into DNA",
-                "F": "Excess protein production, energy depletion, and potential harm to the cell",
-                "G": "mRNA would exit the cell and infect neighboring cells",
-                "H": "Proteins would be broken down into mRNA",
-                "I": "mRNA would become part of the cell membrane",
-                "J": "mRNA would bind to lipids and carbohydrates, disrupting cellular metabolism",
-            },
-            "answer": "F",
-        },
-        {
-            "question": "Based on the characteristic population curves that result from plotting population growth of a species, the most effective means of controlling the mosquito population is to",
-            "options": {
-                "A": "opt for zero population control once the K value of the curve has been reached",
-                "B": "maintain the population at the highest point of its logistic curve",
-                "C": "reduce the carrying capacity cif the environment to lower the K value",
-                "D": "decrease the mortality rate",
-                "E": "increase the birth rate of the species",
-                "F": "drastically reduce the population below the K value",
-                "G": "maintain the population at a point corresponding to the midpoint of its logistic curve",
-                "H": "increase the carrying capacity of the environment to raise the K value",
-                "I": "opt for zero population control at the beginning of the logistic curve",
-                "J": "null",
-            },
-            "answer": "C",
-        },
-        {
-            "question": "Solve the equation 1.2 = 0.4y using mental math.",
-            "options": {
-                "A": "3",
-                "B": "\u22123",
-                "C": "0.8",
-                "D": "2",
-                "E": "0.3",
-                "F": "5",
-                "G": "\u22124",
-                "H": "4",
-                "I": "6",
-                "J": "1.6",
-            },
-            "answer": "A",
-        },
-        {
-            "question": "assume you are Indonesian. In 2010, the rupiah exchange rate was around IDR15,000/USD, and the consumer price index in Indonesia and the United States was at 100. In 2019, the exchange rate changed to IDR14,000/USD. Simultaneously, Indonesia\u2019s inflation rose 5% due to the consumer price index rising to 105. Meanwhile, the United States\u2019 inflation rate rose 10% due to the consumer price index rising to 110. Whats the real exchange rate?",
-            "options": {
-                "A": "14000.00",
-                "B": "15500.00",
-                "C": "15000.00",
-                "D": "16000.00",
-                "E": "13500.00",
-                "F": "14666.67",
-                "G": "13888.89",
-                "H": "14800.00",
-                "I": "15200.00",
-                "J": "13333.33",
-            },
-            "answer": "F",
-        },
-        {
-            "question": "To move the economy closer to full employment the central bank decides that the federal funds rate must be increased. The appropriate open market operation is to ______ which ______ the money supply ______ aggregate demand and fights ______. OMO \u00a0\u00a0\u00a0 MONEY SUPPLY \u00a0\u00a0\u00a0 AD \u00a0\u00a0\u00a0 TO FIGHT",
-            "options": {
-                "A": "Buy bonds \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Unemployment",
-                "B": "Sell bonds \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Unemployment",
-                "C": "Buy bonds \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Unemployment",
-                "D": "Sell bonds \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Inflation",
-                "E": "Buy bonds \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Unemployment",
-                "F": "Sell bonds \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Unemployment",
-                "G": "Buy bonds \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Inflation",
-                "H": "Sell bonds \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Inflation",
-                "I": "Buy bonds \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Inflation",
-                "J": "Sell bonds \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Inflation",
-            },
-            "answer": "H",
-        },
-    ]
+    # optimized_examples = [
+    #     {
+    #         "question": "Explain what difficulties would arise if messenger RNA molecules were not destroyed after they had produced some polypeptide chains.",
+    #         "options": {
+    #             "A": "mRNA would replicate rapidly",
+    #             "B": "The cell would use mRNA as a source of energy",
+    #             "C": "The cell would lack proteins",
+    #             "D": "Cell would enter a state of permanent division",
+    #             "E": "mRNA would be transformed into DNA",
+    #             "F": "Excess protein production, energy depletion, and potential harm to the cell",
+    #             "G": "mRNA would exit the cell and infect neighboring cells",
+    #             "H": "Proteins would be broken down into mRNA",
+    #             "I": "mRNA would become part of the cell membrane",
+    #             "J": "mRNA would bind to lipids and carbohydrates, disrupting cellular metabolism",
+    #         },
+    #         "answer": "F",
+    #     },
+    #     {
+    #         "question": "Based on the characteristic population curves that result from plotting population growth of a species, the most effective means of controlling the mosquito population is to",
+    #         "options": {
+    #             "A": "opt for zero population control once the K value of the curve has been reached",
+    #             "B": "maintain the population at the highest point of its logistic curve",
+    #             "C": "reduce the carrying capacity cif the environment to lower the K value",
+    #             "D": "decrease the mortality rate",
+    #             "E": "increase the birth rate of the species",
+    #             "F": "drastically reduce the population below the K value",
+    #             "G": "maintain the population at a point corresponding to the midpoint of its logistic curve",
+    #             "H": "increase the carrying capacity of the environment to raise the K value",
+    #             "I": "opt for zero population control at the beginning of the logistic curve",
+    #             "J": "null",
+    #         },
+    #         "answer": "C",
+    #     },
+    #     {
+    #         "question": "Solve the equation 1.2 = 0.4y using mental math.",
+    #         "options": {
+    #             "A": "3",
+    #             "B": "\u22123",
+    #             "C": "0.8",
+    #             "D": "2",
+    #             "E": "0.3",
+    #             "F": "5",
+    #             "G": "\u22124",
+    #             "H": "4",
+    #             "I": "6",
+    #             "J": "1.6",
+    #         },
+    #         "answer": "A",
+    #     },
+    #     {
+    #         "question": "assume you are Indonesian. In 2010, the rupiah exchange rate was around IDR15,000/USD, and the consumer price index in Indonesia and the United States was at 100. In 2019, the exchange rate changed to IDR14,000/USD. Simultaneously, Indonesia\u2019s inflation rose 5% due to the consumer price index rising to 105. Meanwhile, the United States\u2019 inflation rate rose 10% due to the consumer price index rising to 110. Whats the real exchange rate?",
+    #         "options": {
+    #             "A": "14000.00",
+    #             "B": "15500.00",
+    #             "C": "15000.00",
+    #             "D": "16000.00",
+    #             "E": "13500.00",
+    #             "F": "14666.67",
+    #             "G": "13888.89",
+    #             "H": "14800.00",
+    #             "I": "15200.00",
+    #             "J": "13333.33",
+    #         },
+    #         "answer": "F",
+    #     },
+    #     {
+    #         "question": "To move the economy closer to full employment the central bank decides that the federal funds rate must be increased. The appropriate open market operation is to ______ which ______ the money supply ______ aggregate demand and fights ______. OMO \u00a0\u00a0\u00a0 MONEY SUPPLY \u00a0\u00a0\u00a0 AD \u00a0\u00a0\u00a0 TO FIGHT",
+    #         "options": {
+    #             "A": "Buy bonds \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Unemployment",
+    #             "B": "Sell bonds \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Unemployment",
+    #             "C": "Buy bonds \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Unemployment",
+    #             "D": "Sell bonds \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Inflation",
+    #             "E": "Buy bonds \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Unemployment",
+    #             "F": "Sell bonds \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Unemployment",
+    #             "G": "Buy bonds \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Inflation",
+    #             "H": "Sell bonds \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Inflation",
+    #             "I": "Buy bonds \u00a0\u00a0\u00a0 Decreases \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Inflation",
+    #             "J": "Sell bonds \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Increases \u00a0\u00a0\u00a0 Inflation",
+    #         },
+    #         "answer": "H",
+    #     },
+    # ]
 
 
 #     formatted_text = ""
