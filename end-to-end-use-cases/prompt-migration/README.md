@@ -1,4 +1,3 @@
-
 # Prompt Migration
 
 ## Overview
@@ -65,7 +64,40 @@ The **Prompt Migration** toolkit helps you assess and adapt prompts across diffe
    ```
 3. **Open the main notebook:**
    Navigate to the `notebooks/harness.ipynb` in your browser to get started.
-4. **Explore Benchmarks:**
+
+4. **Configure MMLU Benchmark:**
+   In the notebook, modify the benchmark configuration to use MMLU:
+   ```python
+   from benchmarks import llama_mmlu # You can also choose other available from `benchmarks/`
+   benchmark = llama_mmlu
+   ```
+
+5. **Run Optimization:**
+   Choose an optimization level from the notebook and run the optimizer:
+   ```python
+   # Choose one: "light", "medium", or "heavy"
+   optimizer = dspy.MIPROv2(metric=benchmark.metric, auto="medium")
+   optimized_program = optimizer.compile(student, trainset=trainset)
+   
+   # View the optimized prompt and/or demos
+   print("BEST PROMPT:\n", optimized_program.signature.instructions)
+   print("BEST EXAMPLES:\n", optimized_program.predict.demos)
+   ```
+
+6. **Run base and optimized prompt on meta-evals:**
+   Take the optimized prompt and examples and update your working directory:
+   - Navigate to `llama-recipes/end-to-end-use-cases/benchmarks/llm_eval_harness/meta_eval/work_dir/mmlu/utils.py`
+   - Open a new terminal and setup meta-evals environment following the readme in /meta_eval
+   - Update the prompts list with your base and optimized prompts as the first two items
+   ```python
+   prompts = ["base_prompt", "optimized_prompt"] # Your base prompt and optimized prompt
+   ```
+   - run lm_eval twice, once for base prompt and once for optimized prompt by changing the `prompt` index in template as such:
+   ```python
+      template = f"<|start_header_id|>user<|end_header_id|>{prompt[0]}. Question: {question}\n {choice}\n<|eot_id|> \n\n<|start_header_id|>assistant<end_header_id|>"
+   ```
+
+7. **Explore Benchmarks:**
    Use the scripts in the `benchmarks/` directory to evaluate your prompt migrations.
 
 ## License
