@@ -1,4 +1,1 @@
-
-
-*.json
-*.jsonl
+**/eval_results/**
