@@ -97,8 +97,7 @@ def doc_to_text(doc: dict) -> str:
     formatted_text = ""
     for question in optimized_examples:
         # Format user message with question and options
-        user_msg = "<|start_header_id|>user<|end_header_id|>\n\n"
-        user_msg += "Given the following question and candidate answers, choose the best answer.\n"
+        user_msg = "<|start_header_id|>user<|end_header_id|>You are a helpful assistant designed to help with multiple choice question. Think step by step."
         user_msg += f"Question: {question['question']}\n"
 
         # Add options
