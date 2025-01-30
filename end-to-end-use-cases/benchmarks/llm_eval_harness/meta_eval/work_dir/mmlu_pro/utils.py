@@ -3,14 +3,17 @@ import string
 import datasets
 
 
-# def doc_to_text(doc: dict) -> str:
-#     question, choice = doc["input_question"], str(doc["input_choice_list"])
-#     prompt = f"<|start_header_id|>user<|end_header_id|>You are a helpful assistant designed to help with multiple choice question. Think step by step. Question: {question}\n {choice}\n<|eot_id|> \n\n<|start_header_id|>assistant<|end_header_id|>"
-#     return prompt
-
-
 def doc_to_text(doc: dict) -> str:
-    input_question, input_choice = doc["input_question"], str(doc["input_choice_list"])
+    question, choice = doc["input_question"], str(doc["input_choice_list"])
+    prompt = [
+        "You are a helpful assistant for multiple choice questions. Think step by step.",
+        "To address the multiple-choice question effectively, carefully read and analyze the provided `question`. Then, evaluate each option in the `options` dictionary, considering the context and any relevant information that might influence the correct choice. In the `reasoning` field, outline your thought process step by step, ensuring that your logic is clear and easy to follow. Finally, select the most appropriate answer based on your analysis and present it as the `answer`. Remember to justify your choice with sound reasoning, making it easier for others to understand your decision-making process.",
+    ]
+    template = f"<|start_header_id|>user<|end_header_id|>{prompt[0]}. Question: {question}\n {choice}\n<|eot_id|> \n\n<|start_header_id|>assistant<|end_header_id|>"
+    return template
+
+    # def doc_to_text(doc: dict) -> str:
+    #     input_question, input_choice = doc["input_question"], str(doc["input_choice_list"])
 
     optimized_examples = [
         {
@@ -94,31 +97,33 @@ def doc_to_text(doc: dict) -> str:
             "answer": "H",
         },
     ]
-    formatted_text = ""
-    for question in optimized_examples:
-        # Format user message with question and options
-        user_msg = "<|start_header_id|>user<|end_header_id|>You are a helpful assistant designed to help with multiple choice question. Think step by step."
-        user_msg += f"Question: {question['question']}\n"
 
-        # Add options
-        for option_key, option_value in question["options"].items():
-            if option_value is not None:
-                user_msg += f"{option_key}. {option_value}\n"
 
-        user_msg += '\nYour response should end with "The best answer is [the_answer_letter]." where the [the_answer_letter] is a letter from the provided choices.\n\n'
-        user_msg += f"Let's think step by step. Question: {input_question}\n {input_choice}\n <|eot_id|>"
+#     formatted_text = ""
+#     for question in optimized_examples:
+#         # Format user message with question and options
+#         user_msg = "<|start_header_id|>user<|end_header_id|>You are a helpful assistant designed to help with multiple choice question. Think step by step."
+#         user_msg += f"Question: {question['question']}\n"
 
-        formatted_text += user_msg
+#         # Add options
+#         for option_key, option_value in question["options"].items():
+#             if option_value is not None:
+#                 user_msg += f"{option_key}. {option_value}\n"
 
-        # Add assistant placeholder message
-    assistant_msg = "<|start_header_id|>assistant<|end_header_id|>\n\n<|eot_id|>"
+#         user_msg += '\nYour response should end with "The best answer is [the_answer_letter]." where the [the_answer_letter] is a letter from the provided choices.\n\n'
+#         user_msg += f"Let's think step by step. Question: {input_question}\n {input_choice}\n <|eot_id|>"
 
-    formatted_text += assistant_msg
+#         formatted_text += user_msg
 
-    # print(formatted_text)
-    # exit()
+#         # Add assistant placeholder message
+#     assistant_msg = "<|start_header_id|>assistant<|end_header_id|>\n\n<|eot_id|>"
 
-    return formatted_text
+#     formatted_text += assistant_msg
+
+#     # print(formatted_text)
+#     # exit()
+
+#     return formatted_text
 
 
 def process_docs(dataset: datasets.Dataset) -> datasets.Dataset:
