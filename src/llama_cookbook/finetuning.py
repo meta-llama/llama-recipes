@@ -40,6 +40,7 @@ from llama_cookbook.utils.train_utils import (
     freeze_transformer_layers,
     freeze_LLM_only,
     get_policies,
+    hsdp_device_mesh,
     print_model_size,
     print_frozen_model_status,
     setup,
@@ -150,7 +151,7 @@ def main(**kwargs):
                 if train_config.quantization and not train_config.enable_fsdp
                 else None
             ),
-            torch_dtype=torch.float16 if train_config.use_fp16 else torch.bfloat16,
+            torch_dtype=torch.float16 if train_config.use_fp16 else "auto",
         )
         processor = AutoProcessor.from_pretrained(
             train_config.model_name
@@ -172,7 +173,7 @@ def main(**kwargs):
                 if train_config.quantization and not train_config.enable_fsdp
                 else None
             ),
-            torch_dtype=torch.float16 if train_config.use_fp16 else torch.bfloat16,
+            torch_dtype=torch.float16 if train_config.use_fp16 else "auto",
         )
     else:
         raise ValueError(

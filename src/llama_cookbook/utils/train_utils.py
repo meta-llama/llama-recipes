@@ -11,7 +11,6 @@ import contextlib
 
 
 import torch
-import torch.cuda.nccl as nccl
 import torch.distributed as dist
 from torch.distributed.fsdp import StateDictType
 from torch.distributed.fsdp.sharded_grad_scaler import ShardedGradScaler
@@ -533,39 +532,6 @@ def print_frozen_model_status(model, config, rank: int = 0) -> None:
                 print(f"    {module}: Unfrozen")
         print("")
 
-def get_policies(cfg, rank):
-    """Get the policies for mixed precision and fsdp wrapping"""
-
-
-    verify_bfloat_support = ((
-    torch.version.cuda
-    and torch.cuda.is_bf16_supported()
-    and torch.version.cuda >= "11.0"
-    and dist.is_nccl_available()
-    and nccl.version() >= (2, 10)
-    ) or
-    (is_xpu_available()))
-
-
-    mixed_precision_policy = None
-    wrapping_policy = None
-
-    # Mixed precision
-    if cfg.mixed_precision:
-        bf16_ready = verify_bfloat_support
-
-        if bf16_ready and not cfg.use_fp16:
-            mixed_precision_policy = bfSixteen
-            if rank == 0:
-                print(f"bFloat16 enabled for mixed precision - using bfSixteen policy")
-        elif cfg.use_fp16:
-            mixed_precision_policy = fpSixteen
-            if rank == 0:
-                print(f"FP16 enabled")
-        else:
-            print(f"bFloat16 support not present. Using FP32, and not mixed precision")
-    wrapping_policy = get_llama_wrapper()
-    return mixed_precision_policy, wrapping_policy
 
 def save_train_params(train_config, fsdp_config, rank):
     """
