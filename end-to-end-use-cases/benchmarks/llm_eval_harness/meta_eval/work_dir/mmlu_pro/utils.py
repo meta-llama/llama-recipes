@@ -6,7 +6,7 @@ import datasets
 def doc_to_text(doc: dict) -> str:
     question, choice = doc["input_question"], str(doc["input_choice_list"])
     prompt = [
-        "You are a helpful assistant for multiple choice questions. Think step by step.",
+        "You are a helpful assistant for multiple choice questions.",
         "To address the multiple-choice question effectively, carefully read and analyze the provided `question`. Then, evaluate each option in the `options` dictionary, considering the context and any relevant information that might influence the correct choice. In the `reasoning` field, outline your thought process step by step, ensuring that your logic is clear and easy to follow. Finally, select the most appropriate answer based on your analysis and present it as the `answer`. Remember to justify your choice with sound reasoning, making it easier for others to understand your decision-making process.",
     ]
     default_parsing_text = 'Your response should end with "The best answer is [the_answer_letter]." where the [the_answer_letter] is a letter from the provided choices.'
