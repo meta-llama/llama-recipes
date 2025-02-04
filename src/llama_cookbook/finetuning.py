@@ -34,12 +34,11 @@ from llama_cookbook.utils.dataset_utils import (
     get_preprocessed_dataset,
 )
 
-from llama_cookbook.utils.fsdp_utils import hsdp_device_mesh
+from llama_cookbook.utils.fsdp_utils import hsdp_device_mesh, get_policies
 from llama_cookbook.utils.train_utils import (
     clear_gpu_cache,
     freeze_transformer_layers,
     freeze_LLM_only,
-    get_policies,
     hsdp_device_mesh,
     print_model_size,
     print_frozen_model_status,
