@@ -7,6 +7,8 @@ import torch.distributed as dist
 
 from llama_cookbook.policies import fpSixteen,bfSixteen, get_llama_wrapper
 from torch.distributed.device_mesh import init_device_mesh
+from accelerate.utils import is_xpu_available
+
 
 def fsdp_auto_wrap_policy(model, transformer_layer_names):
     import functools
