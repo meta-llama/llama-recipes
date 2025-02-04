@@ -39,7 +39,6 @@ from llama_cookbook.utils.train_utils import (
     clear_gpu_cache,
     freeze_transformer_layers,
     freeze_LLM_only,
-    hsdp_device_mesh,
     print_model_size,
     print_frozen_model_status,
     setup,
