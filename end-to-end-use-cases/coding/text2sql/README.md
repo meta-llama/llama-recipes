@@ -16,7 +16,7 @@ For detailed instructions on setting up the environment, creating a database, an
 
 - Before getting started, please make sure to setup Together.ai and get an API key from [here](https://www.together.ai/). 
 
-- First, please install the requirements from [here](https://github.com/meta-llama/llama-cookbook/blob/main/end-to-end-use-cases/coding/text2sql/requierements.txt) by running inside the folder:
+- First, please install the requirements from [here](https://github.com/meta-llama/llama-cookbook/blob/main/end-to-end-use-cases/coding/text2sql/requirements.txt) by running inside the folder:
 
 ```
 git clone https://github.com/meta-llama/llama-cookbook.git
