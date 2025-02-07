@@ -21,7 +21,7 @@ This repository covers the most popular community approaches, use-cases and the 
 
 ## Repository Structure:
 
-- [3P Integrations](https://github.com/meta-llama/llama-cookbook/3p-integrations): Getting Started Recipes and End to End Use-Cases from various Llama providers
+- [3P Integrations](https://github.com/meta-llama/llama-cookbook/tree/main/3p-integrations): Getting Started Recipes and End to End Use-Cases from various Llama providers
 - [End to End Use Cases](https://github.com/meta-llama/llama-cookbook/tree/main/end-to-end-use-cases): As the name suggests, spanning various domains and applications
 - [Getting Started](https://github.com/meta-llama/llama-cookbook/tree/main/getting-started/): Reference for inferencing, fine-tuning and RAG examples
 - [src](https://github.com/meta-llama/llama-cookbook/tree/main/src/): Contains the src for the original llama-recipes library along with some FAQs for fine-tuning.
