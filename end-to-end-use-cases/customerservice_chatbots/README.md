@@ -1,6 +1,6 @@
 This repository contains various end-to-end use cases for building customer service chatbots using Meta's Llama 3. Below is an outline of the subfolders and their contents.
 
-## Ouline
+## Outline
 
 - **[RAG_chatbot](https://github.com/meta-llama/llama-cookbook/tree/main/end-to-end-use-cases/customerservice_chatbots/RAG_chatbot)**
   contains resources for building a Meta Llama 3 chatbot with Retrieval Augmented Generation (RAG). It contains a [notebook](https://github.com/meta-llama/llama-cookbook/blob/main/end-to-end-use-cases/customerservice_chatbots/RAG_chatbot/RAG_Chatbot_Example.ipynb) which shows a complete example of how to build a Meta Llama 3 chatbot hosted on your browser that can answer questions based on your own data. It covers:
@@ -22,6 +22,6 @@ This repository contains various end-to-end use cases for building customer serv
 ## Additional Information
 
 - **RAG Architecture:** The RAG method enhances LLMs by retrieving and augmenting data, allowing for more relevant and context-aware responses.
-- **Development Tools:** The repository utilizes frameworks like LangChain and LlamaIndex for building LLM applications, and Gradio for creating chatbot UIs.
+- **Development Tools:** The repository utilizes frameworks like LangChain and LlamaIndex for building LLM applications, and Gradio for creating chatbot UI.
 
-For more detailed information, please refer to the individual subfolder documentation and examples.
+For more detailed information, please refer to the individual subdirectory documentation and examples.
