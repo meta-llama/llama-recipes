@@ -109,3 +109,91 @@ def process_dataset(
                 "conversations": output.outputs[0].text,
             }
             f.write(json.dumps(result) + "\n")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Process dataset using vLLM with multi-GPU support"
+    )
+    parser.add_argument(
+        "--model", type=str, required=True, help="Name or path of the model to use"
+    )
+    parser.add_argument(
+        "--config",
+        type=str,
+        required=True,
+        help="Path to YAML config file containing system prompt",
+    )
+    parser.add_argument(
+        "--output-file",
+        type=str,
+        default="processed_outputs.jsonl",
+        help="Output file path",
+    )
+    parser.add_argument(
+        "--dataset-path", type=str, required=True, help="Path to the dataset"
+    )
+    parser.add_argument(
+        "--gpu-ids",
+        type=str,
+        help="Comma-separated list of GPU IDs to use (e.g., '0,1,2,3')",
+    )
+    parser.add_argument(
+        "--tensor-parallel-size",
+        type=int,
+        default=1,
+        help="Number of GPUs to use for tensor parallelism",
+    )
+    parser.add_argument(
+        "--gpu-memory-utilization",
+        type=float,
+        default=0.9,
+        help="Target GPU memory utilization (0.0 to 1.0)",
+    )
+    # Add new arguments for range specification
+    parser.add_argument(
+        "--start-index",
+        type=int,
+        default=0,
+        help="Starting index in the dataset (inclusive)",
+    )
+    parser.add_argument(
+        "--end-index",
+        type=int,
+        help="Ending index in the dataset (exclusive). If not specified, processes until the end.",
+    )
+    args = parser.parse_args()
+
+    # Parse GPU IDs if provided
+    gpu_ids = None
+    if args.gpu_ids:
+        gpu_ids = [int(gpu_id) for gpu_id in args.gpu_ids.split(",")]
+
+    # Load system prompt from YAML
+    system_prompt = load_system_prompt(args.config)
+
+    # Load dataset
+    dataset = load_from_disk(args.dataset_path)
+    dataset = dataset.select(range(0, 2000))
+
+    # Initialize vLLM with multi-GPU support
+    llm = setup_llm(
+        model_name=args.model,
+        tensor_parallel_size=args.tensor_parallel_size,
+        gpu_memory_utilization=args.gpu_memory_utilization,
+        gpu_ids=gpu_ids,
+    )
+
+    # Process dataset
+    process_dataset(
+        dataset=dataset,
+        llm=llm,
+        system_prompt=system_prompt,
+        output_file=args.output_file,
+        start_index=args.start_index,
+        end_index=args.end_index,
+    )
+
+
+if __name__ == "__main__":
+    main()
