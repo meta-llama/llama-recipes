@@ -24,10 +24,10 @@
       "pattern": "https://www.intel.com/content/www/us/en/developer/articles/news/llama2.html"
     },
     {
-      "pattern": "^https?://(www\.)?linkedin\.com/.*"
+      "pattern": "http(s.?)?:\/\/(www\.)?linkedin\.com\.*"
     },
     {
-      "pattern": "^https?://medium\.com/.*"
+      "pattern": "http(s?)?:\/\/(www\.)?medium\.com\/.*"
     }
   ]
 }
