@@ -22,6 +22,12 @@
     },
     {
       "pattern": "https://www.intel.com/content/www/us/en/developer/articles/news/llama2.html"
+    },
+    {
+      "pattern": "http(s.?)?:\/\/(www\.)?linkedin\.com\.*"
+    },
+    {
+      "pattern": "http(s?)?:\/\/(www\.)?medium\.com\/.*"
     }
   ]
 }
