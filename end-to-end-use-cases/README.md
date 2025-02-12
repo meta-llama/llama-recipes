@@ -40,3 +40,5 @@ This step-by-step tutorial shows how to use the [WhatsApp Business API](https://
 ### Building a Llama 3 Enabled Messenger Chatbot
 This step-by-step tutorial shows how to use the [Messenger Platform](https://developers.facebook.com/docs/messenger-platform/overview) to build a Llama 3 enabled Messenger chatbot.
 
+### RAG Chatbot Example (running [locally](./customerservice_chatbots/RAG_chatbot/RAG_Chatbot_Example.ipynb)
+A complete example of how to build a Llama 3 chatbot hosted on your browser that can answer questions based on your own data using retrieval augmented generation (RAG). 
