@@ -14,7 +14,7 @@ dotenv==0.9.9
 eval_type_backport==0.2.2
 exceptiongroup==1.2.2
 fastapi==0.115.12
-filelock==3.18.0
+filelock==3.20.3
 frozenlist==1.5.0
 groq==0.22.0
 h11>=0.16.0
