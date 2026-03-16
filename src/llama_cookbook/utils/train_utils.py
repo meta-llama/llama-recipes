@@ -22,7 +22,7 @@ import json
 from llama_cookbook.model_checkpointing import save_fsdp_model_checkpoint_full, save_model_and_optimizer_sharded, save_optimizer_checkpoint, save_peft_checkpoint, save_model_checkpoint
 from llama_cookbook.policies import fpSixteen,bfSixteen, get_llama_wrapper
 from llama_cookbook.utils.memory_utils import MemoryTrace
-from accelerate.utils import is_xpu_available, is_ccl_available
+from accelerate.utils import is_xpu_available, is_xccl_available
 from llama_cookbook.utils.flop_utils import FlopMeasure
 def set_tokenizer_params(tokenizer: LlamaTokenizer):
     tokenizer.pad_token_id = 0
@@ -428,7 +428,7 @@ def check_frozen_layers_peft_model(model):
 
 def setup():
     """Initialize the process group for distributed training"""
-    if is_ccl_available():
+    if is_xccl_available():
         # distributed training on xpus
         dist.init_process_group("ccl")
     else:
