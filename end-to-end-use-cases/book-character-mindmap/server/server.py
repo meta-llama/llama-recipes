@@ -5,7 +5,7 @@ import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from transformers import AutoTokenizer
-from vllm import LLM, sampling_params, SamplingParams
+from vllm import LLM, SamplingParams
 
 # Flask setup
 app = Flask(__name__)

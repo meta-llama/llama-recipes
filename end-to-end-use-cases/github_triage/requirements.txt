@@ -3,4 +3,3 @@ plotly
 openai
 groq
 fpdf
-plotly

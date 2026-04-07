@@ -1,5 +1,4 @@
 gradio
 together
 requests
-pypdf2
-gradio
+pypdf
