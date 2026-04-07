@@ -1,5 +1,5 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
-# This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
+# This software may be used and distributed according to the terms of the Llama Community License Agreement.
 
 # For dataset details visit: https://huggingface.co/datasets/jfleg
 # For download and preparation see: recipes/ft_datasets/grammar_dataset/grammar_dataset_process.ipynb

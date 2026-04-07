@@ -1,5 +1,5 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
-# This software may be used and distributed according to the terms of the Llama 2 Community License Agreement.
+# This software may be used and distributed according to the terms of the Llama Community License Agreement.
 
 import os
 import time
@@ -22,7 +22,12 @@ import json
 from llama_cookbook.model_checkpointing import save_fsdp_model_checkpoint_full, save_model_and_optimizer_sharded, save_optimizer_checkpoint, save_peft_checkpoint, save_model_checkpoint
 from llama_cookbook.policies import fpSixteen,bfSixteen, get_llama_wrapper
 from llama_cookbook.utils.memory_utils import MemoryTrace
-from accelerate.utils import is_xpu_available, is_ccl_available
+from accelerate.utils import is_xpu_available
+try:
+    from accelerate.utils import is_ccl_available
+except ImportError:
+    def is_ccl_available():
+        return False
 from llama_cookbook.utils.flop_utils import FlopMeasure
 def set_tokenizer_params(tokenizer: LlamaTokenizer):
     tokenizer.pad_token_id = 0
