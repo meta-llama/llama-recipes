@@ -41,8 +41,8 @@ You'll need your Hugging Face access token, which you can get at your Settings p
 - First, please Install the requirements from [here]() by running inside the folder:
 
 ```
-git clone https://github.com/meta-llama/llama-recipes
-cd llama-recipes/end-to-end-use-cases/NotebookLlama/
+git clone https://github.com/meta-llama/llama-cookbook
+cd llama-cookbook/end-to-end-use-cases/NotebookLlama/
 pip install -r requirements.txt
 ```
 
