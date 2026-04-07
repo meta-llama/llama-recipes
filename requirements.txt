@@ -20,10 +20,10 @@ typing-extensions>=4.8.0
 tabulate
 evaluate
 rouge_score
-pyyaml==6.0.1
-faiss-gpu; python_version < '3.11'
+pyyaml>=6.0.1
+faiss-cpu
 unstructured[pdf]
 sentence_transformers
 codeshield
 gradio
-markupsafe==2.0.1
+markupsafe>=2.1

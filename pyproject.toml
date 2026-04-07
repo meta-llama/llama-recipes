@@ -12,7 +12,7 @@ authors = [
 ]
 description = "Llama-cookbook is a companion project to the Llama models. It's goal is to provide examples to quickly get started with fine-tuning for domain adaptation and how to run inference for the fine-tuned models."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: Other/Proprietary License",
