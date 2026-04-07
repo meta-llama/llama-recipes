@@ -18,7 +18,7 @@ on:
           default: "true"
 
 env:
-  PYTORCH_WHEEL_URL: https://download.pytorch.org/whl/test/cu118
+  PYTORCH_WHEEL_URL: https://download.pytorch.org/whl/cpu
 
 jobs:
   execute_workflow:
