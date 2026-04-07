@@ -1,5 +1,5 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
-# This software may be used and distributed according to the terms of the Llama 3 Community License Agreement.
+# This software may be used and distributed according to the terms of the Llama Community License Agreement.
 
 import langchain
 from langchain.llms import Replicate
@@ -10,7 +10,7 @@ import os
 import requests
 import json
 
-os.environ["REPLICATE_API_TOKEN"] = "<your replicate api token>"
+os.environ.setdefault("REPLICATE_API_TOKEN", os.environ.get("REPLICATE_API_TOKEN", ""))
 llama3_8b_chat = "meta/meta-llama-3-8b-instruct"
 
 llm = Replicate(
@@ -35,7 +35,7 @@ def msgrcvd_pager():
         'recipient': '{"id": ' + sender + '}',
         'message': json.dumps({'text': answer}),
         'messaging_type': 'RESPONSE',
-        'access_token': "<your page access token>"
+        'access_token': os.environ.get("PAGE_ACCESS_TOKEN", "")
     }
     headers = {
         'Content-Type': 'application/json'

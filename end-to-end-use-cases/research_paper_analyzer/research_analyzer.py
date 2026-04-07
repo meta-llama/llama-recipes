@@ -5,7 +5,7 @@ import time
 import io
 import re
 import gradio as gr
-import PyPDF2
+import pypdf
 from together import Together
 
 
@@ -38,7 +38,7 @@ def extract_arxiv_pdf_url(arxiv_url):
 
 def extract_text_from_pdf(pdf_content):
     pdf_file = io.BytesIO(pdf_content)
-    reader = PyPDF2.PdfReader(pdf_file)
+    reader = pypdf.PdfReader(pdf_file)
     text = ""
     for page in reader.pages:
         text += page.extract_text() + "\n"
@@ -53,7 +53,7 @@ def extract_references_with_llm(pdf_content):
     if len(text) > max_length:
         text = text[:max_length] + "..."
 
-    client = Together(api_key="Your API key here")
+    client = Together(api_key=os.environ.get("TOGETHER_API_KEY"))
 
     citations = client.chat.completions.create(
         model="meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
@@ -219,7 +219,7 @@ def gradio_interface():
         history.append([user_message, ""])
         
 
-        client = Together(api_key="Your API key here")
+        client = Together(api_key=os.environ.get("TOGETHER_API_KEY"))
 
         # Prepare the system prompt and user message
 

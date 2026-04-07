@@ -10,14 +10,15 @@ Then, run the script using Python: `python setup_qdrant_collection.py`
 
 
 from pathlib import Path
+import os
 from qdrant_client import QdrantClient, models
 from sentence_transformers import SentenceTransformer
 import uuid
 import re
 
 # Configuration - in case you want to create an online collection
-QDRANT_URL = "replace with your Qdrant URL"
-QDRANT_API_KEY = "replace with your qdrant API key"
+QDRANT_URL = os.environ.get("QDRANT_URL", "")
+QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY", "")
 EMBEDDING_MODEL = 'all-MiniLM-L6-v2'
 
 # New files to process

@@ -1,5 +1,5 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
-# This software may be used and distributed according to the terms of the Llama 3 Community License Agreement.
+# This software may be used and distributed according to the terms of the Llama Community License Agreement.
 
 import langchain
 from langchain.llms import Replicate
@@ -13,8 +13,8 @@ import json
 class WhatsAppClient:
 
     API_URL = "https://graph.facebook.com/v17.0/"
-    WHATSAPP_API_TOKEN = "<Temporary access token from your WhatsApp API Setup>"
-    WHATSAPP_CLOUD_NUMBER_ID = "<Phone number ID from your WhatsApp API Setup>"
+    WHATSAPP_API_TOKEN = os.environ.get("WHATSAPP_API_TOKEN", "")
+    WHATSAPP_CLOUD_NUMBER_ID = os.environ.get("WHATSAPP_CLOUD_NUMBER_ID", "")
 
     def __init__(self):
         self.headers = {
@@ -38,7 +38,7 @@ class WhatsAppClient:
         assert response.status_code == 200, "Error sending message"
         return response.status_code
 
-os.environ["REPLICATE_API_TOKEN"] = "<your replicate api token>"    
+os.environ.setdefault("REPLICATE_API_TOKEN", os.environ.get("REPLICATE_API_TOKEN", ""))    
 llama3_8b_chat = "meta/meta-llama-3-8b-instruct"
 
 llm = Replicate(
@@ -58,6 +58,6 @@ def msgrcvd():
     answer = llm(message)
     print(message)
     print(answer)
-    client.send_text_message(llm(message), "<your phone number>")
+    client.send_text_message(llm(message), os.environ.get("RECIPIENT_PHONE", ""))
     return message + "<p/>" + answer
 
