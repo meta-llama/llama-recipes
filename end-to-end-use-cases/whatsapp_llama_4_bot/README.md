@@ -80,7 +80,13 @@ pip install -r requirements.txt
 
 ### Step 3: Configure Environment Variables
 
-Create a `.env` file in the project directory and add your API keys and other configuration details as follows:
+Copy the `.env.example` file to `.env` and fill in your API keys:
+
+```bash
+cp .env.example .env
+```
+
+Then edit `.env` with your configuration details:
 
 ```plaintext
 ACCESS_TOKEN=your_whatsapp_access_token
