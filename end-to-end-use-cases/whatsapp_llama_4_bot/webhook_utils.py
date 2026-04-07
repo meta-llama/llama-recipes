@@ -52,11 +52,11 @@ async def send_message_async(user_phone: str, message: str):
 async def send_audio_message(to: str, file_path: str):
     url = f"https://graph.facebook.com/v20.0/{PHONE_NUMBER_ID}/media"
     with open(file_path, "rb") as f:
-        files = { "file": ("reply.mp3", open(file_path, "rb"), "audio/mpeg")}
+        files = { "file": ("reply.mp3", f, "audio/mpeg")}
         params = {
             "messaging_product": "whatsapp",
             "type": "audio",
-            "access_token": ACCESS_TOKEN
+            "access_token": META_ACCESS_TOKEN
         }
         response = requests.post(url, params=params, files=files)
 
@@ -69,7 +69,7 @@ async def send_audio_message(to: str, file_path: str):
             "audio": {"id": media_id}
         }
         headers = {
-            "Authorization": f"Bearer {ACCESS_TOKEN}",
+            "Authorization": f"Bearer {META_ACCESS_TOKEN}",
             "Content-Type": "application/json"
         }
         requests.post(WHATSAPP_API_URL, headers=headers, json=payload)
@@ -96,7 +96,7 @@ async def llm_reply_to_text_v2(user_input: str, user_phone: str, media_id: str =
         }
         
         async with httpx.AsyncClient() as client:
-          response = await client.post("https://df00-171-60-176-142.ngrok-free.app/llm-response", json=json_data, headers=headers,timeout=60)
+          response = await client.post(f"{BASE_URL}/llm-response", json=json_data, headers=headers,timeout=60)
           response_data = response.json()
           # print(response_data)
           if response.status_code == 200 and response_data['error'] == None:
