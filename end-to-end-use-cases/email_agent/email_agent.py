@@ -10,24 +10,23 @@ from bs4 import BeautifulSoup
 import os
 import pytz
 import base64
-import pickle
 from datetime import datetime, timezone
 import json
 import ollama
 from pypdf import PdfReader
 from pathlib import Path
+from google.oauth2.credentials import Credentials
 
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/gmail.compose']
 
 def authenticate_gmail(user_email):
     creds = None
-    token_file = f'token_{user_email}.pickle'  # Unique token file for each user
-    
+    token_file = f'token_{user_email}.json'
+
     # Load the user's token if it exists
     if os.path.exists(token_file):
-        with open(token_file, 'rb') as token:
-            creds = pickle.load(token)
-    
+        creds = Credentials.from_authorized_user_file(token_file, SCOPES)
+
     # If no valid credentials, prompt the user to log in
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
@@ -35,10 +34,10 @@ def authenticate_gmail(user_email):
         else:
             flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
             creds = flow.run_console()
-        
+
         # Save the new credentials to a user-specific token file
-        with open(token_file, 'wb') as token:
-            pickle.dump(creds, token)
+        with open(token_file, 'w') as token:
+            token.write(creds.to_json())
     
     # Build the Gmail API service
     service = build('gmail', 'v1', credentials=creds)
@@ -515,8 +514,14 @@ class Agent:
         self.messages.append({"role": ("ipython" if is_tool_call else "user"), "content": user_prompt_or_tool_result})
         result = self.llama()
         print(f"\nLlama returned: {result}.")
-        if type(result) == dict: # result is a dict only if it's a tool call spec
+        if isinstance(result, dict): # result is a dict only if it's a tool call spec
             function_name = result["function_name"]
+            ALLOWED_FUNCTIONS = {
+                "list_emails", "get_email_detail", "get_pdf_summary",
+                "send_email", "create_draft", "send_draft",
+            }
+            if function_name not in ALLOWED_FUNCTIONS:
+                return f"Unknown function: {function_name}. Please try again."
             func = globals()[function_name]
             parameters = result["parameters"]
             if function_name == "get_email_detail":
@@ -610,7 +615,7 @@ class Agent:
           parameters = res['parameters']
           return {"function_name": function_name,
                   "parameters": parameters}
-        except:
+        except (json.JSONDecodeError, KeyError):
           return result
 
 
