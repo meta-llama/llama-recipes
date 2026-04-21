@@ -31,7 +31,7 @@ pyarrow==19.0.1
 pydantic==2.11.3
 pydantic_core==2.33.1
 Pygments==2.19.1
-python-dotenv==1.1.0
+python-dotenv==1.2.2
 requests==2.32.3
 rich==13.9.4
 shellingham==1.5.4
