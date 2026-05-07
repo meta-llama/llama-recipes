@@ -74,7 +74,7 @@ Here we use a slurm script to schedule a job with slurm over multiple nodes.
 
 ```bash
 
-sbatch recipes/quickstart/finetuning/multi_node.slurm
+sbatch getting-started/finetuning/multi_node.slurm
 # Change the num nodes and GPU per nodes in the script before running.
 
 ```
