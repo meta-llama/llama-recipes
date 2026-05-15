@@ -25,6 +25,11 @@ Each folder is maintained by the respective platform-owner and contains specific
 
 ## Available Integrations
 
+### [Astraflow](./astraflow)
+Examples for running Llama models on Astraflow by UCloud — an OpenAI-compatible platform supporting 200+ models, with both global and China endpoints.
+
+### [AWS](./aws)## Available Integrations
+
 ### [AWS](./aws)
 Examples for using Llama 3 on Amazon Bedrock, including getting started guides, prompt engineering, and React integration.
 
@@ -60,6 +65,9 @@ Comprehensive demos for building LLM applications using Llama on Together AI, in
 
 ### [vLLM](./vllm)
 Examples for high-throughput and memory-efficient inference using vLLM with Llama models.
+
+### [Astraflow](./astraflow)
+Examples for running Llama models on [Astraflow](https://astraflow.ucloud-global.com) by UCloud — an OpenAI-compatible AI model aggregation platform supporting 200+ models. Includes global (`ASTRAFLOW_API_KEY`) and China (`ASTRAFLOW_CN_API_KEY`) endpoint support.
 
 ## Additional Resources
 
