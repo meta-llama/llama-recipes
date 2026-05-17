@@ -30,6 +30,8 @@ while True:
                                             max_tokens=100,
                                             temperature=1.2)
   # Append the response to the chat history
+  if not response.choices:
+      continue
   chat_history.append({
       "role": "assistant",
       "content": response.choices[0].message.content

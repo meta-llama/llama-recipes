@@ -62,6 +62,8 @@ def presidential_speech_chat_completion(client, model, user_question, relevant_e
     )
 
     # Extract the response from the chat completion
+    if not chat_completion.choices:
+        return ""
     response = chat_completion.choices[0].message.content
 
     return response

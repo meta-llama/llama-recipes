@@ -112,6 +112,8 @@ def generate_description(image):
             max_tokens=512,
             temperature=0.7,
         )
+        if not response.choices:
+            return "Error generating description"
         description = response.choices[0].message.content
         print(f"Generated description: {description}")
         return description
@@ -181,6 +183,8 @@ def rewrite_query(original_query, item_description):
             max_tokens=512,
             temperature=0.7,
         )
+        if not response.choices:
+            return original_query
         rewritten_query = response.choices[0].message.content
         print(f"Rewritten query: {rewritten_query}")
         return rewritten_query

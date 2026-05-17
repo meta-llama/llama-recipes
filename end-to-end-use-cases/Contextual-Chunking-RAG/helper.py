@@ -27,8 +27,10 @@ def openai_run(system_prompt, user_message):
 	  max_tokens=2000,
 	  messages=messages
 	)
+	if not completion.choices:
+		return ""
 	message = completion.choices[0].message
-	return message.content    
+	return message.content
 
 
 def deepinfra_run(system_prompt, user_message):
@@ -37,6 +39,8 @@ def deepinfra_run(system_prompt, user_message):
 		messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
 		max_tokens=4096
 	)
+	if not chat_completion.choices:
+		return ""
 	return chat_completion.choices[0].message.content
 
 

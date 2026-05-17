@@ -30,6 +30,8 @@ def chat_with_groq(client, prompt, model, response_format):
     response_format=response_format
     )
 
+    if not completion.choices:
+        return ""
     return completion.choices[0].message.content
 
 

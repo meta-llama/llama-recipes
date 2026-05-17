@@ -453,6 +453,8 @@ class InferenceUtils:
             )
             model_id = config["model"]["model_id"] or client.models.list().data[0].id
             r = client.chat.completions.create(model=model_id, **request)
+            if not r.choices:
+                raise ValueError("No choices returned from LLM")
             return r.choices[0].message.content
         except Exception as e:
             logger.error(f"OpenAI inference failed: {e}")
