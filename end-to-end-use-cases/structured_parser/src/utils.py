@@ -453,7 +453,7 @@ class InferenceUtils:
             )
             model_id = config["model"]["model_id"] or client.models.list().data[0].id
             r = client.chat.completions.create(model=model_id, **request)
-            if not r.choices:
+            if not r.choices or r.choices[0].message is None:
                 raise ValueError("No choices returned from LLM")
             return r.choices[0].message.content
         except Exception as e:

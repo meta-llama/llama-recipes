@@ -132,7 +132,7 @@ while True:
     )
 
     # Extract the response message and any tool calls from the response
-    if not response.choices:
+    if not response.choices or response.choices[0].message is None:
         return None
     response_message = response.choices[0].message
     tool_calls = response_message.tool_calls
