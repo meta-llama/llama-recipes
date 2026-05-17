@@ -37,6 +37,8 @@ class LlamaInference:
         )
         if self.provider == "Llama":
             return response.completion_message.content.text
+        if not response.choices or response.choices[0].message is None:
+            return ""
         return response.choices[0].message.content
 
     def launch_interface(self):

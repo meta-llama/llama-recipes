@@ -36,7 +36,7 @@ class LlamaVLLM():
                 },
                 **generation_kwargs,
             )
-            output = response.choices[0].message
+            output = response.choices[0].message if (response.choices and response.choices[0].message is not None) else None
         except Exception as e:
             logger.error(
                 f"FAILED to generate inference for input {inputs}\nError: {str(e)}"

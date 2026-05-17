@@ -95,6 +95,8 @@ def extract_references_with_llm(pdf_content):
         ],
         temperature=0.3,
     )
+    if not response.choices or response.choices[0].message is None:
+        return []
     response_json = response.choices[0].message.content
 
     # Convert the JSON string to a Python object
