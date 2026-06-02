@@ -157,3 +157,36 @@ class ANYSCALE(LLM):
             "mistralai/Mistral-7B-Instruct-v0.1",
             "HuggingFaceH4/zephyr-7b-beta",
         ]
+
+
+class MINIMAX(LLM):
+    """Accessing MiniMax via OpenAI-compatible API (https://www.minimaxi.com)"""
+
+    def __init__(self, model: str, api_key: str) -> None:
+        super().__init__(model, api_key)
+        self.client = openai.OpenAI(base_url="https://api.minimax.io/v1", api_key=api_key)  # noqa
+
+    @override
+    def query(self, prompt: str) -> str:
+        # Best-level effort to suppress openai log-spew.
+        # Likely not work well in multi-threaded environment.
+        level = logging.getLogger().level
+        logging.getLogger().setLevel(logging.WARNING)
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "user", "content": prompt},
+            ],
+            max_tokens=MAX_TOKENS,
+            temperature=TEMPERATURE if TEMPERATURE > 0 else 0.01,
+        )
+        logging.getLogger().setLevel(level)
+        return response.choices[0].message.content
+
+    @override
+    def valid_models(self) -> list[str]:
+        return [
+            "MiniMax-M3",
+            "MiniMax-M2.7",
+            "MiniMax-M2.7-highspeed",
+        ]
