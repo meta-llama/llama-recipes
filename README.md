@@ -71,3 +71,7 @@ See the License file for Meta Llama 3 [here](https://github.com/meta-llama/llama
 
 See the License file for Meta Llama 2 [here](https://github.com/meta-llama/llama-models/blob/main/models/llama2/LICENSE) and Acceptable Use Policy [here](https://github.com/meta-llama/llama-models/blob/main/models/llama2/USE_POLICY.md)
 <!-- markdown-link-check-enable -->
+
+---
+
+*[Mukller](https://github.com/Mukller)*
