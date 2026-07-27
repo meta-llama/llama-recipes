@@ -3,6 +3,7 @@
 
 import pytest
 from contextlib import nullcontext
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from transformers import LlamaTokenizer
@@ -147,3 +148,88 @@ def test_tokenize_dialog(tokenizer, monkeypatch, setup_tokenizer, llama_version)
         assert result["labels"][:38] == [-100] * 38
         assert result["labels"][43:54] == [-100] * 11
         assert result["labels"].count(-100) == 38 + 11
+
+
+DATASET_PY = """
+def get_custom_dataset(dataset_config, tokenizer, split):
+    return ("default_dataset", split)
+
+def get_foo(dataset_config, tokenizer, split):
+    return ("named_dataset", split)
+
+def get_data_collator(dataset_processer):
+    return ("collator", dataset_processer)
+"""
+
+
+@pytest.fixture
+def dataset_file(tmp_path):
+    path = tmp_path / "my_dataset.py"
+    path.write_text(DATASET_PY)
+    return path
+
+
+def make_config(file_spec):
+    return SimpleNamespace(file=file_spec)
+
+
+def test_get_custom_dataset_uses_default_func(dataset_file):
+    from llama_cookbook.datasets.custom_dataset import get_custom_dataset
+
+    result = get_custom_dataset(make_config(dataset_file.as_posix()), None, "train")
+    assert result == ("default_dataset", "train")
+
+
+def test_get_custom_dataset_uses_named_func(dataset_file):
+    from llama_cookbook.datasets.custom_dataset import get_custom_dataset
+
+    result = get_custom_dataset(make_config(f"{dataset_file.as_posix()}:get_foo"), None, "train")
+    assert result == ("named_dataset", "train")
+
+
+def test_get_data_collator_ignores_dataset_func_name(dataset_file):
+    """Regression test for #828.
+
+    The `:func_name` suffix names the dataset function only. Reusing it for the
+    collator called the dataset function with the wrong arity (TypeError) and
+    never found the user's get_data_collator.
+    """
+    from llama_cookbook.datasets.custom_dataset import get_data_collator
+
+    result = get_data_collator("PROCESSER", make_config(f"{dataset_file.as_posix()}:get_foo"))
+    assert result == ("collator", "PROCESSER")
+
+
+def test_get_data_collator_without_func_name(dataset_file):
+    from llama_cookbook.datasets.custom_dataset import get_data_collator
+
+    result = get_data_collator("PROCESSER", make_config(dataset_file.as_posix()))
+    assert result == ("collator", "PROCESSER")
+
+
+def test_get_data_collator_returns_none_when_missing(tmp_path):
+    """A file without get_data_collator falls back to the default collator."""
+    from llama_cookbook.datasets.custom_dataset import get_data_collator
+
+    path = tmp_path / "no_collator.py"
+    path.write_text("def get_custom_dataset(dataset_config, tokenizer, split):\n    return []\n")
+
+    assert get_data_collator("PROCESSER", make_config(path.as_posix())) is None
+
+
+@pytest.mark.parametrize("suffix", ["", ":get_foo"])
+def test_parse_dataset_file_keeps_windows_drive_letter(suffix):
+    """A drive letter must not be mistaken for a function-name separator."""
+    from llama_cookbook.datasets.custom_dataset import parse_dataset_file
+
+    spec = f"C:/data/ds.py{suffix}"
+    with pytest.raises(FileNotFoundError) as excinfo:
+        parse_dataset_file(spec, "get_custom_dataset")
+    assert "C:/data/ds.py" in str(excinfo.value)
+
+
+def test_parse_dataset_file_rejects_non_py_file():
+    from llama_cookbook.datasets.custom_dataset import parse_dataset_file
+
+    with pytest.raises(ValueError):
+        parse_dataset_file("not_a_module.txt", "get_custom_dataset")
