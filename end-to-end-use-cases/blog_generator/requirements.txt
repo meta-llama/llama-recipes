@@ -1,6 +1,0 @@
-requests
-qdrant-client
-sentence-transformers
-IPython
-jupyter
-python-dotenv
