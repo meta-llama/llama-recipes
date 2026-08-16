@@ -11,7 +11,7 @@ import logging
 
 import time
 from abc import ABC, abstractmethod
-from typing import Callable
+from typing import Callable, Literal
 
 import openai
 from typing_extensions import override
@@ -22,6 +22,11 @@ TEMPERATURE = 0.1
 TOP_P = 0.9
 
 LOG: logging.Logger = logging.getLogger(__name__)
+
+MINIMAX_BASE_URLS = {
+    "global": "https://api.minimax.io/v1",
+    "china": "https://api.minimaxi.com/v1",
+}
 
 
 class LLM(ABC):
@@ -157,3 +162,44 @@ class ANYSCALE(LLM):
             "mistralai/Mistral-7B-Instruct-v0.1",
             "HuggingFaceH4/zephyr-7b-beta",
         ]
+
+
+class MINIMAX(LLM):
+    """Access MiniMax-M3 through its hosted OpenAI-compatible API."""
+
+    def __init__(
+        self,
+        model: str,
+        api_key: str,
+        region: Literal["global", "china"] = "global",
+    ) -> None:
+        super().__init__(model, api_key)
+        self.client = openai.OpenAI(base_url=MINIMAX_BASE_URLS[region], api_key=api_key)
+
+    @override
+    def query(self, prompt: str, image_url: str | None = None) -> str:
+        content: str | list[dict[str, object]] = prompt
+        if image_url is not None:
+            content = [
+                {"type": "text", "text": prompt},
+                {
+                    "type": "image_url",
+                    "image_url": {"url": image_url, "detail": "default"},
+                },
+            ]
+
+        level = logging.getLogger().level
+        logging.getLogger().setLevel(logging.WARNING)
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": content}],
+                max_tokens=MAX_TOKENS,
+            )
+            return response.choices[0].message.content or ""
+        finally:
+            logging.getLogger().setLevel(level)
+
+    @override
+    def valid_models(self) -> list[str]:
+        return ["MiniMax-M3"]
