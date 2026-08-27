@@ -434,6 +434,7 @@ BERTTokenClassification
 MFreidank
 RoBERTA
 XLM
+Xquik
 distilbert
 does't
 finetuning
