@@ -64,6 +64,11 @@ Discover new insights into your favorite books!
 ### 101 and 201 tutorials on performing Tool Calling and building an Agentic Workflow using Llama Models
 101 notebooks show how to apply Llama models and enable tool calling functionality, 201 notebook walks you through an end to end workflow of building an agent that can search two papers, fetch their details and find their differences.
 
+## [Social Listening with Llama and Xquik](./xquik_social_listening/):
+
+### Analyze current public X conversations with bounded tool calls
+This tested agent uses Llama tool calling and Xquik Twitter search to retrieve recent public posts, separate observations from inferences, and cite returned source URLs.
+
 ## [Benchmarks](./benchmarks/):
 
 ### A folder contains benchmark scripts
