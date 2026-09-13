@@ -17,10 +17,21 @@
 
 If you are new to developing with Meta Llama models, this is where you should start. This folder contains introductory-level notebooks across different techniques relating to Meta Llama.
 
+## 🚀 Quickstart Notebooks
+
+| Topic | Notebook | Cloud Quickstart |
+| :--- | :--- | :--- |
+| **Llama 4 Scout** | [Build with Llama 4](./build_with_llama_4.ipynb) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/meta-llama/llama-cookbook/blob/main/getting-started/build_with_llama_4.ipynb) |
+| **Llama API** | [Build with Llama API](./build_with_llama_api.ipynb) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/meta-llama/llama-cookbook/blob/main/getting-started/build_with_llama_api.ipynb) |
+| **PEFT Finetuning** | [Quickstart PEFT Finetuning](./finetuning/quickstart_peft_finetuning.ipynb) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/meta-llama/llama-cookbook/blob/main/getting-started/finetuning/quickstart_peft_finetuning.ipynb) |
+| **Prompt Ops** | [Prompt Ops 101](./llama-tools/prompt-ops_101.ipynb) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/meta-llama/llama-cookbook/blob/main/getting-started/llama-tools/prompt-ops_101.ipynb) |
+
+## Topics Covered
+
 * The [Build_with_Llama 4](./build_with_llama_4.ipynb) notebook showcases a comprehensive walkthrough of the new capabilities of Llama 4 Scout models, including long context, multi-images and function calling.
 * The [Build_with_Llama API](./build_with_llama_api.ipynb) notebook highlights some of the features of [Llama API](https://llama.developer.meta.com?utm_source=llama-cookbook&utm_medium=readme&utm_campaign=getting_started).
 * The [inference](./inference/) folder contains scripts to deploy Llama for inference on server and mobile. See also [3p_integrations/vllm](../3p-integrations/vllm/) and [3p_integrations/tgi](../3p-integrations/tgi/) for hosting Llama on open-source model servers.
 * The [RAG](./RAG/) folder contains a simple Retrieval-Augmented Generation application using Llama.
 * The [finetuning](./finetuning/) folder contains resources to help you finetune Llama on your custom datasets, for both single- and multi-GPU setups. The scripts use the native llama-cookbook finetuning code found in [finetuning.py](../src/llama_cookbook/finetuning.py) which supports these features:
   * **NEW:** [Vision fine-tuning recipe](./finetuning/vision/README.md) for Llama 3.2 11B Vision - Learn how to fine-tune multimodal models for document understanding with 98% accuracy on structured data extraction!
-* The [llama-tools](./llama-tools/) folder contains resources to help you use Llama tools, such as [llama-prompt-ops](../llama-tools/llama-prompt-ops_101.ipynb).
+* The [llama-tools](./llama-tools/) folder contains resources to help you use Llama tools, such as [prompt-ops_101](./llama-tools/prompt-ops_101.ipynb).
