@@ -108,6 +108,52 @@ employability_perc: [True, None]
 </answer>
 ```
 
+## Exporting the dataset to EvalPort
+
+`to_evalport.py` exports the `generated_data/data_*.json` context/report pairs
+as an [EvalPort](https://github.com/adhabnr-ux/evalport) suite. From the repository
+root, run:
+
+```bash
+python end-to-end-use-cases/benchmarks/evals_synthetic_data/to_evalport.py \
+  --judge-model meta-llama/Llama-3.3-70B-Instruct \
+  --output evals.evalport.json
+```
+
+The exporter uses only the Python standard library. It reads this example's
+`generated_data` directory by default; use `--input-dir` for another dataset.
+Each input must contain non-empty string `context` and `report` fields. Their
+text is preserved as `input` and `expected_output`. Case IDs come from filenames,
+so adding a file does not renumber existing cases. Invalid or empty datasets
+are rejected before writing the output. Numbered input files are exported in
+numeric order (`data_2.json` before `data_10.json`).
+
+`--judge-model` records your target runner's model identifier; exporting does
+not call that model or require an API key. The suite includes an `llm_judge`
+reference-comparison prompt for the report's six fields and declares a JSON
+output schema containing a score from 0 to 1 and a reason. This is an export of
+the context/report pairs, **not a reproduction of the notebook's QA against
+the source table or its `accuracy_score` calculation**. Review the generated references and
+adapt the grader to your runner before using it for evaluation.
+
+Validate the exported suite with the reference SDK:
+
+```bash
+python -m pip install evalport-sdk==1.3.1
+python - <<'PYTHON'
+import json
+from openeval.validate import validate_suite
+
+with open("evals.evalport.json", encoding="utf-8") as source:
+    result = validate_suite(json.load(source))
+assert result.valid, result.errors
+print("Valid EvalPort suite")
+PYTHON
+```
+
+The SDK returns a validation result; calling `validate_suite` alone does not
+raise an exception for an invalid document.
+
 ## Conclusion & Next Steps
 
 - Creating good quality Evals for extractive summarization is challenging but important
