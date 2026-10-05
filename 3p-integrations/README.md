@@ -61,6 +61,9 @@ Comprehensive demos for building LLM applications using Llama on Together AI, in
 ### [vLLM](./vllm)
 Examples for high-throughput and memory-efficient inference using vLLM with Llama models.
 
+### [Vivacious Cloud](./vivacious-cloud)
+Recipes for preflight CUDA memory estimation, multi-cloud GPU provisioning, and running Meta Llama 3.2 & 3.1 fine-tuning and inference workflows across 12+ cloud providers.
+
 ## Additional Resources
 
 ### [Using Externally Hosted LLMs](./using_externally_hosted_llms.ipynb)
