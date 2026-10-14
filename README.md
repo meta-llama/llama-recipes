@@ -14,6 +14,11 @@
 	<a href="https://github.com/meta-llama/synthetic-data-kit"><img alt="Llama Tools Syntethic Data Kit" src="https://img.shields.io/badge/Llama_Tools-synthetic--data--kit-orange?logo=meta" /></a>
 	<a href="https://github.com/meta-llama/llama-prompt-ops"><img alt="Llama Tools Syntethic Data Kit" src="https://img.shields.io/badge/Llama_Tools-llama--prompt--ops-orange?logo=meta" /></a>
 </p>
+
+<p align="center">
+  <b>English</b> · <a href="https://github.com/meta-llama/llama-cookbook/blob/main/README.zh.md">简体中文</a>
+</p>
+
 <h2> Official Guide to building with Llama </h2>
 
 
