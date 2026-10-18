@@ -16,6 +16,10 @@
 </p>
 <h2> Official Guide to building with Llama </h2>
 
+<p align="center">
+  <b>English</b> · <a href="https://github.com/meta-llama/llama-recipes/blob/main/README.zh.md">简体中文</a>
+</p>
+
 
 
 Welcome to the official repository for helping you get started with [inference](https://github.com/meta-llama/llama-cookbook/tree/main/getting-started/inference/), [fine-tuning](https://github.com/meta-llama/llama-cookbook/tree/main/getting-started/finetuning) and [end-to-end use-cases](https://github.com/meta-llama/llama-cookbook/tree/main/end-to-end-use-cases) of building with the Llama Model family.
