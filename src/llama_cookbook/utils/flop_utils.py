@@ -6,23 +6,24 @@ from torch.utils.flop_counter import FlopCounterMode
 
 class FlopMeasure(FlopCounterMode):
     """
-    ``FlopMeasure`` is a customized context manager that counts the number of
-    flops within its context. It is based on ``FlopCounterMode`` with additional start_counting() and stop_counting() function so that the flop counting
-    will only start after the warmup stage.
-    It also supports hierarchical output by passing a module (or list of modules) to FlopCounterMode on construction.
+    A customized context manager that counts FLOPs after a
+    configurable warmup period.
 
-    Example usage
+    The step() method advances the warmup state and records
+    the timing window. FLOPs are counted while warmup_step is zero.
 
-    .. code-block:: python
+    Hierarchical output is supported by passing a module or a list
+    of modules to FlopCounterMode during construction.
 
-        model = ...
-        flop_counter = FlopMeasure(model,local_rank=0,warmup_step=3)
-        for batch in enumerate(dataloader):
-            with flop_counter:
+    Example usage:
+
+        flop_counter = FlopMeasure(rank=0, warmup_step=3)
+
+        with flop_counter:
+            for batch in dataloader:
                 model(batch)
                 flop_counter.step()
     """
-
     def __init__(
         self,
         mods: Optional[Union[torch.nn.Module, List[torch.nn.Module]]] = None,
