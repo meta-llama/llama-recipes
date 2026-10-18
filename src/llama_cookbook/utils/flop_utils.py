@@ -17,13 +17,15 @@ class FlopMeasure(FlopCounterMode):
 
     Example usage:
 
-        flop_counter = FlopMeasure(rank=0, warmup_step=3)
+        model = ...
+        flop_counter = FlopMeasure(model, rank=0, warmup_step=3)
 
         with flop_counter:
             for batch in dataloader:
                 model(batch)
                 flop_counter.step()
     """
+    
     def __init__(
         self,
         mods: Optional[Union[torch.nn.Module, List[torch.nn.Module]]] = None,
