@@ -55,6 +55,33 @@ pip install -U pip setuptools
 pip install -e .[tests,auditnlg,vllm]
 ```
 
+### MiniMax hosted inference
+
+The `MINIMAX` adapter lists `MiniMax-M3.1-Flash` first, followed by `MiniMax-M3`,
+through both compatible API formats. It uses the global OpenAI-compatible endpoint
+by default. The model argument is explicit; saved legacy and custom model IDs are
+forwarded unchanged even when they are not in the recommended list.
+
+```python
+import os
+
+from llama_cookbook.inference.llm import MINIMAX
+
+api_key = os.environ["MINIMAX_API_KEY"]
+
+global_openai = MINIMAX("MiniMax-M3.1-Flash", api_key)
+china_openai = MINIMAX(
+    "MiniMax-M3", api_key, base_url="https://api.minimaxi.com/v1"
+)
+global_anthropic = MINIMAX("MiniMax-M3.1-Flash", api_key, api_format="anthropic")
+china_anthropic = MINIMAX(
+    "MiniMax-M3",
+    api_key,
+    api_format="anthropic",
+    base_url="https://api.minimaxi.com/anthropic",
+)
+```
+
 
 ### Getting the Llama models
 You can find Llama models on Hugging Face hub [here](https://huggingface.co/meta-llama), **where models with `hf` in the name are already converted to Hugging Face checkpoints so no further conversion is needed**. The conversion step below is only for original model weights from Meta that are hosted on Hugging Face model hub as well.
