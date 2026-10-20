@@ -5,13 +5,14 @@
 
 import json
 import unittest
+from itertools import product
 from unittest.mock import patch
 
 import anthropic
 import httpx
 import openai
 
-from llama_cookbook.inference.llm import MINIMAX
+from llama_cookbook.inference.llm import MAX_TOKENS, MINIMAX
 
 OPENAI_CLIENT = openai.OpenAI
 ANTHROPIC_CLIENT = anthropic.Anthropic
@@ -19,38 +20,51 @@ ANTHROPIC_CLIENT = anthropic.Anthropic
 
 class MiniMaxTest(unittest.TestCase):
     def test_supported_models_and_endpoint_paths(self) -> None:
-        cases = [
+        endpoints = [
+            ("openai", None, "https://api.minimax.io/v1/chat/completions"),
             (
                 "openai",
-                "MiniMax-M3",
-                None,
-                "https://api.minimax.io/v1/chat/completions",
-            ),
-            (
-                "openai",
-                "MiniMax-M2.7",
                 "https://api.minimaxi.com/v1",
                 "https://api.minimaxi.com/v1/chat/completions",
             ),
             (
                 "anthropic",
-                "MiniMax-M3",
                 None,
                 "https://api.minimax.io/anthropic/v1/messages",
             ),
             (
                 "anthropic",
-                "MiniMax-M2.7",
                 "https://api.minimaxi.com/anthropic",
                 "https://api.minimaxi.com/anthropic/v1/messages",
             ),
+            (
+                "openai",
+                "https://example.test/custom/v1",
+                "https://example.test/custom/v1/chat/completions",
+            ),
+            (
+                "anthropic",
+                "https://example.test/custom/anthropic",
+                "https://example.test/custom/anthropic/v1/messages",
+            ),
+        ]
+        models = [
+            "MiniMax-M3.1-Flash",
+            "MiniMax-M3",
+            "MiniMax-M2.7",
+            "saved-custom-model",
         ]
 
-        for api_format, model, base_url, expected_url in cases:
-            with self.subTest(api_format=api_format, base_url=base_url):
+        for (api_format, base_url, expected_url), model in product(endpoints, models):
+            with self.subTest(api_format=api_format, base_url=base_url, model=model):
                 requests = []
+                transport_httpx = httpx
+                if api_format == "anthropic" and not issubclass(
+                    anthropic.DefaultHttpxClient, httpx.Client
+                ):
+                    import httpx2 as transport_httpx
 
-                def handler(request: httpx.Request) -> httpx.Response:
+                def handler(request):
                     requests.append(request)
                     if api_format == "openai":
                         body = {
@@ -80,39 +94,51 @@ class MiniMaxTest(unittest.TestCase):
                             "stop_sequence": None,
                             "usage": {"input_tokens": 1, "output_tokens": 1},
                         }
-                    return httpx.Response(200, json=body, request=request)
+                    return transport_httpx.Response(200, json=body, request=request)
 
-                http_client = httpx.Client(transport=httpx.MockTransport(handler))
-                kwargs = {"api_format": api_format}
-                if base_url is not None:
-                    kwargs["base_url"] = base_url
+                with transport_httpx.Client(
+                    transport=transport_httpx.MockTransport(handler)
+                ) as http_client:
+                    # Keep the real SDK serialization and the adapter's endpoint
+                    # arguments; substitute only the offline HTTP transport.
+                    client_class = (
+                        OPENAI_CLIENT if api_format == "openai" else ANTHROPIC_CLIENT
+                    )
 
-                if api_format == "openai":
-                    client = OPENAI_CLIENT(
-                        api_key="test-key",
-                        base_url=base_url or "https://api.minimax.io/v1",
-                        http_client=http_client,
-                    )
-                    patch_target = "llama_cookbook.inference.llm.openai.OpenAI"
-                else:
-                    client = ANTHROPIC_CLIENT(
-                        api_key="test-key",
-                        base_url=base_url or "https://api.minimax.io/anthropic",
-                        http_client=http_client,
-                    )
-                    patch_target = "llama_cookbook.inference.llm.anthropic.Anthropic"
+                    def make_client(**kwargs):
+                        return client_class(http_client=http_client, **kwargs)
 
-                with patch(patch_target, return_value=client):
-                    provider = MINIMAX(model, "test-key", **kwargs)
-                    self.assertEqual(provider.query("Test prompt"), "Test response")
-                    self.assertEqual(
-                        provider.valid_models(), ["MiniMax-M3", "MiniMax-M2.7"]
+                    kwargs = {}
+                    if api_format != "openai":
+                        kwargs["api_format"] = api_format
+                    if base_url is not None:
+                        kwargs["base_url"] = base_url
+                    patch_target = (
+                        "llama_cookbook.inference.llm.openai.OpenAI"
+                        if api_format == "openai"
+                        else "llama_cookbook.inference.llm.anthropic.Anthropic"
                     )
+                    with patch(patch_target, side_effect=make_client):
+                        provider = MINIMAX(model, "test-key", **kwargs)
+                        self.assertEqual(provider.query("Test prompt"), "Test response")
+                        self.assertEqual(
+                            provider.valid_models(),
+                            ["MiniMax-M3.1-Flash", "MiniMax-M3"],
+                        )
 
                 self.assertEqual(len(requests), 1)
+                self.assertEqual(requests[0].method, "POST")
                 self.assertEqual(str(requests[0].url), expected_url)
-                self.assertEqual(json.loads(requests[0].content)["model"], model)
-                client.close()
+                # Exact payload equality also guards against adding unsupported
+                # thinking, reasoning effort or service tier defaults.
+                self.assertEqual(
+                    json.loads(requests[0].content),
+                    {
+                        "model": model,
+                        "messages": [{"role": "user", "content": "Test prompt"}],
+                        "max_tokens": MAX_TOKENS,
+                    },
+                )
 
 
 if __name__ == "__main__":

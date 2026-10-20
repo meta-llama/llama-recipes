@@ -225,4 +225,4 @@ class MINIMAX(LLM):
 
     @override
     def valid_models(self) -> list[str]:
-        return ["MiniMax-M3", "MiniMax-M2.7"]
+        return ["MiniMax-M3.1-Flash", "MiniMax-M3"]

@@ -57,8 +57,10 @@ pip install -e .[tests,auditnlg,vllm]
 
 ### MiniMax hosted inference
 
-The `MINIMAX` adapter supports `MiniMax-M3` and `MiniMax-M2.7` through both
-compatible API formats. It uses the global OpenAI-compatible endpoint by default.
+The `MINIMAX` adapter lists `MiniMax-M3.1-Flash` first, followed by `MiniMax-M3`,
+through both compatible API formats. It uses the global OpenAI-compatible endpoint
+by default. The model argument is explicit; saved legacy and custom model IDs are
+forwarded unchanged even when they are not in the recommended list.
 
 ```python
 import os
@@ -67,13 +69,13 @@ from llama_cookbook.inference.llm import MINIMAX
 
 api_key = os.environ["MINIMAX_API_KEY"]
 
-global_openai = MINIMAX("MiniMax-M3", api_key)
+global_openai = MINIMAX("MiniMax-M3.1-Flash", api_key)
 china_openai = MINIMAX(
-    "MiniMax-M2.7", api_key, base_url="https://api.minimaxi.com/v1"
+    "MiniMax-M3", api_key, base_url="https://api.minimaxi.com/v1"
 )
-global_anthropic = MINIMAX("MiniMax-M3", api_key, api_format="anthropic")
+global_anthropic = MINIMAX("MiniMax-M3.1-Flash", api_key, api_format="anthropic")
 china_anthropic = MINIMAX(
-    "MiniMax-M2.7",
+    "MiniMax-M3",
     api_key,
     api_format="anthropic",
     base_url="https://api.minimaxi.com/anthropic",
